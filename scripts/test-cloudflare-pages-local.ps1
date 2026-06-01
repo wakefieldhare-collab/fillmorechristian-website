@@ -216,10 +216,10 @@ try {
 
     $episode = Invoke-NoRedirect -Url "$baseUrl/episode/be-ready-luke-12/"
     Assert-Status -Response $episode -Expected @(200) -Name "Static episode page"
-    if ($episode.Content -notmatch "<audio\s+controls" -or $episode.Content -notmatch "Download Audio" -or $episode.Content -notmatch "All Sermons") {
-        throw "Static episode page is missing audio, download, or archive navigation"
+    if ($episode.Content -notmatch "<audio\s+controls" -or $episode.Content -notmatch "Download Audio" -or $episode.Content -notmatch "All Sermons" -or $episode.Content -notmatch 'class="episode-nav"' -or $episode.Content -notmatch "Newer Message" -or $episode.Content -notmatch "Older Message") {
+        throw "Static episode page is missing audio, download, archive navigation, or episode navigation"
     }
-    $checks.Add([pscustomobject]@{ Check = "Static episode page"; Status = "OK"; Details = "Audio player, download, and archive navigation" })
+    $checks.Add([pscustomobject]@{ Check = "Static episode page"; Status = "OK"; Details = "Audio player, download, archive navigation, and episode navigation" })
 
     $checks | Format-Table -AutoSize
 } finally {

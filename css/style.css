@@ -887,6 +887,50 @@ h4 { font-size: 1.25rem; }
   margin-top: 1.3rem;
 }
 
+.episode-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.episode-nav-link {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 92px;
+  justify-content: center;
+  background: var(--color-white);
+  border: 1px solid rgba(23, 50, 71, 0.12);
+  border-radius: 8px;
+  padding: 18px;
+  box-shadow: 0 8px 22px rgba(23, 50, 71, 0.06);
+}
+
+.episode-nav-link span {
+  color: var(--color-text-light);
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.episode-nav-link strong {
+  color: var(--color-primary);
+  line-height: 1.25;
+}
+
+.episode-nav-link:hover strong {
+  color: var(--color-accent);
+}
+
+.episode-nav-disabled {
+  opacity: 0.58;
+}
+
+.episode-nav-disabled:hover strong {
+  color: var(--color-primary);
+}
+
 .sermons-loading {
   text-align: center;
   padding: 3em;
@@ -1081,6 +1125,10 @@ h4 { font-size: 1.25rem; }
   .media-band-grid,
   .sermon-tools-card,
   .episode-player {
+    grid-template-columns: 1fr;
+  }
+
+  .episode-nav {
     grid-template-columns: 1fr;
   }
 

@@ -206,6 +206,20 @@ if ($items.Count -eq 0) {
     throw "Feed has no items: $feedFile"
 }
 
+$episodeSummaries = New-Object System.Collections.Generic.List[object]
+foreach ($item in $items) {
+    $title = [string]$item.title
+    $slug = Get-EpisodeSlug ([string]$item.link)
+    if (-not $slug) {
+        throw "Could not derive episode slug for $title"
+    }
+
+    $episodeSummaries.Add([pscustomobject]@{
+        Title = $title
+        Slug = $slug
+    })
+}
+
 if (Test-Path -LiteralPath $episodeRoot) {
     Remove-Item -LiteralPath $episodeRoot -Recurse -Force
 }
@@ -215,12 +229,10 @@ $episodeRows = New-Object System.Collections.Generic.List[object]
 $legacyRedirectRows = New-Object System.Collections.Generic.List[object]
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
-foreach ($item in $items) {
-    $title = [string]$item.title
-    $slug = Get-EpisodeSlug ([string]$item.link)
-    if (-not $slug) {
-        throw "Could not derive episode slug for $title"
-    }
+for ($episodeIndex = 0; $episodeIndex -lt $items.Count; $episodeIndex++) {
+    $item = $items[$episodeIndex]
+    $title = $episodeSummaries[$episodeIndex].Title
+    $slug = $episodeSummaries[$episodeIndex].Slug
 
     $date = Format-Date ([string]$item.pubDate)
     $lastMod = ""
@@ -259,6 +271,26 @@ foreach ($item in $items) {
     } else {
         ""
     }
+
+    $newerEpisode = if ($episodeIndex -gt 0) { $episodeSummaries[$episodeIndex - 1] } else { $null }
+    $olderEpisode = if ($episodeIndex -lt ($episodeSummaries.Count - 1)) { $episodeSummaries[$episodeIndex + 1] } else { $null }
+    $newerNavMarkup = if ($newerEpisode) {
+        '          <a class="episode-nav-link" href="../' + (HtmlEncode $newerEpisode.Slug) + '/"><span>Newer Message</span><strong>' + (HtmlEncode $newerEpisode.Title) + '</strong></a>'
+    } else {
+        '          <span class="episode-nav-link episode-nav-disabled"><span>Newer Message</span><strong>Latest message</strong></span>'
+    }
+    $olderNavMarkup = if ($olderEpisode) {
+        '          <a class="episode-nav-link" href="../' + (HtmlEncode $olderEpisode.Slug) + '/"><span>Older Message</span><strong>' + (HtmlEncode $olderEpisode.Title) + '</strong></a>'
+    } else {
+        '          <span class="episode-nav-link episode-nav-disabled"><span>Older Message</span><strong>Oldest message</strong></span>'
+    }
+
+    $episodeNavMarkup = @"
+        <nav class="episode-nav" aria-label="Sermon episode navigation">
+$newerNavMarkup
+$olderNavMarkup
+        </nav>
+"@
 
     $html = @"
 <!DOCTYPE html>
@@ -337,6 +369,7 @@ $downloadActionMarkup              <a href="../../sermons.html" class="btn btn-o
             </div>
           </div>
         </article>
+$episodeNavMarkup
       </div>
     </section>
   </main>

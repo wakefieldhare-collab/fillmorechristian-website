@@ -408,6 +408,22 @@ if ($feeds.ContainsKey($feedPaths[0])) {
         $episodeIssues.Add("missing episode pages: $($missingEpisodePages -join ', ')")
     }
 
+    $missingEpisodeNavigation = New-Object System.Collections.Generic.List[string]
+    foreach ($slug in $uniqueEpisodeSlugs) {
+        $episodePagePath = Join-Path $root "episode\$slug\index.html"
+        if (-not (Test-Path -LiteralPath $episodePagePath)) {
+            continue
+        }
+
+        $episodeHtml = Get-Content -Raw -LiteralPath $episodePagePath
+        if ($episodeHtml -notmatch 'class="episode-nav"' -or $episodeHtml -notmatch "Newer Message" -or $episodeHtml -notmatch "Older Message") {
+            $missingEpisodeNavigation.Add($slug)
+        }
+    }
+    if ($missingEpisodeNavigation.Count -gt 0) {
+        $episodeIssues.Add("episode navigation missing from: $($missingEpisodeNavigation -join ', ')")
+    }
+
     $redirectsPath = Join-Path $root "_redirects"
     if ((Test-Path -LiteralPath $redirectsPath) -and (Get-Content -Raw -LiteralPath $redirectsPath) -match "(?m)^/episode/\*") {
         $episodeIssues.Add("_redirects still contains a wildcard /episode/* redirect")
@@ -802,10 +818,10 @@ if (-not $SkipRemote) {
                 }
 
                 if ($path -eq $sampleEpisodePath) {
-                    if ($response.Content -match "<audio\s+controls" -and $response.Content -match "Download Audio" -and $response.Content -match "All Sermons") {
-                        Add-Check "Staging episode page" "OK" "Sample episode page has audio, download, and archive navigation"
+                    if ($response.Content -match "<audio\s+controls" -and $response.Content -match "Download Audio" -and $response.Content -match "All Sermons" -and $response.Content -match 'class="episode-nav"' -and $response.Content -match "Older Message") {
+                        Add-Check "Staging episode page" "OK" "Sample episode page has audio, download, archive navigation, and episode navigation"
                     } else {
-                        Add-Check "Staging episode page" "FAIL" "Sample episode page is missing audio, download, or archive navigation"
+                        Add-Check "Staging episode page" "FAIL" "Sample episode page is missing audio, download, archive navigation, or episode navigation"
                     }
                 }
 
