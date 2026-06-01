@@ -450,16 +450,29 @@ if (Test-Path -LiteralPath $contactCardPath) {
     if ($contactHtml -notmatch 'href="contact\.vcf"' -or $contactHtml -notmatch '<link\s+rel="alternate"\s+type="text/vcard"') {
         $contactCardIssues.Add("contact page does not link or advertise contact.vcf")
     }
-    if ($contactHtml -notmatch 'data-mailto="church@fillmorechristian\.org"' -or $contactHtml -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or $contactHtml -notmatch 'id="contact-email-copy-status"') {
-        $contactCardIssues.Add("contact page is missing the static mailto form or copyable email fallback")
+    if ($contactHtml -notmatch 'data-mailto="church@fillmorechristian\.org"' -or
+        $contactHtml -notmatch 'data-status-target="contact-form-status"' -or
+        $contactHtml -notmatch 'id="contact-form-status"\s+class="form-status"\s+aria-live="polite"' -or
+        $contactHtml -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or
+        $contactHtml -notmatch 'id="contact-email-copy-status"') {
+        $contactCardIssues.Add("contact page is missing the static mailto form status or copyable email fallback")
     }
     $homeHtml = Get-Content -Raw -LiteralPath (Join-Path $root "index.html")
-    if ($homeHtml -notmatch 'data-mailto="church@fillmorechristian\.org"' -or $homeHtml -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or $homeHtml -notmatch 'id="home-email-copy-status"') {
-        $contactCardIssues.Add("home page is missing the static contact form or copyable email fallback")
+    if ($homeHtml -notmatch 'data-mailto="church@fillmorechristian\.org"' -or
+        $homeHtml -notmatch 'data-status-target="home-contact-form-status"' -or
+        $homeHtml -notmatch 'id="home-contact-form-status"\s+class="form-status"\s+aria-live="polite"' -or
+        $homeHtml -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or
+        $homeHtml -notmatch 'id="home-email-copy-status"') {
+        $contactCardIssues.Add("home page is missing the static contact form status or copyable email fallback")
+    }
+
+    $mainScriptText = Get-Content -Raw -LiteralPath (Join-Path $root "js\main.js")
+    if ($mainScriptText -notmatch "data-status-target" -or $mainScriptText -notmatch "church@fillmorechristian\.org" -or $mainScriptText -notmatch "email app should now have a draft") {
+        $contactCardIssues.Add("main script is missing contact form status messaging")
     }
 
     if ($contactCardIssues.Count -eq 0) {
-        Add-Check "Self-hosted contact card" "OK" "contact.vcf, static mailto forms, and copyable email fallbacks publish church contact details"
+        Add-Check "Self-hosted contact card" "OK" "contact.vcf, static mailto forms with status messaging, and copyable email fallbacks publish church contact details"
     } else {
         Add-Check "Self-hosted contact card" "FAIL" ($contactCardIssues -join "; ")
     }

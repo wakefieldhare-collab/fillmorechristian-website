@@ -841,6 +841,13 @@ h4 { font-size: 1.25rem; }
   resize: vertical;
 }
 
+.form-status {
+  margin-top: 0.75rem;
+  color: var(--color-gray);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
 /* --- Sermons Page --- */
 .sermons-list {
   max-width: 800px;

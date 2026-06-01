@@ -68,6 +68,8 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', function(e) {
       e.preventDefault();
       const to = form.getAttribute('data-mailto');
+      const statusId = form.getAttribute('data-status-target');
+      const status = statusId ? document.getElementById(statusId) : null;
       const formData = new FormData(form);
       const name = formData.get('name') || formData.get('contact-name') || '';
       const email = formData.get('email') || '';
@@ -83,6 +85,10 @@ document.addEventListener('DOMContentLoaded', function() {
       window.location.href = 'mailto:' + encodeURIComponent(to) +
         '?subject=' + encodeURIComponent(subject) +
         '&body=' + encodeURIComponent(body);
+
+      if (status) {
+        status.textContent = 'Your email app should now have a draft addressed to church@fillmorechristian.org. If it did not open, copy the church email address and send your message manually.';
+      }
     });
   });
 

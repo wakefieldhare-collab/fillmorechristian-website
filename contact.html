@@ -20,7 +20,7 @@
   <meta name="twitter:title" content="Contact Fillmore Christian Church">
   <meta name="twitter:description" content="Ask a question, request prayer, or plan a visit to Fillmore Christian Church.">
   <meta name="twitter:image" content="https://www.fillmorechristian.org/images/church-exterior-1200.jpg">
-  <link rel="stylesheet" href="css/style.css?v=20260601-15">
+  <link rel="stylesheet" href="css/style.css?v=20260601-16">
 </head>
 <body>
 
@@ -125,7 +125,7 @@
           </div>
         </div>
 
-        <form class="contact-form" data-mailto="church@fillmorechristian.org">
+        <form class="contact-form" data-mailto="church@fillmorechristian.org" data-status-target="contact-form-status">
           <label for="contact-name">Name</label>
           <input type="text" id="contact-name" name="name" required>
 
@@ -139,6 +139,7 @@
           <textarea id="contact-message" name="message" rows="6" required></textarea>
 
           <button type="submit" class="btn btn-primary" style="width:100%;">Send Message</button>
+          <p id="contact-form-status" class="form-status" aria-live="polite">Your email app will open with the message ready to send.</p>
         </form>
       </div>
     </div>
@@ -177,6 +178,6 @@
     </div>
   </footer>
 
-  <script src="js/main.js?v=20260601-16"></script>
+  <script src="js/main.js?v=20260601-17"></script>
 </body>
 </html>

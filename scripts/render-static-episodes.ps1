@@ -366,7 +366,7 @@ $olderNavMarkup
   <meta name="twitter:description" content="$(HtmlEncode $summary)">
   <meta name="twitter:image" content="https://www.fillmorechristian.org/images/podcast-cover.jpg">
   <script type="application/ld+json">$jsonLdMarkup</script>
-  <link rel="stylesheet" href="../../css/style.css?v=20260601-15">
+  <link rel="stylesheet" href="../../css/style.css?v=20260601-16">
 </head>
 <body>
   <nav class="navbar">
@@ -434,7 +434,7 @@ $episodeNavMarkup
     </div>
   </footer>
 
-  <script src="../../js/main.js?v=20260601-16"></script>
+  <script src="../../js/main.js?v=20260601-17"></script>
 </body>
 </html>
 "@

@@ -203,8 +203,12 @@ try {
     if ($homeResponse.Content -match "fonts\.googleapis\.com|fonts\.gstatic\.com") {
         throw "Home page still references Google-hosted fonts"
     }
-    if ($homeResponse.Content -notmatch 'data-mailto="church@fillmorechristian\.org"' -or $homeResponse.Content -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or $homeResponse.Content -notmatch 'id="home-email-copy-status"') {
-        throw "Home page is missing the static contact form or copyable email fallback"
+    if ($homeResponse.Content -notmatch 'data-mailto="church@fillmorechristian\.org"' -or
+        $homeResponse.Content -notmatch 'data-status-target="home-contact-form-status"' -or
+        $homeResponse.Content -notmatch 'id="home-contact-form-status"\s+class="form-status"\s+aria-live="polite"' -or
+        $homeResponse.Content -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or
+        $homeResponse.Content -notmatch 'id="home-email-copy-status"') {
+        throw "Home page is missing the static contact form status or copyable email fallback"
     }
     $checks.Add([pscustomobject]@{ Check = "Home page"; Status = "OK"; Details = "HTTP 200" })
 
@@ -340,10 +344,19 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Contact location panel"; Status = "OK"; Details = "No embedded map iframe" })
 
-    if ($contactPageContent -notmatch 'data-mailto="church@fillmorechristian\.org"' -or $contactPageContent -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or $contactPageContent -notmatch 'id="contact-email-copy-status"') {
-        throw "Built contact page is missing the static mailto form or copyable email fallback"
+    if ($contactPageContent -notmatch 'data-mailto="church@fillmorechristian\.org"' -or
+        $contactPageContent -notmatch 'data-status-target="contact-form-status"' -or
+        $contactPageContent -notmatch 'id="contact-form-status"\s+class="form-status"\s+aria-live="polite"' -or
+        $contactPageContent -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or
+        $contactPageContent -notmatch 'id="contact-email-copy-status"') {
+        throw "Built contact page is missing the static mailto form status or copyable email fallback"
     }
-    $checks.Add([pscustomobject]@{ Check = "Contact fallback"; Status = "OK"; Details = "Static mailto form and copyable email fallback" })
+    $mainScript = Invoke-NoRedirect -Url "$baseUrl/js/main.js"
+    Assert-Status -Response $mainScript -Expected @(200) -Name "Main script"
+    if ($mainScript.Content -notmatch "data-status-target" -or $mainScript.Content -notmatch "email app should now have a draft") {
+        throw "Main script is missing contact form status messaging"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Contact fallback"; Status = "OK"; Details = "Static mailto form, visible status message, and copyable email fallback" })
 
     $favicon = Invoke-NoRedirect -Url "$baseUrl/favicon.svg"
     Assert-Status -Response $favicon -Expected @(200) -Name "Favicon"
