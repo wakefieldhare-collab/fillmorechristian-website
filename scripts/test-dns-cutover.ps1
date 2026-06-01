@@ -98,6 +98,32 @@ if ("MS=ms48673064" -in $txtValues) {
     Add-Check "Microsoft verification TXT" "WARN" "Microsoft verification TXT was not found. Current TXT: $($txtValues -join '; ')"
 }
 
+$dkimValues = @(Resolve-Answers "pic._domainkey.$Domain" "TXT" | ForEach-Object { Get-RecordValue $_ "TXT" })
+$expectedDkim = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDMspMJXAZ/D2ygNZBnGbLY5Z9DjNaNiLDjKY79O1JYgtYlkOERm5SVNOb1nKavNA98hqTLLN+1N7LQGoaeqY0O8ddDa8NclV57cTekdu4by/fcKN+8zycaOE2HRH9hZP1RLNmandRuUQfmTYMrXIWrjBU0xaQdbXZHMP0pN5FuQIDAQAB"
+if ($expectedDkim -in $dkimValues) {
+    Add-Check "Mailgun DKIM TXT" "OK" "pic._domainkey DKIM record is present"
+} else {
+    Add-Check "Mailgun DKIM TXT" "FAIL" "pic._domainkey DKIM record is missing"
+}
+
+$googleVerificationRecords = @(
+    @{ Name = "cbsw2pw4sdud.$Domain"; Value = "gv-6xwzpofnvqguxs.dv.googlehosted.com" },
+    @{ Name = "4jb3ni34htue.$Domain"; Value = "gv-xvljhthdwk5dxh.dv.googlehosted.com" },
+    @{ Name = "334xc4sml6cf.$Domain"; Value = "gv-ujhethalu73pqt.dv.googlehosted.com" }
+)
+$missingGoogle = New-Object System.Collections.Generic.List[string]
+foreach ($record in $googleVerificationRecords) {
+    $values = @(Resolve-Answers $record.Name "CNAME" | ForEach-Object { Get-RecordValue $_ "CNAME" })
+    if ($record.Value -notin $values) {
+        $missingGoogle.Add("$($record.Name) -> $($record.Value)")
+    }
+}
+if ($missingGoogle.Count -eq 0) {
+    Add-Check "Google verification CNAMEs" "OK" "Google verification CNAMEs are present"
+} else {
+    Add-Check "Google verification CNAMEs" "FAIL" "Missing: $($missingGoogle -join '; ')"
+}
+
 $apexA = @(Resolve-Answers $Domain "A" | ForEach-Object { Get-RecordValue $_ "A" } | Sort-Object -Unique)
 $wwwCname = @(Resolve-Answers "www.$Domain" "CNAME" | ForEach-Object { Get-RecordValue $_ "CNAME" } | Sort-Object -Unique)
 if ($Mode -eq "Before") {

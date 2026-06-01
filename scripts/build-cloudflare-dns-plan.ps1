@@ -3,7 +3,8 @@ param(
     [string]$SnapshotPath = "",
     [string]$OutDir = "exports\dns",
     [string]$PagesProject = "fillmorechristian-website",
-    [string]$MediaHostname = "media.fillmorechristian.org"
+    [string]$MediaHostname = "media.fillmorechristian.org",
+    [string[]]$ExpectedCloudflareNameservers = @("eric.ns.cloudflare.com", "sky.ns.cloudflare.com")
 )
 
 $ErrorActionPreference = "Stop"
@@ -102,7 +103,7 @@ foreach ($record in $preserveRecords) {
 }
 $zoneLines -join "`r`n" | Set-Content -LiteralPath $zonePath -Encoding UTF8
 
-$mailRecords = @($preserveRecords | Where-Object { $_.Type -in @("MX", "TXT") })
+$verificationRecords = @($preserveRecords | Where-Object { $_.Type -in @("MX", "TXT", "CNAME") })
 $notes = New-Object System.Collections.Generic.List[string]
 $notes.Add("# Cloudflare DNS Cutover Plan for $Domain")
 $notes.Add("")
@@ -119,9 +120,11 @@ $notes.Add(('- `{0}`' -f $zonePath))
 $notes.Add("")
 $notes.Add("These records intentionally exclude the old TheChurchCo website records. They preserve mail and verification records only.")
 $notes.Add("")
-foreach ($record in $mailRecords) {
+foreach ($record in $verificationRecords) {
     if ($record.Type -eq "MX") {
         $notes.Add(('- MX `{0}` priority `{1}` -> `{2}`' -f $record.Name, $record.Priority, $record.Value))
+    } elseif ($record.Type -eq "CNAME") {
+        $notes.Add(('- CNAME `{0}` -> `{1}`' -f $record.Name, $record.Value))
     } else {
         $notes.Add(('- TXT `{0}` -> `{1}`' -f $record.Name, $record.Value))
     }
@@ -160,8 +163,23 @@ $notes.Add("")
 $notes.Add("After Cloudflare gives assigned nameservers and Squarespace is updated:")
 $notes.Add("")
 $notes.Add('```powershell')
-$notes.Add('.\scripts\test-dns-cutover.ps1 -Mode After -ExpectedCloudflareNameservers "name1.ns.cloudflare.com","name2.ns.cloudflare.com"')
+if ($ExpectedCloudflareNameservers.Count -gt 0) {
+    $quotedNameservers = '"' + ($ExpectedCloudflareNameservers -join '","') + '"'
+    $notes.Add(('.\scripts\test-dns-cutover.ps1 -Mode After -ExpectedCloudflareNameservers {0}' -f $quotedNameservers))
+} else {
+    $notes.Add('.\scripts\test-dns-cutover.ps1 -Mode After -ExpectedCloudflareNameservers "name1.ns.cloudflare.com","name2.ns.cloudflare.com"')
+}
 $notes.Add('```')
+$notes.Add("")
+if ($ExpectedCloudflareNameservers.Count -gt 0) {
+    $notes.Add("Cloudflare assigned nameservers:")
+    $notes.Add("")
+    foreach ($nameserver in $ExpectedCloudflareNameservers) {
+        $notes.Add(('- `{0}`' -f $nameserver))
+    }
+    $notes.Add("")
+}
+$notes.Add("Cloudflare Pages custom domains for `$Domain` and `www.$Domain` should be attached to `$PagesProject` before the nameserver change.")
 $notes.Add("")
 $notes.Add("Only cancel TheChurchCo after website, feed, media, and mail checks pass.")
 

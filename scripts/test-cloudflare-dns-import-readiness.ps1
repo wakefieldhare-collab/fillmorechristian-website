@@ -116,6 +116,16 @@ $preserveZoneFullPath = Resolve-RepoPath $PreserveZonePath
 $cloudflareToken = ""
 $assignedNameservers = @()
 $cloudflareZoneStatus = ""
+$expectedPreserveRecords = @(
+    @{ Name = $Domain; Type = "MX"; Value = "mxa.mailgun.org"; Priority = "10" },
+    @{ Name = $Domain; Type = "MX"; Value = "mxb.mailgun.org"; Priority = "10" },
+    @{ Name = $Domain; Type = "TXT"; Value = "MS=ms48673064"; Priority = "" },
+    @{ Name = $Domain; Type = "TXT"; Value = "v=spf1 include:mailgun.org ~all"; Priority = "" },
+    @{ Name = "pic._domainkey.$Domain"; Type = "TXT"; Value = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDMspMJXAZ/D2ygNZBnGbLY5Z9DjNaNiLDjKY79O1JYgtYlkOERm5SVNOb1nKavNA98hqTLLN+1N7LQGoaeqY0O8ddDa8NclV57cTekdu4by/fcKN+8zycaOE2HRH9hZP1RLNmandRuUQfmTYMrXIWrjBU0xaQdbXZHMP0pN5FuQIDAQAB"; Priority = "" },
+    @{ Name = "cbsw2pw4sdud.$Domain"; Type = "CNAME"; Value = "gv-6xwzpofnvqguxs.dv.googlehosted.com"; Priority = "" },
+    @{ Name = "4jb3ni34htue.$Domain"; Type = "CNAME"; Value = "gv-xvljhthdwk5dxh.dv.googlehosted.com"; Priority = "" },
+    @{ Name = "334xc4sml6cf.$Domain"; Type = "CNAME"; Value = "gv-ujhethalu73pqt.dv.googlehosted.com"; Priority = "" }
+)
 
 if (-not (Test-Path -LiteralPath $preserveCsvFullPath)) {
     Add-Check "Preserve CSV" "FAIL" "Missing $preserveCsvFullPath"
@@ -140,14 +150,8 @@ if (-not (Test-Path -LiteralPath $preserveCsvFullPath)) {
         Add-Check "Old website records excluded" "FAIL" "Forbidden web record(s): $(@($forbidden | ForEach-Object { "$($_.Type) $($_.Name) -> $($_.Value)" }) -join '; ')"
     }
 
-    $requiredRecords = @(
-        @{ Name = $Domain; Type = "MX"; Value = "mxa.mailgun.org"; Priority = "10" },
-        @{ Name = $Domain; Type = "MX"; Value = "mxb.mailgun.org"; Priority = "10" },
-        @{ Name = $Domain; Type = "TXT"; Value = "MS=ms48673064"; Priority = "" },
-        @{ Name = $Domain; Type = "TXT"; Value = "v=spf1 include:mailgun.org ~all"; Priority = "" }
-    )
     $missing = New-Object System.Collections.Generic.List[string]
-    foreach ($required in $requiredRecords) {
+    foreach ($required in $expectedPreserveRecords) {
         $match = @(
             $records | Where-Object {
                 $_.Name -eq $required.Name -and
@@ -161,9 +165,9 @@ if (-not (Test-Path -LiteralPath $preserveCsvFullPath)) {
         }
     }
     if ($missing.Count -eq 0) {
-        Add-Check "Required mail records" "OK" "Mailgun MX/SPF and Microsoft verification records are present"
+        Add-Check "Required preserve records" "OK" "Mailgun, Microsoft, DKIM, and Google verification records are present"
     } else {
-        Add-Check "Required mail records" "FAIL" "Missing: $($missing -join '; ')"
+        Add-Check "Required preserve records" "FAIL" "Missing: $($missing -join '; ')"
     }
 }
 
@@ -172,7 +176,7 @@ if (-not (Test-Path -LiteralPath $preserveZoneFullPath)) {
 } else {
     $zoneText = Get-Content -Raw -LiteralPath $preserveZoneFullPath
     $zoneIssues = New-Object System.Collections.Generic.List[string]
-    foreach ($needle in @("mxa.mailgun.org.", "mxb.mailgun.org.", '"MS=ms48673064"', '"v=spf1 include:mailgun.org ~all"')) {
+    foreach ($needle in @("mxa.mailgun.org.", "mxb.mailgun.org.", '"MS=ms48673064"', '"v=spf1 include:mailgun.org ~all"', "pic._domainkey", "gv-6xwzpofnvqguxs.dv.googlehosted.com.", "gv-xvljhthdwk5dxh.dv.googlehosted.com.", "gv-ujhethalu73pqt.dv.googlehosted.com.")) {
         if ($zoneText -notmatch [regex]::Escape($needle)) {
             $zoneIssues.Add($needle)
         }
@@ -212,10 +216,24 @@ foreach ($requiredTxt in @("MS=ms48673064", "v=spf1 include:mailgun.org ~all")) 
         $mailIssues.Add("missing public TXT $requiredTxt")
     }
 }
+$dkimValues = @(Resolve-Answers "pic._domainkey.$Domain" "TXT" | ForEach-Object { Get-RecordValue $_ "TXT" })
+if ($expectedPreserveRecords[4].Value -notin $dkimValues) {
+    $mailIssues.Add("missing public DKIM TXT pic._domainkey.$Domain")
+}
+foreach ($requiredCname in @(
+    @{ Name = "cbsw2pw4sdud.$Domain"; Value = "gv-6xwzpofnvqguxs.dv.googlehosted.com" },
+    @{ Name = "4jb3ni34htue.$Domain"; Value = "gv-xvljhthdwk5dxh.dv.googlehosted.com" },
+    @{ Name = "334xc4sml6cf.$Domain"; Value = "gv-ujhethalu73pqt.dv.googlehosted.com" }
+)) {
+    $cnameValues = @(Resolve-Answers $requiredCname.Name "CNAME" | ForEach-Object { Get-RecordValue $_ "CNAME" })
+    if ($requiredCname.Value -notin $cnameValues) {
+        $mailIssues.Add("missing public Google verification CNAME $($requiredCname.Name)")
+    }
+}
 if ($mailIssues.Count -eq 0) {
-    Add-Check "Current public mail DNS" "OK" "Required mail and verification records are visible before cutover"
+    Add-Check "Current public preserve DNS" "OK" "Required mail, DKIM, and verification records are visible before cutover"
 } else {
-    Add-Check "Current public mail DNS" "FAIL" ($mailIssues -join "; ")
+    Add-Check "Current public preserve DNS" "FAIL" ($mailIssues -join "; ")
 }
 
 $wrangler = Get-WranglerInvocation

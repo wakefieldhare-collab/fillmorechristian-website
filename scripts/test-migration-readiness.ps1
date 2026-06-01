@@ -1365,14 +1365,18 @@ if ((Test-Path -LiteralPath $dnsPreservePath) -and (Test-Path -LiteralPath $dnsZ
         $dnsIssues.Add("package.json is missing verify:dns-import script")
     }
     $requiredDnsRows = @(
-        @{ Type = "MX"; Value = "mxa.mailgun.org"; Priority = "10" },
-        @{ Type = "MX"; Value = "mxb.mailgun.org"; Priority = "10" },
-        @{ Type = "TXT"; Value = "v=spf1 include:mailgun.org ~all"; Priority = "" },
-        @{ Type = "TXT"; Value = "MS=ms48673064"; Priority = "" }
+        @{ Name = "fillmorechristian.org"; Type = "MX"; Value = "mxa.mailgun.org"; Priority = "10" },
+        @{ Name = "fillmorechristian.org"; Type = "MX"; Value = "mxb.mailgun.org"; Priority = "10" },
+        @{ Name = "fillmorechristian.org"; Type = "TXT"; Value = "v=spf1 include:mailgun.org ~all"; Priority = "" },
+        @{ Name = "fillmorechristian.org"; Type = "TXT"; Value = "MS=ms48673064"; Priority = "" },
+        @{ Name = "pic._domainkey.fillmorechristian.org"; Type = "TXT"; Value = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDMspMJXAZ/D2ygNZBnGbLY5Z9DjNaNiLDjKY79O1JYgtYlkOERm5SVNOb1nKavNA98hqTLLN+1N7LQGoaeqY0O8ddDa8NclV57cTekdu4by/fcKN+8zycaOE2HRH9hZP1RLNmandRuUQfmTYMrXIWrjBU0xaQdbXZHMP0pN5FuQIDAQAB"; Priority = "" },
+        @{ Name = "cbsw2pw4sdud.fillmorechristian.org"; Type = "CNAME"; Value = "gv-6xwzpofnvqguxs.dv.googlehosted.com"; Priority = "" },
+        @{ Name = "4jb3ni34htue.fillmorechristian.org"; Type = "CNAME"; Value = "gv-xvljhthdwk5dxh.dv.googlehosted.com"; Priority = "" },
+        @{ Name = "334xc4sml6cf.fillmorechristian.org"; Type = "CNAME"; Value = "gv-ujhethalu73pqt.dv.googlehosted.com"; Priority = "" }
     )
     foreach ($required in $requiredDnsRows) {
         $match = @($dnsRows | Where-Object {
-            $_.Name -eq "fillmorechristian.org" -and
+            $_.Name -eq $required.Name -and
             $_.Type -eq $required.Type -and
             $_.Value -eq $required.Value -and
             $_.Priority -eq $required.Priority
@@ -1391,8 +1395,8 @@ if ((Test-Path -LiteralPath $dnsPreservePath) -and (Test-Path -LiteralPath $dnsZ
     }
 
     $zoneText = Get-Content -Raw -LiteralPath $dnsZonePath
-    if ($zoneText -notmatch "mxa\.mailgun\.org\." -or $zoneText -notmatch "mxb\.mailgun\.org\." -or $zoneText -notmatch "include:mailgun\.org") {
-        $dnsIssues.Add("zone file does not contain expected mail records")
+    if ($zoneText -notmatch "mxa\.mailgun\.org\." -or $zoneText -notmatch "mxb\.mailgun\.org\." -or $zoneText -notmatch "include:mailgun\.org" -or $zoneText -notmatch "pic\._domainkey" -or $zoneText -notmatch "gv-6xwzpofnvqguxs\.dv\.googlehosted\.com\." -or $zoneText -notmatch "gv-xvljhthdwk5dxh\.dv\.googlehosted\.com\." -or $zoneText -notmatch "gv-ujhethalu73pqt\.dv\.googlehosted\.com\.") {
+        $dnsIssues.Add("zone file does not contain expected mail, DKIM, and Google verification records")
     }
 
     $dnsPlanText = Get-Content -Raw -LiteralPath $dnsPlanPath

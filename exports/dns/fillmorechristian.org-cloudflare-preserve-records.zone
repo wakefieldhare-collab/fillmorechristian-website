@@ -1,6 +1,10 @@
 ﻿$ORIGIN fillmorechristian.org.
 $TTL 300
-@ 14400 IN MX 10 mxa.mailgun.org.
-@ 14400 IN MX 10 mxb.mailgun.org.
-@ 14400 IN TXT "MS=ms48673064"
-@ 14400 IN TXT "v=spf1 include:mailgun.org ~all"
+334xc4sml6cf 14400 IN CNAME gv-ujhethalu73pqt.dv.googlehosted.com.
+4jb3ni34htue 14400 IN CNAME gv-xvljhthdwk5dxh.dv.googlehosted.com.
+cbsw2pw4sdud 14400 IN CNAME gv-6xwzpofnvqguxs.dv.googlehosted.com.
+@ 6231 IN MX 10 mxa.mailgun.org.
+@ 6231 IN MX 10 mxb.mailgun.org.
+@ 12821 IN TXT "MS=ms48673064"
+@ 12821 IN TXT "v=spf1 include:mailgun.org ~all"
+pic._domainkey 14147 IN TXT "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDMspMJXAZ/D2ygNZBnGbLY5Z9DjNaNiLDjKY79O1JYgtYlkOERm5SVNOb1nKavNA98hqTLLN+1N7LQGoaeqY0O8ddDa8NclV57cTekdu4by/fcKN+8zycaOE2HRH9hZP1RLNmandRuUQfmTYMrXIWrjBU0xaQdbXZHMP0pN5FuQIDAQAB"

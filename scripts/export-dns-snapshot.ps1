@@ -71,7 +71,11 @@ $namesToCheck = @(
     $Domain,
     "www.$Domain",
     "_dmarc.$Domain",
+    "pic._domainkey.$Domain",
     "k1._domainkey.$Domain",
+    "cbsw2pw4sdud.$Domain",
+    "4jb3ni34htue.$Domain",
+    "334xc4sml6cf.$Domain",
     "email.$Domain",
     "mail.$Domain"
 )
@@ -128,6 +132,15 @@ foreach ($record in $txt) {
         $notes += "- TXT $($record.Name) -> $($record.Value)"
     }
 }
+$verificationCnames = @($deduped | Where-Object { $_.Type -eq "CNAME" -and $_.Name -ne "www.$Domain" })
+if ($verificationCnames.Count -gt 0) {
+    $notes += ""
+    $notes += "### Verification CNAMEs"
+    $notes += ""
+    foreach ($record in $verificationCnames) {
+        $notes += "- CNAME $($record.Name) -> $($record.Value)"
+    }
+}
 $notes += ""
 $notes += "### Current Website Records"
 $notes += ""
@@ -140,7 +153,7 @@ foreach ($record in $www) {
 $notes += ""
 $notes += "## Cloudflare Cutover Notes"
 $notes += ""
-$notes += "- Preserve MX and TXT records before changing nameservers."
+$notes += "- Preserve MX, TXT, and verification CNAME records before changing nameservers."
 $notes += "- Replace the current TheChurchCo website records with Cloudflare Pages custom-domain records when Cloudflare provides them."
 $notes += "- Re-run this snapshot immediately before the final nameserver change in case Squarespace DNS has changed."
 

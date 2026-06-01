@@ -190,7 +190,7 @@ Domain registrar: Squarespace Domains, formerly Google Domains.
 
 DNS changes needed:
 
-1. In Cloudflare DNS for `fillmorechristian.org`, verify/import every preserve record first, especially Mailgun MX/TXT records.
+1. In Cloudflare DNS for `fillmorechristian.org`, verify/import every preserve record first, especially Mailgun MX/TXT records, `pic._domainkey` DKIM, and Google verification CNAMEs.
 2. Confirm old TheChurchCo web records are not carried forward except as records to replace.
 3. In Squarespace, update the domain nameservers to `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`.
 4. In Cloudflare Pages, confirm custom domains for `www` and apex become active.
@@ -212,10 +212,14 @@ Then build the Cloudflare import/preserve files and verify the current pre-cutov
 .\scripts\test-dns-cutover.ps1 -Mode Before
 ```
 
-As of June 1, 2026, preserve at least the Mailgun MX records and these TXT records:
+As of June 1, 2026, preserve at least the Mailgun MX records and these TXT/CNAME records:
 
 - `v=spf1 include:mailgun.org ~all`
 - `MS=ms48673064`
+- `pic._domainkey` TXT DKIM
+- `cbsw2pw4sdud` CNAME -> `gv-6xwzpofnvqguxs.dv.googlehosted.com`
+- `4jb3ni34htue` CNAME -> `gv-xvljhthdwk5dxh.dv.googlehosted.com`
+- `334xc4sml6cf` CNAME -> `gv-ujhethalu73pqt.dv.googlehosted.com`
 
 Do not delete the old TheChurchCo website records until Cloudflare Pages custom domains are configured and ready to replace them.
 
