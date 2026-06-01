@@ -103,6 +103,8 @@ Podcast metadata cleanup:
 
 This keeps old ChurchCo account author values such as `thechurchcodaniel` out of the public RSS feed and sermon archive, and it creates one static page for every feed episode so old `/episode/.../` links remain useful after the static-site cutover.
 
+The episode renderer also writes `exports/thechurchco-podcast/legacy-podcast-redirects.csv`, `functions/index.js`, and `_routes.json`. Those preserve the older WordPress-style podcast links such as `/?post_type=podcasts&p=603` by redirecting them to the generated `/episode/.../` page when the site is deployed on Cloudflare Pages.
+
 ## Public Staging Deployment
 
 GitHub Pages staging is enabled from `main`:
@@ -110,7 +112,7 @@ GitHub Pages staging is enabled from `main`:
 - URL: `https://wakefieldhare-collab.github.io/fillmorechristian-website/`
 - Purpose: public preview and QA before Cloudflare authorization.
 - Deployment: `.github/workflows/pages.yml` builds with `npm run build` and publishes `dist`, matching the Cloudflare Pages output directory.
-- Limitation: Cloudflare `_redirects` and `_headers` are not honored by GitHub Pages. Treat this as staging only, not final production.
+- Limitation: Cloudflare `_redirects`, `_headers`, `_routes.json`, and Pages Functions are not honored by GitHub Pages. Treat this as staging only, not final production.
 
 ## Preflight Checks
 

@@ -21,6 +21,7 @@ const publishPaths = [
   "sitemap.xml",
   "team.html",
   "_headers",
+  "_routes.json",
   "_redirects",
   "css",
   "js",

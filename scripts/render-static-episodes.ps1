@@ -1,7 +1,10 @@
 param(
     [string]$FeedPath = "podcast-category\fillmore-christian\feed\podcast",
     [string]$EpisodeDir = "episode",
-    [string]$SitemapPath = "sitemap.xml"
+    [string]$SitemapPath = "sitemap.xml",
+    [string]$FunctionsDir = "functions",
+    [string]$LegacyRedirectManifestPath = "exports\thechurchco-podcast\legacy-podcast-redirects.csv",
+    [string]$RoutesPath = "_routes.json"
 )
 
 $ErrorActionPreference = "Stop"
@@ -10,6 +13,9 @@ $root = Resolve-Path (Join-Path $PSScriptRoot "..")
 $feedFile = Join-Path $root $FeedPath
 $episodeRoot = Join-Path $root $EpisodeDir
 $sitemapFile = Join-Path $root $SitemapPath
+$functionsRoot = Join-Path $root $FunctionsDir
+$legacyRedirectManifestFile = Join-Path $root $LegacyRedirectManifestPath
+$routesFile = Join-Path $root $RoutesPath
 
 if (-not (Test-Path -LiteralPath $feedFile)) {
     throw "Feed file not found: $feedFile"
@@ -123,6 +129,77 @@ function Write-Sitemap {
     [System.IO.File]::WriteAllText($sitemapFile, ($lines -join "`r`n") + "`r`n", $utf8NoBom)
 }
 
+function Get-LegacyPostId {
+    param([string]$Url)
+
+    if (-not $Url) { return "" }
+    try {
+        $uri = [Uri]$Url
+        $queryText = $uri.Query.TrimStart("?")
+        if (-not $queryText) { return "" }
+
+        $query = @{}
+        foreach ($pair in ($queryText -split "&")) {
+            if (-not $pair) { continue }
+            $parts = $pair -split "=", 2
+            $name = [Uri]::UnescapeDataString($parts[0])
+            $value = if ($parts.Count -gt 1) { [Uri]::UnescapeDataString($parts[1]) } else { "" }
+            $query[$name] = $value
+        }
+
+        if ($query["post_type"] -eq "podcasts" -and $query["p"]) {
+            return $query["p"]
+        }
+    } catch {}
+    return ""
+}
+
+function Write-LegacyRedirectFunction {
+    param([object[]]$Rows)
+
+    New-Item -ItemType Directory -Force -Path $functionsRoot | Out-Null
+    $manifestDir = Split-Path -Parent $legacyRedirectManifestFile
+    New-Item -ItemType Directory -Force -Path $manifestDir | Out-Null
+
+    $Rows | Export-Csv -LiteralPath $legacyRedirectManifestFile -NoTypeInformation -Encoding UTF8
+
+    $mapLines = New-Object System.Collections.Generic.List[string]
+    foreach ($row in ($Rows | Sort-Object PostId)) {
+        $mapLines.Add("  `"$($row.PostId)`": `"$($row.Path)`"")
+    }
+    $mapBody = $mapLines -join ",`r`n"
+
+    $functionSource = @"
+const LEGACY_PODCAST_REDIRECTS = {
+$mapBody
+};
+
+export async function onRequest(context) {
+  const url = new URL(context.request.url);
+
+  if (url.searchParams.get("post_type") === "podcasts") {
+    const targetPath = LEGACY_PODCAST_REDIRECTS[url.searchParams.get("p") || ""];
+    if (targetPath) {
+      return Response.redirect(new URL(targetPath, url.origin).toString(), 301);
+    }
+  }
+
+  return context.next();
+}
+"@
+
+    [System.IO.File]::WriteAllText((Join-Path $functionsRoot "index.js"), $functionSource.TrimEnd() + "`r`n", $utf8NoBom)
+
+    $routesJson = @"
+{
+  "version": 1,
+  "include": ["/"],
+  "exclude": []
+}
+"@
+    [System.IO.File]::WriteAllText($routesFile, $routesJson.TrimEnd() + "`r`n", $utf8NoBom)
+}
+
 [xml]$feed = Get-Content -Raw -LiteralPath $feedFile
 $items = @($feed.rss.channel.item)
 if ($items.Count -eq 0) {
@@ -135,6 +212,7 @@ if (Test-Path -LiteralPath $episodeRoot) {
 New-Item -ItemType Directory -Path $episodeRoot | Out-Null
 
 $episodeRows = New-Object System.Collections.Generic.List[object]
+$legacyRedirectRows = New-Object System.Collections.Generic.List[object]
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
 foreach ($item in $items) {
@@ -160,6 +238,7 @@ foreach ($item in $items) {
     $enclosure = $item.enclosure
     $audioUrl = if ($enclosure) { [string]$enclosure.url } else { "" }
     $canonicalUrl = "https://www.fillmorechristian.org/episode/$slug/"
+    $canonicalPath = "/episode/$slug/"
     $localDir = Join-Path $episodeRoot $slug
     New-Item -ItemType Directory -Path $localDir | Out-Null
 
@@ -274,9 +353,20 @@ $audioMarkup
         CanonicalUrl = $canonicalUrl
         LastMod = $lastMod
     })
+
+    $legacyPostId = Get-LegacyPostId ([string]$item.guid.'#text')
+    if ($legacyPostId) {
+        $legacyRedirectRows.Add([pscustomobject]@{
+            PostId = $legacyPostId
+            Title = $title
+            Path = $canonicalPath
+        })
+    }
 }
 
 Write-Sitemap $episodeRows
+Write-LegacyRedirectFunction $legacyRedirectRows
 
 Write-Host "Rendered $($episodeRows.Count) static episode pages into $EpisodeDir"
+Write-Host "Rendered $($legacyRedirectRows.Count) legacy podcast query redirect(s)"
 Write-Host "Updated sitemap: $SitemapPath"

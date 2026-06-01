@@ -78,6 +78,31 @@ function Get-EpisodeSlug {
     return ""
 }
 
+function Get-LegacyPodcastPostId {
+    param([string]$Url)
+
+    if (-not $Url) { return "" }
+    try {
+        $uri = [Uri]$Url
+        $queryText = $uri.Query.TrimStart("?")
+        if (-not $queryText) { return "" }
+
+        $query = @{}
+        foreach ($pair in ($queryText -split "&")) {
+            if (-not $pair) { continue }
+            $parts = $pair -split "=", 2
+            $name = [Uri]::UnescapeDataString($parts[0])
+            $value = if ($parts.Count -gt 1) { [Uri]::UnescapeDataString($parts[1]) } else { "" }
+            $query[$name] = $value
+        }
+
+        if ($query["post_type"] -eq "podcasts" -and $query["p"]) {
+            return $query["p"]
+        }
+    } catch {}
+    return ""
+}
+
 $requiredFiles = @(
     "index.html",
     "about.html",
@@ -96,6 +121,7 @@ $requiredFiles = @(
     "robots.txt",
     "sitemap.xml",
     "_headers",
+    "_routes.json",
     "_redirects"
 )
 
@@ -169,7 +195,7 @@ if (Test-Path -LiteralPath $notFoundPath) {
 $buildOutputPath = Join-Path $root $BuildOutputDir
 if (Test-Path -LiteralPath $buildOutputPath) {
     $missingBuildFiles = @($requiredFiles | Where-Object { -not (Test-Path -LiteralPath (Join-Path $buildOutputPath $_)) })
-    $forbiddenBuildPaths = @("exports", "scripts", ".git", "MIGRATION-RUNBOOK.md", "SETUP-GUIDE.md") |
+    $forbiddenBuildPaths = @("exports", "functions", "scripts", ".git", "MIGRATION-RUNBOOK.md", "SETUP-GUIDE.md") |
         Where-Object { Test-Path -LiteralPath (Join-Path $buildOutputPath $_) }
     $forbiddenBuildImages = @("images\church-exterior.jpg", "images\sanctuary-service.png") |
         Where-Object { Test-Path -LiteralPath (Join-Path $buildOutputPath $_) }
@@ -297,6 +323,90 @@ if ($feeds.ContainsKey($feedPaths[0])) {
         Add-Check "Static episode pages" "OK" "$($uniqueEpisodeSlugs.Count) episode pages generated and indexed"
     } else {
         Add-Check "Static episode pages" "FAIL" ($episodeIssues -join "; ")
+    }
+
+    $legacyRedirectIssues = New-Object System.Collections.Generic.List[string]
+    $legacyManifestPath = Join-Path $root "exports\thechurchco-podcast\legacy-podcast-redirects.csv"
+    $legacyFunctionPath = Join-Path $root "functions\index.js"
+    $routesPath = Join-Path $root "_routes.json"
+    $expectedLegacyRedirects = New-Object System.Collections.Generic.List[object]
+
+    foreach ($item in $feedItems) {
+        $slug = Get-EpisodeSlug ([string]$item.link)
+        $guidText = if ($item.guid.'#text') { [string]$item.guid.'#text' } else { [string]$item.guid }
+        $postId = Get-LegacyPodcastPostId $guidText
+        if ($postId -and $slug) {
+            $expectedLegacyRedirects.Add([pscustomobject]@{
+                PostId = $postId
+                Path = "/episode/$slug/"
+            })
+        }
+    }
+
+    if ($expectedLegacyRedirects.Count -eq 0) {
+        $legacyRedirectIssues.Add("no legacy WordPress podcast query links found in the feed")
+    }
+
+    if (Test-Path -LiteralPath $legacyManifestPath) {
+        $legacyRows = @(Import-Csv -LiteralPath $legacyManifestPath)
+        $duplicateLegacyRows = @($legacyRows | Group-Object PostId | Where-Object { $_.Count -gt 1 })
+        foreach ($duplicate in $duplicateLegacyRows) {
+            $legacyRedirectIssues.Add("duplicate legacy post ID in manifest: $($duplicate.Name)")
+        }
+
+        if ($legacyRows.Count -ne $expectedLegacyRedirects.Count) {
+            $legacyRedirectIssues.Add("manifest has $($legacyRows.Count) row(s), expected $($expectedLegacyRedirects.Count)")
+        }
+
+        foreach ($expected in $expectedLegacyRedirects) {
+            $matchingRow = @($legacyRows | Where-Object { $_.PostId -eq $expected.PostId -and $_.Path -eq $expected.Path })
+            if ($matchingRow.Count -eq 0) {
+                $legacyRedirectIssues.Add("missing redirect $($expected.PostId) -> $($expected.Path)")
+            }
+        }
+    } else {
+        $legacyRedirectIssues.Add("legacy redirect manifest is missing")
+    }
+
+    if (Test-Path -LiteralPath $legacyFunctionPath) {
+        $legacyFunctionText = Get-Content -Raw -LiteralPath $legacyFunctionPath
+        foreach ($expected in $expectedLegacyRedirects) {
+            $expectedMapping = "`"$($expected.PostId)`": `"$($expected.Path)`""
+            if (-not $legacyFunctionText.Contains($expectedMapping)) {
+                $legacyRedirectIssues.Add("function is missing mapping $expectedMapping")
+            }
+        }
+
+        if ($legacyFunctionText -notmatch "Response\.redirect" -or $legacyFunctionText -notmatch "post_type") {
+            $legacyRedirectIssues.Add("function does not look like a podcast query redirect handler")
+        }
+    } else {
+        $legacyRedirectIssues.Add("functions\index.js is missing")
+    }
+
+    if (Test-Path -LiteralPath $routesPath) {
+        try {
+            $routes = Get-Content -Raw -LiteralPath $routesPath | ConvertFrom-Json
+            if ($routes.version -ne 1 -or "/" -notin @($routes.include)) {
+                $legacyRedirectIssues.Add("_routes.json does not include the root path for the query redirect function")
+            }
+        } catch {
+            $legacyRedirectIssues.Add("_routes.json is not valid JSON")
+        }
+    } else {
+        $legacyRedirectIssues.Add("_routes.json is missing")
+    }
+
+    if (Test-Path -LiteralPath $buildOutputPath) {
+        if (-not (Test-Path -LiteralPath (Join-Path $buildOutputPath "_routes.json"))) {
+            $legacyRedirectIssues.Add("built output is missing _routes.json")
+        }
+    }
+
+    if ($legacyRedirectIssues.Count -eq 0) {
+        Add-Check "Legacy podcast query redirects" "OK" "$($expectedLegacyRedirects.Count) old WordPress-style podcast links map to episode pages"
+    } else {
+        Add-Check "Legacy podcast query redirects" "FAIL" ($legacyRedirectIssues -join "; ")
     }
 }
 

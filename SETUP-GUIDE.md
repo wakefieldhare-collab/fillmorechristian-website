@@ -12,6 +12,7 @@ Static website for Fillmore Christian Church, replacing ChurchCo ($50/mo). Built
 - [x] Beliefs page written from FCC Constitution & Bylaws
 - [x] Podcast feed export tooling added in `scripts/export-thechurchco-podcast.ps1`
 - [x] Legacy Apple Podcasts feed path preserved at `podcast-category/fillmore-christian/feed/podcast`
+- [x] Legacy WordPress-style podcast query links preserved with a Cloudflare Pages Function
 - [x] Cloudflare Pages `_headers` and `_redirects` files added
 - [x] Cloudflare build output prepared with `npm run build` -> `dist`
 - [x] Migration preflight script added at `scripts/test-migration-readiness.ps1`
@@ -53,6 +54,8 @@ The static site now serves that same path, so subscribers do not need a redirect
 
 The archive also includes generated static pages for every feed item under `/episode/.../`, so old ChurchCo sermon links can land on a specific message page with its own audio player.
 
+Older podcast GUID/query links such as `/?post_type=podcasts&p=603` are preserved by the generated `functions/index.js` Cloudflare Pages Function and `_routes.json`.
+
 #### Long-Term: Pick Permanent Audio Hosting
 
 The copied feed still points to TheChurchCo-hosted MP3 files. Before canceling TheChurchCo, either:
@@ -80,7 +83,7 @@ The manifest and dry run are safe before Cloudflare authorization. Run the real 
 2. In Cloudflare Pages, create a project from that repo.
 3. Use `npm run build` as the build command and `dist` as the output directory.
 4. Add custom domains for `www.fillmorechristian.org` and `fillmorechristian.org`.
-5. Keep `_headers` and `_redirects` in the published output.
+5. Keep `_headers`, `_redirects`, and `_routes.json` in the published output.
 
 Before deploying, run:
 
@@ -172,7 +175,7 @@ As of June 1, 2026, preserve at least the Mailgun MX records and these TXT recor
 
 - Add the audio file to durable hosting.
 - Add a new `<item>` entry in `podcast.xml` and in `podcast-category/fillmore-christian/feed/podcast`.
-- Run `.\scripts\normalize-podcast-metadata.ps1` and `.\scripts\render-static-sermons.ps1`.
+- Run `.\scripts\normalize-podcast-metadata.ps1`, `.\scripts\render-static-episodes.ps1`, and `.\scripts\render-static-sermons.ps1`.
 - Keep the sermons page pointed at the podcast feed in `js/sermons.js`.
 
 ### Adding Or Editing Events
