@@ -471,6 +471,67 @@ h4 { font-size: 1.25rem; }
   margin-top: 1.5em;
 }
 
+.visit-guide {
+  background: var(--color-white);
+  border-bottom: 1px solid rgba(23, 50, 71, 0.1);
+}
+
+.visit-guide-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 3rem;
+  align-items: start;
+}
+
+.visit-guide-intro h2 {
+  margin-bottom: 0.65em;
+  text-align: left;
+}
+
+.visit-guide-intro p {
+  color: var(--color-text-light);
+  font-size: 1.05rem;
+}
+
+.visit-guide-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 1.4rem;
+}
+
+.visit-guide-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.visit-guide-item {
+  border: 1px solid rgba(23, 50, 71, 0.12);
+  border-radius: 8px;
+  padding: 1.35rem;
+  background: var(--color-bg-alt);
+}
+
+.visit-guide-label {
+  color: var(--color-accent);
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.55rem;
+  text-transform: uppercase;
+}
+
+.visit-guide-item h3 {
+  font-size: 1.15rem;
+  margin-bottom: 0.45rem;
+}
+
+.visit-guide-item p {
+  color: var(--color-text-light);
+  margin-bottom: 0;
+}
+
 .media-band {
   background: var(--color-primary);
   color: var(--color-text-on-dark);
@@ -1411,6 +1472,7 @@ h4 { font-size: 1.25rem; }
   }
 
   .welcome-grid,
+  .visit-guide-grid,
   .media-band-grid,
   .location-panel,
   .sermon-tools-card,

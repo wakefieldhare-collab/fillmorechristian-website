@@ -236,6 +236,16 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Security headers"; Status = "OK"; Details = "nosniff, frame, referrer, and permissions policies" })
 
+    if ($homeResponse.Content -notmatch 'id="first-visit-guide"' -or
+        $homeResponse.Content -notmatch "First time at Fillmore\?" -or
+        $homeResponse.Content -notmatch "Sunday School starts at 9:00 AM" -or
+        $homeResponse.Content -notmatch "Children are welcome in worship" -or
+        $homeResponse.Content -notmatch "Get Directions" -or
+        $homeResponse.Content -notmatch "Ask a Question") {
+        throw "Home page is missing the first-visit guide or its visitor actions"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Homepage visitor guide"; Status = "OK"; Details = "Published output includes first-visit guidance and visitor actions" })
+
     $legacyQuery = Invoke-NoRedirect -Url "$baseUrl/?post_type=podcasts&p=603"
     Assert-Status -Response $legacyQuery -Expected @(301) -Name "Legacy podcast query redirect"
     if (-not $legacyQuery.Location -or $legacyQuery.Location.ToString() -ne "$baseUrl/episode/be-ready-luke-12/") {

@@ -349,6 +349,23 @@ if ($publicCopyIssues.Count -eq 0) {
     Add-Check "Public website copy" "FAIL" ($publicCopyIssues -join "; ")
 }
 
+$homeHtmlPath = Join-Path $root "index.html"
+if (Test-Path -LiteralPath $homeHtmlPath) {
+    $homeHtml = Get-Content -Raw -LiteralPath $homeHtmlPath
+    if ($homeHtml -match 'id="first-visit-guide"' -and
+        $homeHtml -match "First time at Fillmore\?" -and
+        $homeHtml -match "Sunday School starts at 9:00 AM" -and
+        $homeHtml -match "Children are welcome in worship" -and
+        $homeHtml -match "Get Directions" -and
+        $homeHtml -match "Ask a Question") {
+        Add-Check "Homepage visitor guide" "OK" "Homepage includes first-visit guidance, Sunday timing, family note, directions, and contact action"
+    } else {
+        Add-Check "Homepage visitor guide" "FAIL" "Homepage is missing first-visit guidance, timing, family note, directions, or contact action"
+    }
+} else {
+    Add-Check "Homepage visitor guide" "FAIL" "index.html is missing"
+}
+
 $brandAssetIssues = New-Object System.Collections.Generic.List[string]
 $faviconPath = Join-Path $root "favicon.svg"
 $siteManifestPath = Join-Path $root "site.webmanifest"
