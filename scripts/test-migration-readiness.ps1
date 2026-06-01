@@ -41,7 +41,7 @@ function Get-XmlDocument {
     param([string]$Path)
 
     try {
-        [xml]$xml = Get-Content -Raw -LiteralPath $Path
+        [xml]$xml = Get-Content -Raw -Encoding UTF8 -LiteralPath $Path
         return $xml
     } catch {
         throw "Could not parse XML file $Path`: $($_.Exception.Message)"
@@ -568,6 +568,43 @@ if ($feedItemCounts.Count -eq $feedPaths.Count) {
     } else {
         Add-Check "Feed aliases match" "FAIL" "Item counts: $($feedItemCounts.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" } -join '; '); enclosure counts: $($feedEnclosureCounts.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" } -join '; ')"
     }
+}
+
+$podcastOwnershipIssues = New-Object System.Collections.Generic.List[string]
+$canonicalPodcastFeedUrl = "https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast"
+$ownedPodcastGenerator = "Fillmore Christian Church static podcast feed"
+foreach ($relativePath in $feedPaths) {
+    $path = Join-Path $root $relativePath
+    if (-not (Test-Path -LiteralPath $path)) {
+        $podcastOwnershipIssues.Add("$relativePath is missing")
+        continue
+    }
+
+    $feedText = Get-Content -Raw -Encoding UTF8 -LiteralPath $path
+    if ($feedText -notmatch "<title>Fillmore Christian Church</title>") {
+        $podcastOwnershipIssues.Add("$relativePath has an unexpected channel title")
+    }
+    if ($feedText -notmatch "<atom:link\b[^>]*href=`"$([regex]::Escape($canonicalPodcastFeedUrl))`"[^>]*rel=`"self`"[^>]*type=`"application/rss\+xml`"[^>]*/>") {
+        $podcastOwnershipIssues.Add("$relativePath is missing the canonical atom self link")
+    }
+    if ($feedText -notmatch "<itunes:owner>\s*<itunes:name>Fillmore Christian Church</itunes:name>\s*<itunes:email>church@fillmorechristian\.org</itunes:email>\s*</itunes:owner>") {
+        $podcastOwnershipIssues.Add("$relativePath is missing complete iTunes owner metadata")
+    }
+    if ($feedText -notmatch "<image>\s*<url>https://www\.fillmorechristian\.org/images/podcast-cover\.jpg</url>\s*<title>Fillmore Christian Church</title>\s*<link>https://www\.fillmorechristian\.org</link>\s*</image>") {
+        $podcastOwnershipIssues.Add("$relativePath is missing owned RSS image metadata")
+    }
+    if ($feedText -notmatch "<itunes:subtitle>[^<]+</itunes:subtitle>" -or $feedText -notmatch "<googleplay:explicit>no</googleplay:explicit>") {
+        $podcastOwnershipIssues.Add("$relativePath is missing podcast directory metadata")
+    }
+    if ($feedText -notmatch "<generator>$([regex]::Escape($ownedPodcastGenerator))</generator>" -or $feedText -match "wordpress\.org") {
+        $podcastOwnershipIssues.Add("$relativePath still carries old generator metadata")
+    }
+}
+
+if ($podcastOwnershipIssues.Count -eq 0) {
+    Add-Check "Podcast ownership metadata" "OK" "Feed copies identify Fillmore Christian Church as owner and generator"
+} else {
+    Add-Check "Podcast ownership metadata" "FAIL" ($podcastOwnershipIssues -join "; ")
 }
 
 $sermonsPath = Join-Path $root "sermons.html"

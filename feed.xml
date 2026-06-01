@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0">
   <channel>
-    <title>Fillmore Christian</title>
+    <title>Fillmore Christian Church</title>
     <atom:link href="https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast" rel="self" type="application/rss+xml" />
     <link>https://www.fillmorechristian.org</link>
     <description>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</description>
     <lastBuildDate>Sun, 24 May 2026 16:35:20 +0000</lastBuildDate>
     <language>en-US</language>
     <copyright>2026</copyright>
-    <itunes:subtitle></itunes:subtitle>
+    <itunes:subtitle>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</itunes:subtitle>
     <itunes:author>Fillmore Christian Church</itunes:author>
     <googleplay:author>Fillmore Christian Church</googleplay:author>
     <googleplay:email>church@fillmorechristian.org</googleplay:email>
     <itunes:summary>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</itunes:summary>
     <googleplay:description>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</googleplay:description>
     <itunes:owner>
-      <itunes:name></itunes:name>
+      <itunes:name>Fillmore Christian Church</itunes:name>
       <itunes:email>church@fillmorechristian.org</itunes:email>
     </itunes:owner>
     <itunes:explicit>no</itunes:explicit>
-    <googleplay:explicit></googleplay:explicit>
+    <googleplay:explicit>no</googleplay:explicit>
     <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
     <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
     <image>
       <url>https://www.fillmorechristian.org/images/podcast-cover.jpg</url>
-      <title>Fillmore Christian</title>
+      <title>Fillmore Christian Church</title>
       <link>https://www.fillmorechristian.org</link>
     </image>
     <itunes:category text="Religion &amp; Spirituality">
       <itunes:category text="Christianity" />
     </itunes:category>
-    <generator>https://wordpress.org/?v=4.9.2</generator>
+    <generator>Fillmore Christian Church static podcast feed</generator>
     <item>
       <title>Calling of the Disciples Charles Spurgeon</title>
       <link>https://www.fillmorechristian.org/episode/calling-of-the-disciples-charles-spurgeon/</link>
