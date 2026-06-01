@@ -22,9 +22,18 @@ const publishPaths = [
   "_headers",
   "_redirects",
   "css",
-  "images",
   "js",
   "podcast-category"
+];
+
+const publishImagePaths = [
+  "andy-barnes.jpg",
+  "church-exterior-1200.jpg",
+  "church-exterior-1200.webp",
+  "podcast-cover.jpg",
+  "sanctuary-service-1200.jpg",
+  "sanctuary-service-1200.webp",
+  "wakefield-hare.jpg"
 ];
 
 await rm(outDir, { recursive: true, force: true });
@@ -42,4 +51,14 @@ for (const relativePath of publishPaths) {
   });
 }
 
-console.log(`Built ${publishPaths.length} publish paths into ${path.relative(root, outDir)}`);
+await mkdir(path.join(outDir, "images"), { recursive: true });
+for (const imagePath of publishImagePaths) {
+  const source = path.join(root, "images", imagePath);
+  if (!existsSync(source)) {
+    throw new Error(`Missing publish image: ${imagePath}`);
+  }
+
+  await cp(source, path.join(outDir, "images", imagePath), { force: true });
+}
+
+console.log(`Built ${publishPaths.length + publishImagePaths.length} publish paths into ${path.relative(root, outDir)}`);

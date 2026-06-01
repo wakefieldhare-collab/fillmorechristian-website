@@ -155,13 +155,16 @@ if (Test-Path -LiteralPath $buildOutputPath) {
     $missingBuildFiles = @($requiredFiles | Where-Object { -not (Test-Path -LiteralPath (Join-Path $buildOutputPath $_)) })
     $forbiddenBuildPaths = @("exports", "scripts", ".git", "MIGRATION-RUNBOOK.md", "SETUP-GUIDE.md") |
         Where-Object { Test-Path -LiteralPath (Join-Path $buildOutputPath $_) }
+    $forbiddenBuildImages = @("images\church-exterior.jpg", "images\sanctuary-service.png") |
+        Where-Object { Test-Path -LiteralPath (Join-Path $buildOutputPath $_) }
 
-    if ($missingBuildFiles.Count -eq 0 -and $forbiddenBuildPaths.Count -eq 0) {
+    if ($missingBuildFiles.Count -eq 0 -and $forbiddenBuildPaths.Count -eq 0 -and $forbiddenBuildImages.Count -eq 0) {
         Add-Check "Cloudflare build output" "OK" "$BuildOutputDir contains publish assets and excludes migration-only files"
     } else {
         $details = @()
         if ($missingBuildFiles.Count -gt 0) { $details += "missing: $($missingBuildFiles -join ', ')" }
         if ($forbiddenBuildPaths.Count -gt 0) { $details += "should not publish: $($forbiddenBuildPaths -join ', ')" }
+        if ($forbiddenBuildImages.Count -gt 0) { $details += "unoptimized images should not publish: $($forbiddenBuildImages -join ', ')" }
         Add-Check "Cloudflare build output" "FAIL" ($details -join "; ")
     }
 } else {
