@@ -2,3 +2,5 @@ exports/thechurchco-podcast/audio/
 exports/thechurchco-podcast/*.tmp
 exports/*.png
 dist/
+images/church-exterior.jpg
+images/sanctuary-service.png
