@@ -625,11 +625,20 @@ if (Test-Path -LiteralPath $sermonsPath) {
         Add-Check "Sermon year filter data" "FAIL" "$cardsWithYear static card year value(s), expected $expectedCards"
     }
 
-    $cardsWithSortData = ([regex]::Matches($sermonsHtml, 'class="sermon-item[^"]*"\s+data-year="\d{4}"\s+data-sort-date="\d+"\s+data-title="[^"]+"')).Count
+    $cardsWithSortData = ([regex]::Matches($sermonsHtml, 'class="sermon-item[^"]*"\s+data-year="\d{4}"\s+data-has-audio="(?:true|false)"\s+data-sort-date="\d+"\s+data-title="[^"]+"')).Count
     if ($expectedCards -gt 0 -and $cardsWithSortData -eq $expectedCards) {
         Add-Check "Sermon sort data" "OK" "$cardsWithSortData static cards include date and title sort metadata"
     } else {
         Add-Check "Sermon sort data" "FAIL" "$cardsWithSortData static card sort value(s), expected $expectedCards"
+    }
+
+    $cardsWithAudioFlag = ([regex]::Matches($sermonsHtml, 'class="sermon-item[^"]*"\s+data-year="\d{4}"\s+data-has-audio="(?:true|false)"')).Count
+    $audioCardCount = ([regex]::Matches($sermonsHtml, 'data-has-audio="true"')).Count
+    $expectedAudioCards = if ($feedEnclosureCounts.ContainsKey($feedPaths[0])) { $feedEnclosureCounts[$feedPaths[0]] } else { 0 }
+    if ($expectedCards -gt 0 -and $cardsWithAudioFlag -eq $expectedCards -and $audioCardCount -eq $expectedAudioCards -and $sermonsHtml -match 'id="sermon-audio-only"') {
+        Add-Check "Sermon audio filter" "OK" "$audioCardCount cards have audio and the audio-only control is present"
+    } else {
+        Add-Check "Sermon audio filter" "FAIL" "$cardsWithAudioFlag audio flag(s), $audioCardCount audio card(s), expected $expectedCards flag(s) and $expectedAudioCards audio card(s)"
     }
 
     if ($sermonsHtml -match 'id="sermon-year"') {
@@ -1185,11 +1194,19 @@ if (-not $SkipRemote) {
                     Add-Check "Staging sermon year filter" "FAIL" "$remoteCardsWithYear sermon card year value(s); filter control present: $($response.Content -match 'id=`"sermon-year`"')"
                 }
 
-                $remoteCardsWithSortData = ([regex]::Matches($response.Content, 'class="sermon-item[^"]*"\s+data-year="\d{4}"\s+data-sort-date="\d+"\s+data-title="[^"]+"')).Count
+                $remoteCardsWithSortData = ([regex]::Matches($response.Content, 'class="sermon-item[^"]*"\s+data-year="\d{4}"\s+data-has-audio="(?:true|false)"\s+data-sort-date="\d+"\s+data-title="[^"]+"')).Count
                 if ($feedItemCounts.ContainsKey($feedPaths[0]) -and $remoteCardsWithSortData -eq $feedItemCounts[$feedPaths[0]] -and $response.Content -match 'id="sermon-sort"') {
                     Add-Check "Staging sermon sort control" "OK" "$remoteCardsWithSortData sermon cards include sort metadata and sort control is present"
                 } else {
                     Add-Check "Staging sermon sort control" "FAIL" "$remoteCardsWithSortData sermon card sort value(s); sort control present: $($response.Content -match 'id=`"sermon-sort`"')"
+                }
+
+                $remoteCardsWithAudioFlag = ([regex]::Matches($response.Content, 'class="sermon-item[^"]*"\s+data-year="\d{4}"\s+data-has-audio="(?:true|false)"')).Count
+                $remoteAudioCards = ([regex]::Matches($response.Content, 'data-has-audio="true"')).Count
+                if ($feedItemCounts.ContainsKey($feedPaths[0]) -and $feedEnclosureCounts.ContainsKey($feedPaths[0]) -and $remoteCardsWithAudioFlag -eq $feedItemCounts[$feedPaths[0]] -and $remoteAudioCards -eq $feedEnclosureCounts[$feedPaths[0]] -and $response.Content -match 'id="sermon-audio-only"') {
+                    Add-Check "Staging sermon audio filter" "OK" "$remoteAudioCards cards have audio and audio-only control is present"
+                } else {
+                    Add-Check "Staging sermon audio filter" "FAIL" "$remoteCardsWithAudioFlag audio flag(s), $remoteAudioCards audio card(s), audio control present: $($response.Content -match 'id=`"sermon-audio-only`"')"
                 }
 
                 if ($response.Content -match 'id="sermon-search"' -and $response.Content -match 'id="sermon-clear"') {

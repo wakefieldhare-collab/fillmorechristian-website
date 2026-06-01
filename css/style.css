@@ -960,7 +960,7 @@ h4 { font-size: 1.25rem; }
 
 .archive-filter-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 150px 170px auto;
+  grid-template-columns: minmax(0, 1fr) 150px 170px 120px auto;
   gap: 1rem;
   align-items: end;
 }
@@ -986,6 +986,25 @@ h4 { font-size: 1.25rem; }
 .archive-clear-wrap {
   display: flex;
   align-items: end;
+}
+
+.archive-audio-filter {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  gap: 0.45rem;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.archive-audio-filter input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-accent);
+}
+
+.archive-audio-filter label {
+  margin-bottom: 0;
 }
 
 .archive-clear {

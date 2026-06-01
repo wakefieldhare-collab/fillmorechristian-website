@@ -14,29 +14,36 @@ document.addEventListener('DOMContentLoaded', function() {
   const search = document.getElementById('sermon-search');
   const yearFilter = document.getElementById('sermon-year');
   const sortControl = document.getElementById('sermon-sort');
+  const audioOnly = document.getElementById('sermon-audio-only');
   const clearButton = document.getElementById('sermon-clear');
   const staticCards = Array.from(container.querySelectorAll('.sermon-item'));
 
   if (staticCards.length > 0) {
-    initializeStaticArchive(container, staticCards, search, yearFilter, sortControl, clearButton);
+    initializeStaticArchive(container, staticCards, search, yearFilter, sortControl, audioOnly, clearButton);
     return;
   }
 
   if (search) {
     search.addEventListener('input', function() {
-      renderSermons(container, filterSermons(search.value, yearFilter ? yearFilter.value : ''), sortControl ? sortControl.value : 'newest');
+      renderSermons(container, filterSermons(search.value, yearFilter ? yearFilter.value : '', audioOnly ? audioOnly.checked : false), sortControl ? sortControl.value : 'newest');
     });
   }
 
   if (yearFilter) {
     yearFilter.addEventListener('change', function() {
-      renderSermons(container, filterSermons(search ? search.value : '', yearFilter.value), sortControl ? sortControl.value : 'newest');
+      renderSermons(container, filterSermons(search ? search.value : '', yearFilter.value, audioOnly ? audioOnly.checked : false), sortControl ? sortControl.value : 'newest');
     });
   }
 
   if (sortControl) {
     sortControl.addEventListener('change', function() {
-      renderSermons(container, filterSermons(search ? search.value : '', yearFilter ? yearFilter.value : ''), sortControl.value);
+      renderSermons(container, filterSermons(search ? search.value : '', yearFilter ? yearFilter.value : '', audioOnly ? audioOnly.checked : false), sortControl.value);
+    });
+  }
+
+  if (audioOnly) {
+    audioOnly.addEventListener('change', function() {
+      renderSermons(container, filterSermons(search ? search.value : '', yearFilter ? yearFilter.value : '', audioOnly.checked), sortControl ? sortControl.value : 'newest');
     });
   }
 
@@ -45,7 +52,8 @@ document.addEventListener('DOMContentLoaded', function() {
       if (search) search.value = '';
       if (yearFilter) yearFilter.value = '';
       if (sortControl) sortControl.value = 'newest';
-      renderSermons(container, filterSermons('', ''), 'newest');
+      if (audioOnly) audioOnly.checked = false;
+      renderSermons(container, filterSermons('', '', false), 'newest');
       if (search) search.focus();
     });
   }
@@ -55,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
   } else if (LOCAL_SERMONS.length > 0) {
     allSermons = LOCAL_SERMONS;
     populateYearFilter(yearFilter, allSermons.map(function(sermon) { return sermon.year; }));
-    renderSermons(container, filterSermons(search ? search.value : '', yearFilter ? yearFilter.value : ''), sortControl ? sortControl.value : 'newest');
+    renderSermons(container, filterSermons(search ? search.value : '', yearFilter ? yearFilter.value : '', audioOnly ? audioOnly.checked : false), sortControl ? sortControl.value : 'newest');
   } else {
     container.innerHTML = '<div class="sermons-loading">' +
       '<p>Sermons will appear here once the podcast RSS feed is configured.</p>' +
@@ -63,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-function initializeStaticArchive(container, cards, search, yearFilter, sortControl, clearButton) {
+function initializeStaticArchive(container, cards, search, yearFilter, sortControl, audioOnly, clearButton) {
   const emptyMessage = document.createElement('div');
   emptyMessage.className = 'sermons-loading';
   emptyMessage.setAttribute('data-static-empty', 'true');
@@ -78,15 +86,18 @@ function initializeStaticArchive(container, cards, search, yearFilter, sortContr
     const needle = search ? search.value.trim().toLowerCase() : '';
     const selectedYear = yearFilter ? yearFilter.value : '';
     const selectedSort = sortControl ? sortControl.value : 'newest';
+    const requireAudio = audioOnly ? audioOnly.checked : false;
     let visible = 0;
 
     sortCards(cards, selectedSort).forEach(function(card) {
       container.insertBefore(card, emptyMessage);
       const haystack = card.getAttribute('data-search') || card.textContent.toLowerCase();
       const cardYear = card.getAttribute('data-year') || '';
+      const cardHasAudio = card.getAttribute('data-has-audio') !== 'false';
       const matchedSearch = !needle || haystack.indexOf(needle) !== -1;
       const matchedYear = !selectedYear || cardYear === selectedYear;
-      const matched = matchedSearch && matchedYear;
+      const matchedAudio = !requireAudio || cardHasAudio;
+      const matched = matchedSearch && matchedYear && matchedAudio;
       card.hidden = !matched;
       if (matched) visible += 1;
     });
@@ -107,11 +118,16 @@ function initializeStaticArchive(container, cards, search, yearFilter, sortContr
     sortControl.addEventListener('change', applyFilter);
   }
 
+  if (audioOnly) {
+    audioOnly.addEventListener('change', applyFilter);
+  }
+
   if (clearButton) {
     clearButton.addEventListener('click', function() {
       if (search) search.value = '';
       if (yearFilter) yearFilter.value = '';
       if (sortControl) sortControl.value = 'newest';
+      if (audioOnly) audioOnly.checked = false;
       applyFilter();
       if (search) search.focus();
     });
@@ -161,13 +177,14 @@ async function loadFromRSS(container) {
   }
 }
 
-function filterSermons(query, year) {
+function filterSermons(query, year, audioOnly) {
   const needle = query.trim().toLowerCase();
   const selectedYear = year || '';
   return allSermons.filter(function(sermon) {
     const matchedSearch = !needle || sermon.searchText.indexOf(needle) !== -1;
     const matchedYear = !selectedYear || sermon.year === selectedYear;
-    return matchedSearch && matchedYear;
+    const matchedAudio = !audioOnly || !!sermon.audioUrl;
+    return matchedSearch && matchedYear && matchedAudio;
   });
 }
 
@@ -184,6 +201,7 @@ function renderSermons(container, sermons, sortMode) {
   sortedSermons.forEach(function(sermon) {
     const card = document.createElement('article');
     card.className = 'sermon-item' + (sermon.audioUrl ? '' : ' no-audio');
+    card.setAttribute('data-has-audio', sermon.audioUrl ? 'true' : 'false');
     if (sermon.year) {
       card.setAttribute('data-year', sermon.year);
     }

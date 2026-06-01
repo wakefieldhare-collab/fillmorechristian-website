@@ -249,6 +249,11 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Sermons subscribe controls"; Status = "OK"; Details = "Published output includes copyable canonical RSS feed URL" })
 
+    if ($sermonsPageContent -notmatch 'id="sermon-audio-only"' -or $sermonsPageContent -notmatch 'data-has-audio="true"' -or $sermonsPageContent -notmatch 'data-has-audio="false"') {
+        throw "Sermons page is missing the audio-only filter or audio availability metadata"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Sermons audio filter"; Status = "OK"; Details = "Published output includes audio-only filter and audio availability metadata" })
+
     $feed = Invoke-NoRedirect -Url "$baseUrl/podcast-category/fillmore-christian/feed/podcast"
     Assert-Status -Response $feed -Expected @(200) -Name "Podcast feed"
     $contentType = [string]$feed.ContentHeaders.ContentType

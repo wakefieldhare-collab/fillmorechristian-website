@@ -116,8 +116,9 @@ foreach ($item in $items) {
     $search = "$title $date $speaker $description"
 
     $cardClass = if ($audioUrl) { "sermon-item" } else { "sermon-item no-audio" }
+    $hasAudio = if ($audioUrl) { "true" } else { "false" }
     $html = @()
-    $html += "        <article class=`"$cardClass`" data-year=`"$(HtmlEncode $year)`" data-sort-date=`"$(HtmlEncode $sortTimestamp)`" data-title=`"$(HtmlEncode $title.ToLowerInvariant())`" data-search=`"$(HtmlEncode $search.ToLowerInvariant())`">"
+    $html += "        <article class=`"$cardClass`" data-year=`"$(HtmlEncode $year)`" data-has-audio=`"$hasAudio`" data-sort-date=`"$(HtmlEncode $sortTimestamp)`" data-title=`"$(HtmlEncode $title.ToLowerInvariant())`" data-search=`"$(HtmlEncode $search.ToLowerInvariant())`">"
     if ($episodePath) {
         $html += "          <h3><a href=`"$(HtmlEncode $episodePath)`">$(HtmlEncode $title)</a></h3>"
     } else {
