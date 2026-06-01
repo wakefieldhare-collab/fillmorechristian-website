@@ -1500,7 +1500,7 @@ if ((Test-Path -LiteralPath $dnsPreservePath) -and (Test-Path -LiteralPath $dnsZ
 }
 
 if (-not $SkipRemote) {
-    $remotePaths = @("", "about.html", "beliefs.html", "team.html", "events.html", "sermons.html", "contact.html")
+    $remotePaths = @("", "about.html", "beliefs.html", "team.html", "events.html", "sermons.html", "podcast.html", "contact.html")
     if ($sampleEpisodePath) {
         $remotePaths += $sampleEpisodePath
     }
@@ -1514,7 +1514,7 @@ if (-not $SkipRemote) {
             $redirectNote = if ($remoteResponse.RedirectCount -gt 0) { " after $($remoteResponse.RedirectCount) redirect(s) to $($remoteResponse.FinalUrl)" } else { "" }
             Add-Check "Staging URL: /$path" "OK" "HTTP $($response.StatusCode)$redirectNote"
 
-            if ($path -in @("", "about.html", "beliefs.html", "team.html", "events.html", "sermons.html", "contact.html") -or $path -eq $sampleEpisodePath) {
+            if ($path -in @("", "about.html", "beliefs.html", "team.html", "events.html", "sermons.html", "podcast.html", "contact.html") -or $path -eq $sampleEpisodePath) {
                 $expectedCanonical = if ($path -eq "") {
                     "https://www.fillmorechristian.org/"
                 } elseif ($path -eq $sampleEpisodePath) {
@@ -1551,10 +1551,10 @@ if (-not $SkipRemote) {
 
                 if ($path -eq $sampleEpisodePath) {
                     $sampleEpisodeCanonical = "https://www.fillmorechristian.org/$sampleEpisodePath"
-                    if ($response.Content -match "<audio\s+controls" -and $response.Content -match "Download Audio" -and $response.Content -match "All Sermons" -and $response.Content -match 'class="episode-nav"' -and $response.Content -match "Older Message" -and $response.Content -match '"@type":"PodcastEpisode"' -and $response.Content -match '"associatedMedia":\{"@type":"AudioObject"' -and $response.Content -match 'id="episode-link-url"' -and $response.Content -match [regex]::Escape('data-copy-value="' + $sampleEpisodeCanonical + '"') -and $response.Content -match 'id="episode-copy-status"') {
-                        Add-Check "Staging episode page" "OK" "Sample episode page has audio, download, archive navigation, episode navigation, structured data, and copyable sermon link"
+                    if ($response.Content -match "<audio\s+controls" -and $response.Content -match "Download Audio" -and $response.Content -match "All Sermons" -and $response.Content -match 'href="../../podcast\.html"' -and $response.Content -match 'class="episode-nav"' -and $response.Content -match "Older Message" -and $response.Content -match '"@type":"PodcastEpisode"' -and $response.Content -match '"associatedMedia":\{"@type":"AudioObject"' -and $response.Content -match 'id="episode-link-url"' -and $response.Content -match [regex]::Escape('data-copy-value="' + $sampleEpisodeCanonical + '"') -and $response.Content -match 'id="episode-copy-status"') {
+                        Add-Check "Staging episode page" "OK" "Sample episode page has audio, download, archive navigation, podcast navigation, episode navigation, structured data, and copyable sermon link"
                     } else {
-                        Add-Check "Staging episode page" "FAIL" "Sample episode page is missing audio, download, archive navigation, episode navigation, structured data, or copyable sermon link"
+                        Add-Check "Staging episode page" "FAIL" "Sample episode page is missing audio, download, archive navigation, podcast navigation, episode navigation, structured data, or copyable sermon link"
                     }
                 }
 
@@ -1565,11 +1565,22 @@ if (-not $SkipRemote) {
                         @()
                     }
                     $latestTitle = if ($latestAudioItem) { [string]$latestAudioItem.title } else { "" }
-                    if ($latestTitle -and $response.Content -match 'id="latest-sermon"' -and $response.Content -match [regex]::Escape($latestTitle) -and $response.Content -match "Download Audio") {
-                        Add-Check "Staging homepage latest sermon" "OK" "Latest audio item is featured on staging"
+                    if ($latestTitle -and $response.Content -match 'id="latest-sermon"' -and $response.Content -match [regex]::Escape($latestTitle) -and $response.Content -match "Download Audio" -and $response.Content -match '<a\s+href="podcast\.html"\s+class="btn btn-outline">Subscribe to Podcast</a>') {
+                        Add-Check "Staging homepage latest sermon" "OK" "Latest audio item and podcast subscription CTA are featured on staging"
                     } elseif ($latestTitle) {
-                        Add-Check "Staging homepage latest sermon" "FAIL" "Latest sermon block is missing or stale on staging"
+                        Add-Check "Staging homepage latest sermon" "FAIL" "Latest sermon block is missing, stale, or missing the podcast subscription CTA on staging"
                     }
+                }
+            }
+
+            if ($path -eq "podcast.html") {
+                if ($response.Content -match 'id="podcast-feed-url"' -and
+                    $response.Content -match 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -and
+                    $response.Content -match '"@type": "PodcastSeries"' -and
+                    $response.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
+                    Add-Check "Staging podcast page" "OK" "Owned podcast landing page has feed copy controls and structured data"
+                } else {
+                    Add-Check "Staging podcast page" "FAIL" "Podcast page is missing feed copy controls, structured data, or contains old platform references"
                 }
             }
 
