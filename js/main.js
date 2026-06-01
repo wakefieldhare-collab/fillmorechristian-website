@@ -95,6 +95,16 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
   });
+
+  document.addEventListener('play', function(e) {
+    if (!e.target || e.target.tagName !== 'AUDIO') return;
+
+    document.querySelectorAll('audio').forEach(function(player) {
+      if (player !== e.target && !player.paused) {
+        player.pause();
+      }
+    });
+  }, true);
 });
 
 function copyText(text) {

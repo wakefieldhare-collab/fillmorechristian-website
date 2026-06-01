@@ -257,6 +257,12 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Sermons audio filter"; Status = "OK"; Details = "Published output includes audio-only filter and audio availability metadata" })
 
+    $mainScriptContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "js\main.js")
+    if ($mainScriptContent -notmatch "document\.addEventListener\('play'" -or $mainScriptContent -notmatch "querySelectorAll\('audio'\)" -or $mainScriptContent -notmatch "\.pause\(\)") {
+        throw "Main script is missing the one-at-a-time audio playback guard"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Audio playback guard"; Status = "OK"; Details = "Starting one sermon pauses other audio players" })
+
     $feed = Invoke-NoRedirect -Url "$baseUrl/podcast-category/fillmore-christian/feed/podcast"
     Assert-Status -Response $feed -Expected @(200) -Name "Podcast feed"
     $contentType = [string]$feed.ContentHeaders.ContentType

@@ -702,6 +702,18 @@ if (Test-Path -LiteralPath $sermonsPath) {
         Add-Check "Sermon audio downloads" "FAIL" "$downloadLinks downloadable audio link(s), expected $expectedDownloadLinks from the podcast feed"
     }
 
+    $mainScriptPath = Join-Path $root "js\main.js"
+    if (Test-Path -LiteralPath $mainScriptPath) {
+        $mainScriptText = Get-Content -Raw -LiteralPath $mainScriptPath
+        if ($mainScriptText -match "document\.addEventListener\('play'" -and $mainScriptText -match "querySelectorAll\('audio'\)" -and $mainScriptText -match "\.pause\(\)") {
+            Add-Check "Sermon audio playback guard" "OK" "Starting one audio player pauses the rest"
+        } else {
+            Add-Check "Sermon audio playback guard" "FAIL" "Main script is missing the one-at-a-time audio playback guard"
+        }
+    } else {
+        Add-Check "Sermon audio playback guard" "FAIL" "js\main.js is missing"
+    }
+
     if ($sermonsHtml.Contains("description description")) {
         Add-Check "Sermon placeholder cleanup" "FAIL" "Placeholder text remains in sermons.html"
     } else {
