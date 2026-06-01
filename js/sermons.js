@@ -12,6 +12,13 @@ document.addEventListener('DOMContentLoaded', function() {
   if (!container) return;
 
   const search = document.getElementById('sermon-search');
+  const staticCards = Array.from(container.querySelectorAll('.sermon-item'));
+
+  if (staticCards.length > 0) {
+    initializeStaticArchive(container, staticCards, search);
+    return;
+  }
+
   if (search) {
     search.addEventListener('input', function() {
       renderSermons(container, filterSermons(search.value));
@@ -30,6 +37,36 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
+function initializeStaticArchive(container, cards, search) {
+  const emptyMessage = document.createElement('div');
+  emptyMessage.className = 'sermons-loading';
+  emptyMessage.setAttribute('data-static-empty', 'true');
+  emptyMessage.hidden = true;
+  emptyMessage.innerHTML = '<p>No sermons matched your search.</p>';
+  container.appendChild(emptyMessage);
+
+  function applyFilter() {
+    const needle = search ? search.value.trim().toLowerCase() : '';
+    let visible = 0;
+
+    cards.forEach(function(card) {
+      const haystack = card.getAttribute('data-search') || card.textContent.toLowerCase();
+      const matched = !needle || haystack.indexOf(needle) !== -1;
+      card.hidden = !matched;
+      if (matched) visible += 1;
+    });
+
+    emptyMessage.hidden = visible !== 0;
+    updateCount(visible, cards.length);
+  }
+
+  if (search) {
+    search.addEventListener('input', applyFilter);
+  }
+
+  applyFilter();
+}
+
 async function loadFromRSS(container) {
   container.innerHTML = '<div class="sermons-loading"><p>Loading sermons...</p></div>';
 
@@ -43,7 +80,7 @@ async function loadFromRSS(container) {
       const enclosure = item.querySelector('enclosure');
       const rawDate = cleanText(getElementText(item, 'pubDate'));
       const title = cleanText(getElementText(item, 'title'));
-      const description = cleanText(stripHtml(getElementText(item, 'description') || getElementText(item, 'itunes\\:summary') || ''));
+      const description = cleanDescription(cleanText(stripHtml(getElementText(item, 'description') || getElementText(item, 'itunes\\:summary') || '')));
       const audioUrl = enclosure ? enclosure.getAttribute('url') || '' : '';
 
       return {
@@ -200,6 +237,11 @@ function cleanText(str) {
     .replace(/\u00e2\u20ac\u009d/g, '"')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+function cleanDescription(str) {
+  const text = str || '';
+  return /^description(\s+description)*$/i.test(text) ? '' : text;
 }
 
 function stripHtml(str) {
