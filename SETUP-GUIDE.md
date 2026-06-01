@@ -133,6 +133,8 @@ Later, the form can be upgraded to Cloudflare Pages Functions, Formspree, or ano
 
 ### Step 5: Set Up Google Calendar (Events)
 
+The site already publishes a self-hosted recurring Sunday calendar at `events.ics` for Sunday School and Sunday Worship. The Events page links it directly, and the build/readiness checks verify that it ships with the public site.
+
 1. Create a Google Calendar for the church, or use an existing one.
 2. Make it public: Calendar Settings > Access permissions > Make available to public.
 3. Copy the Calendar ID from Settings > Integrate calendar.

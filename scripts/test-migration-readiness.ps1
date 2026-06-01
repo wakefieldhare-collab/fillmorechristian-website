@@ -158,6 +158,7 @@ $requiredFiles = @(
     "index.html",
     "about.html",
     "beliefs.html",
+    "events.ics",
     "events.html",
     "sermons.html",
     "contact.html",
@@ -190,6 +191,7 @@ if (Test-Path -LiteralPath $headersPath) {
     $expectedHeaderPatterns = @{
         "RSS content type" = "Content-Type:\s+application/rss\+xml;\s*charset=utf-8"
         "RSS cache control" = "Cache-Control:\s+public,\s*max-age=300"
+        "Calendar content type" = "Content-Type:\s+text/calendar;\s*charset=utf-8"
         "nosniff" = "X-Content-Type-Options:\s+nosniff"
         "frame policy" = "X-Frame-Options:\s+SAMEORIGIN"
         "referrer policy" = "Referrer-Policy:\s+strict-origin-when-cross-origin"
@@ -284,6 +286,34 @@ if ($metadataFailures.Count -eq 0) {
     Add-Check "Public page metadata" "OK" "$($publicHtmlPages.Count) public pages have canonical, podcast RSS, Open Graph, and Twitter metadata"
 } else {
     Add-Check "Public page metadata" "FAIL" ($metadataFailures -join "; ")
+}
+
+$calendarPath = Join-Path $root "events.ics"
+if (Test-Path -LiteralPath $calendarPath) {
+    $calendarText = Get-Content -Raw -LiteralPath $calendarPath
+    $calendarIssues = New-Object System.Collections.Generic.List[string]
+    if ($calendarText -notmatch "(?m)^BEGIN:VCALENDAR") { $calendarIssues.Add("missing VCALENDAR start") }
+    if ($calendarText -notmatch "(?m)^SUMMARY:Sunday School") { $calendarIssues.Add("missing Sunday School event") }
+    if ($calendarText -notmatch "(?m)^SUMMARY:Sunday Worship") { $calendarIssues.Add("missing Sunday Worship event") }
+    if ($calendarText -notmatch "(?m)^RRULE:FREQ=WEEKLY;BYDAY=SU") { $calendarIssues.Add("missing weekly Sunday recurrence") }
+    if ($calendarText -notmatch "TZID=America/Chicago") { $calendarIssues.Add("missing America/Chicago timezone reference") }
+
+    $indexHtml = Get-Content -Raw -LiteralPath (Join-Path $root "index.html")
+    $eventsHtml = Get-Content -Raw -LiteralPath (Join-Path $root "events.html")
+    if ($indexHtml -notmatch 'href="events\.ics"' -or $eventsHtml -notmatch 'href="events\.ics"') {
+        $calendarIssues.Add("index or events page does not link events.ics")
+    }
+    if ($eventsHtml -notmatch '<link\s+rel="alternate"\s+type="text/calendar"') {
+        $calendarIssues.Add("events page missing calendar autodiscovery")
+    }
+
+    if ($calendarIssues.Count -eq 0) {
+        Add-Check "Self-hosted event calendar" "OK" "events.ics publishes recurring Sunday School and worship schedule"
+    } else {
+        Add-Check "Self-hosted event calendar" "FAIL" ($calendarIssues -join "; ")
+    }
+} else {
+    Add-Check "Self-hosted event calendar" "FAIL" "events.ics is missing"
 }
 
 $notFoundPath = Join-Path $root "404.html"
@@ -842,7 +872,7 @@ if (-not $SkipRemote) {
     if ($sampleEpisodePath) {
         $remotePaths += $sampleEpisodePath
     }
-    $remotePaths += @("podcast-category/fillmore-christian/feed/podcast", "robots.txt", "sitemap.xml")
+    $remotePaths += @("podcast-category/fillmore-christian/feed/podcast", "events.ics", "robots.txt", "sitemap.xml")
 
     foreach ($path in $remotePaths) {
         $url = Join-Url $StagingBaseUrl $path
@@ -950,6 +980,15 @@ if (-not $SkipRemote) {
                     Add-Check "Staging podcast artwork" "OK" "Podcast artwork points at the local site asset on staging"
                 } else {
                     Add-Check "Staging podcast artwork" "FAIL" "Unexpected artwork URLs on staging: $($badRemoteArtworkUrls -join ', ')"
+                }
+            }
+
+            if ($path -eq "events.ics") {
+                $remoteCalendarContentType = [string]$response.Headers["Content-Type"]
+                if ($response.Content -match "(?m)^BEGIN:VCALENDAR" -and $response.Content -match "SUMMARY:Sunday Worship" -and $response.Content -match "RRULE:FREQ=WEEKLY;BYDAY=SU" -and $remoteCalendarContentType -match "text/calendar") {
+                    Add-Check "Staging event calendar" "OK" "events.ics is published with text/calendar content type"
+                } else {
+                    Add-Check "Staging event calendar" "FAIL" "events.ics content or content type was unexpected"
                 }
             }
         } catch {

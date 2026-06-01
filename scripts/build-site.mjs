@@ -11,6 +11,7 @@ const publishPaths = [
   "about.html",
   "beliefs.html",
   "contact.html",
+  "events.ics",
   "events.html",
   "episode",
   "feed.xml",

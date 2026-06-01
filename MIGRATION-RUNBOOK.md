@@ -270,6 +270,7 @@ Cloudflare requires the domain to be active on Cloudflare DNS before transferrin
 - `https://www.fillmorechristian.org/` loads the static site.
 - `https://fillmorechristian.org/` redirects or loads correctly.
 - `https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast` returns RSS XML.
+- `https://www.fillmorechristian.org/events.ics` returns the self-hosted Sunday schedule as `text/calendar`.
 - Sermons page shows podcast episodes.
 - A known MP3 enclosure from the feed downloads or plays.
 - `church@fillmorechristian.org` still receives mail.

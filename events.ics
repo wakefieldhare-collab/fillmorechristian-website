@@ -1,0 +1,31 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Fillmore Christian Church//Sunday Schedule//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Fillmore Christian Church
+X-WR-CALDESC:Recurring Sunday School and worship schedule for Fillmore Christian Church.
+X-WR-TIMEZONE:America/Chicago
+BEGIN:VEVENT
+UID:sunday-school@fillmorechristian.org
+DTSTAMP:20260601T000000Z
+DTSTART;TZID=America/Chicago:20260607T090000
+DTEND;TZID=America/Chicago:20260607T100000
+RRULE:FREQ=WEEKLY;BYDAY=SU
+SUMMARY:Sunday School
+LOCATION:Fillmore Christian Church\, 310 N. Florence Street\, Fillmore\, MO 64449
+DESCRIPTION:Classes for learning Scripture together before worship.
+URL:https://www.fillmorechristian.org/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:sunday-worship@fillmorechristian.org
+DTSTAMP:20260601T000000Z
+DTSTART;TZID=America/Chicago:20260607T100000
+DTEND;TZID=America/Chicago:20260607T111500
+RRULE:FREQ=WEEKLY;BYDAY=SU
+SUMMARY:Sunday Worship
+LOCATION:Fillmore Christian Church\, 310 N. Florence Street\, Fillmore\, MO 64449
+DESCRIPTION:Gather for prayer\, singing\, communion\, and preaching from Scripture.
+URL:https://www.fillmorechristian.org/events.html
+END:VEVENT
+END:VCALENDAR

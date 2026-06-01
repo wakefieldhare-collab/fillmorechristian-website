@@ -246,6 +246,17 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Podcast feed"; Status = "OK"; Details = "RSS content type and XML body" })
 
+    $calendar = Invoke-NoRedirect -Url "$baseUrl/events.ics"
+    Assert-Status -Response $calendar -Expected @(200) -Name "Event calendar"
+    $calendarContentType = [string]$calendar.ContentHeaders.ContentType
+    if ($calendarContentType -notmatch "text/calendar") {
+        throw "Event calendar returned unexpected content type '$calendarContentType'"
+    }
+    if ($calendar.Content -notmatch "BEGIN:VCALENDAR" -or $calendar.Content -notmatch "SUMMARY:Sunday Worship" -or $calendar.Content -notmatch "RRULE:FREQ=WEEKLY;BYDAY=SU") {
+        throw "Event calendar did not include the recurring Sunday schedule"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Event calendar"; Status = "OK"; Details = "text/calendar recurring Sunday schedule" })
+
     $episode = Invoke-NoRedirect -Url "$baseUrl/episode/be-ready-luke-12/"
     Assert-Status -Response $episode -Expected @(200) -Name "Static episode page"
     if ($episode.Content -notmatch "<audio\s+controls" -or $episode.Content -notmatch "Download Audio" -or $episode.Content -notmatch "All Sermons" -or $episode.Content -notmatch 'class="episode-nav"' -or $episode.Content -notmatch "Newer Message" -or $episode.Content -notmatch "Older Message") {
