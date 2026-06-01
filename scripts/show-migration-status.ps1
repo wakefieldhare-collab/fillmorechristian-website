@@ -142,11 +142,13 @@ try {
 }
 
 $wrangler = Get-WranglerInvocation
+$cloudflareAuthenticated = $false
 if ($null -eq $wrangler) {
     Add-Status "Cloudflare auth" "FAIL" "Wrangler is not available. Install or use npx wrangler."
 } else {
     $whoamiOutput = & $wrangler.Command @($wrangler.PrefixArgs) whoami 2>&1
     if ($LASTEXITCODE -eq 0 -and (($whoamiOutput -join "`n") -notmatch "not authenticated")) {
+        $cloudflareAuthenticated = $true
         Add-Status "Cloudflare auth" "OK" "$($wrangler.Label) is authenticated."
     } else {
         Add-Status "Cloudflare auth" "AUTH" "Run npx wrangler login before R2 upload, Pages deploy, DNS, or production cutover."
@@ -225,6 +227,43 @@ if (Test-Path -LiteralPath $r2ManifestPath) {
 }
 
 if (-not $SkipNetwork) {
+    if ($cloudflareAuthenticated -and $wrangler) {
+        try {
+            $pagesOutput = (& $wrangler.Command @($wrangler.PrefixArgs) pages project list 2>&1) -join "`n"
+            if ($LASTEXITCODE -eq 0 -and $pagesOutput -match "fillmorechristian-website" -and $pagesOutput -match "fillmorechristian-website\.pages\.dev") {
+                Add-Status "Cloudflare Pages" "OK" "Project fillmorechristian-website is deployed at https://fillmorechristian-website.pages.dev/."
+            } elseif ($LASTEXITCODE -eq 0) {
+                Add-Status "Cloudflare Pages" "WARN" "Could not find fillmorechristian-website in Pages project list."
+            } else {
+                Add-Status "Cloudflare Pages" "WARN" "Could not list Cloudflare Pages projects."
+            }
+        } catch {
+            Add-Status "Cloudflare Pages" "WARN" "Could not inspect Cloudflare Pages: $($_.Exception.Message)"
+        }
+
+        try {
+            $r2Output = (& $wrangler.Command @($wrangler.PrefixArgs) r2 bucket list 2>&1) -join "`n"
+            if ($LASTEXITCODE -eq 0) {
+                if ($r2Output -match "fillmore-christian-sermons") {
+                    Add-Status "R2 account" "OK" "R2 is enabled and bucket fillmore-christian-sermons exists."
+                } else {
+                    Add-Status "R2 account" "WARN" "R2 is enabled, but bucket fillmore-christian-sermons was not listed."
+                }
+            } elseif ($r2Output -match "enable R2|code:\s*10042") {
+                Add-Status "R2 account" "AUTH" "Enable R2 in the Cloudflare dashboard before uploading sermon audio."
+            } else {
+                Add-Status "R2 account" "WARN" "Could not list R2 buckets."
+            }
+        } catch {
+            $r2Error = $_.Exception.Message
+            if ($r2Error -match "enable R2|code:\s*10042|/r2/buckets") {
+                Add-Status "R2 account" "AUTH" "Enable R2 in the Cloudflare dashboard before uploading sermon audio."
+            } else {
+                Add-Status "R2 account" "WARN" "Could not inspect R2: $r2Error"
+            }
+        }
+    }
+
     try {
         $stagingHome = Invoke-WebRequest -UseBasicParsing -Uri ($StagingBaseUrl.TrimEnd("/") + "/") -TimeoutSec 20
         $stagingFeed = Invoke-WebRequest -UseBasicParsing -Uri ($StagingBaseUrl.TrimEnd("/") + "/podcast-category/fillmore-christian/feed/podcast") -TimeoutSec 20
@@ -262,7 +301,18 @@ if (-not $SkipNetwork) {
 
 $authNeeded = @($rows | Where-Object { $_.Status -eq "AUTH" })
 if ($authNeeded.Count -gt 0) {
-    Add-Status "Next authorization" "AUTH" "Wake authorization needed next: npx wrangler login, then Cloudflare Pages/R2/DNS setup."
+    $authAreas = @($authNeeded | ForEach-Object { $_.Area })
+    if ("Cloudflare auth" -in $authAreas) {
+        Add-Status "Next authorization" "AUTH" "Wake authorization needed next: run npx wrangler login."
+    } elseif (("R2 account" -in $authAreas) -and ("DNS nameservers" -in $authAreas)) {
+        Add-Status "Next authorization" "AUTH" "Wake authorization needed next: enable R2, add fillmorechristian.org to Cloudflare DNS, then update Squarespace nameservers when records are verified."
+    } elseif ("R2 account" -in $authAreas) {
+        Add-Status "Next authorization" "AUTH" "Wake authorization needed next: enable R2 in the Cloudflare dashboard."
+    } elseif ("DNS nameservers" -in $authAreas) {
+        Add-Status "Next authorization" "AUTH" "Wake authorization needed next: add fillmorechristian.org to Cloudflare DNS and update Squarespace nameservers after records are verified."
+    } else {
+        Add-Status "Next authorization" "AUTH" "Wake authorization is needed for: $($authAreas -join ', ')."
+    }
 } else {
     Add-Status "Next authorization" "INFO" "No immediate auth blocker detected; run the strict readiness gates before production changes."
 }
