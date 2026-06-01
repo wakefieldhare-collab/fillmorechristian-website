@@ -12,7 +12,7 @@ Last updated: 2026-06-01
 - Current mail MX records: `mxa.mailgun.org` and `mxb.mailgun.org`
 - Squarespace renewal notice: auto-renew on 2026-06-15 for $15.00; disable by 2026-06-14 only if the transfer is already safely underway or complete.
 - Current Apple Podcasts feed URL: `https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast`
-- GitHub source repo for Cloudflare Pages: `https://github.com/wake-byte/fillmorechristian-website`
+- GitHub source repo for Cloudflare Pages: `https://github.com/wakefieldhare-collab/fillmorechristian-website`
 - Local commit pushed: `b6fe466` on `main`
 
 ## Migration Order
