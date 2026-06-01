@@ -183,6 +183,19 @@ if ($sermons) {
     }
 }
 
+$podcastPage = Invoke-Http -Url (Join-Url $ProductionBaseUrl "/podcast.html")
+if ($podcastPage) {
+    if ($podcastPage.StatusCode -eq 200 -and
+        $podcastPage.Content -match 'id="podcast-feed-url"' -and
+        $podcastPage.Content -match 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -and
+        $podcastPage.Content -match '"@type": "PodcastSeries"' -and
+        $podcastPage.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
+        Add-Check "Production podcast page" "OK" "Owned podcast subscription page is live"
+    } else {
+        Add-Check "Production podcast page" "FAIL" "Podcast page is missing feed copy controls, structured data, or still references TheChurchCo"
+    }
+}
+
 foreach ($asset in @("site.webmanifest", "contact.vcf", "events.ics")) {
     $assetResponse = Invoke-Http -Url (Join-Url $ProductionBaseUrl $asset)
     if ($assetResponse) {

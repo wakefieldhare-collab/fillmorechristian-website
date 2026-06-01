@@ -337,10 +337,11 @@ try {
     $homePageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "index.html")
     if ($homePageContent -notmatch '<img\s+src="images/fcc-logo\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or
         $homePageContent -notmatch '<a\s+href="podcast\.html">Podcast</a>' -or
+        $homePageContent -notmatch '<a\s+href="podcast\.html"\s+class="btn btn-outline">Subscribe to Podcast</a>' -or
         $homePageContent -notmatch 'nav-brand-name">Fillmore Christian Church') {
-        throw "Built home page is missing the official FCC navigation logo, podcast link, or text"
+        throw "Built home page is missing the official FCC navigation logo, podcast links, or text"
     }
-    $checks.Add([pscustomobject]@{ Check = "Navigation brand"; Status = "OK"; Details = "Published output includes the official FCC logo, podcast link, and navigation text" })
+    $checks.Add([pscustomobject]@{ Check = "Navigation brand"; Status = "OK"; Details = "Published output includes the official FCC logo, podcast links, and navigation text" })
 
     if ($homePageContent -notmatch '<source\s+src="/media/' -or $homePageContent -match '<source\s+src="https://www\.fillmorechristian\.org/media/') {
         throw "Built home page does not use same-origin media URLs for audio playback"

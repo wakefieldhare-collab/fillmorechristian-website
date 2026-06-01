@@ -757,12 +757,13 @@ if (Test-Path -LiteralPath $cancellationScriptPath) {
     if ($cancellationScriptText -match "Cloudflare nameservers" -and
         $cancellationScriptText -match "Production audio independence" -and
         $cancellationScriptText -match "www\.fillmorechristian\.org" -and
+        $cancellationScriptText -match "Production podcast page" -and
         $cancellationScriptText -match "sermon-audio-only" -and
         $cancellationScriptText -match "data-has-audio" -and
         $cancellationScriptText -match "Do not cancel TheChurchCo yet") {
-        Add-Check "TheChurchCo cancellation gate" "OK" "Production cancellation verifier checks DNS, static site, sermon archive filters, mail, feed, and audio independence"
+        Add-Check "TheChurchCo cancellation gate" "OK" "Production cancellation verifier checks DNS, static site, podcast page, sermon archive filters, mail, feed, and audio independence"
     } else {
-        Add-Check "TheChurchCo cancellation gate" "FAIL" "Cancellation verifier is missing DNS, sermon archive filter, audio independence, or stop-condition checks"
+        Add-Check "TheChurchCo cancellation gate" "FAIL" "Cancellation verifier is missing DNS, podcast page, sermon archive filter, audio independence, or stop-condition checks"
     }
 } else {
     Add-Check "TheChurchCo cancellation gate" "FAIL" "scripts\test-thechurchco-cancellation-readiness.ps1 is missing"
@@ -1037,10 +1038,11 @@ if ($feeds.ContainsKey($feedPaths[0]) -and (Test-Path -LiteralPath $homePath)) {
         $homeHtml -match 'id="latest-sermon"' -and
         $homeHtml -match [regex]::Escape($latestTitle) -and
         $homeHtml -match [regex]::Escape($latestPageAudioUrl) -and
+        $homeHtml -match '<a\s+href="podcast\.html"\s+class="btn btn-outline">Subscribe to Podcast</a>' -and
         $homeHtml -match "Download Audio") {
         Add-Check "Homepage latest sermon" "OK" "Latest audio item is featured on the homepage"
     } else {
-        Add-Check "Homepage latest sermon" "FAIL" "Homepage latest sermon block is missing or stale"
+        Add-Check "Homepage latest sermon" "FAIL" "Homepage latest sermon block is missing, stale, or not linked to podcast subscription"
     }
 }
 
