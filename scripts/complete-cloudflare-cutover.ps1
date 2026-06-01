@@ -1,5 +1,6 @@
 param(
     [string]$Domain = "fillmorechristian.org",
+    [string]$ProductionBaseUrl = "https://www.fillmorechristian.org",
     [string[]]$ExpectedCloudflareNameservers = @("eric.ns.cloudflare.com", "sky.ns.cloudflare.com"),
     [switch]$WaitForDns,
     [int]$MaxAttempts = 30,
@@ -81,9 +82,12 @@ if (-not $dnsReady) {
     throw "Cloudflare nameservers are not active yet. Set Squarespace nameservers to $($ExpectedCloudflareNameservers -join ', ') and rerun this command."
 }
 
+$normalizedProductionBaseUrl = $ProductionBaseUrl.TrimEnd("/")
+$productionMediaBaseUrl = "$normalizedProductionBaseUrl/media"
+
 & (Join-Path $PSScriptRoot "test-dns-cutover.ps1") -Mode After -ExpectedCloudflareNameservers $ExpectedCloudflareNameservers
-& (Join-Path $PSScriptRoot "test-r2-public-audio.ps1") -All
-& (Join-Path $PSScriptRoot "test-migration-readiness.ps1") -RequireIndependentAudio -VerifyPodcastMedia
+& (Join-Path $PSScriptRoot "test-r2-public-audio.ps1") -BaseUrlOverride $productionMediaBaseUrl -All
+& (Join-Path $PSScriptRoot "test-migration-readiness.ps1") -RequireIndependentAudio -VerifyPodcastMedia -StagingBaseUrl $normalizedProductionBaseUrl
 
 Write-Host "Cloudflare cutover checks passed. The static site, podcast feed, and R2-backed /media audio are ready for production cancellation checks."
 Write-Host "Before canceling TheChurchCo, run: npm run verify:cancel-thechurchco"

@@ -796,6 +796,10 @@ if ((Test-Path -LiteralPath $audioMigrationScriptPath) -and (Test-Path -LiteralP
         $publicAudioScriptText -match "Content-Type" -and
         $cutoverScriptText -match "test-dns-cutover\.ps1" -and
         $cutoverScriptText -match "test-r2-public-audio\.ps1" -and
+        $cutoverScriptText -match "BaseUrlOverride" -and
+        $cutoverScriptText -match "ProductionBaseUrl" -and
+        $cutoverScriptText -match "/media" -and
+        $cutoverScriptText -match "StagingBaseUrl" -and
         $cutoverScriptText -match "RequireIndependentAudio" -and
         $cutoverScriptText -match "ExpectedCloudflareNameservers" -and
         $packageJsonText -match '"complete:cloudflare-cutover"') {
