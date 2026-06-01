@@ -90,6 +90,14 @@
         <a href="events.ics" class="btn btn-primary">Add Sunday Schedule</a>
         <a href="https://maps.google.com/?q=310+N+Florence+Street+Fillmore+MO+64449" class="btn btn-outline" target="_blank" rel="noopener">Get Directions</a>
       </div>
+      <div class="calendar-feed-copy">
+        <label for="calendar-feed-url">Calendar feed</label>
+        <div class="copy-field">
+          <input id="calendar-feed-url" type="text" value="https://www.fillmorechristian.org/events.ics" readonly>
+          <button class="copy-button" type="button" data-copy-value="https://www.fillmorechristian.org/events.ics" data-copy-status-target="calendar-copy-status" data-copy-label="Copy" data-copy-success="Calendar feed URL copied." data-copy-fallback="Calendar feed URL selected. Press Ctrl+C to copy it." data-copy-fail="Copy failed. Select the calendar URL and copy it manually.">Copy</button>
+        </div>
+        <p id="calendar-copy-status" class="copy-status" aria-live="polite">Use this iCal feed in calendar apps that support URL subscriptions.</p>
+      </div>
     </div>
   </section>
 

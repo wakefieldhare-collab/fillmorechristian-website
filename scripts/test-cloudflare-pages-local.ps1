@@ -312,6 +312,14 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Event calendar"; Status = "OK"; Details = "text/calendar recurring Sunday schedule" })
 
+    $eventsPageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "events.html")
+    if ($eventsPageContent -notmatch 'id="calendar-feed-url"' -or
+        $eventsPageContent -notmatch 'data-copy-value="https://www\.fillmorechristian\.org/events\.ics"' -or
+        $eventsPageContent -notmatch 'id="calendar-copy-status"\s+class="copy-status"\s+aria-live="polite"') {
+        throw "Events page is missing the copyable calendar feed URL"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Calendar subscribe controls"; Status = "OK"; Details = "Published output includes copyable canonical iCal feed URL" })
+
     $eventsScript = Invoke-NoRedirect -Url "$baseUrl/js/events.js"
     Assert-Status -Response $eventsScript -Expected @(200) -Name "Events script"
     if ($eventsScript.Content -notmatch "events\.ics" -or $eventsScript.Content -match "googleapis|GOOGLE_CALENDAR_ID|GOOGLE_API_KEY") {

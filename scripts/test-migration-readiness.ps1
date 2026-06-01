@@ -516,6 +516,11 @@ if (Test-Path -LiteralPath $calendarPath) {
     if ($eventsHtml -notmatch '<link\s+rel="alternate"\s+type="text/calendar"') {
         $calendarIssues.Add("events page missing calendar autodiscovery")
     }
+    if ($eventsHtml -notmatch 'id="calendar-feed-url"' -or
+        $eventsHtml -notmatch 'data-copy-value="https://www\.fillmorechristian\.org/events\.ics"' -or
+        $eventsHtml -notmatch 'id="calendar-copy-status"\s+class="copy-status"\s+aria-live="polite"') {
+        $calendarIssues.Add("events page is missing the copyable calendar feed URL")
+    }
     if (Test-Path -LiteralPath $eventsScriptPath) {
         $eventsScript = Get-Content -Raw -LiteralPath $eventsScriptPath
         if ($eventsScript -notmatch "events\.ics") { $calendarIssues.Add("events script does not load the self-hosted iCal feed") }
@@ -525,7 +530,7 @@ if (Test-Path -LiteralPath $calendarPath) {
     }
 
     if ($calendarIssues.Count -eq 0) {
-        Add-Check "Self-hosted event calendar" "OK" "events.ics publishes recurring Sunday School and worship schedule, and the events UI loads it locally"
+        Add-Check "Self-hosted event calendar" "OK" "events.ics publishes recurring Sunday School and worship schedule, and the events UI loads and exposes a copyable feed locally"
     } else {
         Add-Check "Self-hosted event calendar" "FAIL" ($calendarIssues -join "; ")
     }

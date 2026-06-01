@@ -802,6 +802,19 @@ h4 { font-size: 1.25rem; }
   margin-top: 2rem;
 }
 
+.calendar-feed-copy {
+  max-width: 640px;
+  margin: 1.5rem auto 0;
+  text-align: left;
+}
+
+.calendar-feed-copy label {
+  display: block;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.4rem;
+}
+
 /* --- Give Online --- */
 .give-section {
   text-align: center;
