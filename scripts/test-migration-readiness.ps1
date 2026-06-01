@@ -1360,9 +1360,16 @@ if ((Test-Path -LiteralPath $dnsPreservePath) -and (Test-Path -LiteralPath $dnsZ
     if (-not (Test-Path -LiteralPath $dnsImportVerifierPath)) {
         $dnsIssues.Add("DNS import readiness verifier is missing")
     }
+    $dnsApplyScriptPath = Join-Path $root "scripts\apply-cloudflare-dns-cutover-records.ps1"
+    if (-not (Test-Path -LiteralPath $dnsApplyScriptPath)) {
+        $dnsIssues.Add("Cloudflare DNS apply script is missing")
+    }
     $packageJsonText = Get-Content -Raw -LiteralPath (Join-Path $root "package.json")
     if ($packageJsonText -notmatch '"verify:dns-import"\s*:\s*"powershell -ExecutionPolicy Bypass -File scripts/test-cloudflare-dns-import-readiness\.ps1"') {
         $dnsIssues.Add("package.json is missing verify:dns-import script")
+    }
+    if ($packageJsonText -notmatch '"apply:cloudflare-dns"\s*:\s*"powershell -ExecutionPolicy Bypass -File scripts/apply-cloudflare-dns-cutover-records\.ps1"') {
+        $dnsIssues.Add("package.json is missing apply:cloudflare-dns script")
     }
     $requiredDnsRows = @(
         @{ Name = "fillmorechristian.org"; Type = "MX"; Value = "mxa.mailgun.org"; Priority = "10" },

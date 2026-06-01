@@ -212,6 +212,18 @@ Then build the Cloudflare import/preserve files and verify the current pre-cutov
 .\scripts\test-dns-cutover.ps1 -Mode Before
 ```
 
+Preview the Cloudflare DNS records to keep and replace:
+
+```powershell
+npm run apply:cloudflare-dns
+```
+
+Apply them through the Cloudflare API only after setting `CLOUDFLARE_API_TOKEN` or `CF_API_TOKEN` to a token with Zone:DNS Edit permission:
+
+```powershell
+npm run apply:cloudflare-dns -- -Apply
+```
+
 As of June 1, 2026, preserve at least the Mailgun MX records and these TXT/CNAME records:
 
 - `v=spf1 include:mailgun.org ~all`

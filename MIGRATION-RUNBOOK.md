@@ -290,6 +290,18 @@ The preserve files intentionally keep the Mailgun/Microsoft/DKIM/Google verifica
 .\scripts\test-dns-cutover.ps1 -Mode Before
 ```
 
+Preview the exact Cloudflare DNS records to preserve and replace:
+
+```powershell
+npm run apply:cloudflare-dns
+```
+
+To apply those records through the Cloudflare API instead of clicking in the dashboard, set `CLOUDFLARE_API_TOKEN` or `CF_API_TOKEN` to a Cloudflare token with Zone:DNS Edit permission for `fillmorechristian.org`, then run:
+
+```powershell
+npm run apply:cloudflare-dns -- -Apply
+```
+
 After Cloudflare assigns nameservers and Squarespace is updated, run the after-cutover verifier with the real Cloudflare nameserver names:
 
 ```powershell
