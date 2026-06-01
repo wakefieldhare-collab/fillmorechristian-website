@@ -561,8 +561,27 @@ if (Test-Path -LiteralPath $pagesWorkflowPath) {
 }
 
 $cancellationScriptPath = Join-Path $root "scripts\test-thechurchco-cancellation-readiness.ps1"
+$domainTransferScriptPath = Join-Path $root "scripts\test-domain-transfer-readiness.ps1"
 $audioMigrationScriptPath = Join-Path $root "scripts\migrate-cloudflare-audio.ps1"
 $publicAudioScriptPath = Join-Path $root "scripts\test-r2-public-audio.ps1"
+if (Test-Path -LiteralPath $domainTransferScriptPath) {
+    $domainTransferScriptText = Get-Content -Raw -LiteralPath $domainTransferScriptPath
+    $packageJsonPath = Join-Path $root "package.json"
+    $packageJsonText = if (Test-Path -LiteralPath $packageJsonPath) { Get-Content -Raw -LiteralPath $packageJsonPath } else { "" }
+    if ($domainTransferScriptText -match "Squarespace renewal deadline" -and
+        $domainTransferScriptText -match "Cloudflare DNS active" -and
+        $domainTransferScriptText -match "Mail MX preserved" -and
+        $domainTransferScriptText -match "Old website DNS removed" -and
+        $domainTransferScriptText -match "Do not disable Squarespace auto-renew" -and
+        $packageJsonText -match '"verify:domain-transfer"') {
+        Add-Check "Domain transfer safety gate" "OK" "Registrar transfer verifier guards renewal timing, Cloudflare DNS, mail, and old website DNS"
+    } else {
+        Add-Check "Domain transfer safety gate" "FAIL" "Domain transfer verifier is missing renewal, DNS, mail, old-record, or npm-script checks"
+    }
+} else {
+    Add-Check "Domain transfer safety gate" "FAIL" "scripts\test-domain-transfer-readiness.ps1 is missing"
+}
+
 if (Test-Path -LiteralPath $cancellationScriptPath) {
     $cancellationScriptText = Get-Content -Raw -LiteralPath $cancellationScriptPath
     if ($cancellationScriptText -match "Cloudflare nameservers" -and

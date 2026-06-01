@@ -274,6 +274,14 @@ Latest snapshot on 2026-06-01 found:
 
 Cloudflare requires the domain to be active on Cloudflare DNS before transferring registration. After DNS is active:
 
+Run the transfer safety gate before starting the Cloudflare Registrar transfer or disabling Squarespace auto-renew:
+
+```powershell
+npm run verify:domain-transfer
+```
+
+This is expected to fail until Cloudflare nameservers are active, the old TheChurchCo website DNS records are gone, mail records are preserved, and the production website/feed are live. Do not disable Squarespace auto-renew merely because the gate passes; keep it enabled until the Cloudflare Registrar transfer is visibly underway or complete.
+
 1. In Squarespace Domains, confirm DNSSEC is disabled.
 2. Unlock `fillmorechristian.org`.
 3. Request the transfer/auth/EPP code.
