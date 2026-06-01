@@ -369,6 +369,49 @@ if (-not $SkipRemote) {
             Add-Check "Staging URL: /$path" "FAIL" $_.Exception.Message
         }
     }
+
+    $optimizedStagingImages = @(
+        "images/church-exterior-1200.jpg",
+        "images/church-exterior-1200.webp",
+        "images/sanctuary-service-1200.jpg",
+        "images/sanctuary-service-1200.webp"
+    )
+    $missingOptimizedImages = New-Object System.Collections.Generic.List[string]
+    foreach ($imagePath in $optimizedStagingImages) {
+        try {
+            Invoke-WebRequest -UseBasicParsing -Uri (Join-Url $StagingBaseUrl $imagePath) -Method Head -MaximumRedirection 5 | Out-Null
+        } catch {
+            $missingOptimizedImages.Add($imagePath)
+        }
+    }
+
+    $cacheBust = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+    $forbiddenStagingImages = @("images/church-exterior.jpg", "images/sanctuary-service.png")
+    $publishedForbiddenImages = New-Object System.Collections.Generic.List[string]
+    foreach ($imagePath in $forbiddenStagingImages) {
+        try {
+            $url = (Join-Url $StagingBaseUrl $imagePath) + "?readiness=$cacheBust"
+            $response = Invoke-WebRequest -UseBasicParsing -Uri $url -Method Head -MaximumRedirection 5
+            if ($response.StatusCode -lt 400) {
+                $publishedForbiddenImages.Add($imagePath)
+            }
+        } catch {
+            if ($_.Exception.Response -and [int]$_.Exception.Response.StatusCode -ne 404) {
+                $publishedForbiddenImages.Add("$imagePath returned HTTP $([int]$_.Exception.Response.StatusCode)")
+            } elseif (-not $_.Exception.Response) {
+                $publishedForbiddenImages.Add("$imagePath check failed: $($_.Exception.Message)")
+            }
+        }
+    }
+
+    if ($missingOptimizedImages.Count -eq 0 -and $publishedForbiddenImages.Count -eq 0) {
+        Add-Check "Staging optimized images" "OK" "Optimized images are published and unused source images are not"
+    } else {
+        $details = @()
+        if ($missingOptimizedImages.Count -gt 0) { $details += "missing optimized: $($missingOptimizedImages -join ', ')" }
+        if ($publishedForbiddenImages.Count -gt 0) { $details += "source images still public: $($publishedForbiddenImages -join ', ')" }
+        Add-Check "Staging optimized images" "FAIL" ($details -join "; ")
+    }
 }
 
 $checks | Format-Table -AutoSize
