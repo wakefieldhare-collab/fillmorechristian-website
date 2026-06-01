@@ -221,6 +221,26 @@ if (Test-Path -LiteralPath $headersPath) {
     Add-Check "Cloudflare headers" "FAIL" "_headers is missing"
 }
 
+$redirectsPath = Join-Path $root "_redirects"
+if (Test-Path -LiteralPath $redirectsPath) {
+    $redirectsText = Get-Content -Raw -LiteralPath $redirectsPath
+    $redirectIssues = New-Object System.Collections.Generic.List[string]
+    if ($redirectsText -notmatch '(?m)^/podcast-category/fillmore-christian/feed/podcast/\s+/podcast-category/fillmore-christian/feed/podcast\s+301$') {
+        $redirectIssues.Add("missing canonical trailing-slash podcast feed redirect")
+    }
+    if ($redirectsText -notmatch '(?m)^/feed/\s+/podcast-category/fillmore-christian/feed/podcast\s+302$' -or $redirectsText -notmatch '(?m)^/feed\.xml\s+/podcast-category/fillmore-christian/feed/podcast\s+302$' -or $redirectsText -notmatch '(?m)^/podcast\.xml\s+/podcast-category/fillmore-christian/feed/podcast\s+302$') {
+        $redirectIssues.Add("missing podcast feed alias redirects")
+    }
+
+    if ($redirectIssues.Count -eq 0) {
+        Add-Check "Cloudflare redirects" "OK" "Pretty pages, podcast aliases, and trailing-slash feed paths are preserved"
+    } else {
+        Add-Check "Cloudflare redirects" "FAIL" ($redirectIssues -join "; ")
+    }
+} else {
+    Add-Check "Cloudflare redirects" "FAIL" "_redirects is missing"
+}
+
 $wranglerConfigPath = Join-Path $root "wrangler.toml"
 if (Test-Path -LiteralPath $wranglerConfigPath) {
     $wranglerConfig = Get-Content -Raw -LiteralPath $wranglerConfigPath

@@ -10,6 +10,7 @@
 /give/ https://givebutter.com/fillmorechristian 302
 
 # Feed aliases.
+/podcast-category/fillmore-christian/feed/podcast/ /podcast-category/fillmore-christian/feed/podcast 301
 /feed/ /podcast-category/fillmore-christian/feed/podcast 302
 /feed.xml /podcast-category/fillmore-christian/feed/podcast 302
 /podcast.xml /podcast-category/fillmore-christian/feed/podcast 302

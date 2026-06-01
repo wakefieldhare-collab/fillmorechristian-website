@@ -246,6 +246,14 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Pretty sermons redirect"; Status = "OK"; Details = "/sermons/ -> /sermons.html" })
 
+    $podcastFeedSlash = Invoke-NoRedirect -Url "$baseUrl/podcast-category/fillmore-christian/feed/podcast/"
+    Assert-Status -Response $podcastFeedSlash -Expected @(301, 302, 308) -Name "Trailing podcast feed redirect"
+    $podcastFeedSlashLocation = if ($podcastFeedSlash.Location) { $podcastFeedSlash.Location.ToString() } else { "" }
+    if ($podcastFeedSlashLocation -notin @("$baseUrl/podcast-category/fillmore-christian/feed/podcast", "/podcast-category/fillmore-christian/feed/podcast")) {
+        throw "Trailing podcast feed redirect pointed to '$($podcastFeedSlash.Location)'"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Trailing podcast feed redirect"; Status = "OK"; Details = "/podcast-category/fillmore-christian/feed/podcast/ -> canonical feed path" })
+
     $sermonsPageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "sermons.html")
     if ($sermonsPageContent -notmatch 'id="podcast-feed-url"' -or $sermonsPageContent -notmatch 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -or $sermonsPageContent -match "being moved out of TheChurchCo|during the move|ChurchCo transition|preserved podcast RSS feed path") {
         throw "Sermons page is missing the copyable RSS feed URL or still contains migration-era copy"
