@@ -77,6 +77,15 @@ Cloudflare R2 preparation scripts are included:
 .\scripts\test-podcast-media.ps1 -All
 ```
 
+The safer post-login path is the wrapper command:
+
+```powershell
+npm run migrate:cloudflare-audio -- -DryRun
+npm run migrate:cloudflare-audio -- -CreateBucket
+```
+
+It keeps the same personal GitHub owner guard as the deploy script, uploads and verifies the R2 audio backup, rewrites the podcast feeds, regenerates sermon pages, builds `dist`, and runs strict local checks. Add `-VerifyPublicMedia` after `media.fillmorechristian.org` is live.
+
 The manifest, upload dry run, and R2 verifier dry run are safe before Cloudflare authorization. Run the real upload, real R2 verification, and feed rewrite only after Cloudflare authorization, R2 bucket creation, and public media hostname setup.
 
 ### Step 3: Deploy Website To Cloudflare Pages
@@ -107,6 +116,8 @@ npm run deploy:cloudflare
 ```
 
 It builds, verifies readiness, runs the local Cloudflare Pages preflight, checks the personal GitHub remote, and then deploys `dist` to the `fillmorechristian-website` Cloudflare Pages project.
+
+After the R2 audio wrapper rewrites feeds/pages, commit and push those changes to the personal GitHub repo before deploying.
 
 To spot-check current or rewritten podcast audio URLs:
 

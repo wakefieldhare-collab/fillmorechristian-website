@@ -1,7 +1,8 @@
 {
   "scripts": {
     "build": "node scripts/build-site.mjs",
-    "deploy:cloudflare": "powershell -ExecutionPolicy Bypass -File scripts/deploy-cloudflare-pages.ps1"
+    "deploy:cloudflare": "powershell -ExecutionPolicy Bypass -File scripts/deploy-cloudflare-pages.ps1",
+    "migrate:cloudflare-audio": "powershell -ExecutionPolicy Bypass -File scripts/migrate-cloudflare-audio.ps1"
   },
   "devDependencies": {}
 }

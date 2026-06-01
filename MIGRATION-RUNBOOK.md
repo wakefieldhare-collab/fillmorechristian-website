@@ -90,6 +90,17 @@ Prepared scripts for the R2 path:
 .\scripts\rewrite-podcast-audio-urls.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
 ```
 
+After Cloudflare authentication, the guarded one-command local preparation path is:
+
+```powershell
+npm run migrate:cloudflare-audio -- -DryRun
+
+# After `npx wrangler login`, R2 bucket/custom media hostname setup, and a clean tree:
+npm run migrate:cloudflare-audio -- -CreateBucket
+```
+
+The migration command refuses the work GitHub owner, requires `https://` audio URLs, verifies Cloudflare authentication, can create the R2 bucket, uploads and hash-verifies all 70 audio objects, rewrites all three RSS feeds to `https://media.fillmorechristian.org`, regenerates episode pages/sermon archive/homepage latest-sermon links, builds `dist`, and runs strict local readiness plus the Cloudflare Pages local preflight. Use `-VerifyPublicMedia` or `-VerifyPublicMedia -VerifyAllPublicMedia` after the R2 custom hostname is live.
+
 After rewriting enclosure URLs, re-run local verification and push the RSS changes before canceling TheChurchCo.
 
 R2 preparation status on 2026-06-01:
@@ -188,6 +199,8 @@ That command refuses the work GitHub owner, requires a clean working tree by def
 ```powershell
 .\scripts\deploy-cloudflare-pages.ps1 -DryRun -AllowDirty
 ```
+
+If podcast audio has just been migrated to R2, commit and push the generated feed/page changes before running `npm run deploy:cloudflare` so the Cloudflare deployment is tied to a personal-GitHub commit.
 
 ## Cloudflare DNS Records To Preserve
 
