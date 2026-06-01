@@ -1,0 +1,18 @@
+{
+  "name": "Fillmore Christian Church",
+  "short_name": "Fillmore Christian",
+  "description": "Fillmore Christian Church in Fillmore, Missouri.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#f4efe6",
+  "theme_color": "#173247",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "64x64 192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

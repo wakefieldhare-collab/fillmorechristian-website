@@ -13,6 +13,7 @@ Static website for Fillmore Christian Church, replacing ChurchCo ($50/mo). Built
 - [x] Podcast feed export tooling added in `scripts/export-thechurchco-podcast.ps1`
 - [x] Legacy Apple Podcasts feed path preserved at `podcast-category/fillmore-christian/feed/podcast`
 - [x] Legacy WordPress-style podcast query links preserved with a Cloudflare Pages Function
+- [x] Self-hosted favicon and web app manifest added for owned browser/app branding
 - [x] Cloudflare Pages `_headers` and `_redirects` files added
 - [x] Cloudflare build output prepared with `npm run build` -> `dist`
 - [x] Migration preflight script added at `scripts/test-migration-readiness.ps1`

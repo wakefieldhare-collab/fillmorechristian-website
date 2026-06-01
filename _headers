@@ -18,6 +18,10 @@
   Content-Type: text/vcard; charset=utf-8
   Cache-Control: public, max-age=86400
 
+/site.webmanifest
+  Content-Type: application/manifest+json; charset=utf-8
+  Cache-Control: public, max-age=86400
+
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN

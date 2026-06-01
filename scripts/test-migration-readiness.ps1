@@ -165,6 +165,8 @@ $requiredFiles = @(
     "contact.vcf",
     "team.html",
     "404.html",
+    "favicon.svg",
+    "site.webmanifest",
     "css\style.css",
     "js\main.js",
     "js\sermons.js",
@@ -194,6 +196,7 @@ if (Test-Path -LiteralPath $headersPath) {
         "RSS cache control" = "Cache-Control:\s+public,\s*max-age=300"
         "Calendar content type" = "Content-Type:\s+text/calendar;\s*charset=utf-8"
         "Contact card content type" = "Content-Type:\s+text/vcard;\s*charset=utf-8"
+        "Manifest content type" = "Content-Type:\s+application/manifest\+json;\s*charset=utf-8"
         "nosniff" = "X-Content-Type-Options:\s+nosniff"
         "frame policy" = "X-Frame-Options:\s+SAMEORIGIN"
         "referrer policy" = "Referrer-Policy:\s+strict-origin-when-cross-origin"
@@ -267,6 +270,15 @@ foreach ($relativePath in $publicHtmlPages) {
     if ($html -notmatch "<link\s+rel=`"alternate`"\s+type=`"application/rss\+xml`"\s+title=`"Fillmore Christian Podcast`"\s+href=`"https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast`"") {
         $metadataFailures.Add("$relativePath missing podcast RSS autodiscovery")
     }
+    if ($html -notmatch "<link\s+rel=`"icon`"\s+href=`"favicon\.svg`"\s+type=`"image/svg\+xml`"") {
+        $metadataFailures.Add("$relativePath missing favicon")
+    }
+    if ($html -notmatch "<link\s+rel=`"manifest`"\s+href=`"site\.webmanifest`"") {
+        $metadataFailures.Add("$relativePath missing web app manifest")
+    }
+    if ($html -notmatch "<meta\s+name=`"theme-color`"\s+content=`"#173247`"") {
+        $metadataFailures.Add("$relativePath missing theme color")
+    }
     if ($html -notmatch "<meta\s+property=`"og:title`"") {
         $metadataFailures.Add("$relativePath missing og:title")
     }
@@ -285,9 +297,42 @@ foreach ($relativePath in $publicHtmlPages) {
 }
 
 if ($metadataFailures.Count -eq 0) {
-    Add-Check "Public page metadata" "OK" "$($publicHtmlPages.Count) public pages have canonical, podcast RSS, Open Graph, and Twitter metadata"
+    Add-Check "Public page metadata" "OK" "$($publicHtmlPages.Count) public pages have canonical, podcast RSS, brand icon, web app manifest, Open Graph, and Twitter metadata"
 } else {
     Add-Check "Public page metadata" "FAIL" ($metadataFailures -join "; ")
+}
+
+$brandAssetIssues = New-Object System.Collections.Generic.List[string]
+$faviconPath = Join-Path $root "favicon.svg"
+$siteManifestPath = Join-Path $root "site.webmanifest"
+if (Test-Path -LiteralPath $faviconPath) {
+    $faviconText = Get-Content -Raw -LiteralPath $faviconPath
+    if ($faviconText -notmatch "<svg\b" -or $faviconText -notmatch "#173247" -or $faviconText -notmatch "Fillmore Christian Church") {
+        $brandAssetIssues.Add("favicon.svg does not look like the Fillmore-branded SVG")
+    }
+} else {
+    $brandAssetIssues.Add("favicon.svg is missing")
+}
+
+if (Test-Path -LiteralPath $siteManifestPath) {
+    try {
+        $siteManifest = Get-Content -Raw -LiteralPath $siteManifestPath | ConvertFrom-Json
+        $manifestIconSources = @($siteManifest.icons | ForEach-Object { $_.src })
+        if ($siteManifest.name -ne "Fillmore Christian Church") { $brandAssetIssues.Add("manifest name is unexpected") }
+        if ($siteManifest.short_name -ne "Fillmore Christian") { $brandAssetIssues.Add("manifest short_name is unexpected") }
+        if ($siteManifest.theme_color -ne "#173247") { $brandAssetIssues.Add("manifest theme_color is unexpected") }
+        if ("favicon.svg" -notin $manifestIconSources) { $brandAssetIssues.Add("manifest does not reference favicon.svg") }
+    } catch {
+        $brandAssetIssues.Add("site.webmanifest is not valid JSON: $($_.Exception.Message)")
+    }
+} else {
+    $brandAssetIssues.Add("site.webmanifest is missing")
+}
+
+if ($brandAssetIssues.Count -eq 0) {
+    Add-Check "Owned brand assets" "OK" "favicon.svg and site.webmanifest are self-hosted and Fillmore-branded"
+} else {
+    Add-Check "Owned brand assets" "FAIL" ($brandAssetIssues -join "; ")
 }
 
 $contactCardPath = Join-Path $root "contact.vcf"
@@ -522,6 +567,7 @@ if ($feeds.ContainsKey($feedPaths[0])) {
 
     $missingEpisodeNavigation = New-Object System.Collections.Generic.List[string]
     $missingEpisodeStructuredData = New-Object System.Collections.Generic.List[string]
+    $missingEpisodeBrandAssets = New-Object System.Collections.Generic.List[string]
     foreach ($slug in $uniqueEpisodeSlugs) {
         $episodePagePath = Join-Path $root "episode\$slug\index.html"
         if (-not (Test-Path -LiteralPath $episodePagePath)) {
@@ -535,12 +581,18 @@ if ($feeds.ContainsKey($feedPaths[0])) {
         if ($episodeHtml -notmatch '<script\s+type="application/ld\+json">(?s).*"@type":"PodcastEpisode"' -or $episodeHtml -notmatch '"isPartOf":\{"@type":"PodcastSeries","name":"Fillmore Christian"' -or $episodeHtml -notmatch '"publisher":\{"@type":"Church","name":"Fillmore Christian Church"') {
             $missingEpisodeStructuredData.Add($slug)
         }
+        if ($episodeHtml -notmatch '<link\s+rel="icon"\s+href="../../favicon\.svg"\s+type="image/svg\+xml">' -or $episodeHtml -notmatch '<link\s+rel="manifest"\s+href="../../site\.webmanifest">' -or $episodeHtml -notmatch '<meta\s+name="theme-color"\s+content="#173247">') {
+            $missingEpisodeBrandAssets.Add($slug)
+        }
     }
     if ($missingEpisodeNavigation.Count -gt 0) {
         $episodeIssues.Add("episode navigation missing from: $($missingEpisodeNavigation -join ', ')")
     }
     if ($missingEpisodeStructuredData.Count -gt 0) {
         $episodeIssues.Add("episode structured data missing from: $($missingEpisodeStructuredData -join ', ')")
+    }
+    if ($missingEpisodeBrandAssets.Count -gt 0) {
+        $episodeIssues.Add("episode brand asset metadata missing from: $($missingEpisodeBrandAssets -join ', ')")
     }
 
     $redirectsPath = Join-Path $root "_redirects"
@@ -903,7 +955,7 @@ if (-not $SkipRemote) {
     if ($sampleEpisodePath) {
         $remotePaths += $sampleEpisodePath
     }
-    $remotePaths += @("podcast-category/fillmore-christian/feed/podcast", "events.ics", "contact.vcf", "robots.txt", "sitemap.xml")
+    $remotePaths += @("podcast-category/fillmore-christian/feed/podcast", "events.ics", "contact.vcf", "favicon.svg", "site.webmanifest", "robots.txt", "sitemap.xml")
 
     foreach ($path in $remotePaths) {
         $url = Join-Url $StagingBaseUrl $path
@@ -924,13 +976,19 @@ if (-not $SkipRemote) {
                 $hasPodcastAlternate = $response.Content -match "<link\s+rel=`"alternate`"\s+type=`"application/rss\+xml`"\s+title=`"Fillmore Christian Podcast`"\s+href=`"https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast`""
                 $hasOpenGraph = $response.Content -match "<meta\s+property=`"og:title`"" -and $response.Content -match "<meta\s+property=`"og:image`""
                 $hasTwitter = $response.Content -match "<meta\s+name=`"twitter:card`""
+                $faviconHref = if ($path -eq $sampleEpisodePath) { "../../favicon\.svg" } else { "favicon\.svg" }
+                $manifestHref = if ($path -eq $sampleEpisodePath) { "../../site\.webmanifest" } else { "site\.webmanifest" }
+                $hasBrandAssets = $response.Content -match "<link\s+rel=`"icon`"\s+href=`"$faviconHref`"\s+type=`"image/svg\+xml`"" -and
+                    $response.Content -match "<link\s+rel=`"manifest`"\s+href=`"$manifestHref`"" -and
+                    $response.Content -match "<meta\s+name=`"theme-color`"\s+content=`"#173247`""
 
-                if ($hasCanonical -and $hasPodcastAlternate -and $hasOpenGraph -and $hasTwitter) {
-                    Add-Check "Staging metadata: /$path" "OK" "Canonical, podcast RSS, Open Graph, and Twitter metadata present"
+                if ($hasCanonical -and $hasPodcastAlternate -and $hasOpenGraph -and $hasTwitter -and $hasBrandAssets) {
+                    Add-Check "Staging metadata: /$path" "OK" "Canonical, podcast RSS, brand icon, web app manifest, Open Graph, and Twitter metadata present"
                 } else {
                     $metadataDetails = @()
                     if (-not $hasCanonical) { $metadataDetails += "canonical" }
                     if (-not $hasPodcastAlternate) { $metadataDetails += "podcast RSS autodiscovery" }
+                    if (-not $hasBrandAssets) { $metadataDetails += "brand icon or web app manifest" }
                     if (-not $hasOpenGraph) { $metadataDetails += "Open Graph" }
                     if (-not $hasTwitter) { $metadataDetails += "Twitter" }
                     Add-Check "Staging metadata: /$path" "FAIL" "Missing on staging: $($metadataDetails -join ', ')"
@@ -1028,6 +1086,29 @@ if (-not $SkipRemote) {
                     Add-Check "Staging contact card" "OK" "contact.vcf is published with church email and address"
                 } else {
                     Add-Check "Staging contact card" "FAIL" "contact.vcf content was unexpected"
+                }
+            }
+
+            if ($path -eq "favicon.svg") {
+                if ($response.Content -match "<svg\b" -and $response.Content -match "#173247" -and $response.Content -match "Fillmore Christian Church") {
+                    Add-Check "Staging favicon" "OK" "favicon.svg is published"
+                } else {
+                    Add-Check "Staging favicon" "FAIL" "favicon.svg content was unexpected"
+                }
+            }
+
+            if ($path -eq "site.webmanifest") {
+                $manifestContentType = [string]$response.Headers["Content-Type"]
+                try {
+                    $remoteManifest = $response.Content | ConvertFrom-Json
+                    $remoteIconSources = @($remoteManifest.icons | ForEach-Object { $_.src })
+                    if ($manifestContentType -match "application/manifest\+json" -and $remoteManifest.name -eq "Fillmore Christian Church" -and $remoteManifest.theme_color -eq "#173247" -and "favicon.svg" -in $remoteIconSources) {
+                        Add-Check "Staging web app manifest" "OK" "site.webmanifest is published with the expected content type"
+                    } else {
+                        Add-Check "Staging web app manifest" "FAIL" "site.webmanifest fields or content type were unexpected"
+                    }
+                } catch {
+                    Add-Check "Staging web app manifest" "FAIL" "site.webmanifest was not valid JSON: $($_.Exception.Message)"
                 }
             }
         } catch {

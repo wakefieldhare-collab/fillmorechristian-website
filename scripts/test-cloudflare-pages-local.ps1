@@ -268,12 +268,36 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Contact card"; Status = "OK"; Details = "text/vcard church email and address" })
 
+    $favicon = Invoke-NoRedirect -Url "$baseUrl/favicon.svg"
+    Assert-Status -Response $favicon -Expected @(200) -Name "Favicon"
+    if ($favicon.Content -notmatch "<svg\b" -or $favicon.Content -notmatch "#173247" -or $favicon.Content -notmatch "Fillmore Christian Church") {
+        throw "Favicon did not look like the Fillmore-branded SVG"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Favicon"; Status = "OK"; Details = "Fillmore-branded SVG" })
+
+    $webManifest = Invoke-NoRedirect -Url "$baseUrl/site.webmanifest"
+    Assert-Status -Response $webManifest -Expected @(200) -Name "Web app manifest"
+    $manifestContentType = [string]$webManifest.ContentHeaders.ContentType
+    if ($manifestContentType -notmatch "application/manifest\+json") {
+        throw "Web app manifest returned unexpected content type '$manifestContentType'"
+    }
+    try {
+        $manifestJson = $webManifest.Content | ConvertFrom-Json
+        $manifestIconSources = @($manifestJson.icons | ForEach-Object { $_.src })
+        if ($manifestJson.name -ne "Fillmore Christian Church" -or $manifestJson.theme_color -ne "#173247" -or "favicon.svg" -notin $manifestIconSources) {
+            throw "Manifest fields did not match the Fillmore site branding"
+        }
+    } catch {
+        throw "Web app manifest did not parse as expected: $($_.Exception.Message)"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Web app manifest"; Status = "OK"; Details = "application/manifest+json and expected icon" })
+
     $episode = Invoke-NoRedirect -Url "$baseUrl/episode/be-ready-luke-12/"
     Assert-Status -Response $episode -Expected @(200) -Name "Static episode page"
-    if ($episode.Content -notmatch "<audio\s+controls" -or $episode.Content -notmatch "Download Audio" -or $episode.Content -notmatch "All Sermons" -or $episode.Content -notmatch 'class="episode-nav"' -or $episode.Content -notmatch "Newer Message" -or $episode.Content -notmatch "Older Message") {
-        throw "Static episode page is missing audio, download, archive navigation, or episode navigation"
+    if ($episode.Content -notmatch "<audio\s+controls" -or $episode.Content -notmatch "Download Audio" -or $episode.Content -notmatch "All Sermons" -or $episode.Content -notmatch 'class="episode-nav"' -or $episode.Content -notmatch "Newer Message" -or $episode.Content -notmatch "Older Message" -or $episode.Content -notmatch 'href="../../favicon\.svg"' -or $episode.Content -notmatch 'href="../../site\.webmanifest"') {
+        throw "Static episode page is missing audio, download, archive navigation, episode navigation, or brand asset links"
     }
-    $checks.Add([pscustomobject]@{ Check = "Static episode page"; Status = "OK"; Details = "Audio player, download, archive navigation, and episode navigation" })
+    $checks.Add([pscustomobject]@{ Check = "Static episode page"; Status = "OK"; Details = "Audio player, download, archive navigation, episode navigation, and brand asset links" })
 
     $checks | Format-Table -AutoSize
 } finally {

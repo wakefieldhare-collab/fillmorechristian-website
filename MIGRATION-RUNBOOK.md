@@ -15,6 +15,7 @@ Last updated: 2026-06-01
 - GitHub source repo for Cloudflare Pages: `https://github.com/wakefieldhare-collab/fillmorechristian-website`
 - GitHub owner guard: keep this repo under `wakefieldhare-collab`; do not move or deploy it from the work account `wake-byte`.
 - Source of truth: GitHub `main` branch in the repo above. Use `git log -1 --oneline` for the latest pushed commit.
+- Browser/app branding: self-hosted `favicon.svg` and `site.webmanifest` are published with the site.
 
 ## Migration Order
 

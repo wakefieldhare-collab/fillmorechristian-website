@@ -341,7 +341,10 @@ $olderNavMarkup
   <title>$(HtmlEncode $title) | Fillmore Christian Church</title>
   <meta name="description" content="$(HtmlEncode $summary)">
   <link rel="canonical" href="$canonicalUrl">
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../../site.webmanifest">
   <link rel="alternate" type="application/rss+xml" title="Fillmore Christian Podcast" href="https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast">
+  <meta name="theme-color" content="#173247">
   <meta property="og:title" content="$(HtmlEncode $title) | Fillmore Christian Church">
   <meta property="og:description" content="$(HtmlEncode $summary)">
   <meta property="og:type" content="article">

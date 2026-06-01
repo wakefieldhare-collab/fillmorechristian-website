@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Fillmore Christian Church">
+  <rect width="64" height="64" rx="10" fill="#173247"/>
+  <path d="M32 12v40M20 26h24" stroke="#f4efe6" stroke-width="6" stroke-linecap="round"/>
+  <path d="M16 50h32" stroke="#c07a3f" stroke-width="4" stroke-linecap="round"/>
+</svg>
