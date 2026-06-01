@@ -137,7 +137,7 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2026/02/Ezra-6.m4a" length="12138085" type="audio/m4a" />
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2026/02/Ezra-6.m4a" length="12138085" type="audio/mp4" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
       <itunes:block>no</itunes:block>
@@ -232,7 +232,7 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/11/Wake-Hosea.m4a" length="14767072" type="audio/m4a" />
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/11/Wake-Hosea.m4a" length="14767072" type="audio/mp4" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
       <itunes:block>no</itunes:block>
@@ -403,7 +403,7 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/01/Edited-Dehydration-Sunday-at-10-35-AM.m4a" length="16483565" type="audio/m4a" />
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/01/Edited-Dehydration-Sunday-at-10-35-AM.m4a" length="16483565" type="audio/mp4" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
       <itunes:block>no</itunes:block>
@@ -631,7 +631,7 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/07/Hebrews-Sunday-at-10-21-AM.m4a" length="15887505" type="audio/m4a" />
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/07/Hebrews-Sunday-at-10-21-AM.m4a" length="15887505" type="audio/mp4" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
       <itunes:block>no</itunes:block>
@@ -1086,11 +1086,11 @@
       <pubDate>Sun, 10 Jul 2022 16:18:23 +0000</pubDate>
       <dc:creator>Fillmore Christian</dc:creator>
       <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/from-disciple-to-apostles-luke-91-10/</guid>
-      <description><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Ã‚Â ]]></description>
-      <itunes:subtitle><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Ã‚Â ]]></itunes:subtitle>
-      <content:encoded><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Ã‚Â ]]></content:encoded>
-      <itunes:summary><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Ã‚Â ]]></itunes:summary>
-      <googleplay:description><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Ã‚Â ]]></googleplay:description>
+      <description><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Ãƒâ€šÃ‚Â ]]></description>
+      <itunes:subtitle><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Ãƒâ€šÃ‚Â ]]></itunes:subtitle>
+      <content:encoded><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Ãƒâ€šÃ‚Â ]]></content:encoded>
+      <itunes:summary><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Ãƒâ€šÃ‚Â ]]></itunes:summary>
+      <googleplay:description><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Ãƒâ€šÃ‚Â ]]></googleplay:description>
       <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
       <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b57eaca4d--July_10_20229kvgmmp3.mp3" length="40921572" type="audio/mpeg" />
@@ -1107,11 +1107,11 @@
       <pubDate>Sun, 03 Jul 2022 17:02:42 +0000</pubDate>
       <dc:creator>Fillmore Christian</dc:creator>
       <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/the-words-of-eternal-life/</guid>
-      <description><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, &quot;Where else can we go?Ã‚Â  Only you have the words of eternal life.]]></description>
-      <itunes:subtitle><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, "Where else can we go?Ã‚Â  Only you have the words of eternal life.]]></itunes:subtitle>
-      <content:encoded><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, &quot;Where else can we go?Ã‚Â  Only you have the words of eternal life.]]></content:encoded>
-      <itunes:summary><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, "Where else can we go?Ã‚Â  Only you have the words of eternal life.]]></itunes:summary>
-      <googleplay:description><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, &quot;Where else can we go?Ã‚Â  Only you have the words of eternal life.]]></googleplay:description>
+      <description><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, &quot;Where else can we go?Ãƒâ€šÃ‚Â  Only you have the words of eternal life.]]></description>
+      <itunes:subtitle><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, "Where else can we go?Ãƒâ€šÃ‚Â  Only you have the words of eternal life.]]></itunes:subtitle>
+      <content:encoded><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, &quot;Where else can we go?Ãƒâ€šÃ‚Â  Only you have the words of eternal life.]]></content:encoded>
+      <itunes:summary><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, "Where else can we go?Ãƒâ€šÃ‚Â  Only you have the words of eternal life.]]></itunes:summary>
+      <googleplay:description><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, &quot;Where else can we go?Ãƒâ€šÃ‚Â  Only you have the words of eternal life.]]></googleplay:description>
       <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
       <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b5822f7be--July_3_20227a9zpmp3.mp3" length="31164108" type="audio/mpeg" />
@@ -1422,11 +1422,11 @@
       <pubDate>Sun, 29 Aug 2021 17:50:29 +0000</pubDate>
       <dc:creator>Fillmore Christian</dc:creator>
       <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/put-on-the-lord-jesus-christ/</guid>
-      <description><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Ã‚Â  God is at work to make us like him but we are also called to actively work with him.Ã‚Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Ã‚Â Ã‚Â ]]></description>
-      <itunes:subtitle><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Ã‚Â  God is at work to make us like him but we are also called to actively work with him.Ã‚Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Ã‚Â Ã‚Â ]]></itunes:subtitle>
-      <content:encoded><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Ã‚Â  God is at work to make us like him but we are also called to actively work with him.Ã‚Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Ã‚Â Ã‚Â ]]></content:encoded>
-      <itunes:summary><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Ã‚Â  God is at work to make us like him but we are also called to actively work with him.Ã‚Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Ã‚Â Ã‚Â ]]></itunes:summary>
-      <googleplay:description><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Ã‚Â  God is at work to make us like him but we are also called to actively work with him.Ã‚Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Ã‚Â Ã‚Â ]]></googleplay:description>
+      <description><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Ãƒâ€šÃ‚Â  God is at work to make us like him but we are also called to actively work with him.Ãƒâ€šÃ‚Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Ãƒâ€šÃ‚Â Ãƒâ€šÃ‚Â ]]></description>
+      <itunes:subtitle><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Ãƒâ€šÃ‚Â  God is at work to make us like him but we are also called to actively work with him.Ãƒâ€šÃ‚Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Ãƒâ€šÃ‚Â Ãƒâ€šÃ‚Â ]]></itunes:subtitle>
+      <content:encoded><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Ãƒâ€šÃ‚Â  God is at work to make us like him but we are also called to actively work with him.Ãƒâ€šÃ‚Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Ãƒâ€šÃ‚Â Ãƒâ€šÃ‚Â ]]></content:encoded>
+      <itunes:summary><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Ãƒâ€šÃ‚Â  God is at work to make us like him but we are also called to actively work with him.Ãƒâ€šÃ‚Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Ãƒâ€šÃ‚Â Ãƒâ€šÃ‚Â ]]></itunes:summary>
+      <googleplay:description><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Ãƒâ€šÃ‚Â  God is at work to make us like him but we are also called to actively work with him.Ãƒâ€šÃ‚Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Ãƒâ€šÃ‚Â Ãƒâ€šÃ‚Â ]]></googleplay:description>
       <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
       <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b5abbb0c7--August_29_2021_Ken_Sermona3rbymp3.mp3" length="43388244" type="audio/mpeg" />

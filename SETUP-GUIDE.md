@@ -67,6 +67,7 @@ Cloudflare R2 preparation scripts are included:
 .\scripts\upload-podcast-audio-to-r2.ps1 -Bucket fillmore-christian-sermons -DryRun
 .\scripts\upload-podcast-audio-to-r2.ps1 -Bucket fillmore-christian-sermons
 .\scripts\rewrite-podcast-audio-urls.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
+.\scripts\test-podcast-media.ps1 -All
 ```
 
 The manifest and dry run are safe before Cloudflare authorization. Run the real upload and feed rewrite only after Cloudflare authorization, R2 bucket creation, and public media hostname setup.
@@ -87,6 +88,12 @@ npm run build
 ```
 
 The only expected warning before R2 setup is that the podcast audio enclosures still point at TheChurchCo.
+
+To spot-check current or rewritten podcast audio URLs:
+
+```powershell
+.\scripts\test-podcast-media.ps1 -SampleCount 5
+```
 
 ### Step 4: Contact Form
 

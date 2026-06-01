@@ -133,6 +133,18 @@ To verify the 2.16 GB local audio backup hashes before cancellation:
 .\scripts\test-migration-readiness.ps1 -VerifyAudioHashes
 ```
 
+To verify that podcast enclosure URLs are reachable and serving audio metadata:
+
+```powershell
+# Fast sample, useful during normal work.
+.\scripts\test-podcast-media.ps1 -SampleCount 5
+.\scripts\test-migration-readiness.ps1 -VerifyPodcastMedia
+
+# Full enclosure sweep, useful before canceling TheChurchCo or after R2 rewrite.
+.\scripts\test-podcast-media.ps1 -All
+.\scripts\test-migration-readiness.ps1 -VerifyPodcastMedia -VerifyAllPodcastMedia
+```
+
 ## Cloudflare Pages Status
 
 The repo is ready for a Cloudflare Pages static deployment. Use:

@@ -53,6 +53,15 @@ function Normalize-ItemAuthors {
     }
 }
 
+function Get-AudioContentType {
+    param([string]$Url)
+
+    $lower = $Url.ToLowerInvariant()
+    if ($lower.EndsWith(".m4a")) { return "audio/mp4" }
+    if ($lower.EndsWith(".wav")) { return "audio/wav" }
+    return "audio/mpeg"
+}
+
 function Set-PodcastArtwork {
     param(
         [System.Xml.XmlElement]$Parent,
@@ -125,6 +134,8 @@ for ($i = 0; $i -lt $items.Count; $i++) {
             $audioUrl = "https://" + $audioUrl.Substring(7)
             $enclosure.SetAttribute("url", $audioUrl)
         }
+
+        $enclosure.SetAttribute("type", (Get-AudioContentType $audioUrl))
 
         $uri = [Uri]$audioUrl
         $fileName = [System.IO.Path]::GetFileName($uri.AbsolutePath)

@@ -3,7 +3,10 @@ param(
     [string]$BuildOutputDir = "dist",
     [switch]$SkipRemote,
     [switch]$VerifyAudioHashes,
-    [switch]$RequireIndependentAudio
+    [switch]$RequireIndependentAudio,
+    [switch]$VerifyPodcastMedia,
+    [switch]$VerifyAllPodcastMedia,
+    [int]$PodcastMediaSampleCount = 5
 )
 
 $ErrorActionPreference = "Stop"
@@ -334,6 +337,26 @@ if ((Test-Path -LiteralPath $inventoryPath) -and (Test-Path -LiteralPath $audioD
     }
 } else {
     Add-Check "Podcast audio inventory" "WARN" "Inventory or audio directory not present"
+}
+
+if ($VerifyPodcastMedia) {
+    try {
+        $mediaArgs = @{
+            FeedPath = $feedPaths[0]
+            Quiet = $true
+        }
+        if ($VerifyAllPodcastMedia) {
+            $mediaArgs.All = $true
+        } else {
+            $mediaArgs.SampleCount = $PodcastMediaSampleCount
+        }
+
+        & (Join-Path $PSScriptRoot "test-podcast-media.ps1") @mediaArgs | Out-Null
+        $scope = if ($VerifyAllPodcastMedia) { "all unique enclosure URLs" } else { "$PodcastMediaSampleCount sampled enclosure URL(s)" }
+        Add-Check "Podcast media reachability" "OK" "Verified $scope"
+    } catch {
+        Add-Check "Podcast media reachability" "FAIL" $_.Exception.Message
+    }
 }
 
 if (Test-Path -LiteralPath $r2ManifestPath) {

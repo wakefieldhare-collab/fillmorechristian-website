@@ -20,6 +20,15 @@ function Normalize-SpeakerName {
     return $speaker
 }
 
+function Get-AudioContentType {
+    param([string]$Url)
+
+    $lower = $Url.ToLowerInvariant()
+    if ($lower.EndsWith(".m4a")) { return "audio/mp4" }
+    if ($lower.EndsWith(".wav")) { return "audio/wav" }
+    return "audio/mpeg"
+}
+
 function Set-PodcastArtwork {
     param(
         [System.Xml.XmlElement]$Parent,
@@ -66,6 +75,14 @@ foreach ($relativePath in $FeedPaths) {
 
     foreach ($item in @($feed.rss.channel.item)) {
         $changed += Set-PodcastArtwork $item $ArtworkUrl
+
+        if ($item.enclosure -and $item.enclosure.url) {
+            $audioType = Get-AudioContentType ([string]$item.enclosure.url)
+            if ($item.enclosure.type -ne $audioType) {
+                $item.enclosure.SetAttribute("type", $audioType)
+                $changed++
+            }
+        }
 
         foreach ($child in @($item.ChildNodes)) {
             if ($child.NodeType -ne [System.Xml.XmlNodeType]::Element) {
