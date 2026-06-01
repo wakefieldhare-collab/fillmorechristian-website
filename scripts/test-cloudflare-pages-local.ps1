@@ -271,6 +271,11 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Audio playback guard"; Status = "OK"; Details = "Starting one sermon pauses other audio players" })
 
+    if ($mainScriptContent -notmatch "aria-expanded" -or $mainScriptContent -notmatch "aria-controls" -or $mainScriptContent -notmatch "setNavigationOpen" -or $mainScriptContent -notmatch "closeDropdowns" -or $mainScriptContent -notmatch "Escape") {
+        throw "Main script is missing accessible mobile navigation state handling"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Accessible navigation"; Status = "OK"; Details = "Mobile menu exposes expanded state and keyboard close behavior" })
+
     $feed = Invoke-NoRedirect -Url "$baseUrl/podcast-category/fillmore-christian/feed/podcast"
     Assert-Status -Response $feed -Expected @(200) -Name "Podcast feed"
     $contentType = [string]$feed.ContentHeaders.ContentType

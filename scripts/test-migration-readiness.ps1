@@ -802,8 +802,19 @@ if (Test-Path -LiteralPath $sermonsPath) {
         } else {
             Add-Check "Sermon audio playback guard" "FAIL" "Main script is missing the one-at-a-time audio playback guard"
         }
+
+        if ($mainScriptText -match "aria-expanded" -and
+            $mainScriptText -match "aria-controls" -and
+            $mainScriptText -match "setNavigationOpen" -and
+            $mainScriptText -match "closeDropdowns" -and
+            $mainScriptText -match "Escape") {
+            Add-Check "Accessible navigation controls" "OK" "Mobile navigation exposes expanded state and closes from keyboard controls"
+        } else {
+            Add-Check "Accessible navigation controls" "FAIL" "Main script is missing accessible mobile navigation state handling"
+        }
     } else {
         Add-Check "Sermon audio playback guard" "FAIL" "js\main.js is missing"
+        Add-Check "Accessible navigation controls" "FAIL" "js\main.js is missing"
     }
 
     if ($sermonsHtml.Contains("description description")) {
