@@ -176,7 +176,7 @@ As of June 1, 2026, preserve at least the Mailgun MX records and these TXT recor
 
 - Add the audio file to durable hosting.
 - Add a new `<item>` entry in `podcast.xml` and in `podcast-category/fillmore-christian/feed/podcast`.
-- Run `.\scripts\normalize-podcast-metadata.ps1`, `.\scripts\render-static-episodes.ps1`, and `.\scripts\render-static-sermons.ps1`.
+- Run `.\scripts\normalize-podcast-metadata.ps1`, `.\scripts\render-static-episodes.ps1`, `.\scripts\render-static-sermons.ps1`, and `.\scripts\render-homepage-latest-sermon.ps1`.
 - Keep the sermons page pointed at the podcast feed in `js/sermons.js`.
 
 ### Adding Or Editing Events

@@ -318,6 +318,24 @@ if (Test-Path -LiteralPath $sermonsPath) {
     }
 }
 
+$homePath = Join-Path $root "index.html"
+if ($feeds.ContainsKey($feedPaths[0]) -and (Test-Path -LiteralPath $homePath)) {
+    $homeHtml = Get-Content -Raw -LiteralPath $homePath
+    $latestAudioItem = @($feeds[$feedPaths[0]].rss.channel.item | Where-Object { $_.enclosure -and $_.enclosure.url } | Select-Object -First 1)
+    $latestTitle = if ($latestAudioItem) { [string]$latestAudioItem.title } else { "" }
+    $latestAudioUrl = if ($latestAudioItem) { [string]$latestAudioItem.enclosure.url } else { "" }
+
+    if ($latestTitle -and
+        $homeHtml -match 'id="latest-sermon"' -and
+        $homeHtml -match [regex]::Escape($latestTitle) -and
+        $homeHtml -match [regex]::Escape($latestAudioUrl) -and
+        $homeHtml -match "Download Audio") {
+        Add-Check "Homepage latest sermon" "OK" "Latest audio item is featured on the homepage"
+    } else {
+        Add-Check "Homepage latest sermon" "FAIL" "Homepage latest sermon block is missing or stale"
+    }
+}
+
 $sampleEpisodePath = ""
 if ($feeds.ContainsKey($feedPaths[0])) {
     $episodeIssues = New-Object System.Collections.Generic.List[string]
@@ -727,6 +745,20 @@ if (-not $SkipRemote) {
                         Add-Check "Staging episode page" "OK" "Sample episode page has audio, download, and archive navigation"
                     } else {
                         Add-Check "Staging episode page" "FAIL" "Sample episode page is missing audio, download, or archive navigation"
+                    }
+                }
+
+                if ($path -eq "") {
+                    $latestAudioItem = if ($feeds.ContainsKey($feedPaths[0])) {
+                        @($feeds[$feedPaths[0]].rss.channel.item | Where-Object { $_.enclosure -and $_.enclosure.url } | Select-Object -First 1)
+                    } else {
+                        @()
+                    }
+                    $latestTitle = if ($latestAudioItem) { [string]$latestAudioItem.title } else { "" }
+                    if ($latestTitle -and $response.Content -match 'id="latest-sermon"' -and $response.Content -match [regex]::Escape($latestTitle) -and $response.Content -match "Download Audio") {
+                        Add-Check "Staging homepage latest sermon" "OK" "Latest audio item is featured on staging"
+                    } elseif ($latestTitle) {
+                        Add-Check "Staging homepage latest sermon" "FAIL" "Latest sermon block is missing or stale on staging"
                     }
                 }
             }
