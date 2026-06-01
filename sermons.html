@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260601-5">
+  <link rel="stylesheet" href="css/style.css?v=20260601-8">
 </head>
 <body>
 
@@ -65,11 +65,19 @@
         <div>
           <p class="eyebrow">Podcast archive</p>
           <h2>Messages you can revisit anytime.</h2>
-          <p>The sermon archive loads from the preserved podcast RSS feed path so Apple Podcasts and existing subscribers keep working during the move.</p>
+          <p>Listen here, subscribe in your podcast app, or use the RSS feed directly to follow new sermon audio.</p>
           <div class="podcast-buttons">
             <a href="https://podcasts.apple.com/us/podcast/fillmore-christian/id1063845554" class="btn btn-outline" target="_blank" rel="noopener">Apple Podcasts</a>
             <a href="https://open.spotify.com/search/Fillmore%20Christian%20podcast" class="btn btn-outline" target="_blank" rel="noopener">Spotify</a>
             <a href="podcast-category/fillmore-christian/feed/podcast" class="btn btn-outline" target="_blank" rel="noopener">RSS Feed</a>
+          </div>
+          <div class="podcast-feed-copy">
+            <label for="podcast-feed-url">Podcast RSS feed</label>
+            <div class="copy-field">
+              <input id="podcast-feed-url" type="text" value="https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast" readonly>
+              <button class="copy-button" type="button" data-copy-value="https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast" data-copy-status-target="podcast-copy-status">Copy</button>
+            </div>
+            <p id="podcast-copy-status" class="copy-status" aria-live="polite">Use this feed URL in any podcast app that supports RSS subscriptions.</p>
           </div>
         </div>
       </div>
@@ -579,7 +587,7 @@
     </div>
   </footer>
 
-  <script src="js/main.js?v=20260601-5"></script>
+  <script src="js/main.js?v=20260601-8"></script>
   <script src="js/sermons.js?v=20260601-8"></script>
 </body>
 </html>

@@ -302,6 +302,22 @@ if ($metadataFailures.Count -eq 0) {
     Add-Check "Public page metadata" "FAIL" ($metadataFailures -join "; ")
 }
 
+$publicCopyIssues = New-Object System.Collections.Generic.List[string]
+foreach ($relativePath in @("index.html", "sermons.html", "404.html")) {
+    $htmlPath = Join-Path $root $relativePath
+    if (-not (Test-Path -LiteralPath $htmlPath)) { continue }
+
+    $html = Get-Content -Raw -LiteralPath $htmlPath
+    if ($html -match "being moved out of TheChurchCo|during the move|ChurchCo transition|preserved podcast RSS feed path") {
+        $publicCopyIssues.Add("$relativePath still has migration-era public copy")
+    }
+}
+if ($publicCopyIssues.Count -eq 0) {
+    Add-Check "Public website copy" "OK" "Home, sermons, and 404 pages read as stable public pages"
+} else {
+    Add-Check "Public website copy" "FAIL" ($publicCopyIssues -join "; ")
+}
+
 $brandAssetIssues = New-Object System.Collections.Generic.List[string]
 $faviconPath = Join-Path $root "favicon.svg"
 $siteManifestPath = Join-Path $root "site.webmanifest"
@@ -506,6 +522,13 @@ if (Test-Path -LiteralPath $sermonsPath) {
         Add-Check "Sermon search controls" "OK" "Archive page includes search and clear controls"
     } else {
         Add-Check "Sermon search controls" "FAIL" "Archive page is missing #sermon-search or #sermon-clear"
+    }
+
+    $expectedFeedUrl = "https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast"
+    if ($sermonsHtml -match 'id="podcast-feed-url"' -and $sermonsHtml -match 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -and $sermonsHtml -match [regex]::Escape($expectedFeedUrl)) {
+        Add-Check "Podcast subscribe controls" "OK" "Archive page exposes a copyable canonical RSS feed URL"
+    } else {
+        Add-Check "Podcast subscribe controls" "FAIL" "Archive page is missing the copyable canonical RSS feed URL"
     }
 
     $downloadLinks = ([regex]::Matches($sermonsHtml, 'class="sermon-download"')).Count

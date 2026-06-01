@@ -60,4 +60,71 @@ document.addEventListener('DOMContentLoaded', function() {
         '&body=' + encodeURIComponent(body);
     });
   });
+
+  document.querySelectorAll('[data-copy-value]').forEach(function(button) {
+    button.addEventListener('click', function() {
+      const text = button.getAttribute('data-copy-value') || '';
+      const statusId = button.getAttribute('data-copy-status-target');
+      const status = statusId ? document.getElementById(statusId) : null;
+
+      copyText(text).then(function() {
+        if (status) status.textContent = 'RSS feed URL copied.';
+        button.textContent = 'Copied';
+        window.setTimeout(function() {
+          button.textContent = 'Copy';
+        }, 1800);
+      }).catch(function() {
+        const field = button.closest('.copy-field');
+        const input = field ? field.querySelector('input') : null;
+        if (input) {
+          input.focus();
+          input.select();
+          if (status) status.textContent = 'RSS feed URL selected. Press Ctrl+C to copy it.';
+          button.textContent = 'Selected';
+          window.setTimeout(function() {
+            button.textContent = 'Copy';
+          }, 1800);
+        } else if (status) {
+          status.textContent = 'Copy failed. Select the feed URL and copy it manually.';
+        }
+      });
+    });
+  });
 });
+
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text).catch(function() {
+      return fallbackCopyText(text);
+    });
+  }
+
+  return fallbackCopyText(text);
+}
+
+function fallbackCopyText(text) {
+  return new Promise(function(resolve, reject) {
+    const input = document.createElement('textarea');
+    input.value = text;
+    input.setAttribute('readonly', '');
+    input.style.position = 'fixed';
+    input.style.top = '0';
+    input.style.left = '0';
+    input.style.opacity = '0';
+    document.body.appendChild(input);
+    input.focus();
+    input.select();
+
+    try {
+      if (document.execCommand('copy')) {
+        resolve();
+      } else {
+        reject(new Error('copy command failed'));
+      }
+    } catch (err) {
+      reject(err);
+    } finally {
+      document.body.removeChild(input);
+    }
+  });
+}
