@@ -111,7 +111,8 @@ if ($DryRun) {
         }
         if ($VerifyPublicMedia) {
             $scope = if ($VerifyAllPublicMedia) { "all public podcast media URLs" } else { "$PodcastMediaSampleCount sampled public podcast media URL(s)" }
-            Write-Host "Dry run: would verify $scope after the feed rewrite."
+            Write-Host "Dry run: would verify $scope from the R2 public URL manifest before rewriting the feed."
+            Write-Host "Dry run: would verify $scope again from the rewritten podcast feed."
         }
     } finally {
         if (Test-Path -LiteralPath $tempManifestPath) {
@@ -137,6 +138,16 @@ if (-not $SkipUpload) {
 
 if (-not $SkipR2Verify) {
     & (Join-Path $PSScriptRoot "test-r2-audio-upload.ps1") -Bucket $Bucket -ManifestPath $manifestPath -All -VerifyHashes
+}
+
+if ($VerifyPublicMedia) {
+    $publicAudioArgs = @("-ManifestPath", $manifestPath, "-TimeoutSec", "20")
+    if ($VerifyAllPublicMedia) {
+        $publicAudioArgs += "-All"
+    } else {
+        $publicAudioArgs += @("-SampleCount", "$PodcastMediaSampleCount")
+    }
+    & (Join-Path $PSScriptRoot "test-r2-public-audio.ps1") @publicAudioArgs
 }
 
 & (Join-Path $PSScriptRoot "rewrite-podcast-audio-urls.ps1") -BaseAudioUrl $BaseAudioUrl -R2ManifestPath $manifestPath

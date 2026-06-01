@@ -519,6 +519,8 @@ if (Test-Path -LiteralPath $deployScriptPath) {
 }
 
 $cancellationScriptPath = Join-Path $root "scripts\test-thechurchco-cancellation-readiness.ps1"
+$audioMigrationScriptPath = Join-Path $root "scripts\migrate-cloudflare-audio.ps1"
+$publicAudioScriptPath = Join-Path $root "scripts\test-r2-public-audio.ps1"
 if (Test-Path -LiteralPath $cancellationScriptPath) {
     $cancellationScriptText = Get-Content -Raw -LiteralPath $cancellationScriptPath
     if ($cancellationScriptText -match "Cloudflare nameservers" -and
@@ -533,6 +535,23 @@ if (Test-Path -LiteralPath $cancellationScriptPath) {
     }
 } else {
     Add-Check "TheChurchCo cancellation gate" "FAIL" "scripts\test-thechurchco-cancellation-readiness.ps1 is missing"
+}
+
+if ((Test-Path -LiteralPath $audioMigrationScriptPath) -and (Test-Path -LiteralPath $publicAudioScriptPath)) {
+    $audioMigrationScriptText = Get-Content -Raw -LiteralPath $audioMigrationScriptPath
+    $publicAudioScriptText = Get-Content -Raw -LiteralPath $publicAudioScriptPath
+    if ($audioMigrationScriptText -match "test-r2-public-audio\.ps1" -and
+        $audioMigrationScriptText -match "VerifyPublicMedia" -and
+        $audioMigrationScriptText.IndexOf("test-r2-public-audio.ps1") -lt $audioMigrationScriptText.IndexOf("rewrite-podcast-audio-urls.ps1") -and
+        $publicAudioScriptText -match "PublicUrl" -and
+        $publicAudioScriptText -match "Content-Length" -and
+        $publicAudioScriptText -match "Content-Type") {
+        Add-Check "R2 public audio preflight" "OK" "Audio migration verifies public R2 URLs before rewriting podcast feeds"
+    } else {
+        Add-Check "R2 public audio preflight" "FAIL" "Audio migration is missing the public URL preflight before feed rewrite"
+    }
+} else {
+    Add-Check "R2 public audio preflight" "FAIL" "scripts\migrate-cloudflare-audio.ps1 or scripts\test-r2-public-audio.ps1 is missing"
 }
 
 $feedPaths = @(

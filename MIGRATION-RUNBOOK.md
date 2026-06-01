@@ -87,7 +87,11 @@ Prepared scripts for the R2 path:
 .\scripts\test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -SampleCount 5
 .\scripts\test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -VerifyHashes
 
-# After the bucket is reachable through the public hostname:
+# After the bucket is reachable through the public hostname, but before rewriting RSS:
+.\scripts\test-r2-public-audio.ps1 -SampleCount 5
+.\scripts\test-r2-public-audio.ps1 -All
+
+# After the public hostname is verified:
 .\scripts\rewrite-podcast-audio-urls.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
 ```
 
@@ -100,7 +104,7 @@ npm run migrate:cloudflare-audio -- -DryRun
 npm run migrate:cloudflare-audio -- -CreateBucket
 ```
 
-The migration command refuses the work GitHub owner, requires `https://` audio URLs, verifies Cloudflare authentication, can create the R2 bucket, uploads and hash-verifies all 70 audio objects, rewrites all three RSS feeds to `https://media.fillmorechristian.org`, regenerates episode pages/sermon archive/homepage latest-sermon links, builds `dist`, and runs strict local readiness plus the Cloudflare Pages local preflight. Use `-VerifyPublicMedia` or `-VerifyPublicMedia -VerifyAllPublicMedia` after the R2 custom hostname is live.
+The migration command refuses the work GitHub owner, requires `https://` audio URLs, verifies Cloudflare authentication, can create the R2 bucket, uploads and hash-verifies all 70 audio objects, verifies the R2 public URLs before rewriting when `-VerifyPublicMedia` is used, rewrites all three RSS feeds to `https://media.fillmorechristian.org`, regenerates episode pages/sermon archive/homepage latest-sermon links, builds `dist`, and runs strict local readiness plus the Cloudflare Pages local preflight. Use `-VerifyPublicMedia` or `-VerifyPublicMedia -VerifyAllPublicMedia` after the R2 custom hostname is live.
 
 After rewriting enclosure URLs, re-run local verification and push the RSS changes before canceling TheChurchCo.
 
@@ -110,6 +114,7 @@ R2 preparation status on 2026-06-01:
 - The manifest totals 2,315,228,157 bytes and includes the intended `https://media.fillmorechristian.org/...` public URLs.
 - The upload script supports `-DryRun`, uses either `wrangler` or `npx wrangler`, and reads from this manifest so the real upload follows the same object keys.
 - `scripts/test-r2-audio-upload.ps1` can verify sampled or full R2 downloads against the manifest before TheChurchCo is canceled.
+- `scripts/test-r2-public-audio.ps1` can verify the public `media.fillmorechristian.org` URLs from the manifest before the RSS feeds are rewritten.
 
 Podcast metadata cleanup:
 
