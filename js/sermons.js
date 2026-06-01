@@ -34,10 +34,7 @@ async function loadFromRSS(container) {
   container.innerHTML = '<div class="sermons-loading"><p>Loading sermons...</p></div>';
 
   try {
-    const response = await fetch(resolveSiteUrl(PODCAST_RSS_URL));
-    if (!response.ok) throw new Error('RSS request failed: ' + response.status);
-
-    const text = await response.text();
+    const text = await getText(resolveSiteUrl(PODCAST_RSS_URL));
     const parser = new DOMParser();
     const xml = parser.parseFromString(text, 'text/xml');
     const items = Array.from(xml.querySelectorAll('item'));
@@ -143,6 +140,32 @@ function resolveSiteUrl(path) {
     ? pagePath
     : pagePath.substring(0, pagePath.lastIndexOf('/') + 1);
   return new URL(path, window.location.origin + basePath).toString();
+}
+
+function getText(url) {
+  if (typeof window.fetch === 'function') {
+    return window.fetch(url).then(function(response) {
+      if (!response.ok) throw new Error('RSS request failed: ' + response.status);
+      return response.text();
+    });
+  }
+
+  return new Promise(function(resolve, reject) {
+    const request = new XMLHttpRequest();
+    request.open('GET', url, true);
+    request.onreadystatechange = function() {
+      if (request.readyState !== 4) return;
+      if (request.status >= 200 && request.status < 300) {
+        resolve(request.responseText);
+      } else {
+        reject(new Error('RSS request failed: ' + request.status));
+      }
+    };
+    request.onerror = function() {
+      reject(new Error('RSS request failed.'));
+    };
+    request.send();
+  });
 }
 
 function getItunesAuthor(item) {
