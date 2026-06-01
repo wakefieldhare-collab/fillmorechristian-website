@@ -1,8 +1,8 @@
 ﻿# Cloudflare DNS Cutover Plan for fillmorechristian.org
 
-Generated: 2026-06-01 10:58:08 -05:00
+Generated: 2026-06-01 14:01:56 -05:00
 
-Source snapshot: `C:\Users\wakef\Documents\AI-Projects\fcc-website\exports\dns\fillmorechristian.org-cloudflare-preserve-records.csv`
+Source snapshot: `C:\Users\wakef\Documents\AI-Projects\fcc-website\exports\dns\fillmorechristian.org-20260601-100255-records.csv`
 
 ## Import/Preserve Before Nameserver Change
 
@@ -22,6 +22,8 @@ These records intentionally exclude the old TheChurchCo website records. They pr
 
 Do not recreate these old website records in Cloudflare:
 
+- A `fillmorechristian.org` -> `77.83.141.16`
+- CNAME `www.fillmorechristian.org` -> `ssl.thechurchco.com`
 
 Instead, let Cloudflare Pages add or verify custom domains for:
 

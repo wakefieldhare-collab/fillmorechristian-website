@@ -1127,6 +1127,11 @@ if ((Test-Path -LiteralPath $dnsPreservePath) -and (Test-Path -LiteralPath $dnsZ
         $dnsIssues.Add("zone file does not contain expected mail records")
     }
 
+    $dnsPlanText = Get-Content -Raw -LiteralPath $dnsPlanPath
+    if ($dnsPlanText -notmatch "A ``fillmorechristian\.org``.*77\.83\.141\.16" -or $dnsPlanText -notmatch "CNAME ``www\.fillmorechristian\.org``.*ssl\.thechurchco\.com") {
+        $dnsIssues.Add("cutover plan does not explicitly list old website records to replace")
+    }
+
     if ($dnsIssues.Count -eq 0) {
         Add-Check "Cloudflare DNS cutover artifacts" "OK" "$($dnsRows.Count) preserve records cover mail and verification without old website records"
     } else {

@@ -13,6 +13,7 @@ New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
 
 if (-not $SnapshotPath) {
     $snapshot = Get-ChildItem -LiteralPath $outputDir -Filter "$Domain-*-records.csv" |
+        Where-Object { $_.Name -match "^$([regex]::Escape($Domain))-\d{8}-\d{6}-records\.csv$" } |
         Sort-Object LastWriteTime -Descending |
         Select-Object -First 1
     if (-not $snapshot) {
@@ -67,6 +68,10 @@ $oldWebsiteRecords = @(
         ($_.Name -eq "www.$Domain" -and $_.Type -eq "CNAME")
     } | Sort-Object Name, Type, Value
 )
+
+if ($oldWebsiteRecords.Count -eq 0) {
+    throw "DNS snapshot has no old website records to exclude. Use a full export from scripts\export-dns-snapshot.ps1, not the Cloudflare preserve CSV."
+}
 
 $preserveRecords = @(
     $records | Where-Object {
