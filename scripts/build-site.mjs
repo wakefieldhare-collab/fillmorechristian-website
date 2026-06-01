@@ -39,6 +39,7 @@ const publishImagePaths = [
   "church-exterior-1200.jpg",
   "church-exterior-1200.webp",
   "fcc-logo.png",
+  "fcc-logo-mark.png",
   "podcast-cover.jpg",
   "sanctuary-service-1200.jpg",
   "sanctuary-service-1200.webp",

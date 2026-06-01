@@ -368,8 +368,11 @@ foreach ($relativePath in $publicHtmlPages) {
     if ($html -notmatch "<link\s+rel=`"icon`"\s+href=`"favicon\.svg`"\s+type=`"image/svg\+xml`"") {
         $metadataFailures.Add("$relativePath missing favicon")
     }
-    if ($html -notmatch '<img\s+src="images/fcc-logo\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">') {
-        $metadataFailures.Add("$relativePath missing official FCC navigation logo")
+    if ($html -notmatch '<img\s+src="images/fcc-logo-mark\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">') {
+        $metadataFailures.Add("$relativePath missing compact FCC navigation mark")
+    }
+    if ($relativePath -eq "index.html" -and $html -notmatch '<img\s+src="images/fcc-logo\.png"\s+alt="Fillmore Christian Church"\s+class="hero-logo"\s+width="2048"\s+height="2048"\s+decoding="async">') {
+        $metadataFailures.Add("index.html missing official full FCC hero logo")
     }
     if ($relativePath -eq "podcast.html") {
         if ($html -notmatch '<a\s+href="podcast\.html"\s+class="active">Podcast</a>') {
@@ -408,7 +411,7 @@ foreach ($relativePath in $publicHtmlPages) {
 }
 
 if ($metadataFailures.Count -eq 0) {
-    Add-Check "Public page metadata" "OK" "$($publicHtmlPages.Count) public pages have canonical, podcast RSS, official nav logo, brand icon, web app manifest, Open Graph, and Twitter metadata"
+    Add-Check "Public page metadata" "OK" "$($publicHtmlPages.Count) public pages have canonical, podcast RSS, FCC brand assets, brand icon, web app manifest, Open Graph, and Twitter metadata"
 } else {
     Add-Check "Public page metadata" "FAIL" ($metadataFailures -join "; ")
 }
@@ -447,15 +450,24 @@ if (Test-Path -LiteralPath $homeHtmlPath) {
 }
 
 $brandAssetIssues = New-Object System.Collections.Generic.List[string]
-$navLogoPath = Join-Path $root "images\fcc-logo.png"
+$fullLogoPath = Join-Path $root "images\fcc-logo.png"
+$navLogoPath = Join-Path $root "images\fcc-logo-mark.png"
 $faviconPath = Join-Path $root "favicon.svg"
 $siteManifestPath = Join-Path $root "site.webmanifest"
-if (Test-Path -LiteralPath $navLogoPath) {
-    if ((Get-Item -LiteralPath $navLogoPath).Length -lt 10000) {
-        $brandAssetIssues.Add("images/fcc-logo.png is unexpectedly small")
+if (Test-Path -LiteralPath $fullLogoPath) {
+    if ((Get-Item -LiteralPath $fullLogoPath).Length -lt 100000) {
+        $brandAssetIssues.Add("images/fcc-logo.png is unexpectedly small for the official full logo")
     }
 } else {
     $brandAssetIssues.Add("images/fcc-logo.png is missing")
+}
+
+if (Test-Path -LiteralPath $navLogoPath) {
+    if ((Get-Item -LiteralPath $navLogoPath).Length -lt 10000) {
+        $brandAssetIssues.Add("images/fcc-logo-mark.png is unexpectedly small")
+    }
+} else {
+    $brandAssetIssues.Add("images/fcc-logo-mark.png is missing")
 }
 
 if (Test-Path -LiteralPath $faviconPath) {
@@ -483,7 +495,7 @@ if (Test-Path -LiteralPath $siteManifestPath) {
 }
 
 if ($brandAssetIssues.Count -eq 0) {
-    Add-Check "Owned brand assets" "OK" "FCC logo, favicon.svg, and site.webmanifest are self-hosted and Fillmore-branded"
+    Add-Check "Owned brand assets" "OK" "Official FCC logo, compact navigation mark, favicon.svg, and site.webmanifest are self-hosted and Fillmore-branded"
 } else {
     Add-Check "Owned brand assets" "FAIL" ($brandAssetIssues -join "; ")
 }
@@ -1081,7 +1093,7 @@ if ($feeds.ContainsKey($feedPaths[0])) {
         if ($episodeHtml -notmatch '<script\s+type="application/ld\+json">(?s).*"@type":"PodcastEpisode"' -or $episodeHtml -notmatch '"isPartOf":\{"@type":"PodcastSeries","name":"Fillmore Christian"' -or $episodeHtml -notmatch '"publisher":\{"@type":"Church","name":"Fillmore Christian Church"') {
             $missingEpisodeStructuredData.Add($slug)
         }
-        if ($episodeHtml -notmatch '<link\s+rel="icon"\s+href="../../favicon\.svg"\s+type="image/svg\+xml">' -or $episodeHtml -notmatch '<img\s+src="../../images/fcc-logo\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or $episodeHtml -notmatch '<a\s+href="../../podcast\.html">Podcast</a>' -or $episodeHtml -notmatch '<link\s+rel="manifest"\s+href="../../site\.webmanifest">' -or $episodeHtml -notmatch '<meta\s+name="theme-color"\s+content="#173247">') {
+        if ($episodeHtml -notmatch '<link\s+rel="icon"\s+href="../../favicon\.svg"\s+type="image/svg\+xml">' -or $episodeHtml -notmatch '<img\s+src="../../images/fcc-logo-mark\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or $episodeHtml -notmatch '<a\s+href="../../podcast\.html">Podcast</a>' -or $episodeHtml -notmatch '<link\s+rel="manifest"\s+href="../../site\.webmanifest">' -or $episodeHtml -notmatch '<meta\s+name="theme-color"\s+content="#173247">') {
             $missingEpisodeBrandAssets.Add($slug)
         }
         $expectedEpisodeUrl = "https://www.fillmorechristian.org/episode/$slug/"

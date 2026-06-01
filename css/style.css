@@ -243,6 +243,14 @@ h4 { font-size: 1.25rem; }
   color: var(--color-white);
 }
 
+.hero-logo {
+  display: block;
+  width: min(260px, 52vw);
+  height: auto;
+  margin: 0 0 1.25rem;
+  filter: drop-shadow(0 12px 28px rgba(0,0,0,0.36));
+}
+
 .hero h1 {
   margin-bottom: 0.5em;
   font-size: 2.8rem;
@@ -1492,6 +1500,11 @@ h4 { font-size: 1.25rem; }
   .nav-brand-logo {
     width: 40px;
     height: 40px;
+  }
+
+  .hero-logo {
+    width: min(210px, 58vw);
+    margin-bottom: 1rem;
   }
 
   .nav-brand-name {

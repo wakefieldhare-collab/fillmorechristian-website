@@ -335,13 +335,14 @@ try {
     $checks.Add([pscustomobject]@{ Check = "Calendar subscribe controls"; Status = "OK"; Details = "Published output includes copyable canonical iCal feed URL" })
 
     $homePageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "index.html")
-    if ($homePageContent -notmatch '<img\s+src="images/fcc-logo\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or
+    if ($homePageContent -notmatch '<img\s+src="images/fcc-logo-mark\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or
+        $homePageContent -notmatch '<img\s+src="images/fcc-logo\.png"\s+alt="Fillmore Christian Church"\s+class="hero-logo"\s+width="2048"\s+height="2048"\s+decoding="async">' -or
         $homePageContent -notmatch '<a\s+href="podcast\.html">Podcast</a>' -or
         $homePageContent -notmatch '<a\s+href="podcast\.html"\s+class="btn btn-outline">Subscribe to Podcast</a>' -or
         $homePageContent -notmatch 'nav-brand-name">Fillmore Christian Church') {
-        throw "Built home page is missing the official FCC navigation logo, podcast links, or text"
+        throw "Built home page is missing the official FCC hero logo, compact navigation mark, podcast links, or text"
     }
-    $checks.Add([pscustomobject]@{ Check = "Navigation brand"; Status = "OK"; Details = "Published output includes the official FCC logo, podcast links, and navigation text" })
+    $checks.Add([pscustomobject]@{ Check = "Navigation brand"; Status = "OK"; Details = "Published output includes the official FCC hero logo, compact navigation mark, podcast links, and navigation text" })
 
     if ($homePageContent -notmatch '<source\s+src="/media/' -or $homePageContent -match '<source\s+src="https://www\.fillmorechristian\.org/media/') {
         throw "Built home page does not use same-origin media URLs for audio playback"
