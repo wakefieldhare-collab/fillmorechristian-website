@@ -6,6 +6,7 @@ param(
     [switch]$SkipR2Verify,
     [switch]$VerifyPublicMedia,
     [switch]$VerifyAllPublicMedia,
+    [switch]$SkipPublicMediaVerify,
     [int]$PodcastMediaSampleCount = 5,
     [switch]$DryRun
 )
@@ -97,6 +98,14 @@ if ($PodcastMediaSampleCount -lt 1) {
     throw "PodcastMediaSampleCount must be at least 1."
 }
 
+$verifyPublicMediaBeforeRewrite = -not $SkipPublicMediaVerify
+if ($VerifyPublicMedia) {
+    $verifyPublicMediaBeforeRewrite = $true
+}
+if ($SkipPublicMediaVerify -and ($VerifyPublicMedia -or $VerifyAllPublicMedia)) {
+    throw "SkipPublicMediaVerify cannot be combined with VerifyPublicMedia or VerifyAllPublicMedia."
+}
+
 if ($DryRun) {
     $tempManifestPath = Join-Path ([System.IO.Path]::GetTempPath()) ("fcc-r2-audio-manifest-" + [guid]::NewGuid().ToString("N") + ".csv")
     try {
@@ -109,10 +118,12 @@ if ($DryRun) {
         if ($CreateBucket) {
             Write-Host "Dry run: would create R2 bucket if needed with wrangler r2 bucket create $Bucket."
         }
-        if ($VerifyPublicMedia) {
+        if ($verifyPublicMediaBeforeRewrite) {
             $scope = if ($VerifyAllPublicMedia) { "all public podcast media URLs" } else { "$PodcastMediaSampleCount sampled public podcast media URL(s)" }
             Write-Host "Dry run: would verify $scope from the R2 public URL manifest before rewriting the feed."
             Write-Host "Dry run: would verify $scope again from the rewritten podcast feed."
+        } else {
+            Write-Host "Dry run: would skip public media URL verification because SkipPublicMediaVerify was supplied."
         }
     } finally {
         if (Test-Path -LiteralPath $tempManifestPath) {
@@ -140,7 +151,7 @@ if (-not $SkipR2Verify) {
     & (Join-Path $PSScriptRoot "test-r2-audio-upload.ps1") -Bucket $Bucket -ManifestPath $manifestPath -All -VerifyHashes
 }
 
-if ($VerifyPublicMedia) {
+if ($verifyPublicMediaBeforeRewrite) {
     $publicAudioArgs = @("-ManifestPath", $manifestPath, "-TimeoutSec", "20")
     if ($VerifyAllPublicMedia) {
         $publicAudioArgs += "-All"
@@ -166,7 +177,7 @@ try {
 }
 
 $readinessArgs = @("-SkipRemote", "-RequireIndependentAudio")
-if ($VerifyPublicMedia) {
+if ($verifyPublicMediaBeforeRewrite) {
     $readinessArgs += "-VerifyPodcastMedia"
     if ($VerifyAllPublicMedia) {
         $readinessArgs += "-VerifyAllPodcastMedia"
@@ -178,4 +189,4 @@ if ($VerifyPublicMedia) {
 & (Join-Path $PSScriptRoot "test-migration-readiness.ps1") @readinessArgs
 & (Join-Path $PSScriptRoot "test-cloudflare-pages-local.ps1")
 
-Write-Host "Cloudflare audio migration prepared locally. Review, commit, push, then run npm run deploy:cloudflare."
+Write-Host "Cloudflare audio migration prepared locally. Public audio URLs were verified before RSS rewrite unless SkipPublicMediaVerify was supplied. Review, commit, push, then run npm run deploy:cloudflare."

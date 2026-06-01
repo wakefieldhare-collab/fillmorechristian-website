@@ -569,13 +569,15 @@ if ((Test-Path -LiteralPath $audioMigrationScriptPath) -and (Test-Path -LiteralP
     $publicAudioScriptText = Get-Content -Raw -LiteralPath $publicAudioScriptPath
     if ($audioMigrationScriptText -match "test-r2-public-audio\.ps1" -and
         $audioMigrationScriptText -match "VerifyPublicMedia" -and
+        $audioMigrationScriptText -match "SkipPublicMediaVerify" -and
+        $audioMigrationScriptText -match '\$verifyPublicMediaBeforeRewrite\s*=\s*-not\s+\$SkipPublicMediaVerify' -and
         $audioMigrationScriptText.IndexOf("test-r2-public-audio.ps1") -lt $audioMigrationScriptText.IndexOf("rewrite-podcast-audio-urls.ps1") -and
         $publicAudioScriptText -match "PublicUrl" -and
         $publicAudioScriptText -match "Content-Length" -and
         $publicAudioScriptText -match "Content-Type") {
-        Add-Check "R2 public audio preflight" "OK" "Audio migration verifies public R2 URLs before rewriting podcast feeds"
+        Add-Check "R2 public audio preflight" "OK" "Audio migration verifies public R2 URLs by default before rewriting podcast feeds"
     } else {
-        Add-Check "R2 public audio preflight" "FAIL" "Audio migration is missing the public URL preflight before feed rewrite"
+        Add-Check "R2 public audio preflight" "FAIL" "Audio migration is missing the default public URL preflight before feed rewrite"
     }
 } else {
     Add-Check "R2 public audio preflight" "FAIL" "scripts\migrate-cloudflare-audio.ps1 or scripts\test-r2-public-audio.ps1 is missing"

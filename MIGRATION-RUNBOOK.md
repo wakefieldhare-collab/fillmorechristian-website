@@ -104,7 +104,7 @@ npm run migrate:cloudflare-audio -- -DryRun
 npm run migrate:cloudflare-audio -- -CreateBucket
 ```
 
-The migration command refuses the work GitHub owner, requires `https://` audio URLs, verifies Cloudflare authentication, can create the R2 bucket, uploads and hash-verifies all 70 audio objects, verifies the R2 public URLs before rewriting when `-VerifyPublicMedia` is used, rewrites all three RSS feeds to `https://media.fillmorechristian.org`, regenerates episode pages/sermon archive/homepage latest-sermon links, builds `dist`, and runs strict local readiness plus the Cloudflare Pages local preflight. Use `-VerifyPublicMedia` or `-VerifyPublicMedia -VerifyAllPublicMedia` after the R2 custom hostname is live.
+The migration command refuses the work GitHub owner, requires `https://` audio URLs, verifies Cloudflare authentication, can create the R2 bucket, uploads and hash-verifies all 70 audio objects, verifies sampled R2 public URLs by default before rewriting the podcast feeds, rewrites all three RSS feeds to `https://media.fillmorechristian.org`, regenerates episode pages/sermon archive/homepage latest-sermon links, builds `dist`, and runs strict local readiness plus the Cloudflare Pages local preflight. Use `-VerifyAllPublicMedia` before cancellation for a full public media sweep. `-SkipPublicMediaVerify` exists only as an explicit escape hatch and should not be used before canceling TheChurchCo.
 
 After rewriting enclosure URLs, re-run local verification and push the RSS changes before canceling TheChurchCo.
 
@@ -114,7 +114,7 @@ R2 preparation status on 2026-06-01:
 - The manifest totals 2,315,228,157 bytes and includes the intended `https://media.fillmorechristian.org/...` public URLs.
 - The upload script supports `-DryRun`, uses either `wrangler` or `npx wrangler`, and reads from this manifest so the real upload follows the same object keys.
 - `scripts/test-r2-audio-upload.ps1` can verify sampled or full R2 downloads against the manifest before TheChurchCo is canceled.
-- `scripts/test-r2-public-audio.ps1` can verify the public `media.fillmorechristian.org` URLs from the manifest before the RSS feeds are rewritten.
+- `scripts/test-r2-public-audio.ps1` can verify the public `media.fillmorechristian.org` URLs from the manifest before the RSS feeds are rewritten, and the guarded migration command runs that public preflight by default.
 
 Podcast metadata cleanup:
 
