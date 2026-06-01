@@ -257,6 +257,21 @@ if ($feeds.ContainsKey($feedPaths[0])) {
     } else {
         Add-Check "Podcast author cleanup" "FAIL" "$($feedAuthorArtifacts.Count) old platform-account author field(s) remain"
     }
+
+    $artworkUrl = "https://www.fillmorechristian.org/images/podcast-cover.jpg"
+    $feedArtworkUrls = [regex]::Matches($feedText, "<(?:itunes:|googleplay:)?image\b[^>]*href=`"([^`"]+)`"|<url>([^<]+\.(?:jpg|jpeg|png|webp))</url>", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase) |
+        ForEach-Object {
+            if ($_.Groups[1].Success) { $_.Groups[1].Value } else { $_.Groups[2].Value }
+        }
+    $badArtworkUrls = @($feedArtworkUrls | Where-Object { $_ -and $_ -ne $artworkUrl } | Select-Object -Unique)
+    if ($badArtworkUrls.Count -eq 0 -and (Test-Path -LiteralPath (Join-Path $root "images\podcast-cover.jpg"))) {
+        Add-Check "Podcast artwork independence" "OK" "Podcast artwork points at local site asset"
+    } else {
+        $details = @()
+        if ($badArtworkUrls.Count -gt 0) { $details += "unexpected artwork URLs: $($badArtworkUrls -join ', ')" }
+        if (-not (Test-Path -LiteralPath (Join-Path $root "images\podcast-cover.jpg"))) { $details += "images\podcast-cover.jpg is missing" }
+        Add-Check "Podcast artwork independence" "FAIL" ($details -join "; ")
+    }
 }
 
 $manifestPath = Join-Path $root "exports\thechurchco-podcast\manifest.csv"

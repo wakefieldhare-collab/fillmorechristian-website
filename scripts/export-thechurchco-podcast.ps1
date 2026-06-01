@@ -53,6 +53,31 @@ function Normalize-ItemAuthors {
     }
 }
 
+function Set-PodcastArtwork {
+    param(
+        [System.Xml.XmlElement]$Parent,
+        [string]$Url
+    )
+
+    foreach ($child in @($Parent.ChildNodes)) {
+        if ($child.NodeType -ne [System.Xml.XmlNodeType]::Element -or $child.LocalName -ne "image") {
+            continue
+        }
+
+        if ($child.HasAttribute("href")) {
+            $child.SetAttribute("href", $Url)
+            continue
+        }
+
+        foreach ($imageChild in @($child.ChildNodes)) {
+            if ($imageChild.NodeType -eq [System.Xml.XmlNodeType]::Element -and $imageChild.LocalName -eq "url") {
+                $imageChild.InnerText = $Url
+                break
+            }
+        }
+    }
+}
+
 New-Item -ItemType Directory -Force -Path $exportDir, $legacyFeedDir | Out-Null
 if ($DownloadAudio) {
     New-Item -ItemType Directory -Force -Path $audioDir | Out-Null
@@ -74,6 +99,7 @@ $ns.AddNamespace("atom", "http://www.w3.org/2005/Atom")
 $ns.AddNamespace("itunes", "http://www.itunes.com/dtds/podcast-1.0.dtd")
 
 $canonicalFeedUrl = "$SiteUrl/podcast-category/fillmore-christian/feed/podcast"
+$podcastArtworkUrl = "$SiteUrl/images/podcast-cover.jpg"
 $atomLink = $channel.SelectSingleNode("atom:link[@rel='self']", $ns)
 if ($atomLink) {
     $atomLink.SetAttribute("href", $canonicalFeedUrl)
@@ -81,6 +107,10 @@ if ($atomLink) {
 
 $items = @($channel.item)
 Normalize-ItemAuthors $items
+Set-PodcastArtwork $channel $podcastArtworkUrl
+foreach ($item in $items) {
+    Set-PodcastArtwork $item $podcastArtworkUrl
+}
 $rows = New-Object System.Collections.Generic.List[object]
 
 for ($i = 0; $i -lt $items.Count; $i++) {

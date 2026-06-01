@@ -20,10 +20,10 @@
     </itunes:owner>
     <itunes:explicit>no</itunes:explicit>
     <googleplay:explicit></googleplay:explicit>
-    <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1400x1400.jpg"></itunes:image>
-    <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1400x1400.jpg"></googleplay:image>
+    <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+    <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
     <image>
-      <url>https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1400x1400.jpg</url>
+      <url>https://www.fillmorechristian.org/images/podcast-cover.jpg</url>
       <title>Fillmore Christian</title>
       <link>https://www.fillmorechristian.org</link>
     </image>
@@ -1049,8 +1049,8 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1400x1400.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1400x1400.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b577e6ab3--August_21_2022955uamp3.mp3" length="26569166" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1070,8 +1070,8 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b57aa233c--July_24_20226e3ovmp3.mp3" length="36002696" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1086,13 +1086,13 @@
       <pubDate>Sun, 10 Jul 2022 16:18:23 +0000</pubDate>
       <dc:creator>Fillmore Christian</dc:creator>
       <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/from-disciple-to-apostles-luke-91-10/</guid>
-      <description><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Â ]]></description>
-      <itunes:subtitle><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Â ]]></itunes:subtitle>
-      <content:encoded><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Â ]]></content:encoded>
-      <itunes:summary><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Â ]]></itunes:summary>
-      <googleplay:description><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Â ]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <description><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Ã‚Â ]]></description>
+      <itunes:subtitle><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Ã‚Â ]]></itunes:subtitle>
+      <content:encoded><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Ã‚Â ]]></content:encoded>
+      <itunes:summary><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Ã‚Â ]]></itunes:summary>
+      <googleplay:description><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Ã‚Â ]]></googleplay:description>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b57eaca4d--July_10_20229kvgmmp3.mp3" length="40921572" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1107,13 +1107,13 @@
       <pubDate>Sun, 03 Jul 2022 17:02:42 +0000</pubDate>
       <dc:creator>Fillmore Christian</dc:creator>
       <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/the-words-of-eternal-life/</guid>
-      <description><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, &quot;Where else can we go?Â  Only you have the words of eternal life.]]></description>
-      <itunes:subtitle><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, "Where else can we go?Â  Only you have the words of eternal life.]]></itunes:subtitle>
-      <content:encoded><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, &quot;Where else can we go?Â  Only you have the words of eternal life.]]></content:encoded>
-      <itunes:summary><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, "Where else can we go?Â  Only you have the words of eternal life.]]></itunes:summary>
-      <googleplay:description><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, &quot;Where else can we go?Â  Only you have the words of eternal life.]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <description><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, &quot;Where else can we go?Ã‚Â  Only you have the words of eternal life.]]></description>
+      <itunes:subtitle><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, "Where else can we go?Ã‚Â  Only you have the words of eternal life.]]></itunes:subtitle>
+      <content:encoded><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, &quot;Where else can we go?Ã‚Â  Only you have the words of eternal life.]]></content:encoded>
+      <itunes:summary><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, "Where else can we go?Ã‚Â  Only you have the words of eternal life.]]></itunes:summary>
+      <googleplay:description><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, &quot;Where else can we go?Ã‚Â  Only you have the words of eternal life.]]></googleplay:description>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b5822f7be--July_3_20227a9zpmp3.mp3" length="31164108" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1133,8 +1133,8 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b58443382--June_12_2022b3a00mp3.mp3" length="31410519" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1154,8 +1154,8 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b586479f2--May_29_2022act43mp3.mp3" length="35966529" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1175,8 +1175,8 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b58a0b55b--May_8_202294tbamp3.mp3" length="35059835" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1196,8 +1196,8 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b58db14e2--May_1_20228zgqgmp3.mp3" length="37950270" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1217,8 +1217,8 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b58fee3dd--April_17_202291345mp3.mp3" length="42723644" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1238,8 +1238,8 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b592e2061--April_10_20227zkaxmp3.mp3" length="35655297" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1259,8 +1259,8 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b59530989--March_27_20227g84xmp3.mp3" length="29298284" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1280,8 +1280,8 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b59875ea8--March_20_20226ympomp3.mp3" length="31309729" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1301,8 +1301,8 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b59a5ff49--March_13_2022bgmx4mp3.mp3" length="32001984" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1322,8 +1322,8 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b59c61a25--February_27_2022_Ken_Sermona7c1imp3.mp3" length="31702836" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1343,8 +1343,8 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b59fc18b4--January_6_202289sctmp3.mp3" length="27461695" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1364,8 +1364,8 @@
       <content:encoded><![CDATA[I missed the first part of the 3 minutes of the Sermon.]]></content:encoded>
       <itunes:summary><![CDATA[I missed the first part of the 3 minutes of the Sermon.]]></itunes:summary>
       <googleplay:description><![CDATA[I missed the first part of the 3 minutes of the Sermon.]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b5a1dce88--January_16_2022ax4pgmp3.mp3" length="31455477" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1385,8 +1385,8 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b5a4bc772--December_26_2021_Ken_s_Sermon7ry89mp3.mp3" length="34309264" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1406,8 +1406,8 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b5a748c85--December_7_2021_Wake_s_Sermon973nkmp3.mp3" length="44657216" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1422,13 +1422,13 @@
       <pubDate>Sun, 29 Aug 2021 17:50:29 +0000</pubDate>
       <dc:creator>Fillmore Christian</dc:creator>
       <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/put-on-the-lord-jesus-christ/</guid>
-      <description><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Â  God is at work to make us like him but we are also called to actively work with him.Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Â Â ]]></description>
-      <itunes:subtitle><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Â  God is at work to make us like him but we are also called to actively work with him.Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Â Â ]]></itunes:subtitle>
-      <content:encoded><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Â  God is at work to make us like him but we are also called to actively work with him.Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Â Â ]]></content:encoded>
-      <itunes:summary><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Â  God is at work to make us like him but we are also called to actively work with him.Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Â Â ]]></itunes:summary>
-      <googleplay:description><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Â  God is at work to make us like him but we are also called to actively work with him.Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Â Â ]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <description><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Ã‚Â  God is at work to make us like him but we are also called to actively work with him.Ã‚Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Ã‚Â Ã‚Â ]]></description>
+      <itunes:subtitle><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Ã‚Â  God is at work to make us like him but we are also called to actively work with him.Ã‚Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Ã‚Â Ã‚Â ]]></itunes:subtitle>
+      <content:encoded><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Ã‚Â  God is at work to make us like him but we are also called to actively work with him.Ã‚Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Ã‚Â Ã‚Â ]]></content:encoded>
+      <itunes:summary><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Ã‚Â  God is at work to make us like him but we are also called to actively work with him.Ã‚Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Ã‚Â Ã‚Â ]]></itunes:summary>
+      <googleplay:description><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Ã‚Â  God is at work to make us like him but we are also called to actively work with him.Ã‚Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Ã‚Â Ã‚Â ]]></googleplay:description>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b5abbb0c7--August_29_2021_Ken_Sermona3rbymp3.mp3" length="43388244" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>
@@ -1448,8 +1448,8 @@
       <content:encoded><![CDATA[]]></content:encoded>
       <itunes:summary><![CDATA[]]></itunes:summary>
       <googleplay:description><![CDATA[]]></googleplay:description>
-      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
-      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></itunes:image>
+      <googleplay:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"></googleplay:image>
       <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b5b099ca7--August_22_2021_Wake_s_Sermona6g08mp3.mp3" length="79118796" type="audio/mpeg" />
       <itunes:explicit>no</itunes:explicit>
       <googleplay:explicit>no</googleplay:explicit>

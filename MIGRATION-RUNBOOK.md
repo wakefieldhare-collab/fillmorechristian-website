@@ -58,6 +58,7 @@ Current state is safe for cutover but not safe for canceling TheChurchCo:
 
 - The RSS feed is preserved locally and will continue to publish from `www.fillmorechristian.org`.
 - The historical MP3 files are backed up locally and hash-inventoried.
+- Podcast artwork is hosted by the static site at `https://www.fillmorechristian.org/images/podcast-cover.jpg`.
 - The live feed enclosures still point to TheChurchCo's S3 URLs, so audio could break if TheChurchCo removes those files after cancellation.
 
 Before canceling TheChurchCo, choose and complete one of these:

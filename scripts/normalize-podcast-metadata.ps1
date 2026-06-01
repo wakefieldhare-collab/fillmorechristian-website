@@ -3,7 +3,8 @@ param(
         "podcast-category\fillmore-christian\feed\podcast",
         "podcast.xml",
         "feed.xml"
-    )
+    ),
+    [string]$ArtworkUrl = "https://www.fillmorechristian.org/images/podcast-cover.jpg"
 )
 
 $ErrorActionPreference = "Stop"
@@ -19,6 +20,40 @@ function Normalize-SpeakerName {
     return $speaker
 }
 
+function Set-PodcastArtwork {
+    param(
+        [System.Xml.XmlElement]$Parent,
+        [string]$Url
+    )
+
+    $changed = 0
+    foreach ($child in @($Parent.ChildNodes)) {
+        if ($child.NodeType -ne [System.Xml.XmlNodeType]::Element -or $child.LocalName -ne "image") {
+            continue
+        }
+
+        if ($child.HasAttribute("href")) {
+            if ($child.GetAttribute("href") -ne $Url) {
+                $child.SetAttribute("href", $Url)
+                $changed++
+            }
+            continue
+        }
+
+        foreach ($imageChild in @($child.ChildNodes)) {
+            if ($imageChild.NodeType -eq [System.Xml.XmlNodeType]::Element -and $imageChild.LocalName -eq "url") {
+                if ($imageChild.InnerText -ne $Url) {
+                    $imageChild.InnerText = $Url
+                    $changed++
+                }
+                break
+            }
+        }
+    }
+
+    return $changed
+}
+
 foreach ($relativePath in $FeedPaths) {
     $path = Join-Path $root $relativePath
     if (-not (Test-Path -LiteralPath $path)) {
@@ -27,8 +62,11 @@ foreach ($relativePath in $FeedPaths) {
 
     [xml]$feed = Get-Content -Raw -LiteralPath $path
     $changed = 0
+    $changed += Set-PodcastArtwork $feed.rss.channel $ArtworkUrl
 
     foreach ($item in @($feed.rss.channel.item)) {
+        $changed += Set-PodcastArtwork $item $ArtworkUrl
+
         foreach ($child in @($item.ChildNodes)) {
             if ($child.NodeType -ne [System.Xml.XmlNodeType]::Element) {
                 continue
@@ -53,5 +91,5 @@ foreach ($relativePath in $FeedPaths) {
     $feed.Save($writer)
     $writer.Close()
 
-    Write-Host "Normalized $changed author fields in $relativePath"
+    Write-Host "Normalized $changed podcast metadata field(s) in $relativePath"
 }
