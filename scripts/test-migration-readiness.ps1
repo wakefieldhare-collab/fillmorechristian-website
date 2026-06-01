@@ -673,6 +673,7 @@ $audioUploadScriptPath = Join-Path $root "scripts\upload-podcast-audio-to-r2.ps1
 $audioUploadVerifierScriptPath = Join-Path $root "scripts\test-r2-audio-upload.ps1"
 $publicAudioScriptPath = Join-Path $root "scripts\test-r2-public-audio.ps1"
 $mediaDomainScriptPath = Join-Path $root "scripts\configure-r2-media-domain.ps1"
+$cutoverScriptPath = Join-Path $root "scripts\complete-cloudflare-cutover.ps1"
 if (Test-Path -LiteralPath $domainTransferScriptPath) {
     $domainTransferScriptText = Get-Content -Raw -LiteralPath $domainTransferScriptPath
     $packageJsonPath = Join-Path $root "package.json"
@@ -707,10 +708,11 @@ if (Test-Path -LiteralPath $cancellationScriptPath) {
     Add-Check "TheChurchCo cancellation gate" "FAIL" "scripts\test-thechurchco-cancellation-readiness.ps1 is missing"
 }
 
-if ((Test-Path -LiteralPath $audioMigrationScriptPath) -and (Test-Path -LiteralPath $publicAudioScriptPath) -and (Test-Path -LiteralPath $mediaDomainScriptPath)) {
+if ((Test-Path -LiteralPath $audioMigrationScriptPath) -and (Test-Path -LiteralPath $publicAudioScriptPath) -and (Test-Path -LiteralPath $mediaDomainScriptPath) -and (Test-Path -LiteralPath $cutoverScriptPath)) {
     $audioMigrationScriptText = Get-Content -Raw -LiteralPath $audioMigrationScriptPath
     $publicAudioScriptText = Get-Content -Raw -LiteralPath $publicAudioScriptPath
     $mediaDomainScriptText = Get-Content -Raw -LiteralPath $mediaDomainScriptPath
+    $cutoverScriptText = Get-Content -Raw -LiteralPath $cutoverScriptPath
     $packageJsonPath = Join-Path $root "package.json"
     $packageJsonText = if (Test-Path -LiteralPath $packageJsonPath) { Get-Content -Raw -LiteralPath $packageJsonPath } else { "" }
     if ($audioMigrationScriptText -match "test-r2-public-audio\.ps1" -and
@@ -724,13 +726,18 @@ if ((Test-Path -LiteralPath $audioMigrationScriptPath) -and (Test-Path -LiteralP
         $mediaDomainScriptText -match "domains/custom" -and
         $mediaDomainScriptText -match "test-r2-public-audio\.ps1" -and
         $mediaDomainScriptText -match "RequireActive" -and
-        $packageJsonText -match '"configure:r2-media-domain"') {
-        Add-Check "R2 public audio preflight" "OK" "Audio migration verifies public R2 URLs by default before rewriting podcast feeds; media hostname setup is scripted"
+        $cutoverScriptText -match "test-dns-cutover\.ps1" -and
+        $cutoverScriptText -match "configure-r2-media-domain\.ps1" -and
+        $cutoverScriptText -match "migrate-cloudflare-audio\.ps1" -and
+        $cutoverScriptText -match "ExpectedCloudflareNameservers" -and
+        $packageJsonText -match '"configure:r2-media-domain"' -and
+        $packageJsonText -match '"complete:cloudflare-cutover"') {
+        Add-Check "R2 public audio preflight" "OK" "Audio migration verifies public R2 URLs by default before rewriting podcast feeds; media hostname and cutover setup are scripted"
     } else {
-        Add-Check "R2 public audio preflight" "FAIL" "Audio migration is missing the default public URL preflight, scripted media hostname setup, or npm alias"
+        Add-Check "R2 public audio preflight" "FAIL" "Audio migration is missing the default public URL preflight, scripted media hostname/cutover setup, or npm alias"
     }
 } else {
-    Add-Check "R2 public audio preflight" "FAIL" "scripts\migrate-cloudflare-audio.ps1, scripts\configure-r2-media-domain.ps1, or scripts\test-r2-public-audio.ps1 is missing"
+    Add-Check "R2 public audio preflight" "FAIL" "scripts\migrate-cloudflare-audio.ps1, scripts\configure-r2-media-domain.ps1, scripts\complete-cloudflare-cutover.ps1, or scripts\test-r2-public-audio.ps1 is missing"
 }
 
 if ((Test-Path -LiteralPath $audioMigrationScriptPath) -and (Test-Path -LiteralPath $audioUploadScriptPath) -and (Test-Path -LiteralPath $audioUploadVerifierScriptPath)) {

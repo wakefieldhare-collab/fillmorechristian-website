@@ -107,6 +107,14 @@ npm run migrate:cloudflare-audio -- -CreateBucket
 
 The media-domain command uses Cloudflare's R2 custom-domain API, refuses the work GitHub owner, waits for the Cloudflare zone to be active before attaching `media.fillmorechristian.org`, then verifies public audio URLs before the feed is rewritten.
 
+After Squarespace nameservers have been changed to Cloudflare, the guarded continuation command is:
+
+```powershell
+npm run complete:cloudflare-cutover
+```
+
+It verifies Cloudflare nameservers, runs the post-cutover DNS gate, attaches and verifies the R2 media hostname, then rewrites local podcast feed enclosures only after public audio passes. If DNS is still propagating, use `npm run complete:cloudflare-cutover -- -WaitForDns`.
+
 The migration command refuses the work GitHub owner, requires `https://` audio URLs, verifies Cloudflare authentication, can create the R2 bucket, uploads and hash-verifies all 70 audio objects, verifies sampled R2 public URLs by default before rewriting the podcast feeds, rewrites all three RSS feeds to `https://media.fillmorechristian.org`, regenerates episode pages/sermon archive/homepage latest-sermon links, builds `dist`, and runs strict local readiness plus the Cloudflare Pages local preflight. Use `-VerifyAllPublicMedia` before cancellation for a full public media sweep. `-SkipPublicMediaVerify` exists only as an explicit escape hatch and should not be used before canceling TheChurchCo.
 
 After rewriting enclosure URLs, re-run local verification and push the RSS changes before canceling TheChurchCo.
@@ -118,7 +126,7 @@ R2 preparation status on 2026-06-01:
 - R2 is enabled in the Cloudflare account, bucket `fillmore-christian-sermons` exists, and all 70 audio objects were uploaded to Standard storage on June 1, 2026.
 - `scripts/test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -VerifyHashes` downloaded and SHA-256 verified all 70 R2 objects after upload.
 - `scripts/test-r2-public-audio.ps1` can verify the public `media.fillmorechristian.org` URLs from the manifest before the RSS feeds are rewritten, and the guarded migration command runs that public preflight by default.
-- The remaining R2 blocker is public access: after `fillmorechristian.org` is active in Cloudflare DNS, run `npm run configure:r2-media-domain -- -VerifyAllPublicMedia`, then rewrite RSS enclosure URLs.
+- The remaining R2 blocker is public access: after `fillmorechristian.org` is active in Cloudflare DNS, run `npm run complete:cloudflare-cutover`, then commit, push, and deploy the generated RSS/page updates.
 
 Podcast metadata cleanup:
 
