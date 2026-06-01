@@ -90,6 +90,7 @@ Before deploying, run:
 ```powershell
 npm run build
 .\scripts\test-migration-readiness.ps1
+.\scripts\test-cloudflare-pages-local.ps1
 ```
 
 The only expected warning before R2 setup is that the podcast audio enclosures still point at TheChurchCo.

@@ -130,6 +130,13 @@ The expected pre-R2 result is all checks passing with one warning: podcast audio
 .\scripts\test-migration-readiness.ps1 -RequireIndependentAudio
 ```
 
+To verify Cloudflare-specific behavior locally, including `_redirects`, `_headers`, and the Pages Function for old podcast query links:
+
+```powershell
+npm run build
+.\scripts\test-cloudflare-pages-local.ps1
+```
+
 To verify the 2.16 GB local audio backup hashes before cancellation:
 
 ```powershell
@@ -155,6 +162,7 @@ The repo is ready for a Cloudflare Pages static deployment. Use:
 - Build command: `npm run build`
 - Build output directory: `dist`
 - Production branch: `main`
+- Local Pages config: `wrangler.toml` uses `compatibility_date = "2026-04-17"` so it works with the installed Wrangler 4.82 local runtime.
 
 The build copies only public website assets into `dist` so migration notes, scripts, and export artifacts are not published as part of the production site.
 

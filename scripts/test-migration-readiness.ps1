@@ -132,6 +132,29 @@ if ($missingRequired.Count -eq 0) {
     Add-Check "Required static files" "FAIL" ("Missing: " + ($missingRequired -join ", "))
 }
 
+$wranglerConfigPath = Join-Path $root "wrangler.toml"
+if (Test-Path -LiteralPath $wranglerConfigPath) {
+    $wranglerConfig = Get-Content -Raw -LiteralPath $wranglerConfigPath
+    $wranglerIssues = New-Object System.Collections.Generic.List[string]
+    if ($wranglerConfig -notmatch '(?m)^name\s*=\s*"fillmorechristian-website"') {
+        $wranglerIssues.Add("project name is missing or unexpected")
+    }
+    if ($wranglerConfig -notmatch '(?m)^compatibility_date\s*=\s*"\d{4}-\d{2}-\d{2}"') {
+        $wranglerIssues.Add("compatibility_date is missing")
+    }
+    if ($wranglerConfig -notmatch "(?m)^pages_build_output_dir\s*=\s*`"$([regex]::Escape($BuildOutputDir))`"") {
+        $wranglerIssues.Add("pages_build_output_dir does not match $BuildOutputDir")
+    }
+
+    if ($wranglerIssues.Count -eq 0) {
+        Add-Check "Wrangler Pages config" "OK" "wrangler.toml points Cloudflare Pages at $BuildOutputDir"
+    } else {
+        Add-Check "Wrangler Pages config" "FAIL" ($wranglerIssues -join "; ")
+    }
+} else {
+    Add-Check "Wrangler Pages config" "FAIL" "wrangler.toml is missing"
+}
+
 $publicHtmlPages = @(
     "index.html",
     "about.html",
