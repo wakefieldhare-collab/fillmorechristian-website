@@ -337,6 +337,7 @@ $publicHtmlPages = @(
     "beliefs.html",
     "events.html",
     "sermons.html",
+    "podcast.html",
     "contact.html",
     "team.html"
 )
@@ -403,7 +404,7 @@ if ($metadataFailures.Count -eq 0) {
 }
 
 $publicCopyIssues = New-Object System.Collections.Generic.List[string]
-foreach ($relativePath in @("index.html", "sermons.html", "404.html")) {
+foreach ($relativePath in @("index.html", "sermons.html", "podcast.html", "404.html")) {
     $htmlPath = Join-Path $root $relativePath
     if (-not (Test-Path -LiteralPath $htmlPath)) { continue }
 
@@ -958,10 +959,16 @@ if (Test-Path -LiteralPath $sermonsPath) {
     }
 
     $expectedFeedUrl = "https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast"
-    if ($sermonsHtml -match 'id="podcast-feed-url"' -and $sermonsHtml -match 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -and $sermonsHtml -match [regex]::Escape($expectedFeedUrl)) {
-        Add-Check "Podcast subscribe controls" "OK" "Archive page exposes a copyable canonical RSS feed URL"
+    $podcastHtmlPath = Join-Path $root "podcast.html"
+    $podcastHtml = if (Test-Path -LiteralPath $podcastHtmlPath) { Get-Content -Raw -LiteralPath $podcastHtmlPath } else { "" }
+    if ($sermonsHtml -match 'href="podcast\.html"[^>]*>Subscribe</a>' -and
+        $podcastHtml -match 'id="podcast-feed-url"' -and
+        $podcastHtml -match 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -and
+        $podcastHtml -match [regex]::Escape($expectedFeedUrl) -and
+        $podcastHtml -match '"@type": "PodcastSeries"') {
+        Add-Check "Podcast subscribe controls" "OK" "Archive page links to an owned podcast landing page with a copyable canonical RSS feed URL"
     } else {
-        Add-Check "Podcast subscribe controls" "FAIL" "Archive page is missing the copyable canonical RSS feed URL"
+        Add-Check "Podcast subscribe controls" "FAIL" "Archive page or podcast landing page is missing subscribe controls, structured data, or the copyable canonical RSS feed URL"
     }
 
     $downloadLinks = ([regex]::Matches($sermonsHtml, 'class="sermon-download"')).Count

@@ -1035,6 +1035,34 @@ h4 { font-size: 1.25rem; }
   border-radius: 8px;
 }
 
+.podcast-page {
+  background: var(--color-background);
+}
+
+.podcast-page-grid {
+  max-width: 960px;
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 2rem;
+  align-items: center;
+}
+
+.podcast-art-panel img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+}
+
+.podcast-subscribe-panel h2 {
+  text-align: left;
+}
+
+.podcast-subscribe-panel > p {
+  color: var(--color-text-light);
+}
+
 .archive-controls {
   max-width: 800px;
   margin: 0 auto 1.5rem;
@@ -1508,6 +1536,7 @@ h4 { font-size: 1.25rem; }
   .visit-guide-grid,
   .media-band-grid,
   .location-panel,
+  .podcast-page-grid,
   .sermon-tools-card,
   .episode-player {
     grid-template-columns: 1fr;

@@ -19,6 +19,7 @@ const publishPaths = [
   "favicon.svg",
   "fonts",
   "index.html",
+  "podcast.html",
   "podcast.xml",
   "robots.txt",
   "sermons.html",

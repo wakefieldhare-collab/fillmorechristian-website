@@ -269,10 +269,16 @@ try {
     $checks.Add([pscustomobject]@{ Check = "Trailing podcast feed redirect"; Status = "OK"; Details = "/podcast-category/fillmore-christian/feed/podcast/ -> canonical feed path" })
 
     $sermonsPageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "sermons.html")
-    if ($sermonsPageContent -notmatch 'id="podcast-feed-url"' -or $sermonsPageContent -notmatch 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -or $sermonsPageContent -match "being moved out of TheChurchCo|during the move|ChurchCo transition|preserved podcast RSS feed path") {
-        throw "Sermons page is missing the copyable RSS feed URL or still contains migration-era copy"
+    $podcastPageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "podcast.html")
+    if ($sermonsPageContent -notmatch 'href="podcast\.html"[^>]*>Subscribe</a>' -or
+        $podcastPageContent -notmatch 'id="podcast-feed-url"' -or
+        $podcastPageContent -notmatch 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -or
+        $podcastPageContent -notmatch '"@type": "PodcastSeries"' -or
+        $sermonsPageContent -match "being moved out of TheChurchCo|during the move|ChurchCo transition|preserved podcast RSS feed path" -or
+        $podcastPageContent -match "being moved out of TheChurchCo|during the move|ChurchCo transition|preserved podcast RSS feed path") {
+        throw "Sermons or podcast page is missing the owned podcast subscribe path, copyable RSS feed URL, or stable public copy"
     }
-    $checks.Add([pscustomobject]@{ Check = "Sermons subscribe controls"; Status = "OK"; Details = "Published output includes copyable canonical RSS feed URL" })
+    $checks.Add([pscustomobject]@{ Check = "Podcast subscribe controls"; Status = "OK"; Details = "Published output includes an owned podcast landing page and copyable canonical RSS feed URL" })
 
     if ($sermonsPageContent -notmatch 'id="sermon-audio-only"' -or $sermonsPageContent -notmatch 'data-has-audio="true"' -or $sermonsPageContent -notmatch 'data-has-audio="false"') {
         throw "Sermons page is missing the audio-only filter or audio availability metadata"

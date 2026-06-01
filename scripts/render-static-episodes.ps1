@@ -118,6 +118,7 @@ function Write-Sitemap {
         @{ Loc = "https://www.fillmorechristian.org/team.html"; Priority = "0.7" },
         @{ Loc = "https://www.fillmorechristian.org/events.html"; Priority = "0.7" },
         @{ Loc = "https://www.fillmorechristian.org/sermons.html"; Priority = "0.9" },
+        @{ Loc = "https://www.fillmorechristian.org/podcast.html"; Priority = "0.8" },
         @{ Loc = "https://www.fillmorechristian.org/contact.html"; Priority = "0.8" }
     )
 
@@ -567,7 +568,7 @@ $descriptionMarkup
 $audioMarkup
             <div class="episode-actions">
 $downloadActionMarkup              <a href="../../sermons.html" class="btn btn-outline">All Sermons</a>
-              <a href="../../podcast-category/fillmore-christian/feed/podcast" class="btn btn-outline">RSS Feed</a>
+              <a href="../../podcast.html" class="btn btn-outline">Subscribe</a>
             </div>
 $episodeCopyMarkup
           </div>
