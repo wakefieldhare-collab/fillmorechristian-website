@@ -26,6 +26,45 @@ function Normalize-SpeakerName {
     return $speaker
 }
 
+function Get-DoubleEncodedNbsp {
+    return -join ([char[]]@(
+        0x00C3,
+        0x0192,
+        0x00E2,
+        0x20AC,
+        0x0161,
+        0x00C3,
+        0x201A,
+        0x00C2,
+        0x00A0
+    ))
+}
+
+function Repair-TextEncodingArtifacts {
+    param([string]$Text)
+
+    if (-not $Text) { return "" }
+
+    return ($Text.Replace((Get-DoubleEncodedNbsp), " ") -replace "[ \t]{2,}", " ").Trim()
+}
+
+function Repair-ElementTextEncodingArtifacts {
+    param([System.Xml.XmlElement]$Element)
+
+    if (-not $Element) { return 0 }
+
+    $original = $Element.InnerText
+    $cleaned = Repair-TextEncodingArtifacts $original
+    if ($cleaned -eq $original) { return 0 }
+
+    if ($Element.FirstChild -and $Element.FirstChild.NodeType -eq [System.Xml.XmlNodeType]::CDATA) {
+        $Element.FirstChild.Value = $cleaned
+    } else {
+        $Element.InnerText = $cleaned
+    }
+    return 1
+}
+
 function Get-AudioContentType {
     param([string]$Url)
 
@@ -253,6 +292,12 @@ foreach ($relativePath in $FeedPaths) {
 
     foreach ($item in @($feed.rss.channel.item)) {
         $changed += Set-PodcastArtwork $item $ArtworkUrl
+
+        foreach ($child in @($item.ChildNodes)) {
+            if ($child.NodeType -eq [System.Xml.XmlNodeType]::Element) {
+                $changed += Repair-ElementTextEncodingArtifacts $child
+            }
+        }
 
         if ($item.enclosure -and $item.enclosure.url) {
             $audioType = Get-AudioContentType ([string]$item.enclosure.url)

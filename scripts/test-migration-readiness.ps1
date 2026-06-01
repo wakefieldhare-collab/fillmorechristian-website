@@ -690,6 +690,17 @@ if ($feedItemCounts.Count -eq $feedPaths.Count) {
 $podcastOwnershipIssues = New-Object System.Collections.Generic.List[string]
 $canonicalPodcastFeedUrl = "https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast"
 $ownedPodcastGenerator = "Fillmore Christian Church static podcast feed"
+$doubleEncodedNbsp = -join ([char[]]@(
+    0x00C3,
+    0x0192,
+    0x00E2,
+    0x20AC,
+    0x0161,
+    0x00C3,
+    0x201A,
+    0x00C2,
+    0x00A0
+))
 foreach ($relativePath in $feedPaths) {
     $path = Join-Path $root $relativePath
     if (-not (Test-Path -LiteralPath $path)) {
@@ -715,6 +726,9 @@ foreach ($relativePath in $feedPaths) {
     }
     if ($feedText -notmatch "<generator>$([regex]::Escape($ownedPodcastGenerator))</generator>" -or $feedText -match "wordpress\.org") {
         $podcastOwnershipIssues.Add("$relativePath still carries old generator metadata")
+    }
+    if ($feedText.Contains($doubleEncodedNbsp)) {
+        $podcastOwnershipIssues.Add("$relativePath still contains double-encoded nonbreaking-space artifacts")
     }
 }
 
