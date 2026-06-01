@@ -90,6 +90,66 @@ if ($missingRequired.Count -eq 0) {
     Add-Check "Required static files" "FAIL" ("Missing: " + ($missingRequired -join ", "))
 }
 
+$publicHtmlPages = @(
+    "index.html",
+    "about.html",
+    "beliefs.html",
+    "events.html",
+    "sermons.html",
+    "contact.html",
+    "team.html"
+)
+
+$metadataFailures = New-Object System.Collections.Generic.List[string]
+foreach ($relativePath in $publicHtmlPages) {
+    $htmlPath = Join-Path $root $relativePath
+    if (-not (Test-Path -LiteralPath $htmlPath)) {
+        continue
+    }
+
+    $html = Get-Content -Raw -LiteralPath $htmlPath
+    $expectedCanonical = if ($relativePath -eq "index.html") {
+        "https://www.fillmorechristian.org/"
+    } else {
+        "https://www.fillmorechristian.org/$relativePath"
+    }
+
+    if ($html -notmatch "<link\s+rel=`"canonical`"\s+href=`"$([regex]::Escape($expectedCanonical))`"") {
+        $metadataFailures.Add("$relativePath missing canonical")
+    }
+    if ($html -notmatch "<meta\s+property=`"og:title`"") {
+        $metadataFailures.Add("$relativePath missing og:title")
+    }
+    if ($html -notmatch "<meta\s+property=`"og:description`"") {
+        $metadataFailures.Add("$relativePath missing og:description")
+    }
+    if ($html -notmatch "<meta\s+property=`"og:url`"") {
+        $metadataFailures.Add("$relativePath missing og:url")
+    }
+    if ($html -notmatch "<meta\s+property=`"og:image`"") {
+        $metadataFailures.Add("$relativePath missing og:image")
+    }
+    if ($html -notmatch "<meta\s+name=`"twitter:card`"") {
+        $metadataFailures.Add("$relativePath missing twitter:card")
+    }
+}
+
+if ($metadataFailures.Count -eq 0) {
+    Add-Check "Public page metadata" "OK" "$($publicHtmlPages.Count) public pages have canonical, Open Graph, and Twitter metadata"
+} else {
+    Add-Check "Public page metadata" "FAIL" ($metadataFailures -join "; ")
+}
+
+$notFoundPath = Join-Path $root "404.html"
+if (Test-Path -LiteralPath $notFoundPath) {
+    $notFoundHtml = Get-Content -Raw -LiteralPath $notFoundPath
+    if ($notFoundHtml -match "<meta\s+name=`"robots`"\s+content=`"noindex`"") {
+        Add-Check "404 indexing metadata" "OK" "404 page is marked noindex"
+    } else {
+        Add-Check "404 indexing metadata" "FAIL" "404 page is missing robots noindex metadata"
+    }
+}
+
 $buildOutputPath = Join-Path $root $BuildOutputDir
 if (Test-Path -LiteralPath $buildOutputPath) {
     $missingBuildFiles = @($requiredFiles | Where-Object { -not (Test-Path -LiteralPath (Join-Path $buildOutputPath $_)) })
@@ -256,11 +316,28 @@ if ((Test-Path -LiteralPath $inventoryPath) -and (Test-Path -LiteralPath $audioD
 }
 
 if (-not $SkipRemote) {
-    foreach ($path in @("", "sermons.html", "podcast-category/fillmore-christian/feed/podcast", "robots.txt", "sitemap.xml")) {
+    foreach ($path in @("", "about.html", "beliefs.html", "team.html", "events.html", "sermons.html", "contact.html", "podcast-category/fillmore-christian/feed/podcast", "robots.txt", "sitemap.xml")) {
         $url = Join-Url $StagingBaseUrl $path
         try {
             $response = Invoke-WebRequest -UseBasicParsing -Uri $url -MaximumRedirection 5
             Add-Check "Staging URL: /$path" "OK" "HTTP $($response.StatusCode)"
+
+            if ($path -in @("", "about.html", "beliefs.html", "team.html", "events.html", "sermons.html", "contact.html")) {
+                $expectedCanonical = if ($path -eq "") {
+                    "https://www.fillmorechristian.org/"
+                } else {
+                    "https://www.fillmorechristian.org/$path"
+                }
+
+                if ($response.Content -match "<link\s+rel=`"canonical`"\s+href=`"$([regex]::Escape($expectedCanonical))`"" -and
+                    $response.Content -match "<meta\s+property=`"og:title`"" -and
+                    $response.Content -match "<meta\s+property=`"og:image`"" -and
+                    $response.Content -match "<meta\s+name=`"twitter:card`"") {
+                    Add-Check "Staging metadata: /$path" "OK" "Canonical, Open Graph, and Twitter metadata present"
+                } else {
+                    Add-Check "Staging metadata: /$path" "FAIL" "Missing required page metadata on staging"
+                }
+            }
 
             if ($path -eq "sermons.html") {
                 $remoteCards = ([regex]::Matches($response.Content, 'class="sermon-item')).Count
