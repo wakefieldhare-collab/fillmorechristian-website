@@ -267,6 +267,17 @@ for ($episodeIndex = 0; $episodeIndex -lt $items.Count; $episodeIndex++) {
         ""
     }
 
+    $episodeCopyMarkup = @"
+            <div class="podcast-feed-copy episode-link-copy">
+              <label for="episode-link-url">Sermon link</label>
+              <div class="copy-field">
+                <input id="episode-link-url" type="text" value="$canonicalUrl" readonly>
+                <button class="copy-button" type="button" data-copy-value="$canonicalUrl" data-copy-status-target="episode-copy-status" data-copy-label="Copy" data-copy-success="Sermon link copied." data-copy-fallback="Sermon link selected. Press Ctrl+C to copy it." data-copy-fail="Copy failed. Copy the page address from your browser.">Copy</button>
+              </div>
+              <p id="episode-copy-status" class="copy-status" aria-live="polite">Use this direct link to share this sermon.</p>
+            </div>
+"@
+
     $audioMarkup = if ($audioUrl) {
         '          <audio controls preload="none"><source src="' + (HtmlEncode $audioUrl) + '" type="' + $audioType + '">Your browser does not support audio playback.</audio>'
     } else {
@@ -408,6 +419,7 @@ $audioMarkup
 $downloadActionMarkup              <a href="../../sermons.html" class="btn btn-outline">All Sermons</a>
               <a href="../../podcast-category/fillmore-christian/feed/podcast" class="btn btn-outline">RSS Feed</a>
             </div>
+$episodeCopyMarkup
           </div>
         </article>
 $episodeNavMarkup

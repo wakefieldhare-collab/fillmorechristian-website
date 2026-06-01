@@ -361,10 +361,10 @@ try {
     if ($episode.Content -match "fonts\.googleapis\.com|fonts\.gstatic\.com") {
         throw "Static episode page still references Google-hosted fonts"
     }
-    if ($episode.Content -notmatch "<audio\s+controls" -or $episode.Content -notmatch "Download Audio" -or $episode.Content -notmatch "All Sermons" -or $episode.Content -notmatch 'class="episode-nav"' -or $episode.Content -notmatch "Newer Message" -or $episode.Content -notmatch "Older Message" -or $episode.Content -notmatch 'href="../../favicon\.svg"' -or $episode.Content -notmatch 'href="../../site\.webmanifest"') {
-        throw "Static episode page is missing audio, download, archive navigation, episode navigation, or brand asset links"
+    if ($episode.Content -notmatch "<audio\s+controls" -or $episode.Content -notmatch "Download Audio" -or $episode.Content -notmatch "All Sermons" -or $episode.Content -notmatch 'class="episode-nav"' -or $episode.Content -notmatch "Newer Message" -or $episode.Content -notmatch "Older Message" -or $episode.Content -notmatch 'href="../../favicon\.svg"' -or $episode.Content -notmatch 'href="../../site\.webmanifest"' -or $episode.Content -notmatch 'id="episode-link-url"' -or $episode.Content -notmatch 'data-copy-value="https://www\.fillmorechristian\.org/episode/be-ready-luke-12/"' -or $episode.Content -notmatch 'id="episode-copy-status"') {
+        throw "Static episode page is missing audio, download, archive navigation, episode navigation, brand asset links, or copyable canonical sermon link"
     }
-    $checks.Add([pscustomobject]@{ Check = "Static episode page"; Status = "OK"; Details = "Audio player, download, archive navigation, episode navigation, and brand asset links" })
+    $checks.Add([pscustomobject]@{ Check = "Static episode page"; Status = "OK"; Details = "Audio player, download, archive navigation, episode navigation, brand asset links, and copyable sermon link" })
 
     $checks | Format-Table -AutoSize
 } finally {

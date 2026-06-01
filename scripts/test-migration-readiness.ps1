@@ -766,6 +766,7 @@ if ($feeds.ContainsKey($feedPaths[0])) {
     $missingEpisodeNavigation = New-Object System.Collections.Generic.List[string]
     $missingEpisodeStructuredData = New-Object System.Collections.Generic.List[string]
     $missingEpisodeBrandAssets = New-Object System.Collections.Generic.List[string]
+    $missingEpisodeCopyLinks = New-Object System.Collections.Generic.List[string]
     foreach ($slug in $uniqueEpisodeSlugs) {
         $episodePagePath = Join-Path $root "episode\$slug\index.html"
         if (-not (Test-Path -LiteralPath $episodePagePath)) {
@@ -782,6 +783,10 @@ if ($feeds.ContainsKey($feedPaths[0])) {
         if ($episodeHtml -notmatch '<link\s+rel="icon"\s+href="../../favicon\.svg"\s+type="image/svg\+xml">' -or $episodeHtml -notmatch '<link\s+rel="manifest"\s+href="../../site\.webmanifest">' -or $episodeHtml -notmatch '<meta\s+name="theme-color"\s+content="#173247">') {
             $missingEpisodeBrandAssets.Add($slug)
         }
+        $expectedEpisodeUrl = "https://www.fillmorechristian.org/episode/$slug/"
+        if ($episodeHtml -notmatch 'id="episode-link-url"' -or $episodeHtml -notmatch [regex]::Escape('data-copy-value="' + $expectedEpisodeUrl + '"') -or $episodeHtml -notmatch 'id="episode-copy-status"') {
+            $missingEpisodeCopyLinks.Add($slug)
+        }
     }
     if ($missingEpisodeNavigation.Count -gt 0) {
         $episodeIssues.Add("episode navigation missing from: $($missingEpisodeNavigation -join ', ')")
@@ -791,6 +796,9 @@ if ($feeds.ContainsKey($feedPaths[0])) {
     }
     if ($missingEpisodeBrandAssets.Count -gt 0) {
         $episodeIssues.Add("episode brand asset metadata missing from: $($missingEpisodeBrandAssets -join ', ')")
+    }
+    if ($missingEpisodeCopyLinks.Count -gt 0) {
+        $episodeIssues.Add("episode copyable canonical links missing from: $($missingEpisodeCopyLinks -join ', ')")
     }
 
     $redirectsPath = Join-Path $root "_redirects"
@@ -1202,10 +1210,11 @@ if (-not $SkipRemote) {
                 }
 
                 if ($path -eq $sampleEpisodePath) {
-                    if ($response.Content -match "<audio\s+controls" -and $response.Content -match "Download Audio" -and $response.Content -match "All Sermons" -and $response.Content -match 'class="episode-nav"' -and $response.Content -match "Older Message" -and $response.Content -match '"@type":"PodcastEpisode"' -and $response.Content -match '"associatedMedia":\{"@type":"AudioObject"') {
-                        Add-Check "Staging episode page" "OK" "Sample episode page has audio, download, archive navigation, episode navigation, and structured data"
+                    $sampleEpisodeCanonical = "https://www.fillmorechristian.org/$sampleEpisodePath"
+                    if ($response.Content -match "<audio\s+controls" -and $response.Content -match "Download Audio" -and $response.Content -match "All Sermons" -and $response.Content -match 'class="episode-nav"' -and $response.Content -match "Older Message" -and $response.Content -match '"@type":"PodcastEpisode"' -and $response.Content -match '"associatedMedia":\{"@type":"AudioObject"' -and $response.Content -match 'id="episode-link-url"' -and $response.Content -match [regex]::Escape('data-copy-value="' + $sampleEpisodeCanonical + '"') -and $response.Content -match 'id="episode-copy-status"') {
+                        Add-Check "Staging episode page" "OK" "Sample episode page has audio, download, archive navigation, episode navigation, structured data, and copyable sermon link"
                     } else {
-                        Add-Check "Staging episode page" "FAIL" "Sample episode page is missing audio, download, archive navigation, episode navigation, or structured data"
+                        Add-Check "Staging episode page" "FAIL" "Sample episode page is missing audio, download, archive navigation, episode navigation, structured data, or copyable sermon link"
                     }
                 }
 
