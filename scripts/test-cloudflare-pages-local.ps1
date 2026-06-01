@@ -84,6 +84,19 @@ function Assert-Status {
     }
 }
 
+function Get-HeaderValue {
+    param(
+        [object]$Headers,
+        [string]$Name
+    )
+
+    try {
+        return (($Headers.GetValues($Name) | Select-Object -First 1) -as [string])
+    } catch {
+        return ""
+    }
+}
+
 if (-not (Test-Path -LiteralPath $buildOutputPath)) {
     throw "Build output not found: $buildOutputPath. Run npm run build first."
 }
@@ -188,6 +201,25 @@ try {
         throw "Home page did not include the church name"
     }
     $checks.Add([pscustomobject]@{ Check = "Home page"; Status = "OK"; Details = "HTTP 200" })
+
+    $expectedSecurityHeaders = @{
+        "X-Content-Type-Options" = "nosniff"
+        "X-Frame-Options" = "SAMEORIGIN"
+        "Referrer-Policy" = "strict-origin-when-cross-origin"
+        "Permissions-Policy" = "camera=(), microphone=(), geolocation=()"
+    }
+    $missingSecurityHeaders = @(
+        foreach ($name in $expectedSecurityHeaders.Keys) {
+            $actual = Get-HeaderValue -Headers $homeResponse.Headers -Name $name
+            if ($actual -ne $expectedSecurityHeaders[$name]) {
+                "$name=$actual"
+            }
+        }
+    )
+    if ($missingSecurityHeaders.Count -gt 0) {
+        throw "Home page is missing expected security headers: $($missingSecurityHeaders -join '; ')"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Security headers"; Status = "OK"; Details = "nosniff, frame, referrer, and permissions policies" })
 
     $legacyQuery = Invoke-NoRedirect -Url "$baseUrl/?post_type=podcasts&p=603"
     Assert-Status -Response $legacyQuery -Expected @(301) -Name "Legacy podcast query redirect"

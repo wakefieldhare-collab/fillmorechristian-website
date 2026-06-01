@@ -183,6 +183,33 @@ if ($missingRequired.Count -eq 0) {
     Add-Check "Required static files" "FAIL" ("Missing: " + ($missingRequired -join ", "))
 }
 
+$headersPath = Join-Path $root "_headers"
+if (Test-Path -LiteralPath $headersPath) {
+    $headersText = Get-Content -Raw -LiteralPath $headersPath
+    $headerIssues = New-Object System.Collections.Generic.List[string]
+    $expectedHeaderPatterns = @{
+        "RSS content type" = "Content-Type:\s+application/rss\+xml;\s*charset=utf-8"
+        "RSS cache control" = "Cache-Control:\s+public,\s*max-age=300"
+        "nosniff" = "X-Content-Type-Options:\s+nosniff"
+        "frame policy" = "X-Frame-Options:\s+SAMEORIGIN"
+        "referrer policy" = "Referrer-Policy:\s+strict-origin-when-cross-origin"
+        "permissions policy" = "Permissions-Policy:\s+camera=\(\),\s*microphone=\(\),\s*geolocation=\(\)"
+    }
+    foreach ($label in $expectedHeaderPatterns.Keys) {
+        if ($headersText -notmatch $expectedHeaderPatterns[$label]) {
+            $headerIssues.Add("missing $label")
+        }
+    }
+
+    if ($headerIssues.Count -eq 0) {
+        Add-Check "Cloudflare headers" "OK" "RSS content type/cache and static-site security headers configured"
+    } else {
+        Add-Check "Cloudflare headers" "FAIL" ($headerIssues -join "; ")
+    }
+} else {
+    Add-Check "Cloudflare headers" "FAIL" "_headers is missing"
+}
+
 $wranglerConfigPath = Join-Path $root "wrangler.toml"
 if (Test-Path -LiteralPath $wranglerConfigPath) {
     $wranglerConfig = Get-Content -Raw -LiteralPath $wranglerConfigPath
