@@ -1440,3 +1440,5 @@ $warnings = @($checks | Where-Object { $_.Status -eq "WARN" })
 if ($warnings.Count -gt 0) {
     Write-Warning "$($warnings.Count) migration readiness warning(s) remain."
 }
+
+exit 0
