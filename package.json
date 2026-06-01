@@ -4,6 +4,7 @@
     "deploy:cloudflare": "powershell -ExecutionPolicy Bypass -File scripts/deploy-cloudflare-pages.ps1",
     "migrate:cloudflare-audio": "powershell -ExecutionPolicy Bypass -File scripts/migrate-cloudflare-audio.ps1",
     "status:migration": "powershell -ExecutionPolicy Bypass -File scripts/show-migration-status.ps1",
+    "verify:dns-import": "powershell -ExecutionPolicy Bypass -File scripts/test-cloudflare-dns-import-readiness.ps1",
     "verify:domain-transfer": "powershell -ExecutionPolicy Bypass -File scripts/test-domain-transfer-readiness.ps1",
     "verify:r2-public-audio": "powershell -ExecutionPolicy Bypass -File scripts/test-r2-public-audio.ps1",
     "verify:cancel-thechurchco": "powershell -ExecutionPolicy Bypass -File scripts/test-thechurchco-cancellation-readiness.ps1"

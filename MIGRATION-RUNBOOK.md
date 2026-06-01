@@ -268,6 +268,7 @@ This writes:
 The preserve files intentionally keep the Mailgun/Microsoft records and exclude the old TheChurchCo web records. Before changing nameservers, run:
 
 ```powershell
+.\scripts\test-cloudflare-dns-import-readiness.ps1
 .\scripts\test-dns-cutover.ps1 -Mode Before
 ```
 

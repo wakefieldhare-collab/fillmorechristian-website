@@ -1341,6 +1341,14 @@ $dnsPlanPath = Join-Path $root "exports\dns\fillmorechristian.org-cloudflare-dns
 if ((Test-Path -LiteralPath $dnsPreservePath) -and (Test-Path -LiteralPath $dnsZonePath) -and (Test-Path -LiteralPath $dnsPlanPath)) {
     $dnsRows = @(Import-Csv -LiteralPath $dnsPreservePath)
     $dnsIssues = New-Object System.Collections.Generic.List[string]
+    $dnsImportVerifierPath = Join-Path $root "scripts\test-cloudflare-dns-import-readiness.ps1"
+    if (-not (Test-Path -LiteralPath $dnsImportVerifierPath)) {
+        $dnsIssues.Add("DNS import readiness verifier is missing")
+    }
+    $packageJsonText = Get-Content -Raw -LiteralPath (Join-Path $root "package.json")
+    if ($packageJsonText -notmatch '"verify:dns-import"\s*:\s*"powershell -ExecutionPolicy Bypass -File scripts/test-cloudflare-dns-import-readiness\.ps1"') {
+        $dnsIssues.Add("package.json is missing verify:dns-import script")
+    }
     $requiredDnsRows = @(
         @{ Type = "MX"; Value = "mxa.mailgun.org"; Priority = "10" },
         @{ Type = "MX"; Value = "mxb.mailgun.org"; Priority = "10" },
