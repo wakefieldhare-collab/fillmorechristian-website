@@ -35,6 +35,14 @@ function Clean-Description {
     return $Text
 }
 
+function Clean-Speaker {
+    param([string]$Text)
+    $speaker = ($Text -replace "\s+", " ").Trim()
+    if (-not $speaker) { return "Fillmore Christian" }
+    if ($speaker -match "^(?i:thechurchco)") { return "Fillmore Christian" }
+    return $speaker
+}
+
 function Format-Date {
     param([string]$DateText)
     if (-not $DateText) { return "" }
@@ -60,8 +68,7 @@ $cards = New-Object System.Collections.Generic.List[string]
 foreach ($item in $items) {
     $title = [string]$item.title
     $date = Format-Date ([string]$item.pubDate)
-    $speaker = [string]$item.GetElementsByTagName("itunes:author")[0].InnerText
-    if (-not $speaker) { $speaker = "Fillmore Christian" }
+    $speaker = Clean-Speaker ([string]$item.GetElementsByTagName("itunes:author")[0].InnerText)
     $description = Clean-Description (Strip-Html ([string]$item.description))
     if ($description.Length -gt 240) {
         $description = $description.Substring(0, 240) + "..."

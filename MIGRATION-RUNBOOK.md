@@ -79,6 +79,15 @@ Prepared scripts for the R2 path:
 
 After rewriting enclosure URLs, re-run local verification and push the RSS changes before canceling TheChurchCo.
 
+Podcast metadata cleanup:
+
+```powershell
+.\scripts\normalize-podcast-metadata.ps1
+.\scripts\render-static-sermons.ps1
+```
+
+This keeps old ChurchCo account author values such as `thechurchcodaniel` out of the public RSS feed and sermon archive.
+
 ## Public Staging Deployment
 
 GitHub Pages staging is enabled from `main`:

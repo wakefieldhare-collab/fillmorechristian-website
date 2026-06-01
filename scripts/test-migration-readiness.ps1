@@ -161,6 +161,12 @@ if (Test-Path -LiteralPath $sermonsPath) {
     } else {
         Add-Check "Sermon placeholder cleanup" "OK" "No placeholder description text found"
     }
+
+    if ($sermonsHtml -match "thechurchcodaniel") {
+        Add-Check "Sermon platform-account cleanup" "FAIL" "Old TheChurchCo account text remains in sermons.html"
+    } else {
+        Add-Check "Sermon platform-account cleanup" "OK" "No old platform-account speaker text found"
+    }
 }
 
 if ($feeds.ContainsKey($feedPaths[0])) {
@@ -179,6 +185,14 @@ if ($feeds.ContainsKey($feedPaths[0])) {
         Add-Check "Podcast audio independence" "FAIL" "$($churchCoUrls.Count) enclosure URLs still point at TheChurchCo"
     } else {
         Add-Check "Podcast audio independence" "WARN" "$($churchCoUrls.Count) enclosure URLs still point at TheChurchCo until R2 rewrite"
+    }
+
+    $feedText = Get-Content -Raw -LiteralPath (Join-Path $root $feedPaths[0])
+    $feedAuthorArtifacts = [regex]::Matches($feedText, ">(thechurchco[^<]*)<", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    if ($feedAuthorArtifacts.Count -eq 0) {
+        Add-Check "Podcast author cleanup" "OK" "No old platform-account author fields found"
+    } else {
+        Add-Check "Podcast author cleanup" "FAIL" "$($feedAuthorArtifacts.Count) old platform-account author field(s) remain"
     }
 }
 
@@ -254,6 +268,21 @@ if (-not $SkipRemote) {
                     Add-Check "Staging sermon card count" "FAIL" "$remoteCards remote cards, expected $($feedItemCounts[$feedPaths[0]])"
                 } else {
                     Add-Check "Staging sermon card count" "OK" "$remoteCards sermon cards"
+                }
+
+                if ($response.Content -match "thechurchcodaniel|description description") {
+                    Add-Check "Staging sermon metadata cleanup" "FAIL" "Stale placeholder or platform-account text found on staging"
+                } else {
+                    Add-Check "Staging sermon metadata cleanup" "OK" "No stale placeholder or platform-account text found on staging"
+                }
+            }
+
+            if ($path -eq "podcast-category/fillmore-christian/feed/podcast") {
+                $remoteAuthorArtifacts = [regex]::Matches($response.Content, ">(thechurchco[^<]*)<", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+                if ($remoteAuthorArtifacts.Count -eq 0) {
+                    Add-Check "Staging podcast author cleanup" "OK" "No old platform-account author fields found on staging"
+                } else {
+                    Add-Check "Staging podcast author cleanup" "FAIL" "$($remoteAuthorArtifacts.Count) old platform-account author field(s) found on staging"
                 }
             }
         } catch {

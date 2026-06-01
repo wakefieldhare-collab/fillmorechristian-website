@@ -32,6 +32,27 @@ function Repair-Mojibake {
         Replace($badCloseQuote, '"')
 }
 
+function Normalize-SpeakerName {
+    param([string]$Text)
+    $speaker = ($Text -replace "\s+", " ").Trim()
+    if (-not $speaker) { return "Fillmore Christian" }
+    if ($speaker -match "^(?i:thechurchco)") { return "Fillmore Christian" }
+    return $speaker
+}
+
+function Normalize-ItemAuthors {
+    param([System.Xml.XmlElement[]]$Items)
+
+    foreach ($item in $Items) {
+        foreach ($child in @($item.ChildNodes)) {
+            if ($child.NodeType -eq [System.Xml.XmlNodeType]::Element -and
+                ($child.LocalName -eq "author" -or $child.LocalName -eq "creator")) {
+                $child.InnerText = Normalize-SpeakerName $child.InnerText
+            }
+        }
+    }
+}
+
 New-Item -ItemType Directory -Force -Path $exportDir, $legacyFeedDir | Out-Null
 if ($DownloadAudio) {
     New-Item -ItemType Directory -Force -Path $audioDir | Out-Null
@@ -59,6 +80,7 @@ if ($atomLink) {
 }
 
 $items = @($channel.item)
+Normalize-ItemAuthors $items
 $rows = New-Object System.Collections.Generic.List[object]
 
 for ($i = 0; $i -lt $items.Count; $i++) {

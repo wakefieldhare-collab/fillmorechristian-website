@@ -87,7 +87,7 @@ async function loadFromRSS(container) {
         title,
         date: formatPubDate(rawDate),
         rawDate,
-        speaker: cleanText(getItunesAuthor(item) || 'Fillmore Christian'),
+        speaker: cleanSpeaker(cleanText(getItunesAuthor(item))),
         audioUrl,
         audioType: getAudioType(audioUrl),
         description,
@@ -242,6 +242,12 @@ function cleanText(str) {
 function cleanDescription(str) {
   const text = str || '';
   return /^description(\s+description)*$/i.test(text) ? '' : text;
+}
+
+function cleanSpeaker(str) {
+  const speaker = (str || '').replace(/\s+/g, ' ').trim();
+  if (!speaker || /^thechurchco/i.test(speaker)) return 'Fillmore Christian';
+  return speaker;
 }
 
 function stripHtml(str) {
