@@ -366,13 +366,12 @@ $olderNavMarkup
   <meta name="twitter:description" content="$(HtmlEncode $summary)">
   <meta name="twitter:image" content="https://www.fillmorechristian.org/images/podcast-cover.jpg">
   <script type="application/ld+json">$jsonLdMarkup</script>
-  <link rel="stylesheet" href="../../css/style.css?v=20260601-17">
+  <link rel="stylesheet" href="../../css/style.css?v=20260601-16">
 </head>
 <body>
   <nav class="navbar">
     <div class="container">
       <a href="../../index.html" class="nav-brand">
-        <img src="../../favicon.svg" alt="" class="nav-brand-mark" aria-hidden="true">
         <div class="nav-brand-text">
           <span class="nav-brand-name">Fillmore Christian Church</span>
           <span class="nav-brand-tagline">established in 1865</span>

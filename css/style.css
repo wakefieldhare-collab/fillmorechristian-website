@@ -115,14 +115,6 @@ h4 { font-size: 1.25rem; }
   text-decoration: none;
 }
 
-.nav-brand-mark {
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
-  box-shadow: 0 8px 22px rgba(23, 50, 71, 0.16);
-  flex: 0 0 auto;
-}
-
 .nav-brand-text {
   display: flex;
   flex-direction: column;
@@ -1454,11 +1446,6 @@ h4 { font-size: 1.25rem; }
   .nav-brand {
     gap: 10px;
     min-width: 0;
-  }
-
-  .nav-brand-mark {
-    width: 38px;
-    height: 38px;
   }
 
   .nav-brand-name {
