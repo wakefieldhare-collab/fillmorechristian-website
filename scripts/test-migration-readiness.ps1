@@ -295,6 +295,9 @@ if (Test-Path -LiteralPath $redirectsPath) {
     if ($redirectsText -notmatch '(?m)^/podcast-category/fillmore-christian/feed/podcast/\s+/podcast-category/fillmore-christian/feed/podcast\s+301\s*$') {
         $redirectIssues.Add("missing canonical trailing-slash podcast feed redirect")
     }
+    if ($redirectsText -notmatch '(?m)^/podcast/\s+/podcast\.html\s+301\s*$') {
+        $redirectIssues.Add("missing pretty podcast page redirect")
+    }
     if ($redirectsText -notmatch '(?m)^/feed/\s+/podcast-category/fillmore-christian/feed/podcast\s+302\s*$' -or $redirectsText -notmatch '(?m)^/feed\.xml\s+/podcast-category/fillmore-christian/feed/podcast\s+302\s*$' -or $redirectsText -notmatch '(?m)^/podcast\.xml\s+/podcast-category/fillmore-christian/feed/podcast\s+302\s*$') {
         $redirectIssues.Add("missing podcast feed alias redirects")
     }
@@ -367,6 +370,13 @@ foreach ($relativePath in $publicHtmlPages) {
     }
     if ($html -notmatch '<img\s+src="images/fcc-logo\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">') {
         $metadataFailures.Add("$relativePath missing official FCC navigation logo")
+    }
+    if ($relativePath -eq "podcast.html") {
+        if ($html -notmatch '<a\s+href="podcast\.html"\s+class="active">Podcast</a>') {
+            $metadataFailures.Add("podcast.html missing active podcast navigation link")
+        }
+    } elseif ($html -notmatch '<a\s+href="podcast\.html">Podcast</a>') {
+        $metadataFailures.Add("$relativePath missing podcast navigation link")
     }
     if ($html -notmatch "<link\s+rel=`"manifest`"\s+href=`"site\.webmanifest`"") {
         $metadataFailures.Add("$relativePath missing web app manifest")
@@ -1069,7 +1079,7 @@ if ($feeds.ContainsKey($feedPaths[0])) {
         if ($episodeHtml -notmatch '<script\s+type="application/ld\+json">(?s).*"@type":"PodcastEpisode"' -or $episodeHtml -notmatch '"isPartOf":\{"@type":"PodcastSeries","name":"Fillmore Christian"' -or $episodeHtml -notmatch '"publisher":\{"@type":"Church","name":"Fillmore Christian Church"') {
             $missingEpisodeStructuredData.Add($slug)
         }
-        if ($episodeHtml -notmatch '<link\s+rel="icon"\s+href="../../favicon\.svg"\s+type="image/svg\+xml">' -or $episodeHtml -notmatch '<img\s+src="../../images/fcc-logo\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or $episodeHtml -notmatch '<link\s+rel="manifest"\s+href="../../site\.webmanifest">' -or $episodeHtml -notmatch '<meta\s+name="theme-color"\s+content="#173247">') {
+        if ($episodeHtml -notmatch '<link\s+rel="icon"\s+href="../../favicon\.svg"\s+type="image/svg\+xml">' -or $episodeHtml -notmatch '<img\s+src="../../images/fcc-logo\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or $episodeHtml -notmatch '<a\s+href="../../podcast\.html">Podcast</a>' -or $episodeHtml -notmatch '<link\s+rel="manifest"\s+href="../../site\.webmanifest">' -or $episodeHtml -notmatch '<meta\s+name="theme-color"\s+content="#173247">') {
             $missingEpisodeBrandAssets.Add($slug)
         }
         $expectedEpisodeUrl = "https://www.fillmorechristian.org/episode/$slug/"

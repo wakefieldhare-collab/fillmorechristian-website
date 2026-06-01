@@ -540,6 +540,7 @@ $olderNavMarkup
         </li>
         <li><a href="../../events.html">Events</a></li>
         <li><a href="../../sermons.html" class="active">Past Sermons</a></li>
+        <li><a href="../../podcast.html">Podcast</a></li>
         <li><a href="../../contact.html">Contact Us</a></li>
       </ul>
     </div>

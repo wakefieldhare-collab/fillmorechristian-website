@@ -260,6 +260,13 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Pretty sermons redirect"; Status = "OK"; Details = "/sermons/ -> /sermons.html" })
 
+    $prettyPodcast = Invoke-NoRedirect -Url "$baseUrl/podcast/"
+    Assert-Status -Response $prettyPodcast -Expected @(301, 302, 308) -Name "Pretty podcast redirect"
+    if (-not $prettyPodcast.Location -or $prettyPodcast.Location.ToString() -notmatch "/podcast\.html$") {
+        throw "Pretty podcast redirect pointed to '$($prettyPodcast.Location)'"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Pretty podcast redirect"; Status = "OK"; Details = "/podcast/ -> /podcast.html" })
+
     $podcastFeedSlash = Invoke-NoRedirect -Url "$baseUrl/podcast-category/fillmore-christian/feed/podcast/"
     Assert-Status -Response $podcastFeedSlash -Expected @(301, 302, 308) -Name "Trailing podcast feed redirect"
     $podcastFeedSlashLocation = if ($podcastFeedSlash.Location) { $podcastFeedSlash.Location.ToString() } else { "" }
@@ -273,6 +280,7 @@ try {
     if ($sermonsPageContent -notmatch 'href="podcast\.html"[^>]*>Subscribe</a>' -or
         $podcastPageContent -notmatch 'id="podcast-feed-url"' -or
         $podcastPageContent -notmatch 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -or
+        $podcastPageContent -notmatch '<a\s+href="podcast\.html"\s+class="active">Podcast</a>' -or
         $podcastPageContent -notmatch '"@type": "PodcastSeries"' -or
         $sermonsPageContent -match "being moved out of TheChurchCo|during the move|ChurchCo transition|preserved podcast RSS feed path" -or
         $podcastPageContent -match "being moved out of TheChurchCo|during the move|ChurchCo transition|preserved podcast RSS feed path") {
@@ -328,10 +336,11 @@ try {
 
     $homePageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "index.html")
     if ($homePageContent -notmatch '<img\s+src="images/fcc-logo\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or
+        $homePageContent -notmatch '<a\s+href="podcast\.html">Podcast</a>' -or
         $homePageContent -notmatch 'nav-brand-name">Fillmore Christian Church') {
-        throw "Built home page is missing the official FCC navigation logo or text"
+        throw "Built home page is missing the official FCC navigation logo, podcast link, or text"
     }
-    $checks.Add([pscustomobject]@{ Check = "Navigation brand"; Status = "OK"; Details = "Published output includes the official FCC logo and navigation text" })
+    $checks.Add([pscustomobject]@{ Check = "Navigation brand"; Status = "OK"; Details = "Published output includes the official FCC logo, podcast link, and navigation text" })
 
     if ($homePageContent -notmatch '<source\s+src="/media/' -or $homePageContent -match '<source\s+src="https://www\.fillmorechristian\.org/media/') {
         throw "Built home page does not use same-origin media URLs for audio playback"
@@ -438,10 +447,10 @@ try {
     if ($episode.Content -match "fonts\.googleapis\.com|fonts\.gstatic\.com") {
         throw "Static episode page still references Google-hosted fonts"
     }
-    if ($episode.Content -notmatch "<audio\s+controls" -or $episode.Content -notmatch "Download Audio" -or $episode.Content -notmatch "All Sermons" -or $episode.Content -notmatch 'class="episode-nav"' -or $episode.Content -notmatch "Newer Message" -or $episode.Content -notmatch "Older Message" -or $episode.Content -notmatch 'href="../../favicon\.svg"' -or $episode.Content -notmatch 'href="../../site\.webmanifest"' -or $episode.Content -notmatch 'id="episode-link-url"' -or $episode.Content -notmatch 'data-copy-value="https://www\.fillmorechristian\.org/episode/be-ready-luke-12/"' -or $episode.Content -notmatch 'id="episode-copy-status"') {
-        throw "Static episode page is missing audio, download, archive navigation, episode navigation, brand asset links, or copyable canonical sermon link"
+    if ($episode.Content -notmatch "<audio\s+controls" -or $episode.Content -notmatch "Download Audio" -or $episode.Content -notmatch "All Sermons" -or $episode.Content -notmatch 'href="../../podcast\.html"' -or $episode.Content -notmatch 'class="episode-nav"' -or $episode.Content -notmatch "Newer Message" -or $episode.Content -notmatch "Older Message" -or $episode.Content -notmatch 'href="../../favicon\.svg"' -or $episode.Content -notmatch 'href="../../site\.webmanifest"' -or $episode.Content -notmatch 'id="episode-link-url"' -or $episode.Content -notmatch 'data-copy-value="https://www\.fillmorechristian\.org/episode/be-ready-luke-12/"' -or $episode.Content -notmatch 'id="episode-copy-status"') {
+        throw "Static episode page is missing audio, download, archive navigation, podcast navigation, episode navigation, brand asset links, or copyable canonical sermon link"
     }
-    $checks.Add([pscustomobject]@{ Check = "Static episode page"; Status = "OK"; Details = "Audio player, download, archive navigation, episode navigation, brand asset links, and copyable sermon link" })
+    $checks.Add([pscustomobject]@{ Check = "Static episode page"; Status = "OK"; Details = "Audio player, download, archive navigation, podcast navigation, episode navigation, brand asset links, and copyable sermon link" })
 
     $checks | Format-Table -AutoSize
 } finally {
