@@ -87,7 +87,7 @@ function Assert-CloudflareAuth {
 
     $whoamiOutput = & $Wrangler.Command @($Wrangler.PrefixArgs) whoami 2>&1
     if ($LASTEXITCODE -ne 0 -or ($whoamiOutput -join "`n") -match "not authenticated") {
-        throw "Cloudflare is not authenticated. Run `npx wrangler login` first."
+        throw "Cloudflare is not authenticated. Run npx wrangler login first."
     }
 }
 

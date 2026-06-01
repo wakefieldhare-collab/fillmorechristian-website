@@ -43,6 +43,15 @@ function Get-WranglerInvocation {
     throw "wrangler is not installed or available through npx."
 }
 
+function Assert-CloudflareAuth {
+    param([object]$Wrangler)
+
+    $whoamiOutput = & $Wrangler.Command @($Wrangler.PrefixArgs) whoami 2>&1
+    if ($LASTEXITCODE -ne 0 -or ($whoamiOutput -join "`n") -match "not authenticated") {
+        throw "Cloudflare is not authenticated. Run npx wrangler login first."
+    }
+}
+
 $root = Resolve-Path (Join-Path $PSScriptRoot "..")
 $audioPath = Resolve-RepoPath $AudioDir
 $r2ManifestPath = Resolve-RepoPath $ManifestPath
@@ -56,6 +65,9 @@ if (-not (Test-Path -LiteralPath $r2ManifestPath)) {
 }
 
 $wrangler = if ($DryRun) { $null } else { Get-WranglerInvocation }
+if (-not $DryRun) {
+    Assert-CloudflareAuth -Wrangler $wrangler
+}
 
 $rows = @(Import-Csv -LiteralPath $r2ManifestPath | Sort-Object ObjectKey)
 if ($rows.Count -eq 0) {

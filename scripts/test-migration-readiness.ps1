@@ -563,6 +563,8 @@ if (Test-Path -LiteralPath $pagesWorkflowPath) {
 $cancellationScriptPath = Join-Path $root "scripts\test-thechurchco-cancellation-readiness.ps1"
 $domainTransferScriptPath = Join-Path $root "scripts\test-domain-transfer-readiness.ps1"
 $audioMigrationScriptPath = Join-Path $root "scripts\migrate-cloudflare-audio.ps1"
+$audioUploadScriptPath = Join-Path $root "scripts\upload-podcast-audio-to-r2.ps1"
+$audioUploadVerifierScriptPath = Join-Path $root "scripts\test-r2-audio-upload.ps1"
 $publicAudioScriptPath = Join-Path $root "scripts\test-r2-public-audio.ps1"
 if (Test-Path -LiteralPath $domainTransferScriptPath) {
     $domainTransferScriptText = Get-Content -Raw -LiteralPath $domainTransferScriptPath
@@ -615,6 +617,24 @@ if ((Test-Path -LiteralPath $audioMigrationScriptPath) -and (Test-Path -LiteralP
     }
 } else {
     Add-Check "R2 public audio preflight" "FAIL" "scripts\migrate-cloudflare-audio.ps1 or scripts\test-r2-public-audio.ps1 is missing"
+}
+
+if ((Test-Path -LiteralPath $audioMigrationScriptPath) -and (Test-Path -LiteralPath $audioUploadScriptPath) -and (Test-Path -LiteralPath $audioUploadVerifierScriptPath)) {
+    $audioMigrationScriptText = if ($audioMigrationScriptText) { $audioMigrationScriptText } else { Get-Content -Raw -LiteralPath $audioMigrationScriptPath }
+    $audioUploadScriptText = Get-Content -Raw -LiteralPath $audioUploadScriptPath
+    $audioUploadVerifierScriptText = Get-Content -Raw -LiteralPath $audioUploadVerifierScriptPath
+    if ($audioMigrationScriptText -match "Assert-CloudflareAuth" -and
+        $audioUploadScriptText -match "Assert-CloudflareAuth" -and
+        $audioUploadVerifierScriptText -match "Assert-CloudflareAuth" -and
+        $audioMigrationScriptText -match "wrangler login" -and
+        $audioUploadScriptText -match "wrangler login" -and
+        $audioUploadVerifierScriptText -match "wrangler login") {
+        Add-Check "R2 Cloudflare auth guard" "OK" "Audio migration, direct upload, and R2 verifier fail early when Wrangler is not authenticated"
+    } else {
+        Add-Check "R2 Cloudflare auth guard" "FAIL" "R2 migration scripts are missing a clear Cloudflare authentication preflight"
+    }
+} else {
+    Add-Check "R2 Cloudflare auth guard" "FAIL" "R2 migration, upload, or verifier script is missing"
 }
 
 $feedPaths = @(

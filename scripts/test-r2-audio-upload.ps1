@@ -53,6 +53,15 @@ function Get-WranglerInvocation {
     throw "wrangler is not installed or available through npx."
 }
 
+function Assert-CloudflareAuth {
+    param([object]$Wrangler)
+
+    $whoamiOutput = & $Wrangler.Command @($Wrangler.PrefixArgs) whoami 2>&1
+    if ($LASTEXITCODE -ne 0 -or ($whoamiOutput -join "`n") -match "not authenticated") {
+        throw "Cloudflare is not authenticated. Run npx wrangler login first."
+    }
+}
+
 $manifestFullPath = Resolve-RepoPath $ManifestPath
 $audioPath = Resolve-RepoPath $AudioDir
 
@@ -90,6 +99,7 @@ if ($DryRun) {
 }
 
 $wrangler = Get-WranglerInvocation
+Assert-CloudflareAuth -Wrangler $wrangler
 $downloadRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("fcc-r2-audio-verify-" + [guid]::NewGuid().ToString("N"))
 New-Item -ItemType Directory -Path $downloadRoot | Out-Null
 
