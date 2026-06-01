@@ -284,6 +284,14 @@ if (Test-Path -LiteralPath $sermonsPath) {
         Add-Check "Static sermon archive" "FAIL" "$staticCards static cards, expected $expectedCards from the podcast feed"
     }
 
+    $downloadLinks = ([regex]::Matches($sermonsHtml, 'class="sermon-download"')).Count
+    $expectedDownloadLinks = if ($feedEnclosureCounts.ContainsKey($feedPaths[0])) { $feedEnclosureCounts[$feedPaths[0]] } else { 0 }
+    if ($expectedDownloadLinks -gt 0 -and $downloadLinks -eq $expectedDownloadLinks) {
+        Add-Check "Sermon audio downloads" "OK" "$downloadLinks downloadable audio link(s) match feed enclosures"
+    } else {
+        Add-Check "Sermon audio downloads" "FAIL" "$downloadLinks downloadable audio link(s), expected $expectedDownloadLinks from the podcast feed"
+    }
+
     if ($sermonsHtml.Contains("description description")) {
         Add-Check "Sermon placeholder cleanup" "FAIL" "Placeholder text remains in sermons.html"
     } else {
@@ -702,10 +710,10 @@ if (-not $SkipRemote) {
                 }
 
                 if ($path -eq $sampleEpisodePath) {
-                    if ($response.Content -match "<audio\s+controls" -and $response.Content -match "All Sermons") {
-                        Add-Check "Staging episode page" "OK" "Sample episode page has audio and archive navigation"
+                    if ($response.Content -match "<audio\s+controls" -and $response.Content -match "Download Audio" -and $response.Content -match "All Sermons") {
+                        Add-Check "Staging episode page" "OK" "Sample episode page has audio, download, and archive navigation"
                     } else {
-                        Add-Check "Staging episode page" "FAIL" "Sample episode page is missing audio or archive navigation"
+                        Add-Check "Staging episode page" "FAIL" "Sample episode page is missing audio, download, or archive navigation"
                     }
                 }
             }

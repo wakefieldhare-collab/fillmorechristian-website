@@ -107,6 +107,7 @@ foreach ($item in $items) {
     }
     if ($audioUrl) {
         $html += "          <audio controls preload=`"none`"><source src=`"$(HtmlEncode $audioUrl)`" type=`"$(Get-AudioType $audioUrl)`">Your browser does not support audio playback.</audio>"
+        $html += "          <div class=`"sermon-actions`"><a href=`"$(HtmlEncode $audioUrl)`" class=`"sermon-download`" download>Download Audio</a></div>"
     } else {
         $html += "          <p class=`"sermon-audio-missing`">Audio is not attached to this archived feed item yet.</p>"
     }

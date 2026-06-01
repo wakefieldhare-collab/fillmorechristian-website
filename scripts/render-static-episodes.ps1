@@ -242,6 +242,12 @@ foreach ($item in $items) {
     $localDir = Join-Path $episodeRoot $slug
     New-Item -ItemType Directory -Path $localDir | Out-Null
 
+    $downloadActionMarkup = if ($audioUrl) {
+        '              <a href="' + (HtmlEncode $audioUrl) + '" class="btn btn-outline" download>Download Audio</a>' + "`r`n"
+    } else {
+        ""
+    }
+
     $audioMarkup = if ($audioUrl) {
         '          <audio controls preload="none"><source src="' + (HtmlEncode $audioUrl) + '" type="' + (Get-AudioType $audioUrl) + '">Your browser does not support audio playback.</audio>'
     } else {
@@ -276,7 +282,7 @@ foreach ($item in $items) {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../css/style.css?v=20260601-2">
+  <link rel="stylesheet" href="../../css/style.css?v=20260601-3">
 </head>
 <body>
   <nav class="navbar">
@@ -326,7 +332,7 @@ foreach ($item in $items) {
 $descriptionMarkup
 $audioMarkup
             <div class="episode-actions">
-              <a href="../../sermons.html" class="btn btn-outline">All Sermons</a>
+$downloadActionMarkup              <a href="../../sermons.html" class="btn btn-outline">All Sermons</a>
               <a href="../../podcast-category/fillmore-christian/feed/podcast" class="btn btn-outline">RSS Feed</a>
             </div>
           </div>
@@ -342,7 +348,7 @@ $audioMarkup
     </div>
   </footer>
 
-  <script src="../../js/main.js?v=20260601-2"></script>
+  <script src="../../js/main.js?v=20260601-3"></script>
 </body>
 </html>
 "@

@@ -143,6 +143,7 @@ function renderSermons(container, sermons) {
 
     if (sermon.audioUrl) {
       html += '<audio controls preload="none"><source src="' + escapeHtml(sermon.audioUrl) + '" type="' + escapeHtml(sermon.audioType) + '">Your browser does not support audio playback.</audio>';
+      html += '<div class="sermon-actions"><a href="' + escapeHtml(sermon.audioUrl) + '" class="sermon-download" download>Download Audio</a></div>';
     } else {
       html += '<p class="sermon-audio-missing">Audio is not attached to this archived feed item yet.</p>';
     }
