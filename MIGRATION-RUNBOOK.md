@@ -94,6 +94,7 @@ GitHub Pages staging is enabled from `main`:
 
 - URL: `https://wakefieldhare-collab.github.io/fillmorechristian-website/`
 - Purpose: public preview and QA before Cloudflare authorization.
+- Deployment: `.github/workflows/pages.yml` builds with `npm run build` and publishes `dist`, matching the Cloudflare Pages output directory.
 - Limitation: Cloudflare `_redirects` and `_headers` are not honored by GitHub Pages. Treat this as staging only, not final production.
 
 ## Preflight Checks
