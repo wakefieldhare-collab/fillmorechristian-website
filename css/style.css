@@ -739,6 +739,14 @@ h4 { font-size: 1.25rem; }
   margin-bottom: 0.3em;
 }
 
+.sermon-item h3 a {
+  color: inherit;
+}
+
+.sermon-item h3 a:hover {
+  color: var(--color-accent);
+}
+
 .sermon-meta {
   color: var(--color-text-light);
   font-size: 0.9rem;
@@ -759,6 +767,53 @@ h4 { font-size: 1.25rem; }
 .sermon-audio-missing {
   color: var(--color-text-light);
   font-style: italic;
+}
+
+.episode-header h1 {
+  max-width: 880px;
+}
+
+.episode-layout {
+  max-width: 980px;
+}
+
+.episode-player {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+  background: var(--color-white);
+  border: 1px solid rgba(23, 50, 71, 0.1);
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+  padding: 28px;
+}
+
+.episode-art-wrap img {
+  display: block;
+  border-radius: 6px;
+  box-shadow: 0 12px 34px rgba(23, 50, 71, 0.16);
+}
+
+.episode-content h2 {
+  margin-bottom: 0.35rem;
+}
+
+.episode-description {
+  margin: 1rem 0;
+  color: var(--color-text);
+}
+
+.episode-content audio {
+  width: 100%;
+  margin-top: 1.2rem;
+}
+
+.episode-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 1.3rem;
 }
 
 .sermons-loading {
@@ -953,7 +1008,8 @@ h4 { font-size: 1.25rem; }
 
   .welcome-grid,
   .media-band-grid,
-  .sermon-tools-card {
+  .sermon-tools-card,
+  .episode-player {
     grid-template-columns: 1fr;
   }
 
@@ -961,7 +1017,8 @@ h4 { font-size: 1.25rem; }
     min-height: 680px;
   }
 
-  .podcast-cover {
+  .podcast-cover,
+  .episode-art-wrap img {
     width: 140px;
   }
 

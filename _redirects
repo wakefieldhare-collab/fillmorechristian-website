@@ -9,11 +9,7 @@
 /contact/ /contact.html 301
 /give/ https://givebutter.com/fillmorechristian 302
 
-# Keep legacy episode links useful even when individual episode pages are not recreated.
-/episode/* /sermons.html 302
-
 # Feed aliases.
 /feed/ /podcast-category/fillmore-christian/feed/podcast 302
 /feed.xml /podcast-category/fillmore-christian/feed/podcast 302
 /podcast.xml /podcast-category/fillmore-christian/feed/podcast 302
-

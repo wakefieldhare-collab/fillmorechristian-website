@@ -51,6 +51,8 @@ https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podca
 
 The static site now serves that same path, so subscribers do not need a redirect immediately after DNS cutover.
 
+The archive also includes generated static pages for every feed item under `/episode/.../`, so old ChurchCo sermon links can land on a specific message page with its own audio player.
+
 #### Long-Term: Pick Permanent Audio Hosting
 
 The copied feed still points to TheChurchCo-hosted MP3 files. Before canceling TheChurchCo, either:

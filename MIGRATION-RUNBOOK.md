@@ -97,10 +97,11 @@ Podcast metadata cleanup:
 
 ```powershell
 .\scripts\normalize-podcast-metadata.ps1
+.\scripts\render-static-episodes.ps1
 .\scripts\render-static-sermons.ps1
 ```
 
-This keeps old ChurchCo account author values such as `thechurchcodaniel` out of the public RSS feed and sermon archive.
+This keeps old ChurchCo account author values such as `thechurchcodaniel` out of the public RSS feed and sermon archive, and it creates one static page for every feed episode so old `/episode/.../` links remain useful after the static-site cutover.
 
 ## Public Staging Deployment
 

@@ -61,6 +61,20 @@ function Get-AudioType {
     return "audio/mpeg"
 }
 
+function Get-RelativeEpisodePath {
+    param([string]$Url)
+
+    if (-not $Url) { return "" }
+    try {
+        $uri = [Uri]$Url
+        $segments = @($uri.AbsolutePath.Trim("/") -split "/" | Where-Object { $_ })
+        if ($segments.Count -ge 2 -and $segments[0] -eq "episode") {
+            return "episode/$($segments[1])/"
+        }
+    } catch {}
+    return ""
+}
+
 [xml]$feed = Get-Content -Raw -LiteralPath $feedFile
 $items = @($feed.rss.channel.item)
 $cards = New-Object System.Collections.Generic.List[string]
@@ -76,12 +90,17 @@ foreach ($item in $items) {
 
     $enclosure = $item.enclosure
     $audioUrl = if ($enclosure) { [string]$enclosure.url } else { "" }
+    $episodePath = Get-RelativeEpisodePath ([string]$item.link)
     $search = "$title $date $speaker $description"
 
     $cardClass = if ($audioUrl) { "sermon-item" } else { "sermon-item no-audio" }
     $html = @()
     $html += "        <article class=`"$cardClass`" data-search=`"$(HtmlEncode $search.ToLowerInvariant())`">"
-    $html += "          <h3>$(HtmlEncode $title)</h3>"
+    if ($episodePath) {
+        $html += "          <h3><a href=`"$(HtmlEncode $episodePath)`">$(HtmlEncode $title)</a></h3>"
+    } else {
+        $html += "          <h3>$(HtmlEncode $title)</h3>"
+    }
     $html += "          <div class=`"sermon-meta`"><span>$(HtmlEncode $date)</span> &middot; <span>$(HtmlEncode $speaker)</span></div>"
     if ($description) {
         $html += "          <p class=`"sermon-description`">$(HtmlEncode $description)</p>"

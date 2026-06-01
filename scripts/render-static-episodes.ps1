@@ -1,0 +1,282 @@
+param(
+    [string]$FeedPath = "podcast-category\fillmore-christian\feed\podcast",
+    [string]$EpisodeDir = "episode",
+    [string]$SitemapPath = "sitemap.xml"
+)
+
+$ErrorActionPreference = "Stop"
+
+$root = Resolve-Path (Join-Path $PSScriptRoot "..")
+$feedFile = Join-Path $root $FeedPath
+$episodeRoot = Join-Path $root $EpisodeDir
+$sitemapFile = Join-Path $root $SitemapPath
+
+if (-not (Test-Path -LiteralPath $feedFile)) {
+    throw "Feed file not found: $feedFile"
+}
+
+function HtmlEncode {
+    param([string]$Text)
+    return [System.Net.WebUtility]::HtmlEncode($Text)
+}
+
+function Strip-Html {
+    param([string]$Html)
+    if (-not $Html) { return "" }
+    return ([regex]::Replace($Html, "<[^>]+>", " ") -replace "\s+", " ").Trim()
+}
+
+function Clean-Description {
+    param([string]$Text)
+    if (-not $Text) { return "" }
+    if ($Text -match "^(?i:description)(\s+(?i:description))*$") { return "" }
+    return $Text
+}
+
+function Clean-Speaker {
+    param([string]$Text)
+    $speaker = ($Text -replace "\s+", " ").Trim()
+    if (-not $speaker) { return "Fillmore Christian" }
+    if ($speaker -match "^(?i:thechurchco)") { return "Fillmore Christian" }
+    return $speaker
+}
+
+function Format-Date {
+    param([string]$DateText)
+    if (-not $DateText) { return "" }
+    try {
+        return ([datetimeoffset]::Parse($DateText)).ToString("MMMM d, yyyy", [System.Globalization.CultureInfo]::GetCultureInfo("en-US"))
+    } catch {
+        return $DateText
+    }
+}
+
+function Get-AudioType {
+    param([string]$Url)
+    $lower = $Url.ToLowerInvariant()
+    if ($lower.EndsWith(".m4a")) { return "audio/mp4" }
+    if ($lower.EndsWith(".wav")) { return "audio/wav" }
+    return "audio/mpeg"
+}
+
+function Get-EpisodeSlug {
+    param([string]$Url)
+
+    $uri = [Uri]$Url
+    $segments = @($uri.AbsolutePath.Trim("/") -split "/" | Where-Object { $_ })
+    if ($segments.Count -ge 2 -and $segments[0] -eq "episode") {
+        return $segments[1]
+    }
+
+    return ""
+}
+
+function Get-ElementTextByLocalName {
+    param(
+        [System.Xml.XmlElement]$Element,
+        [string]$LocalName
+    )
+
+    foreach ($child in @($Element.ChildNodes)) {
+        if ($child.NodeType -eq [System.Xml.XmlNodeType]::Element -and $child.LocalName -eq $LocalName) {
+            return [string]$child.InnerText
+        }
+    }
+    return ""
+}
+
+function Write-Sitemap {
+    param([object[]]$EpisodeRows)
+
+    $publicPages = @(
+        @{ Loc = "https://www.fillmorechristian.org/"; Priority = "1.0" },
+        @{ Loc = "https://www.fillmorechristian.org/about.html"; Priority = "0.8" },
+        @{ Loc = "https://www.fillmorechristian.org/beliefs.html"; Priority = "0.8" },
+        @{ Loc = "https://www.fillmorechristian.org/team.html"; Priority = "0.7" },
+        @{ Loc = "https://www.fillmorechristian.org/events.html"; Priority = "0.7" },
+        @{ Loc = "https://www.fillmorechristian.org/sermons.html"; Priority = "0.9" },
+        @{ Loc = "https://www.fillmorechristian.org/contact.html"; Priority = "0.8" }
+    )
+
+    $lines = New-Object System.Collections.Generic.List[string]
+    $lines.Add('<?xml version="1.0" encoding="UTF-8"?>')
+    $lines.Add('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+    foreach ($page in $publicPages) {
+        $lines.Add('  <url>')
+        $lines.Add("    <loc>$($page.Loc)</loc>")
+        $lines.Add("    <priority>$($page.Priority)</priority>")
+        $lines.Add('  </url>')
+    }
+
+    foreach ($episode in $EpisodeRows) {
+        $lines.Add('  <url>')
+        $lines.Add("    <loc>$($episode.CanonicalUrl)</loc>")
+        if ($episode.LastMod) {
+            $lines.Add("    <lastmod>$($episode.LastMod)</lastmod>")
+        }
+        $lines.Add('    <priority>0.6</priority>')
+        $lines.Add('  </url>')
+    }
+
+    $lines.Add('</urlset>')
+    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    [System.IO.File]::WriteAllText($sitemapFile, ($lines -join "`r`n") + "`r`n", $utf8NoBom)
+}
+
+[xml]$feed = Get-Content -Raw -LiteralPath $feedFile
+$items = @($feed.rss.channel.item)
+if ($items.Count -eq 0) {
+    throw "Feed has no items: $feedFile"
+}
+
+if (Test-Path -LiteralPath $episodeRoot) {
+    Remove-Item -LiteralPath $episodeRoot -Recurse -Force
+}
+New-Item -ItemType Directory -Path $episodeRoot | Out-Null
+
+$episodeRows = New-Object System.Collections.Generic.List[object]
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+
+foreach ($item in $items) {
+    $title = [string]$item.title
+    $slug = Get-EpisodeSlug ([string]$item.link)
+    if (-not $slug) {
+        throw "Could not derive episode slug for $title"
+    }
+
+    $date = Format-Date ([string]$item.pubDate)
+    $lastMod = ""
+    try {
+        $lastMod = ([datetimeoffset]::Parse([string]$item.pubDate)).ToString("yyyy-MM-dd")
+    } catch {}
+
+    $speaker = Clean-Speaker (Get-ElementTextByLocalName $item "author")
+    $description = Clean-Description (Strip-Html ([string]$item.description))
+    $summary = if ($description) { $description } else { "Listen to $title from the Fillmore Christian Church sermon archive." }
+    if ($summary.Length -gt 155) {
+        $summary = $summary.Substring(0, 152).TrimEnd() + "..."
+    }
+
+    $enclosure = $item.enclosure
+    $audioUrl = if ($enclosure) { [string]$enclosure.url } else { "" }
+    $canonicalUrl = "https://www.fillmorechristian.org/episode/$slug/"
+    $localDir = Join-Path $episodeRoot $slug
+    New-Item -ItemType Directory -Path $localDir | Out-Null
+
+    $audioMarkup = if ($audioUrl) {
+        '          <audio controls preload="none"><source src="' + (HtmlEncode $audioUrl) + '" type="' + (Get-AudioType $audioUrl) + '">Your browser does not support audio playback.</audio>'
+    } else {
+        '          <p class="sermon-audio-missing">Audio is not attached to this archived feed item yet.</p>'
+    }
+
+    $descriptionMarkup = if ($description) {
+        '          <p class="episode-description">' + (HtmlEncode $description) + '</p>'
+    } else {
+        ""
+    }
+
+    $html = @"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>$(HtmlEncode $title) | Fillmore Christian Church</title>
+  <meta name="description" content="$(HtmlEncode $summary)">
+  <link rel="canonical" href="$canonicalUrl">
+  <link rel="alternate" type="application/rss+xml" title="Fillmore Christian Podcast" href="https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast">
+  <meta property="og:title" content="$(HtmlEncode $title) | Fillmore Christian Church">
+  <meta property="og:description" content="$(HtmlEncode $summary)">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="$canonicalUrl">
+  <meta property="og:image" content="https://www.fillmorechristian.org/images/podcast-cover.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="$(HtmlEncode $title) | Fillmore Christian Church">
+  <meta name="twitter:description" content="$(HtmlEncode $summary)">
+  <meta name="twitter:image" content="https://www.fillmorechristian.org/images/podcast-cover.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css?v=20260601-2">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <a href="../../index.html" class="nav-brand">
+        <div class="nav-brand-text">
+          <span class="nav-brand-name">Fillmore Christian Church</span>
+          <span class="nav-brand-tagline">established in 1865</span>
+        </div>
+      </a>
+      <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="../../index.html">Home</a></li>
+        <li class="nav-dropdown">
+          <a href="../../about.html">About</a>
+          <ul class="nav-dropdown-menu">
+            <li><a href="../../beliefs.html">Our Beliefs</a></li>
+            <li><a href="../../team.html">Our Team</a></li>
+          </ul>
+        </li>
+        <li><a href="../../events.html">Events</a></li>
+        <li><a href="../../sermons.html" class="active">Past Sermons</a></li>
+        <li><a href="../../contact.html">Contact Us</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <section class="page-header sermon-header episode-header">
+      <div class="container">
+        <p class="eyebrow">Sermon archive</p>
+        <h1>$(HtmlEncode $title)</h1>
+        <p>$(HtmlEncode $date) &middot; $(HtmlEncode $speaker)</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container episode-layout">
+        <article class="episode-player">
+          <div class="episode-art-wrap">
+            <img src="../../images/podcast-cover.jpg" alt="Fillmore Christian podcast cover art" width="1400" height="1400" loading="lazy" decoding="async">
+          </div>
+          <div class="episode-content">
+            <p class="eyebrow">Listen</p>
+            <h2>$(HtmlEncode $title)</h2>
+            <div class="sermon-meta"><span>$(HtmlEncode $date)</span> &middot; <span>$(HtmlEncode $speaker)</span></div>
+$descriptionMarkup
+$audioMarkup
+            <div class="episode-actions">
+              <a href="../../sermons.html" class="btn btn-outline">All Sermons</a>
+              <a href="../../podcast-category/fillmore-christian/feed/podcast" class="btn btn-outline">RSS Feed</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 Fillmore Christian Church. All rights reserved.</p>
+      <p>Fillmore, Missouri</p>
+    </div>
+  </footer>
+
+  <script src="../../js/main.js?v=20260601-2"></script>
+</body>
+</html>
+"@
+
+    [System.IO.File]::WriteAllText((Join-Path $localDir "index.html"), $html.TrimEnd() + "`r`n", $utf8NoBom)
+    $episodeRows.Add([pscustomobject]@{
+        Slug = $slug
+        CanonicalUrl = $canonicalUrl
+        LastMod = $lastMod
+    })
+}
+
+Write-Sitemap $episodeRows
+
+Write-Host "Rendered $($episodeRows.Count) static episode pages into $EpisodeDir"
+Write-Host "Updated sitemap: $SitemapPath"

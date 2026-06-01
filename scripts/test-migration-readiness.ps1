@@ -65,6 +65,19 @@ function Get-EnclosureUrls {
     return $urls
 }
 
+function Get-EpisodeSlug {
+    param([string]$Url)
+
+    try {
+        $uri = [Uri]$Url
+        $segments = @($uri.AbsolutePath.Trim("/") -split "/" | Where-Object { $_ })
+        if ($segments.Count -ge 2 -and $segments[0] -eq "episode") {
+            return $segments[1]
+        }
+    } catch {}
+    return ""
+}
+
 $requiredFiles = @(
     "index.html",
     "about.html",
@@ -232,6 +245,58 @@ if (Test-Path -LiteralPath $sermonsPath) {
         Add-Check "Sermon platform-account cleanup" "FAIL" "Old TheChurchCo account text remains in sermons.html"
     } else {
         Add-Check "Sermon platform-account cleanup" "OK" "No old platform-account speaker text found"
+    }
+}
+
+$sampleEpisodePath = ""
+if ($feeds.ContainsKey($feedPaths[0])) {
+    $episodeIssues = New-Object System.Collections.Generic.List[string]
+    $feedItems = @($feeds[$feedPaths[0]].rss.channel.item)
+    $episodeSlugs = @($feedItems | ForEach-Object { Get-EpisodeSlug ([string]$_.link) } | Where-Object { $_ })
+    $uniqueEpisodeSlugs = @($episodeSlugs | Select-Object -Unique)
+    if ($episodeSlugs.Count -ne $feedItems.Count) {
+        $episodeIssues.Add("$($feedItems.Count - $episodeSlugs.Count) feed item(s) do not have /episode/ links")
+    }
+    if ($uniqueEpisodeSlugs.Count -ne $episodeSlugs.Count) {
+        $episodeIssues.Add("duplicate episode slugs found")
+    }
+
+    $missingEpisodePages = @($uniqueEpisodeSlugs | Where-Object { -not (Test-Path -LiteralPath (Join-Path $root "episode\$_\index.html")) })
+    if ($missingEpisodePages.Count -gt 0) {
+        $episodeIssues.Add("missing episode pages: $($missingEpisodePages -join ', ')")
+    }
+
+    $redirectsPath = Join-Path $root "_redirects"
+    if ((Test-Path -LiteralPath $redirectsPath) -and (Get-Content -Raw -LiteralPath $redirectsPath) -match "(?m)^/episode/\*") {
+        $episodeIssues.Add("_redirects still contains a wildcard /episode/* redirect")
+    }
+
+    $sitemapPath = Join-Path $root "sitemap.xml"
+    if (Test-Path -LiteralPath $sitemapPath) {
+        $sitemapText = Get-Content -Raw -LiteralPath $sitemapPath
+        $missingSitemapEpisodes = @($uniqueEpisodeSlugs | Where-Object { $sitemapText -notmatch [regex]::Escape("https://www.fillmorechristian.org/episode/$_/") })
+        if ($missingSitemapEpisodes.Count -gt 0) {
+            $episodeIssues.Add("missing episode sitemap URLs: $($missingSitemapEpisodes -join ', ')")
+        }
+    } else {
+        $episodeIssues.Add("sitemap.xml is missing")
+    }
+
+    if (Test-Path -LiteralPath $buildOutputPath) {
+        $missingBuildEpisodePages = @($uniqueEpisodeSlugs | Where-Object { -not (Test-Path -LiteralPath (Join-Path $buildOutputPath "episode\$_\index.html")) })
+        if ($missingBuildEpisodePages.Count -gt 0) {
+            $episodeIssues.Add("missing built episode pages: $($missingBuildEpisodePages -join ', ')")
+        }
+    }
+
+    if ($uniqueEpisodeSlugs.Count -gt 0) {
+        $sampleEpisodePath = "episode/$($uniqueEpisodeSlugs[0])/"
+    }
+
+    if ($episodeIssues.Count -eq 0) {
+        Add-Check "Static episode pages" "OK" "$($uniqueEpisodeSlugs.Count) episode pages generated and indexed"
+    } else {
+        Add-Check "Static episode pages" "FAIL" ($episodeIssues -join "; ")
     }
 }
 
@@ -473,15 +538,23 @@ if ((Test-Path -LiteralPath $dnsPreservePath) -and (Test-Path -LiteralPath $dnsZ
 }
 
 if (-not $SkipRemote) {
-    foreach ($path in @("", "about.html", "beliefs.html", "team.html", "events.html", "sermons.html", "contact.html", "podcast-category/fillmore-christian/feed/podcast", "robots.txt", "sitemap.xml")) {
+    $remotePaths = @("", "about.html", "beliefs.html", "team.html", "events.html", "sermons.html", "contact.html")
+    if ($sampleEpisodePath) {
+        $remotePaths += $sampleEpisodePath
+    }
+    $remotePaths += @("podcast-category/fillmore-christian/feed/podcast", "robots.txt", "sitemap.xml")
+
+    foreach ($path in $remotePaths) {
         $url = Join-Url $StagingBaseUrl $path
         try {
             $response = Invoke-WebRequest -UseBasicParsing -Uri $url -MaximumRedirection 5
             Add-Check "Staging URL: /$path" "OK" "HTTP $($response.StatusCode)"
 
-            if ($path -in @("", "about.html", "beliefs.html", "team.html", "events.html", "sermons.html", "contact.html")) {
+            if ($path -in @("", "about.html", "beliefs.html", "team.html", "events.html", "sermons.html", "contact.html") -or $path -eq $sampleEpisodePath) {
                 $expectedCanonical = if ($path -eq "") {
                     "https://www.fillmorechristian.org/"
+                } elseif ($path -eq $sampleEpisodePath) {
+                    "https://www.fillmorechristian.org/$path"
                 } else {
                     "https://www.fillmorechristian.org/$path"
                 }
@@ -493,6 +566,14 @@ if (-not $SkipRemote) {
                     Add-Check "Staging metadata: /$path" "OK" "Canonical, Open Graph, and Twitter metadata present"
                 } else {
                     Add-Check "Staging metadata: /$path" "FAIL" "Missing required page metadata on staging"
+                }
+
+                if ($path -eq $sampleEpisodePath) {
+                    if ($response.Content -match "<audio\s+controls" -and $response.Content -match "All Sermons") {
+                        Add-Check "Staging episode page" "OK" "Sample episode page has audio and archive navigation"
+                    } else {
+                        Add-Check "Staging episode page" "FAIL" "Sample episode page is missing audio or archive navigation"
+                    }
                 }
             }
 
