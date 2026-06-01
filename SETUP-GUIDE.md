@@ -21,6 +21,7 @@ Static website for Fillmore Christian Church, replacing ChurchCo ($50/mo). Built
 - [x] 70 unique sermon audio files backed up locally with SHA-256 inventory
 - [x] R2 audio manifest prepared for `https://media.fillmorechristian.org`
 - [x] GitHub Pages staging deployment enabled from the personal repo
+- [x] Cloudflare Pages project created and deployed at `https://fillmorechristian-website.pages.dev/`
 - [x] DNS preserve/import artifacts prepared for Cloudflare cutover
 - [x] Project files in `C:\Users\wakef\Documents\AI-Projects\fcc-website`
 
@@ -86,7 +87,7 @@ Cloudflare R2 preparation scripts are included. The manifest and dry runs are sa
 .\scripts\test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -DryRun
 ```
 
-Run the real upload and verification only after `npx wrangler login`, R2 bucket setup, and public media hostname setup:
+Run the real upload and verification only after R2 is enabled in the Cloudflare dashboard, the R2 bucket exists, and the public media hostname is set up:
 
 ```powershell
 .\scripts\upload-podcast-audio-to-r2.ps1 -Bucket fillmore-christian-sermons
@@ -177,7 +178,7 @@ Domain registrar: Squarespace Domains, formerly Google Domains.
 - Login: https://domains.squarespace.com
 - Domain: `fillmorechristian.org`
 - Renewal notice: auto-renews June 15, 2026 for $15.00; disable by June 14 only if transfer/cutover is safe.
-- Current blocker: `npx wrangler login` has not been completed on this machine.
+- Current blocker: R2 is not enabled yet in Cloudflare, and `fillmorechristian.org` still needs to be added to Cloudflare DNS.
 
 DNS changes needed:
 

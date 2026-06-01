@@ -115,6 +115,7 @@ R2 preparation status on 2026-06-01:
 - The upload script supports `-DryRun`, uses either `wrangler` or `npx wrangler`, and reads from this manifest so the real upload follows the same object keys.
 - `scripts/test-r2-audio-upload.ps1` can verify sampled or full R2 downloads against the manifest before TheChurchCo is canceled.
 - `scripts/test-r2-public-audio.ps1` can verify the public `media.fillmorechristian.org` URLs from the manifest before the RSS feeds are rewritten, and the guarded migration command runs that public preflight by default.
+- R2 is not enabled yet in the Cloudflare account; `wrangler r2 bucket list` returns Cloudflare API code `10042` until R2 is enabled in the dashboard.
 
 Podcast metadata cleanup:
 
@@ -198,7 +199,15 @@ This gate is expected to fail until Cloudflare nameservers are active, the stati
 
 ## Cloudflare Pages Status
 
-The repo is ready for a Cloudflare Pages static deployment. Use:
+Cloudflare Pages project status on 2026-06-01:
+
+- Project: `fillmorechristian-website`
+- Production preview URL: `https://fillmorechristian-website.pages.dev/`
+- First deployed commit: `4431150 Add copyable calendar feed link`
+- Current deployment source is the local guarded `npm run deploy:cloudflare` command, not a Cloudflare-connected GitHub integration.
+- The deployment publishes `_headers`, `_redirects`, `_routes.json`, and the generated Pages Function bundle.
+
+For future Cloudflare Pages deployments, use:
 
 - Build command: `npm run build`
 - Build output directory: `dist`
@@ -207,7 +216,7 @@ The repo is ready for a Cloudflare Pages static deployment. Use:
 
 The build copies only public website assets into `dist` so migration notes, scripts, and export artifacts are not published as part of the production site.
 
-`wrangler` is installed locally, but it was not authenticated on 2026-06-01. Run `wrangler login` or connect the GitHub repo through the Cloudflare dashboard before deployment.
+`wrangler` is installed locally and authenticated to `wakefield.hare@gmail.com` as of 2026-06-01.
 
 After Cloudflare authentication, the guarded deploy command is:
 

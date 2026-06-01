@@ -38,6 +38,59 @@ function Join-Url {
     return $Base.TrimEnd("/") + "/" + $Path.TrimStart("/")
 }
 
+function Invoke-RemoteWebRequest {
+    param(
+        [string]$Url,
+        [int]$MaxRedirects = 5
+    )
+
+    $currentUrl = $Url
+    for ($redirectCount = 0; $redirectCount -le $MaxRedirects; $redirectCount++) {
+        try {
+            $response = Invoke-WebRequest -UseBasicParsing -Uri $currentUrl -MaximumRedirection 0
+            $statusCode = [int]$response.StatusCode
+            if ($statusCode -in @(301, 302, 303, 307, 308) -and $redirectCount -lt $MaxRedirects) {
+                $location = [string]$response.Headers["Location"]
+                if (-not $location) {
+                    throw "Redirect from $currentUrl did not include a Location header."
+                }
+
+                $currentUri = New-Object System.Uri($currentUrl)
+                $nextUri = New-Object System.Uri($currentUri, $location)
+                $currentUrl = $nextUri.AbsoluteUri
+                continue
+            }
+
+            return [pscustomobject]@{
+                Response = $response
+                FinalUrl = $currentUrl
+                RedirectCount = $redirectCount
+            }
+        } catch {
+            $webResponse = $_.Exception.Response
+            if (-not $webResponse) {
+                throw
+            }
+
+            $statusCode = [int]$webResponse.StatusCode
+            if ($statusCode -notin @(301, 302, 303, 307, 308) -or $redirectCount -ge $MaxRedirects) {
+                throw
+            }
+
+            $location = [string]$webResponse.Headers["Location"]
+            if (-not $location) {
+                throw
+            }
+
+            $currentUri = New-Object System.Uri($currentUrl)
+            $nextUri = New-Object System.Uri($currentUri, $location)
+            $currentUrl = $nextUri.AbsoluteUri
+        }
+    }
+
+    throw "Too many redirects for $Url"
+}
+
 function Get-XmlDocument {
     param([string]$Path)
 
@@ -1346,8 +1399,10 @@ if (-not $SkipRemote) {
     foreach ($path in $remotePaths) {
         $url = Join-Url $StagingBaseUrl $path
         try {
-            $response = Invoke-WebRequest -UseBasicParsing -Uri $url -MaximumRedirection 5
-            Add-Check "Staging URL: /$path" "OK" "HTTP $($response.StatusCode)"
+            $remoteResponse = Invoke-RemoteWebRequest -Url $url -MaxRedirects 5
+            $response = $remoteResponse.Response
+            $redirectNote = if ($remoteResponse.RedirectCount -gt 0) { " after $($remoteResponse.RedirectCount) redirect(s) to $($remoteResponse.FinalUrl)" } else { "" }
+            Add-Check "Staging URL: /$path" "OK" "HTTP $($response.StatusCode)$redirectNote"
 
             if ($path -in @("", "about.html", "beliefs.html", "team.html", "events.html", "sermons.html", "contact.html") -or $path -eq $sampleEpisodePath) {
                 $expectedCanonical = if ($path -eq "") {
