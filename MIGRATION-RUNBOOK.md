@@ -112,10 +112,10 @@ R2 preparation status on 2026-06-01:
 
 - `exports/thechurchco-podcast/r2-audio-manifest.csv` maps 70 local objects to 71 RSS enclosure references.
 - The manifest totals 2,315,228,157 bytes and includes the intended `https://media.fillmorechristian.org/...` public URLs.
-- The upload script supports `-DryRun`, uses either `wrangler` or `npx wrangler`, and reads from this manifest so the real upload follows the same object keys.
-- `scripts/test-r2-audio-upload.ps1` can verify sampled or full R2 downloads against the manifest before TheChurchCo is canceled.
+- R2 is enabled in the Cloudflare account, bucket `fillmore-christian-sermons` exists, and all 70 audio objects were uploaded to Standard storage on June 1, 2026.
+- `scripts/test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -VerifyHashes` downloaded and SHA-256 verified all 70 R2 objects after upload.
 - `scripts/test-r2-public-audio.ps1` can verify the public `media.fillmorechristian.org` URLs from the manifest before the RSS feeds are rewritten, and the guarded migration command runs that public preflight by default.
-- R2 is not enabled yet in the Cloudflare account; `wrangler r2 bucket list` returns Cloudflare API code `10042` until R2 is enabled in the dashboard.
+- The remaining R2 blocker is public access: add `fillmorechristian.org` to Cloudflare DNS, connect `media.fillmorechristian.org` as the R2 bucket custom domain, then run the full public media check before rewriting RSS enclosure URLs.
 
 Podcast metadata cleanup:
 
