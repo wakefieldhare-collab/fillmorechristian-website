@@ -13,6 +13,8 @@ Static website for Fillmore Christian Church, replacing ChurchCo ($50/mo). Built
 - [x] Podcast feed export tooling added in `scripts/export-thechurchco-podcast.ps1`
 - [x] Legacy Apple Podcasts feed path preserved at `podcast-category/fillmore-christian/feed/podcast`
 - [x] Cloudflare Pages `_headers` and `_redirects` files added
+- [x] Cloudflare build output prepared with `npm run build` -> `dist`
+- [x] Migration preflight script added at `scripts/test-migration-readiness.ps1`
 - [x] Project files in `C:\Users\wakef\Documents\AI-Projects\fcc-website`
 
 See `MIGRATION-RUNBOOK.md` for the current Cloudflare migration order.
@@ -71,9 +73,18 @@ Run those only after Cloudflare authorization, R2 bucket creation, and public me
 
 1. Put this folder in a GitHub repo.
 2. In Cloudflare Pages, create a project from that repo.
-3. Use no build command and the repo root as the output directory.
+3. Use `npm run build` as the build command and `dist` as the output directory.
 4. Add custom domains for `www.fillmorechristian.org` and `fillmorechristian.org`.
 5. Keep `_headers` and `_redirects` in the published output.
+
+Before deploying, run:
+
+```powershell
+npm run build
+.\scripts\test-migration-readiness.ps1
+```
+
+The only expected warning before R2 setup is that the podcast audio enclosures still point at TheChurchCo.
 
 ### Step 4: Contact Form
 
@@ -113,6 +124,17 @@ DNS changes needed:
 4. In Cloudflare Pages, finish the custom domain setup for `www` and apex.
 5. Verify email still works before changing or deleting any mail records.
 6. After Cloudflare DNS is active, transfer the registrar from Squarespace to Cloudflare Registrar.
+
+Current public DNS can be snapshotted with:
+
+```powershell
+.\scripts\export-dns-snapshot.ps1
+```
+
+As of June 1, 2026, preserve at least the Mailgun MX records and these TXT records:
+
+- `v=spf1 include:mailgun.org ~all`
+- `MS=ms48673064`
 
 ### Step 7: Add Church Logo (Optional)
 

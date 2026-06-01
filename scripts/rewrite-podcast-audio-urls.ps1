@@ -14,6 +14,14 @@ $ErrorActionPreference = "Stop"
 $root = Resolve-Path (Join-Path $PSScriptRoot "..")
 $base = $BaseAudioUrl.TrimEnd("/")
 
+function ConvertTo-LocalAudioFileName {
+    param([string]$Url)
+
+    $uri = [Uri]$Url
+    $fileName = [System.IO.Path]::GetFileName($uri.AbsolutePath)
+    return $fileName -replace '[^\w\.\-]+', '-'
+}
+
 foreach ($relativePath in $FeedPaths) {
     $path = Join-Path $root $relativePath
     if (-not (Test-Path -LiteralPath $path)) {
@@ -30,8 +38,7 @@ foreach ($relativePath in $FeedPaths) {
             continue
         }
 
-        $uri = [Uri]([string]$enclosure.url)
-        $fileName = [System.IO.Path]::GetFileName($uri.AbsolutePath)
+        $fileName = ConvertTo-LocalAudioFileName ([string]$enclosure.url)
         if (-not $fileName) {
             continue
         }
@@ -49,4 +56,3 @@ foreach ($relativePath in $FeedPaths) {
 
     Write-Host "Rewrote $rewritten enclosure URLs in $relativePath"
 }
-
