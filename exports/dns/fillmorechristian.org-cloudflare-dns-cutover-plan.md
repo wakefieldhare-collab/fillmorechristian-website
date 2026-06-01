@@ -1,6 +1,6 @@
 ﻿# Cloudflare DNS Cutover Plan for fillmorechristian.org
 
-Generated: 2026-06-01 17:40:18 -05:00
+Generated: 2026-06-01 18:05:07 -05:00
 
 Source snapshot: `C:\Users\wakef\Documents\AI-Projects\fcc-website\exports\dns\fillmorechristian.org-20260601-164552-records.csv`
 
@@ -36,6 +36,23 @@ Instead, let Cloudflare Pages add or verify custom domains for:
 
 Expected Pages project name: `fillmorechristian-website`
 
+## Manual Dashboard Cutover Checklist
+
+In Cloudflare DNS > Records, verify or create these website records:
+
+- CNAME `fillmorechristian.org` -> `fillmorechristian-website.pages.dev` with proxy enabled
+- CNAME `www.fillmorechristian.org` -> `fillmorechristian-website.pages.dev` with proxy enabled
+
+Remove or replace these old website records if Cloudflare imported them:
+
+- A `fillmorechristian.org` -> `77.83.141.16`
+- CNAME `www.fillmorechristian.org` -> `ssl.thechurchco.com`
+
+In Squarespace Domains, replace all current nameservers with:
+
+- `eric.ns.cloudflare.com`
+- `sky.ns.cloudflare.com`
+
 ## Verify R2 Audio Through Pages
 
 - The Cloudflare Pages project binds the `fillmore-christian-sermons` R2 bucket as `SERMON_AUDIO`.
@@ -62,6 +79,6 @@ Cloudflare assigned nameservers:
 - `eric.ns.cloudflare.com`
 - `sky.ns.cloudflare.com`
 
-Cloudflare Pages custom domains for $Domain and www.fillmorechristian.org should be attached to $PagesProject before the nameserver change.
+Cloudflare Pages custom domains for fillmorechristian.org and www.fillmorechristian.org should be attached to fillmorechristian-website before the nameserver change.
 
 Only cancel TheChurchCo after website, feed, media, and mail checks pass.

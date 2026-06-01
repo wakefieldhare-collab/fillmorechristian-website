@@ -1444,6 +1444,10 @@ if ((Test-Path -LiteralPath $dnsPreservePath) -and (Test-Path -LiteralPath $dnsZ
     if ($dnsPlanText -notmatch "SERMON_AUDIO" -or $dnsPlanText -notmatch "https://www\.fillmorechristian\.org/media/" -or $dnsPlanText -notmatch 'same-origin `/media/<object-key>`') {
         $dnsIssues.Add("cutover plan does not explicitly include the Pages R2 media route and verification")
     }
+    if ($dnsPlanText -notmatch "CNAME ``fillmorechristian\.org`` -> ``fillmorechristian-website\.pages\.dev``" -or
+        $dnsPlanText -notmatch "CNAME ``www\.fillmorechristian\.org`` -> ``fillmorechristian-website\.pages\.dev``") {
+        $dnsIssues.Add("cutover plan does not explicitly list the Cloudflare Pages DNS records")
+    }
 
     if ($dnsIssues.Count -eq 0) {
         Add-Check "Cloudflare DNS cutover artifacts" "OK" "$($dnsRows.Count) preserve records cover mail and verification without old website records; plan includes the Pages R2 media route"

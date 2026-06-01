@@ -145,6 +145,29 @@ $notes.Add(('- `{0}`' -f $Domain))
 $notes.Add("")
 $notes.Add(('Expected Pages project name: `{0}`' -f $PagesProject))
 $notes.Add("")
+$notes.Add("## Manual Dashboard Cutover Checklist")
+$notes.Add("")
+$notes.Add("In Cloudflare DNS > Records, verify or create these website records:")
+$notes.Add("")
+$pagesHostname = "$PagesProject.pages.dev"
+$notes.Add(('- CNAME `{0}` -> `{1}` with proxy enabled' -f $Domain, $pagesHostname))
+$notes.Add(('- CNAME `www.{0}` -> `{1}` with proxy enabled' -f $Domain, $pagesHostname))
+$notes.Add("")
+$notes.Add("Remove or replace these old website records if Cloudflare imported them:")
+$notes.Add("")
+foreach ($record in $oldWebsiteRecords) {
+    $priorityText = if ($record.Priority) { " priority $($record.Priority)" } else { "" }
+    $notes.Add(('- {0} `{1}`{2} -> `{3}`' -f $record.Type, $record.Name, $priorityText, $record.Value))
+}
+$notes.Add("")
+if ($ExpectedCloudflareNameservers.Count -gt 0) {
+    $notes.Add("In Squarespace Domains, replace all current nameservers with:")
+    $notes.Add("")
+    foreach ($nameserver in $ExpectedCloudflareNameservers) {
+        $notes.Add(('- `{0}`' -f $nameserver))
+    }
+    $notes.Add("")
+}
 $notes.Add("## Verify R2 Audio Through Pages")
 $notes.Add("")
 $notes.Add("- The Cloudflare Pages project binds the ``fillmore-christian-sermons`` R2 bucket as ``SERMON_AUDIO``.")
@@ -179,7 +202,7 @@ if ($ExpectedCloudflareNameservers.Count -gt 0) {
     }
     $notes.Add("")
 }
-$notes.Add("Cloudflare Pages custom domains for `$Domain` and `www.$Domain` should be attached to `$PagesProject` before the nameserver change.")
+$notes.Add(("Cloudflare Pages custom domains for `{0}` and `www.{0}` should be attached to `{1}` before the nameserver change." -f $Domain, $PagesProject))
 $notes.Add("")
 $notes.Add("Only cancel TheChurchCo after website, feed, media, and mail checks pass.")
 
