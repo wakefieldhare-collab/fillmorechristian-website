@@ -99,6 +99,7 @@ The real upload and R2 hash verification were completed on June 1, 2026:
 After `media.fillmorechristian.org` is connected to the R2 bucket and public HTTPS audio is verified, rewrite the feed and run the public checks:
 
 ```powershell
+npm run configure:r2-media-domain -- -VerifyAllPublicMedia
 .\scripts\test-r2-public-audio.ps1 -All
 .\scripts\rewrite-podcast-audio-urls.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
 .\scripts\test-podcast-media.ps1 -All
