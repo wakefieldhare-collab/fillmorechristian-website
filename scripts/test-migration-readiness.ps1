@@ -377,6 +377,7 @@ $calendarPath = Join-Path $root "events.ics"
 if (Test-Path -LiteralPath $calendarPath) {
     $calendarText = Get-Content -Raw -LiteralPath $calendarPath
     $calendarIssues = New-Object System.Collections.Generic.List[string]
+    $eventsScriptPath = Join-Path $root "js\events.js"
     if ($calendarText -notmatch "(?m)^BEGIN:VCALENDAR") { $calendarIssues.Add("missing VCALENDAR start") }
     if ($calendarText -notmatch "(?m)^SUMMARY:Sunday School") { $calendarIssues.Add("missing Sunday School event") }
     if ($calendarText -notmatch "(?m)^SUMMARY:Sunday Worship") { $calendarIssues.Add("missing Sunday Worship event") }
@@ -391,9 +392,16 @@ if (Test-Path -LiteralPath $calendarPath) {
     if ($eventsHtml -notmatch '<link\s+rel="alternate"\s+type="text/calendar"') {
         $calendarIssues.Add("events page missing calendar autodiscovery")
     }
+    if (Test-Path -LiteralPath $eventsScriptPath) {
+        $eventsScript = Get-Content -Raw -LiteralPath $eventsScriptPath
+        if ($eventsScript -notmatch "events\.ics") { $calendarIssues.Add("events script does not load the self-hosted iCal feed") }
+        if ($eventsScript -match "googleapis|GOOGLE_CALENDAR_ID|GOOGLE_API_KEY") { $calendarIssues.Add("events script still references Google Calendar API") }
+    } else {
+        $calendarIssues.Add("js/events.js is missing")
+    }
 
     if ($calendarIssues.Count -eq 0) {
-        Add-Check "Self-hosted event calendar" "OK" "events.ics publishes recurring Sunday School and worship schedule"
+        Add-Check "Self-hosted event calendar" "OK" "events.ics publishes recurring Sunday School and worship schedule, and the events UI loads it locally"
     } else {
         Add-Check "Self-hosted event calendar" "FAIL" ($calendarIssues -join "; ")
     }

@@ -263,6 +263,13 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Event calendar"; Status = "OK"; Details = "text/calendar recurring Sunday schedule" })
 
+    $eventsScript = Invoke-NoRedirect -Url "$baseUrl/js/events.js"
+    Assert-Status -Response $eventsScript -Expected @(200) -Name "Events script"
+    if ($eventsScript.Content -notmatch "events\.ics" -or $eventsScript.Content -match "googleapis|GOOGLE_CALENDAR_ID|GOOGLE_API_KEY") {
+        throw "Events script does not use the self-hosted iCal feed cleanly"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Events script"; Status = "OK"; Details = "Loads self-hosted events.ics without Google Calendar API" })
+
     $contactCard = Invoke-NoRedirect -Url "$baseUrl/contact.vcf"
     Assert-Status -Response $contactCard -Expected @(200) -Name "Contact card"
     $contactCardContentType = [string]$contactCard.ContentHeaders.ContentType
