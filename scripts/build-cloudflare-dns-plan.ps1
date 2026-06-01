@@ -2,7 +2,8 @@ param(
     [string]$Domain = "fillmorechristian.org",
     [string]$SnapshotPath = "",
     [string]$OutDir = "exports\dns",
-    [string]$PagesProject = "fillmorechristian-website"
+    [string]$PagesProject = "fillmorechristian-website",
+    [string]$MediaHostname = "media.fillmorechristian.org"
 )
 
 $ErrorActionPreference = "Stop"
@@ -141,6 +142,12 @@ $notes.Add(('- `www.{0}`' -f $Domain))
 $notes.Add(('- `{0}`' -f $Domain))
 $notes.Add("")
 $notes.Add(('Expected Pages project name: `{0}`' -f $PagesProject))
+$notes.Add("")
+$notes.Add("## Add During R2 Audio Setup")
+$notes.Add("")
+$notes.Add(('- Configure `{0}` as the public custom domain for the R2 sermon-audio bucket.' -f $MediaHostname))
+$notes.Add("- Verify sampled and then all public media URLs before rewriting the podcast feed enclosures.")
+$notes.Add("- Keep the podcast feed pointed at TheChurchCo audio until the R2 public hostname passes verification.")
 $notes.Add("")
 $notes.Add("## Verify")
 $notes.Add("")

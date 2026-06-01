@@ -1244,9 +1244,12 @@ if ((Test-Path -LiteralPath $dnsPreservePath) -and (Test-Path -LiteralPath $dnsZ
     if ($dnsPlanText -notmatch "A ``fillmorechristian\.org``.*77\.83\.141\.16" -or $dnsPlanText -notmatch "CNAME ``www\.fillmorechristian\.org``.*ssl\.thechurchco\.com") {
         $dnsIssues.Add("cutover plan does not explicitly list old website records to replace")
     }
+    if ($dnsPlanText -notmatch "media\.fillmorechristian\.org" -or $dnsPlanText -notmatch "R2 sermon-audio bucket" -or $dnsPlanText -notmatch "before rewriting the podcast feed enclosures") {
+        $dnsIssues.Add("cutover plan does not explicitly include the R2 media hostname and pre-rewrite verification")
+    }
 
     if ($dnsIssues.Count -eq 0) {
-        Add-Check "Cloudflare DNS cutover artifacts" "OK" "$($dnsRows.Count) preserve records cover mail and verification without old website records"
+        Add-Check "Cloudflare DNS cutover artifacts" "OK" "$($dnsRows.Count) preserve records cover mail and verification without old website records; plan includes the R2 media hostname"
     } else {
         Add-Check "Cloudflare DNS cutover artifacts" "FAIL" ($dnsIssues -join "; ")
     }
