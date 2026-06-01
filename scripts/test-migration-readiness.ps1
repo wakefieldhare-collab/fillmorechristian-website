@@ -6,6 +6,7 @@ param(
     [string]$BuildOutputDir = "dist",
     [switch]$SkipRemote,
     [switch]$VerifyAudioHashes,
+    [switch]$SkipLocalAudioBackup,
     [switch]$RequireIndependentAudio,
     [switch]$VerifyPodcastMedia,
     [switch]$VerifyAllPodcastMedia,
@@ -225,10 +226,10 @@ $redirectsPath = Join-Path $root "_redirects"
 if (Test-Path -LiteralPath $redirectsPath) {
     $redirectsText = Get-Content -Raw -LiteralPath $redirectsPath
     $redirectIssues = New-Object System.Collections.Generic.List[string]
-    if ($redirectsText -notmatch '(?m)^/podcast-category/fillmore-christian/feed/podcast/\s+/podcast-category/fillmore-christian/feed/podcast\s+301$') {
+    if ($redirectsText -notmatch '(?m)^/podcast-category/fillmore-christian/feed/podcast/\s+/podcast-category/fillmore-christian/feed/podcast\s+301\s*$') {
         $redirectIssues.Add("missing canonical trailing-slash podcast feed redirect")
     }
-    if ($redirectsText -notmatch '(?m)^/feed/\s+/podcast-category/fillmore-christian/feed/podcast\s+302$' -or $redirectsText -notmatch '(?m)^/feed\.xml\s+/podcast-category/fillmore-christian/feed/podcast\s+302$' -or $redirectsText -notmatch '(?m)^/podcast\.xml\s+/podcast-category/fillmore-christian/feed/podcast\s+302$') {
+    if ($redirectsText -notmatch '(?m)^/feed/\s+/podcast-category/fillmore-christian/feed/podcast\s+302\s*$' -or $redirectsText -notmatch '(?m)^/feed\.xml\s+/podcast-category/fillmore-christian/feed/podcast\s+302\s*$' -or $redirectsText -notmatch '(?m)^/podcast\.xml\s+/podcast-category/fillmore-christian/feed/podcast\s+302\s*$') {
         $redirectIssues.Add("missing podcast feed alias redirects")
     }
 
@@ -543,6 +544,20 @@ if (Test-Path -LiteralPath $deployScriptPath) {
     }
 } else {
     Add-Check "Cloudflare deploy script" "FAIL" "scripts\deploy-cloudflare-pages.ps1 is missing"
+}
+
+$pagesWorkflowPath = Join-Path $root ".github\workflows\pages.yml"
+if (Test-Path -LiteralPath $pagesWorkflowPath) {
+    $pagesWorkflowText = Get-Content -Raw -LiteralPath $pagesWorkflowPath
+    if ($pagesWorkflowText -match "(?m)^\s+readiness:\s*$" -and
+        $pagesWorkflowText -match "test-migration-readiness\.ps1\s+-SkipRemote\s+-SkipLocalAudioBackup" -and
+        $pagesWorkflowText -match "(?s)needs:\s*\r?\n\s+- build\s*\r?\n\s+- readiness") {
+        Add-Check "Staging CI readiness gate" "OK" "GitHub Pages deploy waits for the migration readiness job"
+    } else {
+        Add-Check "Staging CI readiness gate" "FAIL" "GitHub Pages workflow does not require the migration readiness job before deploy"
+    }
+} else {
+    Add-Check "Staging CI readiness gate" "FAIL" ".github\workflows\pages.yml is missing"
 }
 
 $cancellationScriptPath = Join-Path $root "scripts\test-thechurchco-cancellation-readiness.ps1"
@@ -995,7 +1010,9 @@ if (Test-Path -LiteralPath $manifestPath) {
     $rowsWithAudio = @($manifestRows | Where-Object { $_.EnclosureUrl })
     Add-Check "Podcast manifest" "OK" "$($manifestRows.Count) rows, $($rowsWithAudio.Count) rows with audio enclosures"
 
-    if (Test-Path -LiteralPath $audioDir) {
+    if ($SkipLocalAudioBackup) {
+        Add-Check "Podcast audio backup coverage" "WARN" "Local audio backup file check skipped for CI; run without -SkipLocalAudioBackup before canceling TheChurchCo"
+    } elseif (Test-Path -LiteralPath $audioDir) {
         $audioFiles = @(Get-ChildItem -LiteralPath $audioDir -File)
         $expectedAudioFiles = @($rowsWithAudio | ForEach-Object { ConvertTo-LocalAudioFileName $_.EnclosureUrl } | Where-Object { $_ } | Select-Object -Unique)
         $missingAudio = @($expectedAudioFiles | Where-Object { -not (Test-Path -LiteralPath (Join-Path $audioDir $_)) })

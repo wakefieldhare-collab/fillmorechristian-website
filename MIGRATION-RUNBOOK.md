@@ -136,6 +136,7 @@ GitHub Pages staging is enabled from `main`:
 - URL: `https://wakefieldhare-collab.github.io/fillmorechristian-website/`
 - Purpose: public preview and QA before Cloudflare authorization.
 - Deployment: `.github/workflows/pages.yml` builds with `npm run build` and publishes `dist`, matching the Cloudflare Pages output directory.
+- Safety gate: deploy waits for a Windows readiness job that runs `npm run build` and `scripts/test-migration-readiness.ps1 -SkipRemote -SkipLocalAudioBackup`. The skip applies only to the large local audio backup folder that is intentionally not checked into GitHub; local cancellation checks still run without that skip.
 - Limitation: Cloudflare `_redirects`, `_headers`, `_routes.json`, and Pages Functions are not honored by GitHub Pages. Treat this as staging only, not final production.
 
 ## Preflight Checks

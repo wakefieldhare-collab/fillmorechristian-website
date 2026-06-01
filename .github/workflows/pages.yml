@@ -55,8 +55,8 @@ jobs:
         run: npm run build
 
       - name: Run migration readiness gate
-        shell: powershell
-        run: .\scripts\test-migration-readiness.ps1 -SkipRemote
+        shell: pwsh
+        run: .\scripts\test-migration-readiness.ps1 -SkipRemote -SkipLocalAudioBackup
 
   deploy:
     environment:
