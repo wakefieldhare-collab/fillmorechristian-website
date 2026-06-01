@@ -161,13 +161,23 @@ if ($homeResponse) {
 
 $sermons = Invoke-Http -Url (Join-Url $ProductionBaseUrl "/sermons.html")
 if ($sermons) {
+    $sermonCards = ([regex]::Matches($sermons.Content, 'class="sermon-item')).Count
+    $audioAvailabilityFlags = ([regex]::Matches($sermons.Content, 'data-has-audio="(?:true|false)"')).Count
+    $archiveControlsPresent = $sermons.Content -match 'id="podcast-feed-url"' -and
+        $sermons.Content -match 'id="sermon-search"' -and
+        $sermons.Content -match 'id="sermon-year"' -and
+        $sermons.Content -match 'id="sermon-sort"' -and
+        $sermons.Content -match 'id="sermon-audio-only"' -and
+        $sermons.Content -match 'id="sermon-clear"'
+
     if ($sermons.StatusCode -eq 200 -and
-        $sermons.Content -match 'id="podcast-feed-url"' -and
-        $sermons.Content -match "sermon-card" -and
+        $archiveControlsPresent -and
+        $sermonCards -ge 70 -and
+        $audioAvailabilityFlags -eq $sermonCards -and
         $sermons.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
-        Add-Check "Production sermons archive" "OK" "Sermon archive and podcast subscribe control are live"
+        Add-Check "Production sermons archive" "OK" "$sermonCards sermon cards, archive filters, audio-only filter, and podcast subscribe control are live"
     } else {
-        Add-Check "Production sermons archive" "FAIL" "Sermons archive is missing static archive controls or still references TheChurchCo"
+        Add-Check "Production sermons archive" "FAIL" "Sermons archive is missing static archive controls/audio metadata, has too few cards, or still references TheChurchCo"
     }
 }
 
