@@ -26,6 +26,12 @@ Static website for Fillmore Christian Church, replacing ChurchCo ($50/mo). Built
 
 See `MIGRATION-RUNBOOK.md` for the current Cloudflare migration order.
 
+For a quick read-only snapshot of the migration state, run:
+
+```powershell
+npm run status:migration
+```
+
 ## What's Left
 
 ### Step 1: Keep The Sermon Audio Backup Safe

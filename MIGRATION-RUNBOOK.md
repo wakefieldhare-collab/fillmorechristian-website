@@ -141,6 +141,12 @@ GitHub Pages staging is enabled from `main`:
 
 ## Preflight Checks
 
+For a quick read-only status snapshot that shows the personal GitHub owner, Squarespace renewal timing, local feed/audio/R2 coverage, staging, DNS, and the next authorization blocker:
+
+```powershell
+npm run status:migration
+```
+
 Run the readiness check before any production DNS or podcast cutover:
 
 ```powershell

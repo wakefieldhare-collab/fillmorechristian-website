@@ -573,6 +573,24 @@ if (Test-Path -LiteralPath $pagesWorkflowPath) {
     Add-Check "Staging CI readiness gate" "FAIL" ".github\workflows\pages.yml is missing"
 }
 
+$statusScriptPath = Join-Path $root "scripts\show-migration-status.ps1"
+$packageJsonPath = Join-Path $root "package.json"
+if ((Test-Path -LiteralPath $statusScriptPath) -and (Test-Path -LiteralPath $packageJsonPath)) {
+    $statusScriptText = Get-Content -Raw -LiteralPath $statusScriptPath
+    $packageJsonText = Get-Content -Raw -LiteralPath $packageJsonPath
+    if ($statusScriptText -match "npx wrangler login" -and
+        $statusScriptText -match "Squarespace renewal" -and
+        $statusScriptText -match "wakefieldhare-collab" -and
+        $statusScriptText -match "media\.fillmorechristian\.org" -and
+        $packageJsonText -match '"status:migration"') {
+        Add-Check "Migration status command" "OK" "Read-only status script summarizes owner, renewal, audio, R2, DNS, staging, and auth state"
+    } else {
+        Add-Check "Migration status command" "FAIL" "Migration status script or npm alias is missing key ownership/auth/audio checks"
+    }
+} else {
+    Add-Check "Migration status command" "FAIL" "scripts\show-migration-status.ps1 or package.json is missing"
+}
+
 $cancellationScriptPath = Join-Path $root "scripts\test-thechurchco-cancellation-readiness.ps1"
 $domainTransferScriptPath = Join-Path $root "scripts\test-domain-transfer-readiness.ps1"
 $audioMigrationScriptPath = Join-Path $root "scripts\migrate-cloudflare-audio.ps1"
