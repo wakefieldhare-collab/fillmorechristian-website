@@ -66,13 +66,11 @@ If the feed URL changes, add an `<itunes:new-feed-url>` tag and a 301 redirect f
 4. Add custom domains for `www.fillmorechristian.org` and `fillmorechristian.org`.
 5. Keep `_headers` and `_redirects` in the published output.
 
-### Step 4: Set Up Contact Form
+### Step 4: Contact Form
 
-The contact form uses Formspree (free tier: 50 submissions/month):
+The contact forms currently create a prefilled email to `church@fillmorechristian.org` using the visitor's mail app. This avoids a broken placeholder form while the site is moving.
 
-1. Go to https://formspree.io and create a free account.
-2. Create a new form and copy the form ID.
-3. In `index.html` and `contact.html`, replace `YOUR_FORM_ID` in the form action URL.
+Later, the form can be upgraded to Cloudflare Pages Functions, Formspree, or another form service after the church chooses where form submissions should be stored and who should receive notifications.
 
 ### Step 5: Set Up Google Calendar (Events)
 
@@ -139,8 +137,7 @@ DNS changes needed:
 ## Monthly Cost
 
 - Website hosting: free on Cloudflare Pages.
-- Contact form: free on Formspree up to its current free-tier limit.
+- Contact form: currently mailto-based, with no third-party form service.
 - Calendar: free on Google Calendar.
 - Domain renewal: Cloudflare Registrar at-cost after transfer.
 - Podcast hosting: depends on final host choice; do not rely on TheChurchCo-hosted MP3s after cancellation.
-

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=20260601">
 </head>
 <body>
 
@@ -21,7 +21,7 @@
           <span class="nav-brand-tagline">established in 1865</span>
         </div>
       </a>
-      <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+      <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
       <ul class="nav-links">
         <li><a href="index.html">Home</a></li>
         <li class="nav-dropdown">
@@ -51,10 +51,10 @@
     <div class="container">
       <div class="contact-grid">
         <div class="contact-info">
-          <p style="margin-bottom:1.5em;">Whether you have a question, need prayer, or want to plan a visit, we're here for you. Don't hesitate to reach out — we'd love to connect.</p>
+          <p style="margin-bottom:1.5em;">Whether you have a question, need prayer, or want to plan a visit, we're here for you. Don't hesitate to reach out -- we'd love to connect.</p>
 
           <div class="contact-item">
-            <span class="icon">✉️</span>
+            <span class="icon">Email</span>
             <div>
               <strong>Email</strong><br>
               <a href="mailto:church@fillmorechristian.org">church@fillmorechristian.org</a>
@@ -62,7 +62,7 @@
           </div>
 
           <div class="contact-item">
-            <span class="icon">📍</span>
+            <span class="icon">Map</span>
             <div>
               <strong>Address</strong><br>
               <a href="https://maps.google.com/?q=310+N+Florence+Street+Fillmore+MO+64449" target="_blank" rel="noopener">
@@ -73,7 +73,7 @@
           </div>
 
           <div class="contact-item">
-            <span class="icon">⛪</span>
+            <span class="icon">Service</span>
             <div>
               <strong>Service Times</strong><br>
               Sunday School: 9:00 AM<br>
@@ -89,12 +89,7 @@
           </div>
         </div>
 
-        <form class="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-          <!--
-            SETUP: Go to formspree.io, create a free account, create a form,
-            and replace YOUR_FORM_ID above with your actual form ID.
-            Free tier allows 50 submissions/month.
-          -->
+        <form class="contact-form" data-mailto="church@fillmorechristian.org">
           <label for="contact-name">Name</label>
           <input type="text" id="contact-name" name="name" required>
 
@@ -146,6 +141,9 @@
     </div>
   </footer>
 
-  <script src="js/main.js"></script>
+  <script src="js/main.js?v=20260601"></script>
 </body>
 </html>
+
+
+

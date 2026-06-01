@@ -10,13 +10,13 @@
 }
 
 :root {
-  --color-primary: #2c3e50;
-  --color-primary-light: #34495e;
-  --color-accent: #8b6914;
-  --color-accent-light: #a07d2e;
-  --color-bg: #faf9f6;
-  --color-bg-alt: #f0ece3;
-  --color-bg-dark: #2c3e50;
+  --color-primary: #173247;
+  --color-primary-light: #264b63;
+  --color-accent: #9a7318;
+  --color-accent-light: #b98d2d;
+  --color-bg: #fbfaf7;
+  --color-bg-alt: #f1ede4;
+  --color-bg-dark: #173247;
   --color-text: #333333;
   --color-text-light: #666666;
   --color-text-on-dark: #f0ece3;
@@ -26,6 +26,7 @@
   --font-body: 'Source Sans 3', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   --max-width: 1200px;
   --nav-height: 80px;
+  --shadow-soft: 0 18px 55px rgba(23, 50, 71, 0.14);
 }
 
 html {
@@ -153,7 +154,7 @@ h4 { font-size: 1.25rem; }
 }
 
 .nav-dropdown > a::after {
-  content: ' ▾';
+  content: ' v';
   font-size: 0.7em;
 }
 
@@ -199,9 +200,33 @@ h4 { font-size: 1.25rem; }
   text-align: center;
 }
 
+.hero-image {
+  min-height: calc(100vh - var(--nav-height));
+  display: flex;
+  align-items: center;
+  text-align: left;
+  position: relative;
+  background-image:
+    linear-gradient(90deg, rgba(14, 31, 45, 0.88), rgba(14, 31, 45, 0.54), rgba(14, 31, 45, 0.18)),
+    url('../images/church-exterior.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-content {
+  color: var(--color-white);
+}
+
 .hero h1 {
   margin-bottom: 0.5em;
   font-size: 2.8rem;
+}
+
+.hero-image h1 {
+  color: var(--color-white);
+  max-width: 760px;
+  font-size: clamp(2.7rem, 7vw, 5.8rem);
+  line-height: 0.98;
 }
 
 .hero .tagline {
@@ -216,6 +241,32 @@ h4 { font-size: 1.25rem; }
   margin: 0 auto 1.5em;
   font-size: 1.15rem;
   color: var(--color-text-light);
+}
+
+.hero-image p {
+  margin-left: 0;
+  color: rgba(255,255,255,0.88);
+  font-size: 1.25rem;
+}
+
+.eyebrow {
+  color: var(--color-accent);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  margin-bottom: 0.75rem;
+}
+
+.hero-image .eyebrow {
+  color: #f2c66d;
+}
+
+.hero-actions,
+.podcast-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
 }
 
 .btn {
@@ -249,6 +300,17 @@ h4 { font-size: 1.25rem; }
 .btn-outline:hover {
   background-color: var(--color-accent);
   color: var(--color-white);
+}
+
+.btn-light {
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.45);
+  color: var(--color-white);
+}
+
+.btn-light:hover {
+  background: var(--color-white);
+  color: var(--color-primary);
 }
 
 /* --- Worship Times --- */
@@ -293,6 +355,27 @@ h4 { font-size: 1.25rem; }
   padding: 4em 0;
 }
 
+.welcome-grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.welcome-grid h2 {
+  text-align: left;
+  margin-bottom: 0;
+}
+
+.welcome-copy {
+  font-size: 1.1rem;
+  color: var(--color-text-light);
+}
+
+.welcome-copy p + p {
+  margin-top: 1rem;
+}
+
 .features-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -313,10 +396,14 @@ h4 { font-size: 1.25rem; }
   box-shadow: 0 6px 20px rgba(0,0,0,0.1);
 }
 
-.feature-card .icon {
-  font-size: 2.5rem;
-  margin-bottom: 0.8em;
-  display: block;
+.feature-kicker {
+  display: inline-block;
+  color: var(--color-accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.9rem;
 }
 
 .feature-card h3 {
@@ -350,6 +437,42 @@ h4 { font-size: 1.25rem; }
 .section h2 {
   text-align: center;
   margin-bottom: 1.5em;
+}
+
+.section-action {
+  text-align: center;
+  margin-top: 1.5em;
+}
+
+.media-band {
+  background: var(--color-primary);
+  color: var(--color-text-on-dark);
+}
+
+.media-band h2,
+.media-band .eyebrow {
+  text-align: left;
+}
+
+.media-band h2 {
+  color: var(--color-white);
+}
+
+.media-band p {
+  color: rgba(240, 236, 227, 0.84);
+  margin-bottom: 1.4rem;
+}
+
+.media-band-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 3rem;
+  align-items: center;
+}
+
+.media-band img {
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
 }
 
 /* --- Upcoming Events --- */
@@ -484,12 +607,94 @@ h4 { font-size: 1.25rem; }
   margin: 0 auto;
 }
 
+.sermon-header {
+  background-image:
+    linear-gradient(rgba(23, 50, 71, 0.86), rgba(23, 50, 71, 0.72)),
+    url('../images/church-exterior.jpg');
+  background-position: center;
+  background-size: cover;
+}
+
+.sermon-header h1,
+.sermon-header p {
+  color: var(--color-white);
+}
+
+.sermon-tools {
+  padding-bottom: 1.5rem;
+}
+
+.sermon-tools-card {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 1.5rem;
+  align-items: center;
+  background: var(--color-white);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.sermon-tools-card h2 {
+  text-align: left;
+  margin-bottom: 0.45rem;
+}
+
+.sermon-tools-card p {
+  color: var(--color-text-light);
+  margin-bottom: 1rem;
+}
+
+.podcast-cover {
+  width: 180px;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.archive-controls {
+  max-width: 800px;
+  margin: 0 auto 1.5rem;
+  background: var(--color-white);
+  border: 1px solid rgba(23, 50, 71, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 8px 24px rgba(23, 50, 71, 0.07);
+}
+
+.archive-controls label {
+  display: block;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.4rem;
+}
+
+.archive-controls input {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.8rem 0.9rem;
+  font: inherit;
+}
+
+.archive-count {
+  color: var(--color-text-light);
+  margin-top: 0.55rem;
+  font-size: 0.95rem;
+}
+
 .sermon-item {
   background: var(--color-white);
   border-radius: 8px;
   padding: 1.5em;
   margin-bottom: 1.2em;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.sermon-item.no-audio {
+  border-left: 4px solid var(--color-accent);
 }
 
 .sermon-item h3 {
@@ -511,6 +716,11 @@ h4 { font-size: 1.25rem; }
   color: var(--color-text-light);
   font-size: 0.95rem;
   margin-bottom: 0.8em;
+}
+
+.sermon-audio-missing {
+  color: var(--color-text-light);
+  font-style: italic;
 }
 
 .sermons-loading {
@@ -701,6 +911,20 @@ h4 { font-size: 1.25rem; }
 
   .features-grid {
     grid-template-columns: 1fr;
+  }
+
+  .welcome-grid,
+  .media-band-grid,
+  .sermon-tools-card {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-image {
+    min-height: 680px;
+  }
+
+  .podcast-cover {
+    width: 140px;
   }
 
   .contact-section .contact-grid {
