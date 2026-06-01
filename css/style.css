@@ -748,7 +748,7 @@ h4 { font-size: 1.25rem; }
 
 .archive-filter-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 160px;
+  grid-template-columns: minmax(0, 1fr) 160px auto;
   gap: 1rem;
   align-items: end;
 }
@@ -769,6 +769,29 @@ h4 { font-size: 1.25rem; }
   color: var(--color-text);
   padding: 0.8rem 0.9rem;
   font: inherit;
+}
+
+.archive-clear-wrap {
+  display: flex;
+  align-items: end;
+}
+
+.archive-clear {
+  min-height: 48px;
+  border: 1px solid rgba(23, 50, 71, 0.2);
+  border-radius: 4px;
+  background: var(--color-white);
+  color: var(--color-primary);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+}
+
+.archive-clear:hover,
+.archive-clear:focus {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 .archive-count {
@@ -1143,6 +1166,14 @@ h4 { font-size: 1.25rem; }
 
   .archive-filter-grid {
     grid-template-columns: 1fr;
+  }
+
+  .archive-clear-wrap {
+    align-items: stretch;
+  }
+
+  .archive-clear {
+    width: 100%;
   }
 
   .contact-section .contact-grid {

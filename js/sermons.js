@@ -13,10 +13,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const search = document.getElementById('sermon-search');
   const yearFilter = document.getElementById('sermon-year');
+  const clearButton = document.getElementById('sermon-clear');
   const staticCards = Array.from(container.querySelectorAll('.sermon-item'));
 
   if (staticCards.length > 0) {
-    initializeStaticArchive(container, staticCards, search, yearFilter);
+    initializeStaticArchive(container, staticCards, search, yearFilter, clearButton);
     return;
   }
 
@@ -29,6 +30,15 @@ document.addEventListener('DOMContentLoaded', function() {
   if (yearFilter) {
     yearFilter.addEventListener('change', function() {
       renderSermons(container, filterSermons(search ? search.value : '', yearFilter.value));
+    });
+  }
+
+  if (clearButton) {
+    clearButton.addEventListener('click', function() {
+      if (search) search.value = '';
+      if (yearFilter) yearFilter.value = '';
+      renderSermons(container, filterSermons('', ''));
+      if (search) search.focus();
     });
   }
 
@@ -45,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-function initializeStaticArchive(container, cards, search, yearFilter) {
+function initializeStaticArchive(container, cards, search, yearFilter, clearButton) {
   const emptyMessage = document.createElement('div');
   emptyMessage.className = 'sermons-loading';
   emptyMessage.setAttribute('data-static-empty', 'true');
@@ -81,6 +91,15 @@ function initializeStaticArchive(container, cards, search, yearFilter) {
 
   if (yearFilter) {
     yearFilter.addEventListener('change', applyFilter);
+  }
+
+  if (clearButton) {
+    clearButton.addEventListener('click', function() {
+      if (search) search.value = '';
+      if (yearFilter) yearFilter.value = '';
+      applyFilter();
+      if (search) search.focus();
+    });
   }
 
   applyFilter();

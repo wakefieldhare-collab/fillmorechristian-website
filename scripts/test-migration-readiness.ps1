@@ -378,6 +378,12 @@ if (Test-Path -LiteralPath $sermonsPath) {
         Add-Check "Sermon year filter control" "FAIL" "Archive page is missing #sermon-year"
     }
 
+    if ($sermonsHtml -match 'id="sermon-search"' -and $sermonsHtml -match 'id="sermon-clear"') {
+        Add-Check "Sermon search controls" "OK" "Archive page includes search and clear controls"
+    } else {
+        Add-Check "Sermon search controls" "FAIL" "Archive page is missing #sermon-search or #sermon-clear"
+    }
+
     $downloadLinks = ([regex]::Matches($sermonsHtml, 'class="sermon-download"')).Count
     $expectedDownloadLinks = if ($feedEnclosureCounts.ContainsKey($feedPaths[0])) { $feedEnclosureCounts[$feedPaths[0]] } else { 0 }
     if ($expectedDownloadLinks -gt 0 -and $downloadLinks -eq $expectedDownloadLinks) {
@@ -880,6 +886,12 @@ if (-not $SkipRemote) {
                     Add-Check "Staging sermon year filter" "OK" "$remoteCardsWithYear sermon cards include years and filter control is present"
                 } else {
                     Add-Check "Staging sermon year filter" "FAIL" "$remoteCardsWithYear sermon card year value(s); filter control present: $($response.Content -match 'id=`"sermon-year`"')"
+                }
+
+                if ($response.Content -match 'id="sermon-search"' -and $response.Content -match 'id="sermon-clear"') {
+                    Add-Check "Staging sermon search controls" "OK" "Search and clear controls are present"
+                } else {
+                    Add-Check "Staging sermon search controls" "FAIL" "Search or clear controls are missing"
                 }
 
                 if ($response.Content -match "thechurchcodaniel|description description") {
