@@ -26,6 +26,11 @@ function HtmlEncode {
     return [System.Net.WebUtility]::HtmlEncode($Text)
 }
 
+function JsonEncode {
+    param([object]$Value)
+    return ($Value | ConvertTo-Json -Depth 12 -Compress)
+}
+
 function Strip-Html {
     param([string]$Html)
     if (-not $Html) { return "" }
@@ -249,6 +254,8 @@ for ($episodeIndex = 0; $episodeIndex -lt $items.Count; $episodeIndex++) {
 
     $enclosure = $item.enclosure
     $audioUrl = if ($enclosure) { [string]$enclosure.url } else { "" }
+    $audioLength = if ($enclosure -and $enclosure.length) { [string]$enclosure.length } else { "" }
+    $audioType = if ($audioUrl) { Get-AudioType $audioUrl } else { "" }
     $canonicalUrl = "https://www.fillmorechristian.org/episode/$slug/"
     $canonicalPath = "/episode/$slug/"
     $localDir = Join-Path $episodeRoot $slug
@@ -261,7 +268,7 @@ for ($episodeIndex = 0; $episodeIndex -lt $items.Count; $episodeIndex++) {
     }
 
     $audioMarkup = if ($audioUrl) {
-        '          <audio controls preload="none"><source src="' + (HtmlEncode $audioUrl) + '" type="' + (Get-AudioType $audioUrl) + '">Your browser does not support audio playback.</audio>'
+        '          <audio controls preload="none"><source src="' + (HtmlEncode $audioUrl) + '" type="' + $audioType + '">Your browser does not support audio playback.</audio>'
     } else {
         '          <p class="sermon-audio-missing">Audio is not attached to this archived feed item yet.</p>'
     }
@@ -292,6 +299,39 @@ $olderNavMarkup
         </nav>
 "@
 
+    $jsonLd = [ordered]@{
+        "@context" = "https://schema.org"
+        "@type" = "PodcastEpisode"
+        "name" = $title
+        "description" = $summary
+        "url" = $canonicalUrl
+        "datePublished" = $lastMod
+        "isPartOf" = [ordered]@{
+            "@type" = "PodcastSeries"
+            "name" = "Fillmore Christian"
+            "url" = "https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast"
+        }
+        "publisher" = [ordered]@{
+            "@type" = "Church"
+            "name" = "Fillmore Christian Church"
+            "url" = "https://www.fillmorechristian.org/"
+        }
+    }
+
+    if ($audioUrl) {
+        $audioObject = [ordered]@{
+            "@type" = "AudioObject"
+            "contentUrl" = $audioUrl
+            "encodingFormat" = $audioType
+        }
+        if ($audioLength) {
+            $audioObject["contentSize"] = $audioLength
+        }
+        $jsonLd["associatedMedia"] = $audioObject
+    }
+
+    $jsonLdMarkup = JsonEncode $jsonLd
+
     $html = @"
 <!DOCTYPE html>
 <html lang="en">
@@ -311,6 +351,7 @@ $olderNavMarkup
   <meta name="twitter:title" content="$(HtmlEncode $title) | Fillmore Christian Church">
   <meta name="twitter:description" content="$(HtmlEncode $summary)">
   <meta name="twitter:image" content="https://www.fillmorechristian.org/images/podcast-cover.jpg">
+  <script type="application/ld+json">$jsonLdMarkup</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
