@@ -63,6 +63,16 @@ function Format-Year {
     }
 }
 
+function Format-SortTimestamp {
+    param([string]$DateText)
+    if (-not $DateText) { return "0" }
+    try {
+        return ([datetimeoffset]::Parse($DateText)).ToUnixTimeSeconds().ToString([System.Globalization.CultureInfo]::InvariantCulture)
+    } catch {
+        return "0"
+    }
+}
+
 function Get-AudioType {
     param([string]$Url)
     $lower = $Url.ToLowerInvariant()
@@ -93,6 +103,7 @@ foreach ($item in $items) {
     $title = [string]$item.title
     $date = Format-Date ([string]$item.pubDate)
     $year = Format-Year ([string]$item.pubDate)
+    $sortTimestamp = Format-SortTimestamp ([string]$item.pubDate)
     $speaker = Clean-Speaker ([string]$item.GetElementsByTagName("itunes:author")[0].InnerText)
     $description = Clean-Description (Strip-Html ([string]$item.description))
     if ($description.Length -gt 240) {
@@ -106,7 +117,7 @@ foreach ($item in $items) {
 
     $cardClass = if ($audioUrl) { "sermon-item" } else { "sermon-item no-audio" }
     $html = @()
-    $html += "        <article class=`"$cardClass`" data-year=`"$(HtmlEncode $year)`" data-search=`"$(HtmlEncode $search.ToLowerInvariant())`">"
+    $html += "        <article class=`"$cardClass`" data-year=`"$(HtmlEncode $year)`" data-sort-date=`"$(HtmlEncode $sortTimestamp)`" data-title=`"$(HtmlEncode $title.ToLowerInvariant())`" data-search=`"$(HtmlEncode $search.ToLowerInvariant())`">"
     if ($episodePath) {
         $html += "          <h3><a href=`"$(HtmlEncode $episodePath)`">$(HtmlEncode $title)</a></h3>"
     } else {

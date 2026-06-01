@@ -748,7 +748,7 @@ h4 { font-size: 1.25rem; }
 
 .archive-filter-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 160px auto;
+  grid-template-columns: minmax(0, 1fr) 150px 170px auto;
   gap: 1rem;
   align-items: end;
 }

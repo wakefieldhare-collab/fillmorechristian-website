@@ -384,10 +384,23 @@ if (Test-Path -LiteralPath $sermonsPath) {
         Add-Check "Sermon year filter data" "FAIL" "$cardsWithYear static card year value(s), expected $expectedCards"
     }
 
+    $cardsWithSortData = ([regex]::Matches($sermonsHtml, 'class="sermon-item[^"]*"\s+data-year="\d{4}"\s+data-sort-date="\d+"\s+data-title="[^"]+"')).Count
+    if ($expectedCards -gt 0 -and $cardsWithSortData -eq $expectedCards) {
+        Add-Check "Sermon sort data" "OK" "$cardsWithSortData static cards include date and title sort metadata"
+    } else {
+        Add-Check "Sermon sort data" "FAIL" "$cardsWithSortData static card sort value(s), expected $expectedCards"
+    }
+
     if ($sermonsHtml -match 'id="sermon-year"') {
         Add-Check "Sermon year filter control" "OK" "Archive page includes year filter control"
     } else {
         Add-Check "Sermon year filter control" "FAIL" "Archive page is missing #sermon-year"
+    }
+
+    if ($sermonsHtml -match 'id="sermon-sort"' -and $sermonsHtml -match 'value="newest"' -and $sermonsHtml -match 'value="oldest"' -and $sermonsHtml -match 'value="title"') {
+        Add-Check "Sermon sort control" "OK" "Archive page includes newest, oldest, and title sort options"
+    } else {
+        Add-Check "Sermon sort control" "FAIL" "Archive page is missing #sermon-sort or expected sort options"
     }
 
     if ($sermonsHtml -match 'id="sermon-search"' -and $sermonsHtml -match 'id="sermon-clear"') {
@@ -898,6 +911,13 @@ if (-not $SkipRemote) {
                     Add-Check "Staging sermon year filter" "OK" "$remoteCardsWithYear sermon cards include years and filter control is present"
                 } else {
                     Add-Check "Staging sermon year filter" "FAIL" "$remoteCardsWithYear sermon card year value(s); filter control present: $($response.Content -match 'id=`"sermon-year`"')"
+                }
+
+                $remoteCardsWithSortData = ([regex]::Matches($response.Content, 'class="sermon-item[^"]*"\s+data-year="\d{4}"\s+data-sort-date="\d+"\s+data-title="[^"]+"')).Count
+                if ($feedItemCounts.ContainsKey($feedPaths[0]) -and $remoteCardsWithSortData -eq $feedItemCounts[$feedPaths[0]] -and $response.Content -match 'id="sermon-sort"') {
+                    Add-Check "Staging sermon sort control" "OK" "$remoteCardsWithSortData sermon cards include sort metadata and sort control is present"
+                } else {
+                    Add-Check "Staging sermon sort control" "FAIL" "$remoteCardsWithSortData sermon card sort value(s); sort control present: $($response.Content -match 'id=`"sermon-sort`"')"
                 }
 
                 if ($response.Content -match 'id="sermon-search"' -and $response.Content -match 'id="sermon-clear"') {
