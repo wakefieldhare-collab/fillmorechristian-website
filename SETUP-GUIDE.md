@@ -100,6 +100,14 @@ The only expected warning before R2 setup is that the podcast audio enclosures s
 
 The readiness script also fails if the Git remote or active GitHub CLI account points at `wake-byte`.
 
+After Cloudflare authorization, deploy with the guarded command:
+
+```powershell
+npm run deploy:cloudflare
+```
+
+It builds, verifies readiness, runs the local Cloudflare Pages preflight, checks the personal GitHub remote, and then deploys `dist` to the `fillmorechristian-website` Cloudflare Pages project.
+
 To spot-check current or rewritten podcast audio URLs:
 
 ```powershell

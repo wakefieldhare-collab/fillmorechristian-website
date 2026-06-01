@@ -177,6 +177,18 @@ The build copies only public website assets into `dist` so migration notes, scri
 
 `wrangler` is installed locally, but it was not authenticated on 2026-06-01. Run `wrangler login` or connect the GitHub repo through the Cloudflare dashboard before deployment.
 
+After Cloudflare authentication, the guarded deploy command is:
+
+```powershell
+npm run deploy:cloudflare
+```
+
+That command refuses the work GitHub owner, requires a clean working tree by default, runs `npm run build`, local readiness, and Cloudflare Pages local preflight, then runs `wrangler pages deploy dist --project-name fillmorechristian-website --branch main` with the current Git commit hash and message. Before authentication, use this rehearsal form:
+
+```powershell
+.\scripts\deploy-cloudflare-pages.ps1 -DryRun -AllowDirty
+```
+
 ## Cloudflare DNS Records To Preserve
 
 Before changing nameservers, screenshot/export all current Squarespace DNS records. At minimum preserve:

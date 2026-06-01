@@ -317,6 +317,18 @@ if (Test-Path -LiteralPath $buildOutputPath) {
     Add-Check "Cloudflare build output" "WARN" "$BuildOutputDir not found; run npm run build before Cloudflare deployment"
 }
 
+$deployScriptPath = Join-Path $root "scripts\deploy-cloudflare-pages.ps1"
+if (Test-Path -LiteralPath $deployScriptPath) {
+    $deployScriptText = Get-Content -Raw -LiteralPath $deployScriptPath
+    if ($deployScriptText -match "wake-byte" -and $deployScriptText -match "test-cloudflare-pages-local\.ps1" -and $deployScriptText -match "pages[\s`"']*,[\s`"']*deploy") {
+        Add-Check "Cloudflare deploy script" "OK" "Guarded Pages deploy script checks owner, preflight, and Wrangler deploy"
+    } else {
+        Add-Check "Cloudflare deploy script" "FAIL" "Deploy script is missing owner guard, preflight, or Wrangler deploy command"
+    }
+} else {
+    Add-Check "Cloudflare deploy script" "FAIL" "scripts\deploy-cloudflare-pages.ps1 is missing"
+}
+
 $feedPaths = @(
     "podcast-category\fillmore-christian\feed\podcast",
     "podcast.xml",

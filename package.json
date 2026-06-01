@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "build": "node scripts/build-site.mjs"
+    "build": "node scripts/build-site.mjs",
+    "deploy:cloudflare": "powershell -ExecutionPolicy Bypass -File scripts/deploy-cloudflare-pages.ps1"
   },
   "devDependencies": {}
 }
