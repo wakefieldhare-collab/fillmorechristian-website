@@ -594,6 +594,25 @@ if (Test-Path -LiteralPath $calendarPath) {
     if ($eventsHtml -notmatch '<link\s+rel="alternate"\s+type="text/calendar"') {
         $calendarIssues.Add("events page missing calendar autodiscovery")
     }
+    if ($eventsHtml -notmatch '<script type="application/ld\+json">' -or
+        $eventsHtml -notmatch '"@type": "ItemList"' -or
+        $eventsHtml -notmatch '"name": "Sunday School"' -or
+        $eventsHtml -notmatch '"name": "Sunday Worship"' -or
+        $eventsHtml -notmatch '"scheduleTimezone": "America/Chicago"') {
+        $calendarIssues.Add("events page is missing structured recurring event metadata")
+    }
+    $eventJsonMatch = [regex]::Match($eventsHtml, '(?s)<script type="application/ld\+json">\s*(.*?)\s*</script>')
+    if ($eventJsonMatch.Success) {
+        try {
+            $eventJson = $eventJsonMatch.Groups[1].Value | ConvertFrom-Json
+            $eventItems = @($eventJson.itemListElement)
+            if ($eventJson.'@type' -ne "ItemList" -or $eventItems.Count -ne 2) {
+                $calendarIssues.Add("events structured data does not contain the expected two-item schedule")
+            }
+        } catch {
+            $calendarIssues.Add("events structured data is not valid JSON")
+        }
+    }
     if ($eventsHtml -notmatch 'id="calendar-feed-url"' -or
         $eventsHtml -notmatch 'data-copy-value="https://www\.fillmorechristian\.org/events\.ics"' -or
         $eventsHtml -notmatch 'id="calendar-copy-status"\s+class="copy-status"\s+aria-live="polite"') {
