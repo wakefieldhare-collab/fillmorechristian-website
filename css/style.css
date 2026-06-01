@@ -1038,8 +1038,25 @@ h4 { font-size: 1.25rem; }
 
 .archive-count {
   color: var(--color-text-light);
-  margin-top: 0.55rem;
+  margin: 0;
   font-size: 0.95rem;
+}
+
+.archive-share-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.archive-share {
+  min-height: 40px;
+  white-space: nowrap;
+}
+
+.archive-share-status {
+  margin-top: 0.35rem;
 }
 
 .sermon-item {
@@ -1417,6 +1434,11 @@ h4 { font-size: 1.25rem; }
 
   .archive-clear-wrap {
     align-items: stretch;
+  }
+
+  .archive-share-row {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .archive-clear {

@@ -111,7 +111,11 @@
             <button id="sermon-clear" class="archive-clear" type="button">Clear</button>
           </div>
         </div>
-        <p id="sermon-count" class="archive-count" aria-live="polite"></p>
+        <div class="archive-share-row">
+          <p id="sermon-count" class="archive-count" aria-live="polite"></p>
+          <button id="sermon-share-link" class="copy-button archive-share" type="button" data-copy-value="https://www.fillmorechristian.org/sermons.html" data-copy-status-target="sermon-share-status" data-copy-label="Copy Link" data-copy-success="Archive link copied." data-copy-fallback="Archive link selected. Press Ctrl+C to copy it." data-copy-fail="Copy failed. Copy the page address from your browser.">Copy Link</button>
+        </div>
+        <p id="sermon-share-status" class="copy-status archive-share-status" aria-live="polite"></p>
       </div>
       <div class="sermons-list" id="sermons-container">
         <!-- STATIC_SERMONS_START -->
@@ -589,6 +593,6 @@
   </footer>
 
   <script src="js/main.js?v=20260601-15"></script>
-  <script src="js/sermons.js?v=20260601-16"></script>
+  <script src="js/sermons.js?v=20260601-17"></script>
 </body>
 </html>

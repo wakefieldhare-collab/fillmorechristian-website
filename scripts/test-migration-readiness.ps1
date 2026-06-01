@@ -757,10 +757,10 @@ if (Test-Path -LiteralPath $sermonsPath) {
         Add-Check "Sermon sort control" "FAIL" "Archive page is missing #sermon-sort or expected sort options"
     }
 
-    if ($sermonsHtml -match 'id="sermon-search"' -and $sermonsHtml -match 'id="sermon-clear"') {
-        Add-Check "Sermon search controls" "OK" "Archive page includes search and clear controls"
+    if ($sermonsHtml -match 'id="sermon-search"' -and $sermonsHtml -match 'id="sermon-clear"' -and $sermonsHtml -match 'id="sermon-share-link"' -and $sermonsHtml -match 'id="sermon-share-status"') {
+        Add-Check "Sermon search controls" "OK" "Archive page includes search, clear, and copyable filtered-link controls"
     } else {
-        Add-Check "Sermon search controls" "FAIL" "Archive page is missing #sermon-search or #sermon-clear"
+        Add-Check "Sermon search controls" "FAIL" "Archive page is missing #sermon-search, #sermon-clear, #sermon-share-link, or #sermon-share-status"
     }
 
     $sermonsScriptPath = Join-Path $root "js\sermons.js"
@@ -769,10 +769,11 @@ if (Test-Path -LiteralPath $sermonsPath) {
         if ($sermonsScriptText -match "URLSearchParams" -and
             $sermonsScriptText -match "history\.replaceState" -and
             $sermonsScriptText -match "applyArchiveStateFromUrl" -and
-            $sermonsScriptText -match "updateArchiveUrl") {
-            Add-Check "Sermon filter deep links" "OK" "Archive filters can load from and write to URL query parameters"
+            $sermonsScriptText -match "updateArchiveUrl" -and
+            $sermonsScriptText -match "updateArchiveShareLink") {
+            Add-Check "Sermon filter deep links" "OK" "Archive filters can load from and write to URL query parameters and copy the current filtered link"
         } else {
-            Add-Check "Sermon filter deep links" "FAIL" "Archive filters are missing URL query parameter persistence"
+            Add-Check "Sermon filter deep links" "FAIL" "Archive filters are missing URL query parameter persistence or copyable filtered-link sync"
         }
     } else {
         Add-Check "Sermon filter deep links" "FAIL" "js\sermons.js is missing"
@@ -1359,10 +1360,10 @@ if (-not $SkipRemote) {
                     Add-Check "Staging sermon audio filter" "FAIL" "$remoteCardsWithAudioFlag audio flag(s), $remoteAudioCards audio card(s), audio control present: $($response.Content -match 'id=`"sermon-audio-only`"')"
                 }
 
-                if ($response.Content -match 'id="sermon-search"' -and $response.Content -match 'id="sermon-clear"') {
-                    Add-Check "Staging sermon search controls" "OK" "Search and clear controls are present"
+                if ($response.Content -match 'id="sermon-search"' -and $response.Content -match 'id="sermon-clear"' -and $response.Content -match 'id="sermon-share-link"') {
+                    Add-Check "Staging sermon search controls" "OK" "Search, clear, and filtered-link copy controls are present"
                 } else {
-                    Add-Check "Staging sermon search controls" "FAIL" "Search or clear controls are missing"
+                    Add-Check "Staging sermon search controls" "FAIL" "Search, clear, or filtered-link copy controls are missing"
                 }
 
                 if ($response.Content -match "thechurchcodaniel|description description") {

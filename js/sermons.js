@@ -16,10 +16,11 @@ document.addEventListener('DOMContentLoaded', function() {
   const sortControl = document.getElementById('sermon-sort');
   const audioOnly = document.getElementById('sermon-audio-only');
   const clearButton = document.getElementById('sermon-clear');
+  const shareButton = document.getElementById('sermon-share-link');
   const staticCards = Array.from(container.querySelectorAll('.sermon-item'));
 
   if (staticCards.length > 0) {
-    initializeStaticArchive(container, staticCards, search, yearFilter, sortControl, audioOnly, clearButton);
+    initializeStaticArchive(container, staticCards, search, yearFilter, sortControl, audioOnly, clearButton, shareButton);
     return;
   }
 
@@ -71,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-function initializeStaticArchive(container, cards, search, yearFilter, sortControl, audioOnly, clearButton) {
+function initializeStaticArchive(container, cards, search, yearFilter, sortControl, audioOnly, clearButton, shareButton) {
   const emptyMessage = document.createElement('div');
   emptyMessage.className = 'sermons-loading';
   emptyMessage.setAttribute('data-static-empty', 'true');
@@ -109,6 +110,7 @@ function initializeStaticArchive(container, cards, search, yearFilter, sortContr
     if (shouldUpdateUrl) {
       updateArchiveUrl(search, yearFilter, sortControl, audioOnly);
     }
+    updateArchiveShareLink(shareButton);
   }
 
   if (search) {
@@ -183,6 +185,11 @@ function updateArchiveUrl(search, yearFilter, sortControl, audioOnly) {
   const nextQuery = params.toString();
   const nextUrl = window.location.pathname + (nextQuery ? '?' + nextQuery : '') + window.location.hash;
   window.history.replaceState({}, '', nextUrl);
+}
+
+function updateArchiveShareLink(shareButton) {
+  if (!shareButton) return;
+  shareButton.setAttribute('data-copy-value', window.location.href);
 }
 
 function setArchiveParam(params, name, value) {
