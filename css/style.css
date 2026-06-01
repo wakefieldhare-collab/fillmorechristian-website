@@ -544,6 +544,20 @@ h4 { font-size: 1.25rem; }
   color: var(--color-text-light);
 }
 
+.narrow-page {
+  max-width: 760px;
+}
+
+.lead {
+  color: var(--color-text-light);
+  font-size: 1.15rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.not-found-actions {
+  margin-top: 1.5rem;
+}
+
 /* --- Contact Section --- */
 .contact-section .contact-grid {
   display: grid;

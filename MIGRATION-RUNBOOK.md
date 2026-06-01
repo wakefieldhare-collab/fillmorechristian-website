@@ -13,7 +13,7 @@ Last updated: 2026-06-01
 - Squarespace renewal notice: auto-renew on 2026-06-15 for $15.00; disable by 2026-06-14 only if the transfer is already safely underway or complete.
 - Current Apple Podcasts feed URL: `https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast`
 - GitHub source repo for Cloudflare Pages: `https://github.com/wakefieldhare-collab/fillmorechristian-website`
-- Local commit pushed: `b6fe466` on `main`
+- Source of truth: GitHub `main` branch in the repo above. Use `git log -1 --oneline` for the latest pushed commit.
 
 ## Migration Order
 
@@ -50,6 +50,22 @@ Export status on 2026-06-01:
 - Two feed items currently have no audio enclosure in ChurchCo.
 - Two July 2023 feed items point to the same MP3, so only one local file was downloaded for that shared enclosure.
 - Backup folder: `exports/thechurchco-podcast/audio/`
+- Download verification inventory: `exports/thechurchco-podcast/audio-inventory.csv` with SHA-256 hashes for the 70 local audio files.
+
+## Podcast Independence Plan
+
+Current state is safe for cutover but not safe for canceling TheChurchCo:
+
+- The RSS feed is preserved locally and will continue to publish from `www.fillmorechristian.org`.
+- The historical MP3 files are backed up locally and hash-inventoried.
+- The live feed enclosures still point to TheChurchCo's S3 URLs, so audio could break if TheChurchCo removes those files after cancellation.
+
+Before canceling TheChurchCo, choose and complete one of these:
+
+1. **Cloudflare R2 audio hosting:** upload `exports/thechurchco-podcast/audio/` to R2, put it behind a public hostname such as `media.fillmorechristian.org`, then rewrite RSS enclosure URLs to that hostname.
+2. **Podcast-host import:** import the preserved RSS feed into a dedicated podcast host, verify all audio imported, then add `<itunes:new-feed-url>` and redirects per Apple Podcasts guidance.
+
+Cloudflare R2 keeps the church infrastructure under the same Cloudflare account as the website and domain, so it is the cleanest ownership model if the church is comfortable with low-cost object storage.
 
 ## Cloudflare Pages Status
 

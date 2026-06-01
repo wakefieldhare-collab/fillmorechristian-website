@@ -1,4 +1,19 @@
-# Keep old ChurchCo sermon URLs alive where practical.
+# Preserve old ChurchCo pretty URLs after static-site cutover.
+/about/ /about.html 301
+/beliefs/ /beliefs.html 301
+/our-team/ /team.html 301
+/team/ /team.html 301
+/events/ /events.html 301
+/audio-sermons/ /sermons.html 301
+/sermons/ /sermons.html 301
+/contact/ /contact.html 301
+/give/ https://givebutter.com/fillmorechristian 302
+
+# Keep legacy episode links useful even when individual episode pages are not recreated.
 /episode/* /sermons.html 302
-/audio-sermons/ /sermons.html 302
+
+# Feed aliases.
+/feed/ /podcast-category/fillmore-christian/feed/podcast 302
+/feed.xml /podcast-category/fillmore-christian/feed/podcast 302
+/podcast.xml /podcast-category/fillmore-christian/feed/podcast 302
 
