@@ -355,10 +355,7 @@ $olderNavMarkup
   <meta name="twitter:description" content="$(HtmlEncode $summary)">
   <meta name="twitter:image" content="https://www.fillmorechristian.org/images/podcast-cover.jpg">
   <script type="application/ld+json">$jsonLdMarkup</script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../css/style.css?v=20260601-9">
+  <link rel="stylesheet" href="../../css/style.css?v=20260601-10">
 </head>
 <body>
   <nav class="navbar">
@@ -425,7 +422,7 @@ $episodeNavMarkup
     </div>
   </footer>
 
-  <script src="../../js/main.js?v=20260601-9"></script>
+  <script src="../../js/main.js?v=20260601-10"></script>
 </body>
 </html>
 "@

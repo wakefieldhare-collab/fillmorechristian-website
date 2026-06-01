@@ -17,6 +17,7 @@ const publishPaths = [
   "episode",
   "feed.xml",
   "favicon.svg",
+  "fonts",
   "index.html",
   "podcast.xml",
   "robots.txt",

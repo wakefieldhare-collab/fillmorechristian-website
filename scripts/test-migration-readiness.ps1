@@ -166,6 +166,8 @@ $requiredFiles = @(
     "team.html",
     "404.html",
     "favicon.svg",
+    "fonts\playfair-display-latin-400-700.woff2",
+    "fonts\source-sans-3-latin-400-700.woff2",
     "site.webmanifest",
     "css\style.css",
     "js\main.js",
@@ -197,6 +199,8 @@ if (Test-Path -LiteralPath $headersPath) {
         "Calendar content type" = "Content-Type:\s+text/calendar;\s*charset=utf-8"
         "Contact card content type" = "Content-Type:\s+text/vcard;\s*charset=utf-8"
         "Manifest content type" = "Content-Type:\s+application/manifest\+json;\s*charset=utf-8"
+        "Font content type" = "Content-Type:\s+font/woff2"
+        "Font cache control" = "Cache-Control:\s+public,\s*max-age=31536000,\s*immutable"
         "nosniff" = "X-Content-Type-Options:\s+nosniff"
         "frame policy" = "X-Frame-Options:\s+SAMEORIGIN"
         "referrer policy" = "Referrer-Policy:\s+strict-origin-when-cross-origin"
@@ -294,6 +298,9 @@ foreach ($relativePath in $publicHtmlPages) {
     if ($html -notmatch "<meta\s+name=`"twitter:card`"") {
         $metadataFailures.Add("$relativePath missing twitter:card")
     }
+    if ($html -match "fonts\.googleapis\.com|fonts\.gstatic\.com") {
+        $metadataFailures.Add("$relativePath still references Google-hosted fonts")
+    }
 }
 
 if ($metadataFailures.Count -eq 0) {
@@ -349,6 +356,39 @@ if ($brandAssetIssues.Count -eq 0) {
     Add-Check "Owned brand assets" "OK" "favicon.svg and site.webmanifest are self-hosted and Fillmore-branded"
 } else {
     Add-Check "Owned brand assets" "FAIL" ($brandAssetIssues -join "; ")
+}
+
+$fontAssetIssues = New-Object System.Collections.Generic.List[string]
+$fontFiles = @(
+    "fonts\playfair-display-latin-400-700.woff2",
+    "fonts\source-sans-3-latin-400-700.woff2"
+)
+foreach ($fontFile in $fontFiles) {
+    $fontPath = Join-Path $root $fontFile
+    if (-not (Test-Path -LiteralPath $fontPath)) {
+        $fontAssetIssues.Add("$fontFile is missing")
+    } elseif ((Get-Item -LiteralPath $fontPath).Length -lt 10000) {
+        $fontAssetIssues.Add("$fontFile looks too small to be a valid font")
+    }
+}
+
+$cssPath = Join-Path $root "css\style.css"
+if (Test-Path -LiteralPath $cssPath) {
+    $cssText = Get-Content -Raw -LiteralPath $cssPath
+    if ($cssText -notmatch "@font-face" -or $cssText -notmatch "playfair-display-latin-400-700\.woff2" -or $cssText -notmatch "source-sans-3-latin-400-700\.woff2") {
+        $fontAssetIssues.Add("css/style.css does not load the self-hosted fonts")
+    }
+    if ($cssText -match "fonts\.googleapis\.com|fonts\.gstatic\.com") {
+        $fontAssetIssues.Add("css/style.css still references Google-hosted fonts")
+    }
+} else {
+    $fontAssetIssues.Add("css/style.css is missing")
+}
+
+if ($fontAssetIssues.Count -eq 0) {
+    Add-Check "Self-hosted fonts" "OK" "Playfair Display and Source Sans 3 are served from local WOFF2 assets"
+} else {
+    Add-Check "Self-hosted fonts" "FAIL" ($fontAssetIssues -join "; ")
 }
 
 $contactCardPath = Join-Path $root "contact.vcf"

@@ -200,6 +200,9 @@ try {
     if ($homeResponse.Content -notmatch "Fillmore Christian Church") {
         throw "Home page did not include the church name"
     }
+    if ($homeResponse.Content -match "fonts\.googleapis\.com|fonts\.gstatic\.com") {
+        throw "Home page still references Google-hosted fonts"
+    }
     $checks.Add([pscustomobject]@{ Check = "Home page"; Status = "OK"; Details = "HTTP 200" })
 
     $expectedSecurityHeaders = @{
@@ -270,6 +273,18 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Events script"; Status = "OK"; Details = "Loads self-hosted events.ics without Google Calendar API" })
 
+    $font = Invoke-NoRedirect -Url "$baseUrl/fonts/source-sans-3-latin-400-700.woff2"
+    Assert-Status -Response $font -Expected @(200) -Name "Self-hosted font"
+    $fontContentType = [string]$font.ContentHeaders.ContentType
+    if ($fontContentType -notmatch "font/woff2") {
+        throw "Self-hosted font returned unexpected content type '$fontContentType'"
+    }
+    $fontCacheControl = Get-HeaderValue -Headers $font.Headers -Name "Cache-Control"
+    if ($fontCacheControl -notmatch "max-age=31536000" -or $fontCacheControl -notmatch "immutable") {
+        throw "Self-hosted font returned unexpected cache control '$fontCacheControl'"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Self-hosted font"; Status = "OK"; Details = "WOFF2 content type and immutable cache" })
+
     $contactCard = Invoke-NoRedirect -Url "$baseUrl/contact.vcf"
     Assert-Status -Response $contactCard -Expected @(200) -Name "Contact card"
     $contactCardContentType = [string]$contactCard.ContentHeaders.ContentType
@@ -307,6 +322,9 @@ try {
 
     $episode = Invoke-NoRedirect -Url "$baseUrl/episode/be-ready-luke-12/"
     Assert-Status -Response $episode -Expected @(200) -Name "Static episode page"
+    if ($episode.Content -match "fonts\.googleapis\.com|fonts\.gstatic\.com") {
+        throw "Static episode page still references Google-hosted fonts"
+    }
     if ($episode.Content -notmatch "<audio\s+controls" -or $episode.Content -notmatch "Download Audio" -or $episode.Content -notmatch "All Sermons" -or $episode.Content -notmatch 'class="episode-nav"' -or $episode.Content -notmatch "Newer Message" -or $episode.Content -notmatch "Older Message" -or $episode.Content -notmatch 'href="../../favicon\.svg"' -or $episode.Content -notmatch 'href="../../site\.webmanifest"') {
         throw "Static episode page is missing audio, download, archive navigation, episode navigation, or brand asset links"
     }
