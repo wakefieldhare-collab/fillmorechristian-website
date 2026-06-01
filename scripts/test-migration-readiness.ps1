@@ -162,6 +162,7 @@ $requiredFiles = @(
     "events.html",
     "sermons.html",
     "contact.html",
+    "contact.vcf",
     "team.html",
     "404.html",
     "css\style.css",
@@ -192,6 +193,7 @@ if (Test-Path -LiteralPath $headersPath) {
         "RSS content type" = "Content-Type:\s+application/rss\+xml;\s*charset=utf-8"
         "RSS cache control" = "Cache-Control:\s+public,\s*max-age=300"
         "Calendar content type" = "Content-Type:\s+text/calendar;\s*charset=utf-8"
+        "Contact card content type" = "Content-Type:\s+text/vcard;\s*charset=utf-8"
         "nosniff" = "X-Content-Type-Options:\s+nosniff"
         "frame policy" = "X-Frame-Options:\s+SAMEORIGIN"
         "referrer policy" = "Referrer-Policy:\s+strict-origin-when-cross-origin"
@@ -286,6 +288,28 @@ if ($metadataFailures.Count -eq 0) {
     Add-Check "Public page metadata" "OK" "$($publicHtmlPages.Count) public pages have canonical, podcast RSS, Open Graph, and Twitter metadata"
 } else {
     Add-Check "Public page metadata" "FAIL" ($metadataFailures -join "; ")
+}
+
+$contactCardPath = Join-Path $root "contact.vcf"
+if (Test-Path -LiteralPath $contactCardPath) {
+    $contactCardText = Get-Content -Raw -LiteralPath $contactCardPath
+    $contactHtml = Get-Content -Raw -LiteralPath (Join-Path $root "contact.html")
+    $contactCardIssues = New-Object System.Collections.Generic.List[string]
+    if ($contactCardText -notmatch "(?m)^BEGIN:VCARD") { $contactCardIssues.Add("missing VCARD start") }
+    if ($contactCardText -notmatch "(?m)^FN:Fillmore Christian Church") { $contactCardIssues.Add("missing church name") }
+    if ($contactCardText -notmatch "church@fillmorechristian\.org") { $contactCardIssues.Add("missing church email") }
+    if ($contactCardText -notmatch "310 N\. Florence Street") { $contactCardIssues.Add("missing street address") }
+    if ($contactHtml -notmatch 'href="contact\.vcf"' -or $contactHtml -notmatch '<link\s+rel="alternate"\s+type="text/vcard"') {
+        $contactCardIssues.Add("contact page does not link or advertise contact.vcf")
+    }
+
+    if ($contactCardIssues.Count -eq 0) {
+        Add-Check "Self-hosted contact card" "OK" "contact.vcf publishes church email and address"
+    } else {
+        Add-Check "Self-hosted contact card" "FAIL" ($contactCardIssues -join "; ")
+    }
+} else {
+    Add-Check "Self-hosted contact card" "FAIL" "contact.vcf is missing"
 }
 
 $calendarPath = Join-Path $root "events.ics"
@@ -879,7 +903,7 @@ if (-not $SkipRemote) {
     if ($sampleEpisodePath) {
         $remotePaths += $sampleEpisodePath
     }
-    $remotePaths += @("podcast-category/fillmore-christian/feed/podcast", "events.ics", "robots.txt", "sitemap.xml")
+    $remotePaths += @("podcast-category/fillmore-christian/feed/podcast", "events.ics", "contact.vcf", "robots.txt", "sitemap.xml")
 
     foreach ($path in $remotePaths) {
         $url = Join-Url $StagingBaseUrl $path
@@ -996,6 +1020,14 @@ if (-not $SkipRemote) {
                     Add-Check "Staging event calendar" "OK" "events.ics is published with text/calendar content type"
                 } else {
                     Add-Check "Staging event calendar" "FAIL" "events.ics content or content type was unexpected"
+                }
+            }
+
+            if ($path -eq "contact.vcf") {
+                if ($response.Content -match "(?m)^BEGIN:VCARD" -and $response.Content -match "FN:Fillmore Christian Church" -and $response.Content -match "church@fillmorechristian\.org" -and $response.Content -match "310 N\. Florence Street") {
+                    Add-Check "Staging contact card" "OK" "contact.vcf is published with church email and address"
+                } else {
+                    Add-Check "Staging contact card" "FAIL" "contact.vcf content was unexpected"
                 }
             }
         } catch {

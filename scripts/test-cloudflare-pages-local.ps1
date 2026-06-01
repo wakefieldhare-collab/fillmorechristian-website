@@ -257,6 +257,17 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Event calendar"; Status = "OK"; Details = "text/calendar recurring Sunday schedule" })
 
+    $contactCard = Invoke-NoRedirect -Url "$baseUrl/contact.vcf"
+    Assert-Status -Response $contactCard -Expected @(200) -Name "Contact card"
+    $contactCardContentType = [string]$contactCard.ContentHeaders.ContentType
+    if ($contactCardContentType -notmatch "text/vcard") {
+        throw "Contact card returned unexpected content type '$contactCardContentType'"
+    }
+    if ($contactCard.Content -notmatch "BEGIN:VCARD" -or $contactCard.Content -notmatch "FN:Fillmore Christian Church" -or $contactCard.Content -notmatch "church@fillmorechristian\.org") {
+        throw "Contact card did not include the church contact details"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Contact card"; Status = "OK"; Details = "text/vcard church email and address" })
+
     $episode = Invoke-NoRedirect -Url "$baseUrl/episode/be-ready-luke-12/"
     Assert-Status -Response $episode -Expected @(200) -Name "Static episode page"
     if ($episode.Content -notmatch "<audio\s+controls" -or $episode.Content -notmatch "Download Audio" -or $episode.Content -notmatch "All Sermons" -or $episode.Content -notmatch 'class="episode-nav"' -or $episode.Content -notmatch "Newer Message" -or $episode.Content -notmatch "Older Message") {

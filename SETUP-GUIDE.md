@@ -129,6 +129,8 @@ To spot-check current or rewritten podcast audio URLs:
 
 The contact forms currently create a prefilled email to `church@fillmorechristian.org` using the visitor's mail app. This avoids a broken placeholder form while the site is moving.
 
+The site also publishes `contact.vcf`, a self-hosted contact card with the church email and address. The Contact page links it directly.
+
 Later, the form can be upgraded to Cloudflare Pages Functions, Formspree, or another form service after the church chooses where form submissions should be stored and who should receive notifications.
 
 ### Step 5: Set Up Google Calendar (Events)

@@ -1,0 +1,9 @@
+BEGIN:VCARD
+VERSION:4.0
+FN:Fillmore Christian Church
+ORG:Fillmore Christian Church
+EMAIL;TYPE=work:church@fillmorechristian.org
+ADR;TYPE=work:;;310 N. Florence Street;Fillmore;MO;64449;US
+URL:https://www.fillmorechristian.org/
+NOTE:Sunday School at 9:00 AM and Worship at 10:00 AM.
+END:VCARD
