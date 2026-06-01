@@ -301,6 +301,9 @@ foreach ($relativePath in $publicHtmlPages) {
     if ($html -match "fonts\.googleapis\.com|fonts\.gstatic\.com") {
         $metadataFailures.Add("$relativePath still references Google-hosted fonts")
     }
+    if ($html -match "google\.com/maps/embed|<iframe") {
+        $metadataFailures.Add("$relativePath still embeds third-party iframe content")
+    }
 }
 
 if ($metadataFailures.Count -eq 0) {
@@ -389,6 +392,29 @@ if ($fontAssetIssues.Count -eq 0) {
     Add-Check "Self-hosted fonts" "OK" "Playfair Display and Source Sans 3 are served from local WOFF2 assets"
 } else {
     Add-Check "Self-hosted fonts" "FAIL" ($fontAssetIssues -join "; ")
+}
+
+$locationPanelIssues = New-Object System.Collections.Generic.List[string]
+foreach ($relativePath in @("about.html", "contact.html")) {
+    $htmlPath = Join-Path $root $relativePath
+    if (-not (Test-Path -LiteralPath $htmlPath)) {
+        $locationPanelIssues.Add("$relativePath is missing")
+        continue
+    }
+
+    $html = Get-Content -Raw -LiteralPath $htmlPath
+    if ($html -match "google\.com/maps/embed|<iframe") {
+        $locationPanelIssues.Add("$relativePath still embeds third-party map content")
+    }
+    if ($html -notmatch "location-panel" -or $html -notmatch "Get Directions" -or $html -notmatch "310 N\. Florence Street") {
+        $locationPanelIssues.Add("$relativePath is missing the self-hosted location panel")
+    }
+}
+
+if ($locationPanelIssues.Count -eq 0) {
+    Add-Check "Self-hosted location panels" "OK" "About and contact pages use local location panels instead of embedded maps"
+} else {
+    Add-Check "Self-hosted location panels" "FAIL" ($locationPanelIssues -join "; ")
 }
 
 $contactCardPath = Join-Path $root "contact.vcf"
@@ -1048,14 +1074,15 @@ if (-not $SkipRemote) {
                 $hasOpenGraph = $response.Content -match "<meta\s+property=`"og:title`"" -and $response.Content -match "<meta\s+property=`"og:image`""
                 $hasTwitter = $response.Content -match "<meta\s+name=`"twitter:card`""
                 $hasNoGoogleFonts = $response.Content -notmatch "fonts\.googleapis\.com|fonts\.gstatic\.com"
+                $hasNoMapEmbeds = $response.Content -notmatch "google\.com/maps/embed|<iframe"
                 $faviconHref = if ($path -eq $sampleEpisodePath) { "../../favicon\.svg" } else { "favicon\.svg" }
                 $manifestHref = if ($path -eq $sampleEpisodePath) { "../../site\.webmanifest" } else { "site\.webmanifest" }
                 $hasBrandAssets = $response.Content -match "<link\s+rel=`"icon`"\s+href=`"$faviconHref`"\s+type=`"image/svg\+xml`"" -and
                     $response.Content -match "<link\s+rel=`"manifest`"\s+href=`"$manifestHref`"" -and
                     $response.Content -match "<meta\s+name=`"theme-color`"\s+content=`"#173247`""
 
-                if ($hasCanonical -and $hasPodcastAlternate -and $hasOpenGraph -and $hasTwitter -and $hasBrandAssets -and $hasNoGoogleFonts) {
-                    Add-Check "Staging metadata: /$path" "OK" "Canonical, podcast RSS, brand icon, web app manifest, Open Graph, Twitter, and self-hosted font metadata present"
+                if ($hasCanonical -and $hasPodcastAlternate -and $hasOpenGraph -and $hasTwitter -and $hasBrandAssets -and $hasNoGoogleFonts -and $hasNoMapEmbeds) {
+                    Add-Check "Staging metadata: /$path" "OK" "Canonical, podcast RSS, brand icon, web app manifest, Open Graph, Twitter, and self-hosted dependency metadata present"
                 } else {
                     $metadataDetails = @()
                     if (-not $hasCanonical) { $metadataDetails += "canonical" }
@@ -1064,6 +1091,7 @@ if (-not $SkipRemote) {
                     if (-not $hasOpenGraph) { $metadataDetails += "Open Graph" }
                     if (-not $hasTwitter) { $metadataDetails += "Twitter" }
                     if (-not $hasNoGoogleFonts) { $metadataDetails += "self-hosted fonts" }
+                    if (-not $hasNoMapEmbeds) { $metadataDetails += "self-hosted map/location panel" }
                     Add-Check "Staging metadata: /$path" "FAIL" "Missing on staging: $($metadataDetails -join ', ')"
                 }
 

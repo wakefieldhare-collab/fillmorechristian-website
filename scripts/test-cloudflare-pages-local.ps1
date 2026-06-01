@@ -273,6 +273,12 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Events script"; Status = "OK"; Details = "Loads self-hosted events.ics without Google Calendar API" })
 
+    $aboutPageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "about.html")
+    if ($aboutPageContent -match "google\.com/maps/embed|<iframe" -or $aboutPageContent -notmatch "location-panel") {
+        throw "Built about page does not use the self-hosted location panel cleanly"
+    }
+    $checks.Add([pscustomobject]@{ Check = "About location panel"; Status = "OK"; Details = "No embedded map iframe" })
+
     $font = Invoke-NoRedirect -Url "$baseUrl/fonts/source-sans-3-latin-400-700.woff2"
     Assert-Status -Response $font -Expected @(200) -Name "Self-hosted font"
     $fontContentType = [string]$font.ContentHeaders.ContentType
@@ -295,6 +301,12 @@ try {
         throw "Contact card did not include the church contact details"
     }
     $checks.Add([pscustomobject]@{ Check = "Contact card"; Status = "OK"; Details = "text/vcard church email and address" })
+
+    $contactPageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "contact.html")
+    if ($contactPageContent -match "google\.com/maps/embed|<iframe" -or $contactPageContent -notmatch "location-panel") {
+        throw "Built contact page does not use the self-hosted location panel cleanly"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Contact location panel"; Status = "OK"; Details = "No embedded map iframe" })
 
     $favicon = Invoke-NoRedirect -Url "$baseUrl/favicon.svg"
     Assert-Status -Response $favicon -Expected @(200) -Name "Favicon"

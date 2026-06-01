@@ -539,6 +539,134 @@ h4 { font-size: 1.25rem; }
   box-shadow: var(--shadow-soft);
 }
 
+/* --- Location Panels --- */
+.location-section {
+  text-align: center;
+}
+
+.location-panel {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.95fr) minmax(0, 1.05fr);
+  gap: 2rem;
+  align-items: stretch;
+  max-width: 850px;
+  margin: 1.5rem auto 0;
+  background: var(--color-white);
+  border: 1px solid rgba(23, 50, 71, 0.12);
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.location-panel-compact {
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin-top: 1.5rem;
+  box-shadow: none;
+}
+
+.location-map {
+  position: relative;
+  min-height: 260px;
+  background:
+    linear-gradient(90deg, rgba(23, 50, 71, 0.08) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(23, 50, 71, 0.08) 1px, transparent 1px),
+    var(--color-bg-alt);
+  background-size: 44px 44px;
+  overflow: hidden;
+}
+
+.location-panel-compact .location-map {
+  min-height: 180px;
+}
+
+.map-road {
+  position: absolute;
+  background: rgba(23, 50, 71, 0.2);
+}
+
+.map-road-horizontal {
+  left: -5%;
+  right: -5%;
+  top: 48%;
+  height: 18px;
+  transform: rotate(-8deg);
+}
+
+.map-road-vertical {
+  top: -8%;
+  bottom: -8%;
+  left: 50%;
+  width: 16px;
+  transform: rotate(5deg);
+}
+
+.map-marker {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  transform: translate(-50%, -50%);
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-text-on-dark);
+  border: 6px solid var(--color-white);
+  box-shadow: 0 12px 30px rgba(23, 50, 71, 0.24);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.map-label {
+  position: absolute;
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.map-label-north {
+  right: 1rem;
+  top: 1rem;
+}
+
+.map-label-town {
+  left: 1rem;
+  bottom: 1rem;
+}
+
+.location-details {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.location-details h3 {
+  margin-bottom: 0.5rem;
+}
+
+.location-details p {
+  color: var(--color-text-light);
+}
+
+.location-times {
+  display: grid;
+  gap: 0.45rem;
+  margin: 1rem 0 1.5rem;
+  color: var(--color-text);
+}
+
+.location-times strong {
+  color: var(--color-primary);
+}
+
 /* --- Upcoming Events --- */
 .events-list {
   max-width: 800px;
@@ -1169,7 +1297,7 @@ h4 { font-size: 1.25rem; }
   font-size: 1.1rem;
 }
 
-/* --- Google Calendar Embed --- */
+/* --- Calendar Embed --- */
 .calendar-embed {
   max-width: 900px;
   margin: 0 auto;
@@ -1230,6 +1358,7 @@ h4 { font-size: 1.25rem; }
 
   .welcome-grid,
   .media-band-grid,
+  .location-panel,
   .sermon-tools-card,
   .episode-player {
     grid-template-columns: 1fr;
