@@ -106,7 +106,7 @@ Later, the form can be upgraded to Cloudflare Pages Functions, Formspree, or ano
 5. Update `js/events.js`:
    - Set `GOOGLE_CALENDAR_ID` to your calendar ID.
    - Set `GOOGLE_API_KEY` to your API key.
-6. Optionally, uncomment the iframe in `events.html` and replace `CALENDAR_ID`.
+6. Until a calendar is connected, the site shows the built-in Sunday School and Sunday Worship schedule.
 
 ### Step 6: Move DNS To Cloudflare
 

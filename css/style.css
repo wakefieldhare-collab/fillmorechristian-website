@@ -526,11 +526,23 @@ h4 { font-size: 1.25rem; }
   font-size: 0.9rem;
 }
 
+.event-details p {
+  margin-top: 0.35rem;
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+}
+
 .events-empty {
   text-align: center;
   color: var(--color-text-light);
   padding: 2em;
   font-style: italic;
+}
+
+.event-note {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 /* --- Give Online --- */

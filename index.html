@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260601">
+  <link rel="stylesheet" href="css/style.css?v=20260601-2">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -172,7 +172,28 @@
     <div class="container">
       <h2>Upcoming Events</h2>
       <div class="events-list" id="upcoming-events">
-        <!-- Events loaded dynamically from Google Calendar -->
+        <div class="event-item" data-static-event="true">
+          <div class="event-date-box">
+            <span class="month">Sun</span>
+            <span class="day">9</span>
+          </div>
+          <div class="event-details">
+            <h4>Sunday School</h4>
+            <span class="event-time">Every Sunday at 9:00 AM</span>
+            <p>Classes for learning Scripture together before worship.</p>
+          </div>
+        </div>
+        <div class="event-item" data-static-event="true">
+          <div class="event-date-box">
+            <span class="month">Sun</span>
+            <span class="day">10</span>
+          </div>
+          <div class="event-details">
+            <h4>Sunday Worship</h4>
+            <span class="event-time">Every Sunday at 10:00 AM</span>
+            <p>Gather with us for prayer, singing, communion, and preaching from Scripture.</p>
+          </div>
+        </div>
       </div>
       <div class="section-action">
         <a href="events.html" class="btn btn-outline">View All Events</a>
@@ -268,8 +289,8 @@
     </div>
   </footer>
 
-  <script src="js/main.js?v=20260601"></script>
-  <script src="js/events.js?v=20260601"></script>
+  <script src="js/main.js?v=20260601-2"></script>
+  <script src="js/events.js?v=20260601-2"></script>
 </body>
 </html>
 

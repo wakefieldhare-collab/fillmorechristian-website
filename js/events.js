@@ -1,35 +1,16 @@
 /* ============================================
    Events Loader - Fetches from Google Calendar
-   ============================================
+   ============================================ */
 
-   HOW IT WORKS:
-   This script fetches upcoming events from a public Google Calendar
-   and displays them on the website.
-
-   SETUP:
-   1. Create a Google Calendar for the church
-   2. Make it public (Settings > Access permissions > Make available to public)
-   3. Get the Calendar ID (Settings > Integrate calendar > Calendar ID)
-   4. Get a Google API key from https://console.cloud.google.com
-      - Create a project, enable Google Calendar API, create an API key
-      - Restrict the key to Calendar API and your domain
-   5. Set both values below
-
-   If no API key is configured, the page will show a Google Calendar embed instead.
-*/
-
-// *** CONFIGURE YOUR GOOGLE CALENDAR HERE ***
-const GOOGLE_CALENDAR_ID = ''; // e.g., 'your-church@group.calendar.google.com'
-const GOOGLE_API_KEY = '';      // e.g., 'AIzaSy...'
+const GOOGLE_CALENDAR_ID = '';
+const GOOGLE_API_KEY = '';
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Load events on homepage upcoming events section
   const upcomingContainer = document.getElementById('upcoming-events');
   if (upcomingContainer) {
     loadUpcomingEvents(upcomingContainer, 5);
   }
 
-  // Load events on the full events page
   const eventsPageContainer = document.getElementById('events-full-list');
   if (eventsPageContainer) {
     loadUpcomingEvents(eventsPageContainer, 20);
@@ -38,8 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function loadUpcomingEvents(container, maxResults) {
   if (!GOOGLE_CALENDAR_ID || !GOOGLE_API_KEY) {
-    // Show placeholder if not configured
-    container.innerHTML = getPlaceholderEventsHtml();
+    if (!container.querySelector('.event-item')) {
+      container.innerHTML = getStaticEventsHtml();
+    }
     return;
   }
 
@@ -54,17 +36,19 @@ async function loadUpcomingEvents(container, maxResults) {
       '&maxResults=' + maxResults +
       '&singleEvents=true&orderBy=startTime';
 
-    const response = await fetch(url);
-    const data = await response.json();
+    const text = await getText(url);
+    const data = JSON.parse(text);
 
     if (data.items && data.items.length > 0) {
       renderEvents(container, data.items);
     } else {
-      container.innerHTML = '<div class="events-empty">No upcoming events at this time. Check back soon!</div>';
+      container.innerHTML = getStaticEventsHtml();
     }
   } catch (err) {
     console.error('Error loading events:', err);
-    container.innerHTML = '<div class="events-empty">Unable to load events. Please try again later.</div>';
+    if (!container.querySelector('.event-item')) {
+      container.innerHTML = getStaticEventsHtml();
+    }
   }
 }
 
@@ -74,18 +58,13 @@ function renderEvents(container, events) {
   events.forEach(function(event) {
     const start = event.start.dateTime || event.start.date;
     const date = new Date(start);
-
-    const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const item = document.createElement('div');
     item.className = 'event-item';
 
-    let timeStr = '';
-    if (event.start.dateTime) {
-      timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-    } else {
-      timeStr = 'All Day';
-    }
+    const timeStr = event.start.dateTime
+      ? date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+      : 'All day';
 
     item.innerHTML =
       '<div class="event-date-box">' +
@@ -93,37 +72,63 @@ function renderEvents(container, events) {
         '<span class="day">' + date.getDate() + '</span>' +
       '</div>' +
       '<div class="event-details">' +
-        '<h4>' + escapeHtml(event.summary || 'Untitled Event') + '</h4>' +
-        '<span class="event-time">' + timeStr + '</span>' +
-        (event.description ? '<p style="margin-top:0.3em;color:#666;font-size:0.9rem;">' + escapeHtml(event.description.substring(0, 150)) + '</p>' : '') +
+        '<h4>' + escapeHtml(event.summary || 'Untitled event') + '</h4>' +
+        '<span class="event-time">' + escapeHtml(timeStr) + '</span>' +
+        (event.description ? '<p>' + escapeHtml(event.description.substring(0, 150)) + '</p>' : '') +
       '</div>';
 
     container.appendChild(item);
   });
 }
 
-function getPlaceholderEventsHtml() {
-  // Show some placeholder events until Google Calendar is configured
+function getStaticEventsHtml() {
   return '' +
-    '<div class="event-item">' +
-      '<div class="event-date-box"><span class="month">SUN</span><span class="day">—</span></div>' +
-      '<div class="event-details">' +
-        '<h4>Sunday Worship</h4>' +
-        '<span class="event-time">Every Sunday at 10:00 AM</span>' +
-      '</div>' +
-    '</div>' +
-    '<div class="event-item">' +
-      '<div class="event-date-box"><span class="month">SUN</span><span class="day">—</span></div>' +
+    '<div class="event-item" data-static-event="true">' +
+      '<div class="event-date-box"><span class="month">Sun</span><span class="day">9</span></div>' +
       '<div class="event-details">' +
         '<h4>Sunday School</h4>' +
         '<span class="event-time">Every Sunday at 9:00 AM</span>' +
+        '<p>Classes for learning Scripture together before worship.</p>' +
       '</div>' +
     '</div>' +
-    '<p style="text-align:center;margin-top:1em;font-size:0.85rem;color:#999;">Events will auto-populate once Google Calendar is connected. See <code>js/events.js</code> for setup.</p>';
+    '<div class="event-item" data-static-event="true">' +
+      '<div class="event-date-box"><span class="month">Sun</span><span class="day">10</span></div>' +
+      '<div class="event-details">' +
+        '<h4>Sunday Worship</h4>' +
+        '<span class="event-time">Every Sunday at 10:00 AM</span>' +
+        '<p>Gather with us for prayer, singing, communion, and preaching from Scripture.</p>' +
+      '</div>' +
+    '</div>';
+}
+
+function getText(url) {
+  if (typeof window.fetch === 'function') {
+    return window.fetch(url).then(function(response) {
+      if (!response.ok) throw new Error('Calendar request failed: ' + response.status);
+      return response.text();
+    });
+  }
+
+  return new Promise(function(resolve, reject) {
+    const request = new XMLHttpRequest();
+    request.open('GET', url, true);
+    request.onreadystatechange = function() {
+      if (request.readyState !== 4) return;
+      if (request.status >= 200 && request.status < 300) {
+        resolve(request.responseText);
+      } else {
+        reject(new Error('Calendar request failed: ' + request.status));
+      }
+    };
+    request.onerror = function() {
+      reject(new Error('Calendar request failed.'));
+    };
+    request.send();
+  });
 }
 
 function escapeHtml(str) {
   const div = document.createElement('div');
-  div.appendChild(document.createTextNode(str));
+  div.appendChild(document.createTextNode(str || ''));
   return div.innerHTML;
 }
