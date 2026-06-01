@@ -1,5 +1,8 @@
 param(
     [string]$StagingBaseUrl = "https://wakefieldhare-collab.github.io/fillmorechristian-website",
+    [string]$ExpectedGitHubOwner = "wakefieldhare-collab",
+    [string]$ExpectedGitHubRepo = "fillmorechristian-website",
+    [string]$ForbiddenGitHubOwner = "wake-byte",
     [string]$BuildOutputDir = "dist",
     [switch]$SkipRemote,
     [switch]$VerifyAudioHashes,
@@ -101,6 +104,54 @@ function Get-LegacyPodcastPostId {
         }
     } catch {}
     return ""
+}
+
+$gitHubIssues = New-Object System.Collections.Generic.List[string]
+$gitHubWarnings = New-Object System.Collections.Generic.List[string]
+$expectedRepoPattern = "github\.com[:/]$([regex]::Escape($ExpectedGitHubOwner))/$([regex]::Escape($ExpectedGitHubRepo))(\.git)?$"
+
+try {
+    $originUrl = (& git -C $root remote get-url origin 2>$null).Trim()
+    if (-not $originUrl) {
+        $gitHubIssues.Add("origin remote is not configured")
+    } elseif ($originUrl -match [regex]::Escape($ForbiddenGitHubOwner)) {
+        $gitHubIssues.Add("origin remote points at forbidden owner $ForbiddenGitHubOwner`: $originUrl")
+    } elseif ($originUrl -notmatch $expectedRepoPattern) {
+        $gitHubIssues.Add("origin remote should be $ExpectedGitHubOwner/$ExpectedGitHubRepo, found $originUrl")
+    }
+} catch {
+    $gitHubIssues.Add("could not read git origin remote")
+}
+
+try {
+    $ghStatus = (& gh auth status 2>&1) -join "`n"
+    if ($LASTEXITCODE -ne 0) {
+        $gitHubWarnings.Add("gh is not authenticated; verify Cloudflare/GitHub connection manually")
+    } else {
+        $activeAccountMatches = [regex]::Matches($ghStatus, "account\s+([^\s]+)[\s\S]*?Active account:\s+true")
+        $activeAccounts = @($activeAccountMatches | ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique)
+        if ($ForbiddenGitHubOwner -in $activeAccounts) {
+            $gitHubIssues.Add("gh active account is forbidden owner $ForbiddenGitHubOwner")
+        }
+        if ($activeAccounts.Count -gt 0 -and $ExpectedGitHubOwner -notin $activeAccounts) {
+            $gitHubIssues.Add("gh active account should be $ExpectedGitHubOwner, found $($activeAccounts -join ', ')")
+        }
+        if ($activeAccounts.Count -eq 0) {
+            $gitHubWarnings.Add("could not identify active gh account from gh auth status")
+        }
+    }
+} catch {
+    $gitHubWarnings.Add("gh auth status could not be checked")
+}
+
+if ($gitHubIssues.Count -gt 0) {
+    $details = @($gitHubIssues)
+    if ($gitHubWarnings.Count -gt 0) { $details += @($gitHubWarnings) }
+    Add-Check "GitHub owner guard" "FAIL" ($details -join "; ")
+} elseif ($gitHubWarnings.Count -gt 0) {
+    Add-Check "GitHub owner guard" "WARN" ($gitHubWarnings -join "; ")
+} else {
+    Add-Check "GitHub owner guard" "OK" "origin and active gh account use $ExpectedGitHubOwner"
 }
 
 $requiredFiles = @(

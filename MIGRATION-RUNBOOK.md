@@ -13,6 +13,7 @@ Last updated: 2026-06-01
 - Squarespace renewal notice: auto-renew on 2026-06-15 for $15.00; disable by 2026-06-14 only if the transfer is already safely underway or complete.
 - Current Apple Podcasts feed URL: `https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast`
 - GitHub source repo for Cloudflare Pages: `https://github.com/wakefieldhare-collab/fillmorechristian-website`
+- GitHub owner guard: keep this repo under `wakefieldhare-collab`; do not move or deploy it from the work account `wake-byte`.
 - Source of truth: GitHub `main` branch in the repo above. Use `git log -1 --oneline` for the latest pushed commit.
 
 ## Migration Order
@@ -125,6 +126,8 @@ npm run build
 ```
 
 The expected pre-R2 result is all checks passing with one warning: podcast audio enclosures still point at TheChurchCo. After R2 audio rewrite, run the stricter form:
+
+The readiness script also checks that the `origin` remote and active `gh` account are using `wakefieldhare-collab`, not `wake-byte`.
 
 ```powershell
 .\scripts\build-r2-audio-manifest.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"

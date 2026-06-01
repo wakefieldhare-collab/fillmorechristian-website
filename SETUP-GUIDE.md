@@ -80,10 +80,11 @@ The manifest and dry run are safe before Cloudflare authorization. Run the real 
 ### Step 3: Deploy Website To Cloudflare Pages
 
 1. Put this folder in a GitHub repo.
-2. In Cloudflare Pages, create a project from that repo.
-3. Use `npm run build` as the build command and `dist` as the output directory.
-4. Add custom domains for `www.fillmorechristian.org` and `fillmorechristian.org`.
-5. Keep `_headers`, `_redirects`, and `_routes.json` in the published output.
+2. Keep the repo under the personal GitHub owner `wakefieldhare-collab`, not the work account `wake-byte`.
+3. In Cloudflare Pages, create a project from that repo.
+4. Use `npm run build` as the build command and `dist` as the output directory.
+5. Add custom domains for `www.fillmorechristian.org` and `fillmorechristian.org`.
+6. Keep `_headers`, `_redirects`, and `_routes.json` in the published output.
 
 Before deploying, run:
 
@@ -94,6 +95,8 @@ npm run build
 ```
 
 The only expected warning before R2 setup is that the podcast audio enclosures still point at TheChurchCo.
+
+The readiness script also fails if the Git remote or active GitHub CLI account points at `wake-byte`.
 
 To spot-check current or rewritten podcast audio URLs:
 
