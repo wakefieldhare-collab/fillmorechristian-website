@@ -743,6 +743,21 @@ if (Test-Path -LiteralPath $sermonsPath) {
         Add-Check "Sermon search controls" "FAIL" "Archive page is missing #sermon-search or #sermon-clear"
     }
 
+    $sermonsScriptPath = Join-Path $root "js\sermons.js"
+    if (Test-Path -LiteralPath $sermonsScriptPath) {
+        $sermonsScriptText = Get-Content -Raw -LiteralPath $sermonsScriptPath
+        if ($sermonsScriptText -match "URLSearchParams" -and
+            $sermonsScriptText -match "history\.replaceState" -and
+            $sermonsScriptText -match "applyArchiveStateFromUrl" -and
+            $sermonsScriptText -match "updateArchiveUrl") {
+            Add-Check "Sermon filter deep links" "OK" "Archive filters can load from and write to URL query parameters"
+        } else {
+            Add-Check "Sermon filter deep links" "FAIL" "Archive filters are missing URL query parameter persistence"
+        }
+    } else {
+        Add-Check "Sermon filter deep links" "FAIL" "js\sermons.js is missing"
+    }
+
     $expectedFeedUrl = "https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast"
     if ($sermonsHtml -match 'id="podcast-feed-url"' -and $sermonsHtml -match 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -and $sermonsHtml -match [regex]::Escape($expectedFeedUrl)) {
         Add-Check "Podcast subscribe controls" "OK" "Archive page exposes a copyable canonical RSS feed URL"

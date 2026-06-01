@@ -81,8 +81,10 @@ function initializeStaticArchive(container, cards, search, yearFilter, sortContr
   populateYearFilter(yearFilter, cards.map(function(card) {
     return card.getAttribute('data-year') || '';
   }));
+  applyArchiveStateFromUrl(search, yearFilter, sortControl, audioOnly);
 
-  function applyFilter() {
+  function applyFilter(options) {
+    const shouldUpdateUrl = !options || options.updateUrl !== false;
     const needle = search ? search.value.trim().toLowerCase() : '';
     const selectedYear = yearFilter ? yearFilter.value : '';
     const selectedSort = sortControl ? sortControl.value : 'newest';
@@ -104,6 +106,9 @@ function initializeStaticArchive(container, cards, search, yearFilter, sortContr
 
     emptyMessage.hidden = visible !== 0;
     updateCount(visible, cards.length);
+    if (shouldUpdateUrl) {
+      updateArchiveUrl(search, yearFilter, sortControl, audioOnly);
+    }
   }
 
   if (search) {
@@ -133,7 +138,59 @@ function initializeStaticArchive(container, cards, search, yearFilter, sortContr
     });
   }
 
-  applyFilter();
+  applyFilter({ updateUrl: false });
+}
+
+function applyArchiveStateFromUrl(search, yearFilter, sortControl, audioOnly) {
+  if (typeof URLSearchParams === 'undefined') return;
+
+  const params = new URLSearchParams(window.location.search || '');
+  const query = params.get('q') || '';
+  const year = params.get('year') || '';
+  const sort = params.get('sort') || '';
+  const audio = params.get('audio') || '';
+
+  if (search && query) {
+    search.value = query;
+  }
+  if (yearFilter && year && Array.from(yearFilter.options).some(function(option) { return option.value === year; })) {
+    yearFilter.value = year;
+  }
+  if (sortControl && ['newest', 'oldest', 'title'].indexOf(sort) !== -1) {
+    sortControl.value = sort;
+  }
+  if (audioOnly && audio === '1') {
+    audioOnly.checked = true;
+  }
+}
+
+function updateArchiveUrl(search, yearFilter, sortControl, audioOnly) {
+  if (typeof URLSearchParams === 'undefined' || !window.history || typeof window.history.replaceState !== 'function') {
+    return;
+  }
+
+  const params = new URLSearchParams(window.location.search || '');
+  const query = search ? search.value.trim() : '';
+  const year = yearFilter ? yearFilter.value : '';
+  const sort = sortControl ? sortControl.value : 'newest';
+  const requireAudio = audioOnly ? audioOnly.checked : false;
+
+  setArchiveParam(params, 'q', query);
+  setArchiveParam(params, 'year', year);
+  setArchiveParam(params, 'sort', sort && sort !== 'newest' ? sort : '');
+  setArchiveParam(params, 'audio', requireAudio ? '1' : '');
+
+  const nextQuery = params.toString();
+  const nextUrl = window.location.pathname + (nextQuery ? '?' + nextQuery : '') + window.location.hash;
+  window.history.replaceState({}, '', nextUrl);
+}
+
+function setArchiveParam(params, name, value) {
+  if (value) {
+    params.set(name, value);
+  } else {
+    params.delete(name);
+  }
 }
 
 async function loadFromRSS(container) {
