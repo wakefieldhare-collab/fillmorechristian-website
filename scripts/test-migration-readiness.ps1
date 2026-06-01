@@ -403,6 +403,52 @@ if (Test-Path -LiteralPath $r2ManifestPath) {
     Add-Check "R2 audio manifest" "WARN" "R2 manifest not found; run scripts\build-r2-audio-manifest.ps1 before uploading audio"
 }
 
+$dnsPreservePath = Join-Path $root "exports\dns\fillmorechristian.org-cloudflare-preserve-records.csv"
+$dnsZonePath = Join-Path $root "exports\dns\fillmorechristian.org-cloudflare-preserve-records.zone"
+$dnsPlanPath = Join-Path $root "exports\dns\fillmorechristian.org-cloudflare-dns-cutover-plan.md"
+if ((Test-Path -LiteralPath $dnsPreservePath) -and (Test-Path -LiteralPath $dnsZonePath) -and (Test-Path -LiteralPath $dnsPlanPath)) {
+    $dnsRows = @(Import-Csv -LiteralPath $dnsPreservePath)
+    $dnsIssues = New-Object System.Collections.Generic.List[string]
+    $requiredDnsRows = @(
+        @{ Type = "MX"; Value = "mxa.mailgun.org"; Priority = "10" },
+        @{ Type = "MX"; Value = "mxb.mailgun.org"; Priority = "10" },
+        @{ Type = "TXT"; Value = "v=spf1 include:mailgun.org ~all"; Priority = "" },
+        @{ Type = "TXT"; Value = "MS=ms48673064"; Priority = "" }
+    )
+    foreach ($required in $requiredDnsRows) {
+        $match = @($dnsRows | Where-Object {
+            $_.Name -eq "fillmorechristian.org" -and
+            $_.Type -eq $required.Type -and
+            $_.Value -eq $required.Value -and
+            $_.Priority -eq $required.Priority
+        })
+        if ($match.Count -eq 0) {
+            $dnsIssues.Add("missing $($required.Type) $($required.Value)")
+        }
+    }
+
+    $oldWebsiteRows = @($dnsRows | Where-Object {
+        ($_.Type -eq "A" -and $_.Value -eq "77.83.141.16") -or
+        ($_.Type -eq "CNAME" -and $_.Value -eq "ssl.thechurchco.com")
+    })
+    if ($oldWebsiteRows.Count -gt 0) {
+        $dnsIssues.Add("old website records are present in preserve import")
+    }
+
+    $zoneText = Get-Content -Raw -LiteralPath $dnsZonePath
+    if ($zoneText -notmatch "mxa\.mailgun\.org\." -or $zoneText -notmatch "mxb\.mailgun\.org\." -or $zoneText -notmatch "include:mailgun\.org") {
+        $dnsIssues.Add("zone file does not contain expected mail records")
+    }
+
+    if ($dnsIssues.Count -eq 0) {
+        Add-Check "Cloudflare DNS cutover artifacts" "OK" "$($dnsRows.Count) preserve records cover mail and verification without old website records"
+    } else {
+        Add-Check "Cloudflare DNS cutover artifacts" "FAIL" ($dnsIssues -join "; ")
+    }
+} else {
+    Add-Check "Cloudflare DNS cutover artifacts" "WARN" "DNS cutover artifacts are missing; run scripts\build-cloudflare-dns-plan.ps1"
+}
+
 if (-not $SkipRemote) {
     foreach ($path in @("", "about.html", "beliefs.html", "team.html", "events.html", "sermons.html", "contact.html", "podcast-category/fillmore-christian/feed/podcast", "robots.txt", "sitemap.xml")) {
         $url = Join-Url $StagingBaseUrl $path

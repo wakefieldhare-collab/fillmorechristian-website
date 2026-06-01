@@ -133,6 +133,13 @@ Current public DNS can be snapshotted with:
 .\scripts\export-dns-snapshot.ps1
 ```
 
+Then build the Cloudflare import/preserve files and verify the current pre-cutover state:
+
+```powershell
+.\scripts\build-cloudflare-dns-plan.ps1
+.\scripts\test-dns-cutover.ps1 -Mode Before
+```
+
 As of June 1, 2026, preserve at least the Mailgun MX records and these TXT records:
 
 - `v=spf1 include:mailgun.org ~all`

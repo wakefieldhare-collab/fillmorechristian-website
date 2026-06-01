@@ -1,0 +1,6 @@
+﻿$ORIGIN fillmorechristian.org.
+$TTL 300
+@ 14400 IN MX 10 mxa.mailgun.org.
+@ 14400 IN MX 10 mxb.mailgun.org.
+@ 14400 IN TXT "MS=ms48673064"
+@ 14400 IN TXT "v=spf1 include:mailgun.org ~all"

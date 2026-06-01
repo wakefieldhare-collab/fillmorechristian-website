@@ -1,0 +1,5 @@
+﻿"Name","Type","Value","Priority","TTL"
+"fillmorechristian.org","MX","mxa.mailgun.org","10","14400"
+"fillmorechristian.org","MX","mxb.mailgun.org","10","14400"
+"fillmorechristian.org","TXT","MS=ms48673064","","14400"
+"fillmorechristian.org","TXT","v=spf1 include:mailgun.org ~all","","14400"

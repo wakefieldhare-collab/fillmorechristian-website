@@ -164,6 +164,30 @@ Current public DNS can be snapshotted with:
 .\scripts\export-dns-snapshot.ps1
 ```
 
+Build the Cloudflare preserve/import records and cutover plan from the latest snapshot:
+
+```powershell
+.\scripts\build-cloudflare-dns-plan.ps1
+```
+
+This writes:
+
+- `exports/dns/fillmorechristian.org-cloudflare-preserve-records.csv`
+- `exports/dns/fillmorechristian.org-cloudflare-preserve-records.zone`
+- `exports/dns/fillmorechristian.org-cloudflare-dns-cutover-plan.md`
+
+The preserve files intentionally keep the Mailgun/Microsoft records and exclude the old TheChurchCo web records. Before changing nameservers, run:
+
+```powershell
+.\scripts\test-dns-cutover.ps1 -Mode Before
+```
+
+After Cloudflare assigns nameservers and Squarespace is updated, run the after-cutover verifier with the real Cloudflare nameserver names:
+
+```powershell
+.\scripts\test-dns-cutover.ps1 -Mode After -ExpectedCloudflareNameservers "name1.ns.cloudflare.com","name2.ns.cloudflare.com"
+```
+
 Latest snapshot on 2026-06-01 found:
 
 - NS: `ns-cloud-d1.googledomains.com` through `ns-cloud-d4.googledomains.com`
