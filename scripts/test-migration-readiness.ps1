@@ -449,6 +449,17 @@ if (-not $SkipRemote) {
                 } else {
                     Add-Check "Staging podcast author cleanup" "FAIL" "$($remoteAuthorArtifacts.Count) old platform-account author field(s) found on staging"
                 }
+
+                $remoteArtworkUrls = [regex]::Matches($response.Content, "<(?:itunes:|googleplay:)?image\b[^>]*href=`"([^`"]+)`"|<url>([^<]+\.(?:jpg|jpeg|png|webp))</url>", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase) |
+                    ForEach-Object {
+                        if ($_.Groups[1].Success) { $_.Groups[1].Value } else { $_.Groups[2].Value }
+                    }
+                $badRemoteArtworkUrls = @($remoteArtworkUrls | Where-Object { $_ -and $_ -ne "https://www.fillmorechristian.org/images/podcast-cover.jpg" } | Select-Object -Unique)
+                if ($badRemoteArtworkUrls.Count -eq 0) {
+                    Add-Check "Staging podcast artwork" "OK" "Podcast artwork points at the local site asset on staging"
+                } else {
+                    Add-Check "Staging podcast artwork" "FAIL" "Unexpected artwork URLs on staging: $($badRemoteArtworkUrls -join ', ')"
+                }
             }
         } catch {
             Add-Check "Staging URL: /$path" "FAIL" $_.Exception.Message
@@ -458,6 +469,7 @@ if (-not $SkipRemote) {
     $optimizedStagingImages = @(
         "images/church-exterior-1200.jpg",
         "images/church-exterior-1200.webp",
+        "images/podcast-cover.jpg",
         "images/sanctuary-service-1200.jpg",
         "images/sanctuary-service-1200.webp"
     )
