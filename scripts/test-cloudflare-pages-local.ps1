@@ -320,6 +320,13 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Calendar subscribe controls"; Status = "OK"; Details = "Published output includes copyable canonical iCal feed URL" })
 
+    $homePageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "index.html")
+    if ($homePageContent -notmatch '<img\s+src="favicon\.svg"\s+alt=""\s+class="nav-brand-mark"\s+aria-hidden="true">' -or
+        $homePageContent -notmatch 'nav-brand-name">Fillmore Christian Church') {
+        throw "Built home page is missing the branded navigation mark"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Navigation brand mark"; Status = "OK"; Details = "Published output includes the Fillmore-branded navigation mark" })
+
     $eventsScript = Invoke-NoRedirect -Url "$baseUrl/js/events.js"
     Assert-Status -Response $eventsScript -Expected @(200) -Name "Events script"
     if ($eventsScript.Content -notmatch "events\.ics" -or $eventsScript.Content -match "googleapis|GOOGLE_CALENDAR_ID|GOOGLE_API_KEY") {

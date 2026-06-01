@@ -115,9 +115,12 @@ h4 { font-size: 1.25rem; }
   text-decoration: none;
 }
 
-.nav-brand img {
-  height: 50px;
-  width: auto;
+.nav-brand-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  box-shadow: 0 8px 22px rgba(23, 50, 71, 0.16);
+  flex: 0 0 auto;
 }
 
 .nav-brand-text {
@@ -1446,6 +1449,24 @@ h4 { font-size: 1.25rem; }
 
   .nav-toggle {
     display: block;
+  }
+
+  .nav-brand {
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .nav-brand-mark {
+    width: 38px;
+    height: 38px;
+  }
+
+  .nav-brand-name {
+    font-size: 1rem;
+  }
+
+  .nav-brand-tagline {
+    font-size: 0.7rem;
   }
 
   .nav-links {
