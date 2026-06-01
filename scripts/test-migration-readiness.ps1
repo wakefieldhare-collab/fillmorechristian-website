@@ -1149,6 +1149,9 @@ if ($feeds.ContainsKey($feedPaths[0])) {
         if ($legacyFunctionText -notmatch "Response\.redirect" -or $legacyFunctionText -notmatch "post_type") {
             $legacyRedirectIssues.Add("function does not look like a podcast query redirect handler")
         }
+        if ($legacyFunctionText -notmatch "SERMON_AUDIO" -or $legacyFunctionText -notmatch "handleMediaRequest" -or $legacyFunctionText -notmatch "Accept-Ranges") {
+            $legacyRedirectIssues.Add("function does not include the Pages R2 media handler")
+        }
     } else {
         $legacyRedirectIssues.Add("functions\index.js is missing")
     }
@@ -1156,8 +1159,8 @@ if ($feeds.ContainsKey($feedPaths[0])) {
     if (Test-Path -LiteralPath $routesPath) {
         try {
             $routes = Get-Content -Raw -LiteralPath $routesPath | ConvertFrom-Json
-            if ($routes.version -ne 1 -or "/" -notin @($routes.include)) {
-                $legacyRedirectIssues.Add("_routes.json does not include the root path for the query redirect function")
+            if ($routes.version -ne 1 -or "/" -notin @($routes.include) -or "/media/*" -notin @($routes.include)) {
+                $legacyRedirectIssues.Add("_routes.json does not include the root and /media/* paths for Pages Functions")
             }
         } catch {
             $legacyRedirectIssues.Add("_routes.json is not valid JSON")

@@ -11,12 +11,15 @@ function getMediaKey(pathname) {
     return "";
   }
 
-  const key = decodeURIComponent(pathname.slice("/media/".length));
-  if (!key || key.startsWith("/") || key.includes("..") || key.includes("\\")) {
+  try {
+    const key = decodeURIComponent(pathname.slice("/media/".length));
+    if (!key || key.startsWith("/") || key.includes("..") || key.includes("\\")) {
+      return "";
+    }
+    return key;
+  } catch {
     return "";
   }
-
-  return key;
 }
 
 function getFallbackContentType(key) {

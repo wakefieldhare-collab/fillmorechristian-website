@@ -330,6 +330,14 @@ try {
     if ($homePageContent -notmatch '<source\s+src="/media/' -or $homePageContent -match '<source\s+src="https://www\.fillmorechristian\.org/media/') {
         throw "Built home page does not use same-origin media URLs for audio playback"
     }
+    $routesPath = Join-Path $buildOutputPath "_routes.json"
+    if (-not (Test-Path -LiteralPath $routesPath)) {
+        throw "Built output is missing _routes.json"
+    }
+    $routes = Get-Content -Raw -LiteralPath $routesPath | ConvertFrom-Json
+    if ("/media/*" -notin @($routes.include)) {
+        throw "Built _routes.json does not include /media/* for the R2 media function"
+    }
     $checks.Add([pscustomobject]@{ Check = "Same-origin audio playback"; Status = "OK"; Details = "Published HTML audio players use /media paths served by Pages Functions" })
 
     $missingMedia = Invoke-NoRedirect -Url "$baseUrl/media/__missing-audio-object__.mp3" -Method "HEAD"
