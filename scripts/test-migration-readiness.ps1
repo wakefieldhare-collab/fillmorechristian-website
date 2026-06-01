@@ -657,8 +657,10 @@ if ((Test-Path -LiteralPath $statusScriptPath) -and (Test-Path -LiteralPath $pac
         $statusScriptText -match "Squarespace renewal" -and
         $statusScriptText -match "wakefieldhare-collab" -and
         $statusScriptText -match "media\.fillmorechristian\.org" -and
+        $statusScriptText -match "apply:cloudflare-dns" -and
+        $statusScriptText -match "Zone:DNS Edit" -and
         $packageJsonText -match '"status:migration"') {
-        Add-Check "Migration status command" "OK" "Read-only status script summarizes owner, renewal, audio, R2, DNS, staging, and auth state"
+        Add-Check "Migration status command" "OK" "Read-only status script summarizes owner, renewal, audio, R2, DNS, staging, auth state, and DNS-token next step"
     } else {
         Add-Check "Migration status command" "FAIL" "Migration status script or npm alias is missing key ownership/auth/audio checks"
     }

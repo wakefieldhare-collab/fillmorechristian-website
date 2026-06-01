@@ -375,17 +375,18 @@ if (-not $SkipNetwork) {
 $authNeeded = @($rows | Where-Object { $_.Status -eq "AUTH" })
 if ($authNeeded.Count -gt 0) {
     $authAreas = @($authNeeded | ForEach-Object { $_.Area })
+    $dnsApplyGuidance = "Run npm run apply:cloudflare-dns -- -Apply after setting CLOUDFLARE_API_TOKEN with Zone:Read and Zone:DNS Edit, or verify the same records in the Cloudflare dashboard"
     if ("Cloudflare auth" -in $authAreas) {
         Add-Status "Next authorization" "AUTH" "Wake authorization needed next: run npx wrangler login."
     } elseif (("Cloudflare zone" -in $authAreas) -and ($cloudflareZoneStatus -eq "pending") -and $cloudflareZoneNameservers.Count -gt 0) {
-        Add-Status "Next authorization" "AUTH" "Wake authorization needed next: verify Cloudflare DNS records, then set Squarespace nameservers to $($cloudflareZoneNameservers -join ', ')."
+        Add-Status "Next authorization" "AUTH" "Wake authorization needed next: $dnsApplyGuidance, then set Squarespace nameservers to $($cloudflareZoneNameservers -join ', ')."
     } elseif (("R2 account" -in $authAreas) -and ("DNS nameservers" -in $authAreas)) {
         Add-Status "Next authorization" "AUTH" "Wake authorization needed next: enable R2, add fillmorechristian.org to Cloudflare DNS, then update Squarespace nameservers when records are verified."
     } elseif ("R2 account" -in $authAreas) {
         Add-Status "Next authorization" "AUTH" "Wake authorization needed next: enable R2 in the Cloudflare dashboard."
     } elseif ("DNS nameservers" -in $authAreas) {
         if ($cloudflareZoneNameservers.Count -gt 0) {
-            Add-Status "Next authorization" "AUTH" "Wake authorization needed next: verify Cloudflare DNS records, then set Squarespace nameservers to $($cloudflareZoneNameservers -join ', ')."
+            Add-Status "Next authorization" "AUTH" "Wake authorization needed next: $dnsApplyGuidance, then set Squarespace nameservers to $($cloudflareZoneNameservers -join ', ')."
         } else {
             Add-Status "Next authorization" "AUTH" "Wake authorization needed next: add fillmorechristian.org to Cloudflare DNS and update Squarespace nameservers after records are verified."
         }
