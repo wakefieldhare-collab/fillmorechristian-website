@@ -12,6 +12,8 @@ Last updated: 2026-06-01
 - Current mail MX records: `mxa.mailgun.org` and `mxb.mailgun.org`
 - Squarespace renewal notice: auto-renew on 2026-06-15 for $15.00; disable by 2026-06-14 only if the transfer is already safely underway or complete.
 - Current Apple Podcasts feed URL: `https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast`
+- GitHub source repo for Cloudflare Pages: `https://github.com/wake-byte/fillmorechristian-website`
+- Local commit pushed: `b6fe466` on `main`
 
 ## Migration Order
 
@@ -39,6 +41,25 @@ The script writes:
 - `exports/thechurchco-podcast/audio/` with downloaded MP3 backups when `-DownloadAudio` is used.
 
 Do not cancel TheChurchCo until the audio files are backed up and a permanent podcast-hosting decision is made. The copied feed currently keeps enclosure URLs pointed at TheChurchCo's S3-hosted MP3 files; those may stop working after cancellation.
+
+Export status on 2026-06-01:
+
+- Feed items: 73
+- Unique downloaded audio files: 70
+- Audio backup size: about 2.16 GB
+- Two feed items currently have no audio enclosure in ChurchCo.
+- Two July 2023 feed items point to the same MP3, so only one local file was downloaded for that shared enclosure.
+- Backup folder: `exports/thechurchco-podcast/audio/`
+
+## Cloudflare Pages Status
+
+The repo is ready for a Cloudflare Pages static deployment. Use:
+
+- Build command: none
+- Build output directory: `/` or project root
+- Production branch: `main`
+
+`wrangler` is installed locally, but it was not authenticated on 2026-06-01. Run `wrangler login` or connect the GitHub repo through the Cloudflare dashboard before deployment.
 
 ## Cloudflare DNS Records To Preserve
 
@@ -73,4 +94,3 @@ Cloudflare requires the domain to be active on Cloudflare DNS before transferrin
 - `church@fillmorechristian.org` still receives mail.
 - Contact form destination is configured and tested.
 - Give link still points to `https://givebutter.com/fillmorechristian`.
-
