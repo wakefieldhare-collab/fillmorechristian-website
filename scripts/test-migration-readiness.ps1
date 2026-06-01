@@ -772,10 +772,13 @@ if (Test-Path -LiteralPath $cancellationScriptPath) {
         $cancellationScriptText -match "Production podcast page" -and
         $cancellationScriptText -match "sermon-audio-only" -and
         $cancellationScriptText -match "data-has-audio" -and
+        $cancellationScriptText -match "test-r2-public-audio\.ps1" -and
+        $cancellationScriptText -match "BaseUrlOverride" -and
+        $cancellationScriptText -match "Production R2 media route" -and
         $cancellationScriptText -match "Do not cancel TheChurchCo yet") {
-        Add-Check "TheChurchCo cancellation gate" "OK" "Production cancellation verifier checks DNS, static site, podcast page, sermon archive filters, mail, feed, and audio independence"
+        Add-Check "TheChurchCo cancellation gate" "OK" "Production cancellation verifier checks DNS, static site, podcast page, sermon archive filters, mail, feed, audio independence, and the production Pages /media route"
     } else {
-        Add-Check "TheChurchCo cancellation gate" "FAIL" "Cancellation verifier is missing DNS, podcast page, sermon archive filter, audio independence, or stop-condition checks"
+        Add-Check "TheChurchCo cancellation gate" "FAIL" "Cancellation verifier is missing DNS, podcast page, sermon archive filter, audio independence, production media-route, or stop-condition checks"
     }
 } else {
     Add-Check "TheChurchCo cancellation gate" "FAIL" "scripts\test-thechurchco-cancellation-readiness.ps1 is missing"

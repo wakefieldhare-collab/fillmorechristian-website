@@ -2,6 +2,7 @@ param(
     [string]$Domain = "fillmorechristian.org",
     [string]$ProductionBaseUrl = "https://www.fillmorechristian.org",
     [string]$PodcastFeedPath = "podcast-category/fillmore-christian/feed/podcast",
+    [string]$R2ManifestPath = "exports\thechurchco-podcast\r2-audio-manifest.csv",
     [string]$ExpectedAudioHost = "www.fillmorechristian.org",
     [string[]]$ExpectedCloudflareNameservers = @(),
     [switch]$VerifyAllPodcastMedia,
@@ -294,6 +295,19 @@ if ($feedResponse) {
     } catch {
         Add-Check "Production podcast feed" "FAIL" "Could not parse RSS from $podcastFeedUrl`: $($_.Exception.Message)"
     }
+}
+
+$r2VerifierPath = Join-Path $PSScriptRoot "test-r2-public-audio.ps1"
+$productionMediaBaseUrl = (Join-Url $ProductionBaseUrl "media").TrimEnd("/")
+if (Test-Path -LiteralPath $r2VerifierPath) {
+    try {
+        & $r2VerifierPath -ManifestPath $R2ManifestPath -BaseUrlOverride $productionMediaBaseUrl -All -TimeoutSec $TimeoutSec -Quiet
+        Add-Check "Production R2 media route" "OK" "All R2 audio manifest objects respond through $productionMediaBaseUrl"
+    } catch {
+        Add-Check "Production R2 media route" "FAIL" $_.Exception.Message
+    }
+} else {
+    Add-Check "Production R2 media route" "FAIL" "Missing verifier script: $r2VerifierPath"
 }
 
 $checks | Format-Table -AutoSize
