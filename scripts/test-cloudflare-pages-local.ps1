@@ -321,10 +321,11 @@ try {
     $checks.Add([pscustomobject]@{ Check = "Calendar subscribe controls"; Status = "OK"; Details = "Published output includes copyable canonical iCal feed URL" })
 
     $homePageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "index.html")
-    if ($homePageContent -notmatch 'nav-brand-name">Fillmore Christian Church') {
-        throw "Built home page is missing the Fillmore Christian Church navigation text"
+    if ($homePageContent -notmatch '<img\s+src="images/fcc-logo\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or
+        $homePageContent -notmatch 'nav-brand-name">Fillmore Christian Church') {
+        throw "Built home page is missing the official FCC navigation logo or text"
     }
-    $checks.Add([pscustomobject]@{ Check = "Navigation brand text"; Status = "OK"; Details = "Published output includes the Fillmore Christian Church navigation text" })
+    $checks.Add([pscustomobject]@{ Check = "Navigation brand"; Status = "OK"; Details = "Published output includes the official FCC logo and navigation text" })
 
     $eventsScript = Invoke-NoRedirect -Url "$baseUrl/js/events.js"
     Assert-Status -Response $eventsScript -Expected @(200) -Name "Events script"

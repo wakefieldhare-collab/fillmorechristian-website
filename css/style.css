@@ -115,6 +115,13 @@ h4 { font-size: 1.25rem; }
   text-decoration: none;
 }
 
+.nav-brand-logo {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
 .nav-brand-text {
   display: flex;
   flex-direction: column;
@@ -1446,6 +1453,11 @@ h4 { font-size: 1.25rem; }
   .nav-brand {
     gap: 10px;
     min-width: 0;
+  }
+
+  .nav-brand-logo {
+    width: 40px;
+    height: 40px;
   }
 
   .nav-brand-name {
