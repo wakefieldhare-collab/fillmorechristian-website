@@ -1100,7 +1100,12 @@ if (-not $SkipRemote) {
             if ($path -eq "site.webmanifest") {
                 $manifestContentType = [string]$response.Headers["Content-Type"]
                 try {
-                    $remoteManifest = $response.Content | ConvertFrom-Json
+                    $manifestText = if ($response.Content -is [byte[]]) {
+                        [System.Text.Encoding]::UTF8.GetString($response.Content)
+                    } else {
+                        [string]$response.Content
+                    }
+                    $remoteManifest = $manifestText | ConvertFrom-Json
                     $remoteIconSources = @($remoteManifest.icons | ForEach-Object { $_.src })
                     if ($manifestContentType -match "application/manifest\+json" -and $remoteManifest.name -eq "Fillmore Christian Church" -and $remoteManifest.theme_color -eq "#173247" -and "favicon.svg" -in $remoteIconSources) {
                         Add-Check "Staging web app manifest" "OK" "site.webmanifest is published with the expected content type"
