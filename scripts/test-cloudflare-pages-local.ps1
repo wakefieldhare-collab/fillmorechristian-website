@@ -349,7 +349,10 @@ try {
     if ($eventsScript.Content -notmatch "events\.ics" -or $eventsScript.Content -match "googleapis|GOOGLE_CALENDAR_ID|GOOGLE_API_KEY") {
         throw "Events script does not use the self-hosted iCal feed cleanly"
     }
-    $checks.Add([pscustomobject]@{ Check = "Events script"; Status = "OK"; Details = "Loads self-hosted events.ics without Google Calendar API" })
+    if ($eventsScript.Content -notmatch "generateUpcomingOccurrences" -or $eventsScript.Content -notmatch "loadUpcomingEvents\(upcomingContainer, 4\)") {
+        throw "Events script does not expand recurring events into dated upcoming occurrences"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Events script"; Status = "OK"; Details = "Loads self-hosted events.ics and expands recurring Sunday events" })
 
     $aboutPageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "about.html")
     if ($aboutPageContent -match "google\.com/maps/embed|<iframe" -or $aboutPageContent -notmatch "location-panel") {

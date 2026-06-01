@@ -603,6 +603,9 @@ if (Test-Path -LiteralPath $calendarPath) {
         $eventsScript = Get-Content -Raw -LiteralPath $eventsScriptPath
         if ($eventsScript -notmatch "events\.ics") { $calendarIssues.Add("events script does not load the self-hosted iCal feed") }
         if ($eventsScript -match "googleapis|GOOGLE_CALENDAR_ID|GOOGLE_API_KEY") { $calendarIssues.Add("events script still references Google Calendar API") }
+        if ($eventsScript -notmatch "generateUpcomingOccurrences" -or $eventsScript -notmatch "loadUpcomingEvents\(upcomingContainer, 4\)") {
+            $calendarIssues.Add("events script does not expand weekly recurring events into upcoming dated occurrences")
+        }
     } else {
         $calendarIssues.Add("js/events.js is missing")
     }

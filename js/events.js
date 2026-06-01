@@ -7,7 +7,7 @@ const CHURCH_CALENDAR_URL = 'events.ics';
 document.addEventListener('DOMContentLoaded', function() {
   const upcomingContainer = document.getElementById('upcoming-events');
   if (upcomingContainer) {
-    loadUpcomingEvents(upcomingContainer, 5);
+    loadUpcomingEvents(upcomingContainer, 4);
   }
 
   const eventsPageContainer = document.getElementById('events-full-list');
@@ -83,29 +83,30 @@ function parseIcsEvents(text) {
 
 function getUpcomingEvents(events, maxResults) {
   const now = new Date();
+  const limit = maxResults || 20;
+  const expandedEvents = [];
 
-  return (events || [])
-    .map(function(event) {
-      const occurrence = getNextOccurrence(event, now);
-      if (!occurrence) return null;
-
-      return {
+  (events || []).forEach(function(event) {
+    generateUpcomingOccurrences(event, now, limit).forEach(function(occurrence) {
+      expandedEvents.push({
         summary: event.summary,
         description: event.description,
         location: event.location,
         start: occurrence.start,
         end: occurrence.end
-      };
-    })
-    .filter(Boolean)
+      });
+    });
+  });
+
+  return expandedEvents
     .sort(function(a, b) {
       return a.start.getTime() - b.start.getTime();
     })
-    .slice(0, maxResults || 20);
+    .slice(0, limit);
 }
 
-function getNextOccurrence(event, now) {
-  if (!event.start) return null;
+function generateUpcomingOccurrences(event, now, limit) {
+  if (!event.start) return [];
 
   const start = new Date(event.start.getTime());
   const end = event.end
@@ -113,17 +114,35 @@ function getNextOccurrence(event, now) {
     : new Date(start.getTime() + 60 * 60 * 1000);
   const duration = end.getTime() - start.getTime();
 
-  if (/FREQ=WEEKLY/.test(event.rrule || '')) {
-    while (end.getTime() <= now.getTime()) {
-      start.setDate(start.getDate() + 7);
-      end.setDate(end.getDate() + 7);
+  if (!/FREQ=WEEKLY/.test(event.rrule || '')) {
+    if (end.getTime() <= now.getTime()) {
+      return [];
     }
+    return [{ start, end }];
   }
 
-  return {
-    start,
-    end: new Date(start.getTime() + duration)
-  };
+  while (end.getTime() <= now.getTime()) {
+    start.setDate(start.getDate() + 7);
+    end.setDate(end.getDate() + 7);
+  }
+
+  const occurrences = [];
+  for (let i = 0; i < limit; i += 1) {
+    occurrences.push({
+      start: new Date(start.getTime()),
+      end: new Date(end.getTime())
+    });
+
+    start.setDate(start.getDate() + 7);
+    end.setDate(end.getDate() + 7);
+  }
+
+  return occurrences.map(function(occurrence) {
+    return {
+      start: occurrence.start,
+      end: new Date(occurrence.start.getTime() + duration)
+    };
+  });
 }
 
 function renderEvents(container, events) {
@@ -221,6 +240,11 @@ function formatMonth(date) {
 }
 
 function formatEventTime(start, end) {
+  const dateText = start.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric'
+  });
   const startText = start.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
@@ -232,7 +256,7 @@ function formatEventTime(start, end) {
     hour12: true
   });
 
-  return startText + ' - ' + endText;
+  return dateText + ' at ' + startText + ' - ' + endText;
 }
 
 function unescapeIcsText(value) {
