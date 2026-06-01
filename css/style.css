@@ -1,0 +1,734 @@
+/* ============================================
+   Fillmore Christian Church - Main Stylesheet
+   ============================================ */
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-primary: #2c3e50;
+  --color-primary-light: #34495e;
+  --color-accent: #8b6914;
+  --color-accent-light: #a07d2e;
+  --color-bg: #faf9f6;
+  --color-bg-alt: #f0ece3;
+  --color-bg-dark: #2c3e50;
+  --color-text: #333333;
+  --color-text-light: #666666;
+  --color-text-on-dark: #f0ece3;
+  --color-white: #ffffff;
+  --color-border: #ddd;
+  --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body: 'Source Sans 3', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --max-width: 1200px;
+  --nav-height: 80px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--color-accent-light);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  color: var(--color-primary);
+  line-height: 1.3;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* --- Navigation --- */
+.navbar {
+  background-color: var(--color-white);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: var(--nav-height);
+}
+
+.navbar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.nav-brand img {
+  height: 50px;
+  width: auto;
+}
+
+.nav-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-brand-name {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  color: var(--color-primary);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.nav-brand-tagline {
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  font-style: italic;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 8px;
+  align-items: center;
+}
+
+.nav-links li {
+  position: relative;
+}
+
+.nav-links a {
+  color: var(--color-primary);
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: block;
+  font-size: 0.95rem;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  background-color: var(--color-bg-alt);
+  color: var(--color-accent);
+}
+
+/* Dropdown */
+.nav-dropdown {
+  position: relative;
+}
+
+.nav-dropdown > a::after {
+  content: ' ▾';
+  font-size: 0.7em;
+}
+
+.nav-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--color-white);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 4px;
+  min-width: 180px;
+  padding: 8px 0;
+  list-style: none;
+  z-index: 100;
+}
+
+.nav-dropdown:hover .nav-dropdown-menu {
+  display: block;
+}
+
+.nav-dropdown-menu a {
+  padding: 8px 20px;
+  font-size: 0.9rem;
+  border-radius: 0;
+}
+
+/* Mobile menu toggle */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--color-primary);
+  padding: 8px;
+}
+
+/* --- Hero Section --- */
+.hero {
+  background-color: var(--color-bg-alt);
+  padding: 4em 0;
+  text-align: center;
+}
+
+.hero h1 {
+  margin-bottom: 0.5em;
+  font-size: 2.8rem;
+}
+
+.hero .tagline {
+  font-style: italic;
+  color: var(--color-text-light);
+  font-size: 1rem;
+  margin-bottom: 1em;
+}
+
+.hero p {
+  max-width: 700px;
+  margin: 0 auto 1.5em;
+  font-size: 1.15rem;
+  color: var(--color-text-light);
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 30px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: var(--color-accent);
+  color: var(--color-white);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-accent-light);
+  color: var(--color-white);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-accent);
+  border: 2px solid var(--color-accent);
+}
+
+.btn-outline:hover {
+  background-color: var(--color-accent);
+  color: var(--color-white);
+}
+
+/* --- Worship Times --- */
+.worship-times {
+  background-color: var(--color-primary);
+  color: var(--color-text-on-dark);
+  padding: 2.5em 0;
+  text-align: center;
+}
+
+.worship-times h2 {
+  color: var(--color-text-on-dark);
+  margin-bottom: 1em;
+}
+
+.times-grid {
+  display: flex;
+  justify-content: center;
+  gap: 3em;
+  flex-wrap: wrap;
+}
+
+.time-item {
+  text-align: center;
+}
+
+.time-item .time {
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  display: block;
+  margin-bottom: 0.2em;
+}
+
+.time-item .label {
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+/* --- Feature Boxes --- */
+.features {
+  padding: 4em 0;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2em;
+}
+
+.feature-card {
+  background: var(--color-white);
+  border-radius: 8px;
+  padding: 2em;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+.feature-card .icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.8em;
+  display: block;
+}
+
+.feature-card h3 {
+  margin-bottom: 0.5em;
+}
+
+.feature-card p {
+  color: var(--color-text-light);
+  margin-bottom: 1.2em;
+  font-size: 0.95rem;
+}
+
+/* --- Section Styles --- */
+.section {
+  padding: 4em 0;
+}
+
+.section-alt {
+  background-color: var(--color-bg-alt);
+}
+
+.section-dark {
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-on-dark);
+}
+
+.section-dark h2 {
+  color: var(--color-text-on-dark);
+}
+
+.section h2 {
+  text-align: center;
+  margin-bottom: 1.5em;
+}
+
+/* --- Upcoming Events --- */
+.events-list {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.event-item {
+  display: flex;
+  gap: 1.5em;
+  padding: 1.2em 0;
+  border-bottom: 1px solid var(--color-border);
+  align-items: flex-start;
+}
+
+.event-item:last-child {
+  border-bottom: none;
+}
+
+.event-date-box {
+  background-color: var(--color-accent);
+  color: var(--color-white);
+  border-radius: 8px;
+  padding: 10px 16px;
+  text-align: center;
+  min-width: 70px;
+  flex-shrink: 0;
+}
+
+.event-date-box .month {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  display: block;
+}
+
+.event-date-box .day {
+  font-size: 1.5rem;
+  font-weight: 700;
+  display: block;
+  line-height: 1.2;
+}
+
+.event-details h4 {
+  margin-bottom: 0.3em;
+}
+
+.event-details .event-time {
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+}
+
+.events-empty {
+  text-align: center;
+  color: var(--color-text-light);
+  padding: 2em;
+  font-style: italic;
+}
+
+/* --- Give Online --- */
+.give-section {
+  text-align: center;
+}
+
+.give-section p {
+  max-width: 600px;
+  margin: 0 auto 1.5em;
+  color: var(--color-text-light);
+}
+
+/* --- Contact Section --- */
+.contact-section .contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3em;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.contact-info p {
+  margin-bottom: 1em;
+  color: var(--color-text-light);
+}
+
+.contact-info .contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 1em;
+}
+
+.contact-info .contact-item .icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.contact-form label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  margin-bottom: 1em;
+  transition: border-color 0.3s ease;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.contact-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* --- Sermons Page --- */
+.sermons-list {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.sermon-item {
+  background: var(--color-white);
+  border-radius: 8px;
+  padding: 1.5em;
+  margin-bottom: 1.2em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.sermon-item h3 {
+  margin-bottom: 0.3em;
+}
+
+.sermon-meta {
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  margin-bottom: 0.8em;
+}
+
+.sermon-item audio {
+  width: 100%;
+  margin-top: 0.5em;
+}
+
+.sermon-description {
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+  margin-bottom: 0.8em;
+}
+
+.sermons-loading {
+  text-align: center;
+  padding: 3em;
+  color: var(--color-text-light);
+}
+
+/* --- Team Page --- */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2em;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.team-card {
+  background: var(--color-white);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  text-align: center;
+}
+
+.team-card .photo {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  background-color: var(--color-bg-alt);
+}
+
+.team-card .info {
+  padding: 1.5em;
+}
+
+.team-card h3 {
+  margin-bottom: 0.3em;
+}
+
+.team-card .role {
+  color: var(--color-accent);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+/* --- Beliefs Page --- */
+.beliefs-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.belief-item {
+  margin-bottom: 2em;
+  padding-bottom: 2em;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.belief-item:last-child {
+  border-bottom: none;
+}
+
+.belief-item h3 {
+  margin-bottom: 0.5em;
+}
+
+.belief-item p {
+  color: var(--color-text-light);
+  line-height: 1.7;
+}
+
+/* --- Footer --- */
+.footer {
+  background-color: var(--color-primary);
+  color: var(--color-text-on-dark);
+  padding: 3em 0 1.5em;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2em;
+  margin-bottom: 2em;
+}
+
+.footer h4 {
+  color: var(--color-text-on-dark);
+  margin-bottom: 1em;
+  font-size: 1.1rem;
+}
+
+.footer p, .footer a {
+  color: rgba(240, 236, 227, 0.8);
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+
+.footer a:hover {
+  color: var(--color-text-on-dark);
+}
+
+.footer-links {
+  list-style: none;
+}
+
+.footer-links li {
+  margin-bottom: 0.3em;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.15);
+  padding-top: 1.5em;
+  text-align: center;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+/* --- Page Header (interior pages) --- */
+.page-header {
+  background-color: var(--color-bg-alt);
+  padding: 3em 0;
+  text-align: center;
+}
+
+.page-header h1 {
+  margin-bottom: 0.3em;
+}
+
+.page-header p {
+  color: var(--color-text-light);
+  font-size: 1.1rem;
+}
+
+/* --- Google Calendar Embed --- */
+.calendar-embed {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.calendar-embed iframe {
+  width: 100%;
+  min-height: 600px;
+  border: none;
+  border-radius: 8px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  :root {
+    --nav-height: 65px;
+  }
+
+  .nav-toggle {
+    display: block;
+  }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: var(--nav-height);
+    left: 0;
+    right: 0;
+    background: var(--color-white);
+    flex-direction: column;
+    padding: 1em;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    gap: 4px;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-dropdown-menu {
+    position: static;
+    box-shadow: none;
+    padding-left: 1em;
+    display: none;
+  }
+
+  .nav-dropdown.open .nav-dropdown-menu {
+    display: block;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-section .contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .times-grid {
+    gap: 1.5em;
+  }
+
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.6rem; }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 2.5em 0;
+  }
+
+  .hero h1 {
+    font-size: 1.7rem;
+  }
+
+  .section {
+    padding: 2.5em 0;
+  }
+}

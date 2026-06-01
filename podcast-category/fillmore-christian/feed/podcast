@@ -1,0 +1,1462 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0">
+  <channel>
+    <title>Fillmore Christian</title>
+    <atom:link href="https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast" rel="self" type="application/rss+xml" />
+    <link>https://www.fillmorechristian.org</link>
+    <description>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</description>
+    <lastBuildDate>Sun, 24 May 2026 16:35:20 +0000</lastBuildDate>
+    <language>en-US</language>
+    <copyright>2026</copyright>
+    <itunes:subtitle></itunes:subtitle>
+    <itunes:author>Fillmore Christian Church</itunes:author>
+    <googleplay:author>Fillmore Christian Church</googleplay:author>
+    <googleplay:email>church@fillmorechristian.org</googleplay:email>
+    <itunes:summary>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</itunes:summary>
+    <googleplay:description>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</googleplay:description>
+    <itunes:owner>
+      <itunes:name></itunes:name>
+      <itunes:email>church@fillmorechristian.org</itunes:email>
+    </itunes:owner>
+    <itunes:explicit>no</itunes:explicit>
+    <googleplay:explicit></googleplay:explicit>
+    <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1400x1400.jpg"></itunes:image>
+    <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1400x1400.jpg"></googleplay:image>
+    <image>
+      <url>https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1400x1400.jpg</url>
+      <title>Fillmore Christian</title>
+      <link>https://www.fillmorechristian.org</link>
+    </image>
+    <itunes:category text="Religion &amp; Spirituality">
+      <itunes:category text="Christianity" />
+    </itunes:category>
+    <generator>https://wordpress.org/?v=4.9.2</generator>
+    <item>
+      <title>Calling of the Disciples Charles Spurgeon</title>
+      <link>https://www.fillmorechristian.org/episode/calling-of-the-disciples-charles-spurgeon/</link>
+      <pubDate>Sun, 24 May 2026 16:34:53 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/calling-of-the-disciples-charles-spurgeon/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2026/05/May-24-2026-Charles-Spurgeon-John-1-35-51.mp3" length="32946373" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>The Faithful Son in the Wilderness</title>
+      <link>https://www.fillmorechristian.org/episode/the-faithful-son-in-the-wilderness/</link>
+      <pubDate>Sun, 17 May 2026 16:26:50 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/the-faithful-son-in-the-wilderness/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2026/05/May-17-2026-Luke-4-1-13-Wake-sermon.mp3" length="31741018" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>From Egypt to the Jordan</title>
+      <link>https://www.fillmorechristian.org/episode/from-egypt-to-the-jordan/</link>
+      <pubDate>Sun, 26 Apr 2026 16:37:14 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/from-egypt-to-the-jordan/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2026/04/April-26-2026-From-Egypt-to-the-Jordan.mp3" length="27131931" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>The Reading of the Law Nehemiah 8</title>
+      <link>https://www.fillmorechristian.org/episode/the-reading-of-the-law-nehemiah-8/</link>
+      <pubDate>Sun, 08 Mar 2026 16:28:35 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/the-reading-of-the-law-nehemiah-8/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2026/03/March-8-2025-Nehemiah-9-Wake-Sermon.mp3" length="33643726" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>The Humble King Charles Spurgeon</title>
+      <link>https://www.fillmorechristian.org/episode/the-humble-king-charles-spurgeon-2/</link>
+      <pubDate>Sun, 15 Feb 2026 17:48:39 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/the-humble-king-charles-spurgeon-2/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2026/02/Febuary-15-2026-Charles-Spurgeon-on-meak-God-.mp3" length="44609440" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>The Weight of Unresolved Guilt â€“ Ezra 6</title>
+      <link>https://www.fillmorechristian.org/episode/the-weight-of-unresolved-guilt-ezra-6/</link>
+      <pubDate>Mon, 09 Feb 2026 17:31:44 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/the-weight-of-unresolved-guilt-ezra-6/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2026/02/Ezra-6.m4a" length="12138085" type="audio/m4a" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Faithful Through the Trials</title>
+      <link>https://www.fillmorechristian.org/episode/faithful-through-the-trials/</link>
+      <pubDate>Sun, 11 Jan 2026 17:23:02 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/faithful-through-the-trials/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2026/01/Daniel-6-Wake-Sermon-January-11-2026-.mp3" length="28385766" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Breathe of Life into Dry Bones</title>
+      <link>https://www.fillmorechristian.org/episode/breathe-of-life-to-dry-bones/</link>
+      <pubDate>Sun, 14 Dec 2025 17:25:47 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/breathe-of-life-to-dry-bones/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/12/Ezekiel-Wake-Sermon-December-14-2025.mp3" length="21798813" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Micah 4-6 The Hope in the Minor Prophets</title>
+      <link>https://www.fillmorechristian.org/episode/micah-4-6-the-hope-in-the-minor-prophets/</link>
+      <pubDate>Sun, 23 Nov 2025 17:44:36 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/micah-4-6-the-hope-in-the-minor-prophets/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/11/November-23-2025-Wake-Sermon-Micah-5-6-mp3.mp3" length="44605270" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Charles Spurgeon on King Hezekiah</title>
+      <link>https://www.fillmorechristian.org/episode/charles-spurgeon-on-king-hezekiah/</link>
+      <pubDate>Sun, 16 Nov 2025 17:52:39 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/charles-spurgeon-on-king-hezekiah/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/11/Charles-Spurgeon-November-16-2025-.mp3" length="54194992" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Hosea</title>
+      <link>https://www.fillmorechristian.org/episode/hosea/</link>
+      <pubDate>Thu, 06 Nov 2025 12:30:46 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/hosea/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/11/Wake-Hosea.m4a" length="14767072" type="audio/m4a" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Right in Your Own Eyes</title>
+      <link>https://www.fillmorechristian.org/episode/right-in-your-own-eyes/</link>
+      <pubDate>Sun, 18 May 2025 16:56:18 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/right-in-your-own-eyes/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/05/May-18-2025-Judges-17-21-Right-inYou-Own-Eye-Wake-Sermon.mp3" length="24645840" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Judges Summary</title>
+      <link>https://www.fillmorechristian.org/episode/judges-summary-2/</link>
+      <pubDate>Sun, 04 May 2025 16:50:19 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/judges-summary-2/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/05/5-4-2025-Wake-Sermon-Judges-Summary-.mp3" length="19679879" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>The Downward Spiral</title>
+      <link>https://www.fillmorechristian.org/episode/the-downward-spiral/</link>
+      <pubDate>Sun, 27 Apr 2025 16:16:53 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/the-downward-spiral/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/04/April-27-2025-Judges-2-6-23-Wake-Sermon.mp3" length="21512405" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Joshua 25 Charles Spurgeon Sermon</title>
+      <link>https://www.fillmorechristian.org/episode/joshua-25-charles-spurgeon-sermon/</link>
+      <pubDate>Sun, 13 Apr 2025 17:18:28 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/joshua-25-charles-spurgeon-sermon/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/04/Wake-Charles-Spurgeon-Joshua-25-.mp3" length="21851808" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>The Sign of The Covenant</title>
+      <link>https://www.fillmorechristian.org/episode/the-sign-of-the-covenant/</link>
+      <pubDate>Sun, 23 Mar 2025 16:39:09 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/the-sign-of-the-covenant/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/03/March-23-2025-Joshua-6-7-Wake-Sermon.mp3" length="26731400" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>The Old Testament Mirror</title>
+      <link>https://www.fillmorechristian.org/episode/the-old-testament-mirror/</link>
+      <pubDate>Sun, 23 Feb 2025 17:41:45 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/the-old-testament-mirror/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/02/February-23-2025-Wake-Sermon-Numbers-14.mp3" length="22167157" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Charles Spurgeon Sermon On the Atonement</title>
+      <link>https://www.fillmorechristian.org/episode/charles-spurgeon-sermon-on-the-atonement/</link>
+      <pubDate>Sun, 09 Feb 2025 17:28:06 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/charles-spurgeon-sermon-on-the-atonement/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/02/Charles-Spurgeon-Atonement-Febuary-9-2025.mp3" length="28147908" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>The Tabernacle and Christ</title>
+      <link>https://www.fillmorechristian.org/episode/the-tabernacle-and-christ/</link>
+      <pubDate>Sun, 02 Feb 2025 17:31:31 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/the-tabernacle-and-christ/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/02/Febuary-2-2025-Exodus-39-40.mp3" length="24040531" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Exodus 17 â€“ Dehydrated</title>
+      <link>https://www.fillmorechristian.org/episode/exodus-17-dehydrated/</link>
+      <pubDate>Sat, 18 Jan 2025 01:53:00 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/?post_type=podcasts&amp;p=1085</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2025/01/Edited-Dehydration-Sunday-at-10-35-AM.m4a" length="16483565" type="audio/m4a" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Crossing the Red Sea</title>
+      <link>https://www.fillmorechristian.org/episode/crossing-the-red-sea/</link>
+      <pubDate>Sun, 15 Dec 2024 17:35:45 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/crossing-the-red-sea/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/12/December-15-2024-Crossing-the-Red-Sea.mp3" length="21814245" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Exodus 4-6 Charles Spurgeon Sermon</title>
+      <link>https://www.fillmorechristian.org/episode/exodus-4-6-charles-spurgeon-sermon/</link>
+      <pubDate>Sun, 01 Dec 2024 17:30:00 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/exodus-4-6-charles-spurgeon-sermon/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/12/Exodus4-6-Charles-Spurgeon-read-Wake.mp3" length="24707149" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>The book of Job</title>
+      <link>https://www.fillmorechristian.org/episode/the-book-of-job-2/</link>
+      <pubDate>Sun, 24 Nov 2024 17:23:34 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/the-book-of-job-2/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/11/Wake-Sermon-November-24-2024-The-book-of-Job.mp3" length="20112188" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>The Choise of God Jacob and Esau</title>
+      <link>https://www.fillmorechristian.org/episode/the-choise-of-god-jacob-and-esau/</link>
+      <pubDate>Sun, 03 Nov 2024 17:41:24 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/the-choise-of-god-jacob-and-esau/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/11/November-3-2024-wake-sermon-Jacob-and-Esau.mp3" length="25875505" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Genesis 24 The Masterâ€™s Servant Sermon by Charles Spurgeon</title>
+      <link>https://www.fillmorechristian.org/episode/genesis-24-the-masters-servant/</link>
+      <pubDate>Sun, 27 Oct 2024 16:31:27 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/genesis-24-the-masters-servant/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/10/Genesis-24-October-27-2024.wav" length="201756716" type="audio/wav" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Genesis 22 1-19 Alistair Begg Sermon read by Wake</title>
+      <link>https://www.fillmorechristian.org/episode/genesis-22-1-19-alistair-begg-sermon-read-by-wake/</link>
+      <pubDate>Sun, 20 Oct 2024 16:14:30 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/genesis-22-1-19-alistair-begg-sermon-read-by-wake/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/10/Genesis-22-1-19-Alistair-Begg-Sermon-read-by-Wake.mp3" length="26070535" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Justified By Faith Genesis 17</title>
+      <link>https://www.fillmorechristian.org/episode/justified-by-faith-genesis-17/</link>
+      <pubDate>Sun, 13 Oct 2024 16:36:09 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/justified-by-faith-genesis-17/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/10/Genesis-17-October-13-2024-Wake-Sermon.mp3" length="32314076" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>The Calling Genesis 12 1-9 Charles Spurgeon</title>
+      <link>https://www.fillmorechristian.org/episode/the-calling-genesis-12-1-9-charles-spurgeon/</link>
+      <pubDate>Sun, 29 Sep 2024 16:19:27 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/the-calling-genesis-12-1-9-charles-spurgeon/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/09/Genesis-12-1-9-.mp3" length="29374638" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>The Flood: Grace in the Midst of Evil</title>
+      <link>https://www.fillmorechristian.org/episode/the-flood-grace-in-the-midst-of-evil-2/</link>
+      <pubDate>Sun, 15 Sep 2024 16:31:02 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/the-flood-grace-in-the-midst-of-evil-2/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/09/September-15-2024-Genesis-6-Wake-Sermon.mp3" length="38856716" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Creation Gosple Project Week One</title>
+      <link>https://www.fillmorechristian.org/episode/creation-gosple-project-week-one/</link>
+      <pubDate>Sun, 25 Aug 2024 16:41:05 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/creation-gosple-project-week-one/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/08/August-25-2024-Week-1-gosple-project.mp3" length="31605391" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Examine Your Faith</title>
+      <link>https://www.fillmorechristian.org/episode/examine-your-faith/</link>
+      <pubDate>Sun, 14 Jul 2024 16:34:13 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/examine-your-faith/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/07/Hebrew-11-Wake-Sermon-July-14-2024.mp3" length="34004844" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Endurance By Faith, Through Faith</title>
+      <link>https://www.fillmorechristian.org/episode/endurance-by-faith-through-faith/</link>
+      <pubDate>Sun, 23 Jun 2024 14:19:17 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/endurance-by-faith-through-faith/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/07/Hebrews-Sunday-at-10-21-AM.m4a" length="15887505" type="audio/m4a" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Order of Melchizedek</title>
+      <link>https://www.fillmorechristian.org/episode/order-of-melchizedek/</link>
+      <pubDate>Sun, 12 May 2024 16:29:50 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/order-of-melchizedek/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/05/May-12-2024-Wake-Sermon.mp3" length="35012189" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Hebrew 5:11-6:3</title>
+      <link>https://www.fillmorechristian.org/episode/hebrew-511-63/</link>
+      <pubDate>Sun, 21 Apr 2024 16:30:30 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/hebrew-511-63/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/04/April-21-2024-Hebrews-5-11-6-3.mp3" length="39273917" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Christ Is In All</title>
+      <link>https://www.fillmorechristian.org/episode/christ-is-in-all/</link>
+      <pubDate>Sun, 03 Mar 2024 17:23:55 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/christ-is-in-all/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/03/March3-2024-Hebrews-1-1-14-Wakes-Sermon.mp3" length="22953665" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Death to Life</title>
+      <link>https://www.fillmorechristian.org/episode/death-to-life/</link>
+      <pubDate>Sun, 11 Feb 2024 17:21:43 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/death-to-life/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2024/02/February-11-2024-Wake-Sermon-Baptism.mp3" length="31278864" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Be Prepared</title>
+      <link>https://www.fillmorechristian.org/episode/be-prepared/</link>
+      <pubDate>Sun, 12 Nov 2023 18:40:03 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/be-prepared/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2023/11/November-12-2023-Luke-22-35-38-47-53.mp3" length="21032831" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Regret vs Repentance</title>
+      <link>https://www.fillmorechristian.org/episode/regret-repentance/</link>
+      <pubDate>Sun, 22 Oct 2023 16:20:27 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/where-is-the-pressure/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2023/10/October-22-2023-Luke-22-1-6.mp3" length="29334376" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Talk the Talk Walk the Walk</title>
+      <link>https://www.fillmorechristian.org/episode/talk-the-talk-walk-the-walk/</link>
+      <pubDate>Sun, 15 Oct 2023 16:30:01 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/talk-the-talk-walk-the-walk/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2023/10/October-15-2023-1-Thessalonians-2-1-12.mp3" length="23899402" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Church, Be Encouraged</title>
+      <link>https://www.fillmorechristian.org/episode/church-be-encouraged/</link>
+      <pubDate>Sun, 01 Oct 2023 16:44:56 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/church-be-encouraged/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2023/10/October-1-2023-1Thessalonians-1-1-10.mp3" length="33206947" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Preeminence, Pretense, and Poverty</title>
+      <link>https://www.fillmorechristian.org/episode/preeminence/</link>
+      <pubDate>Sun, 10 Sep 2023 16:13:00 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/christ-is-preeminent/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2023/09/September-10-2023-Luke-20-41-47-luke-21-1-4.mp3" length="26260817" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>What is Your Foundation</title>
+      <link>https://www.fillmorechristian.org/episode/what-is-your-foundation/</link>
+      <pubDate>Sun, 20 Aug 2023 16:27:11 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/what-is-your-foundation/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2023/08/August-20-2023-Luke-20-9-19.mp3" length="24806423" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Love is Actionable</title>
+      <link>https://www.fillmorechristian.org/episode/love-is-actionable-2/</link>
+      <pubDate>Sun, 13 Aug 2023 16:22:52 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/love-is-actionable-2/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2023/08/August-13-2023-1-Thessalonians-5-12-18.mp3" length="28977139" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Living your Life for Eternity Luke 19 11-27</title>
+      <link>https://www.fillmorechristian.org/episode/living-your-life-for-eternity-luke-19-11-27/</link>
+      <pubDate>Sun, 23 Jul 2023 16:44:19 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/living-your-life-for-eternity-luke-19-11-27/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2023/07/July-16-2023-Luke-19-1-10-Wake-Sermon.mp3" length="25248274" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Living Life for Eternity Luke 19 11-27</title>
+      <link>https://www.fillmorechristian.org/episode/living-life-for-eternity-luke-19-11-27/</link>
+      <pubDate>Sun, 23 Jul 2023 16:41:20 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/living-life-for-eternity-luke-19-11-27/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="" length="" type="" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Let God Use Your Constraints Luke 19 1-10</title>
+      <link>https://www.fillmorechristian.org/episode/let-god-use-your-constraints-luke-19-1-10/</link>
+      <pubDate>Sun, 16 Jul 2023 16:19:42 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/let-god-use-your-constraints-luke-19-1-10/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2023/07/July-16-2023-Luke-19-1-10-Wake-Sermon.mp3" length="25248274" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>The Edge of Ourselves</title>
+      <link>https://www.fillmorechristian.org/episode/our-unworthiness/</link>
+      <pubDate>Sun, 25 Jun 2023 16:37:16 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/our-unworthiness/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2023/06/June-25-2025-Luke-18-9-17-Wake-Sermon.mp3" length="26533783" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Undiverted from Christ</title>
+      <link>https://www.fillmorechristian.org/episode/undiverted-from-christ/</link>
+      <pubDate>Sun, 04 Jun 2023 16:33:34 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/undiverted-from-christ/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2023/06/June-4-2023-Luke-17-11-19.mp3" length="19232963" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Relying on the Word of God 1 Thessalonians 2 13-16</title>
+      <link>https://www.fillmorechristian.org/episode/relying-on-the-word-of-god-1-thessalonians-2-13-16/</link>
+      <pubDate>Sun, 28 May 2023 16:36:32 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/relying-on-the-word-of-god-1-thessalonians-2-13-16/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2023/05/May-28-2023-Isaac-Sermon.mp3" length="15192389" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>The Danger of Being the Older Brother</title>
+      <link>https://www.fillmorechristian.org/episode/the-danger-of-being-the-older-brother/</link>
+      <pubDate>Sun, 23 Apr 2023 16:23:14 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/?post_type=podcasts&amp;p=632</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2023/04/April-23-2023-Luke-15.mp3" length="27855089" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Luke 14: 16b-35 Following Christ Whatever the Cost</title>
+      <link>https://www.fillmorechristian.org/episode/luke-14-16b-35-following-christ-whatever-the-cost/</link>
+      <pubDate>Sun, 16 Apr 2023 16:20:41 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/?post_type=podcasts&amp;p=629</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="" length="" type="" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Luke 13 31-35 Godâ€™s Desire and Mission for You</title>
+      <link>https://www.fillmorechristian.org/episode/luke-13-31-35-gods-desire-and-mission-for-you/</link>
+      <pubDate>Sun, 26 Mar 2023 16:19:58 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/?post_type=podcasts&amp;p=621</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2023/03/March-26-2023-Luke-13-31-35.mp3" length="24464760" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>Be Ready, Luke 12:35-48</title>
+      <link>https://www.fillmorechristian.org/episode/be-ready-luke-12/</link>
+      <pubDate>Sun, 12 Feb 2023 16:00:01 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/?post_type=podcasts&amp;p=603</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2023/02/Be-Ready-Feb-12-2023.mp3" length="68934681" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration></itunes:duration>
+      <itunes:author>Fillmore Christian</itunes:author>
+    </item>
+    <item>
+      <title>The Cost of Pride</title>
+      <link>https://www.fillmorechristian.org/episode/the-cost-of-pride/</link>
+      <pubDate>Sun, 21 Aug 2022 16:12:56 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/the-cost-of-pride/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1400x1400.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1400x1400.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b577e6ab3--August_21_2022955uamp3.mp3" length="26569166" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>32:01</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>Killing the Lion</title>
+      <link>https://www.fillmorechristian.org/episode/killing-the-lion/</link>
+      <pubDate>Sun, 24 Jul 2022 16:09:16 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/killing-the-lion/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b57aa233c--July_24_20226e3ovmp3.mp3" length="36002696" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>35:41</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>From Disciple to Apostles â€“ Luke 9:1-10</title>
+      <link>https://www.fillmorechristian.org/episode/from-disciple-to-apostles-luke-91-10/</link>
+      <pubDate>Sun, 10 Jul 2022 16:18:23 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/from-disciple-to-apostles-luke-91-10/</guid>
+      <description><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Â ]]></description>
+      <itunes:subtitle><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Â ]]></itunes:subtitle>
+      <content:encoded><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Â ]]></content:encoded>
+      <itunes:summary><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Â ]]></itunes:summary>
+      <googleplay:description><![CDATA[Do you ever feel pressure to share the Gospel? What if that pressure that forces sharing could turn to joy?Â ]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b57eaca4d--July_10_20229kvgmmp3.mp3" length="40921572" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>43:08</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>The Words of Eternal Life</title>
+      <link>https://www.fillmorechristian.org/episode/the-words-of-eternal-life/</link>
+      <pubDate>Sun, 03 Jul 2022 17:02:42 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/the-words-of-eternal-life/</guid>
+      <description><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, &quot;Where else can we go?Â  Only you have the words of eternal life.]]></description>
+      <itunes:subtitle><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, "Where else can we go?Â  Only you have the words of eternal life.]]></itunes:subtitle>
+      <content:encoded><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, &quot;Where else can we go?Â  Only you have the words of eternal life.]]></content:encoded>
+      <itunes:summary><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, "Where else can we go?Â  Only you have the words of eternal life.]]></itunes:summary>
+      <googleplay:description><![CDATA[In the second half of Luke 8, Jesus miraculously addresses the needs of people who come to him after exhausting all other options and find in the words of Peter, &quot;Where else can we go?Â  Only you have the words of eternal life.]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b5822f7be--July_3_20227a9zpmp3.mp3" length="31164108" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>35:19</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>The Parable of the Soils</title>
+      <link>https://www.fillmorechristian.org/episode/the-parable-of-the-soils/</link>
+      <pubDate>Sun, 12 Jun 2022 16:33:47 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/the-parable-of-the-soils/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b58443382--June_12_2022b3a00mp3.mp3" length="31410519" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>37:50</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>Reed shaken By the Wind</title>
+      <link>https://www.fillmorechristian.org/episode/reed-shaken-by-the-wind/</link>
+      <pubDate>Sun, 29 May 2022 16:28:10 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/reed-shaken-by-the-wind/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b586479f2--May_29_2022act43mp3.mp3" length="35966529" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>38:20</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>House on the Rock</title>
+      <link>https://www.fillmorechristian.org/episode/house-on-the-rock/</link>
+      <pubDate>Sun, 08 May 2022 16:23:59 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/house-on-the-rock/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b58a0b55b--May_8_202294tbamp3.mp3" length="35059835" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>37:58</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>The Annoying Speck in Your Eye</title>
+      <link>https://www.fillmorechristian.org/episode/the-annoying-speck-in-your-eye/</link>
+      <pubDate>Sun, 01 May 2022 16:53:22 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/the-annoying-speck-in-your-eye/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b58db14e2--May_1_20228zgqgmp3.mp3" length="37950270" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>36:32</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>The Path to Joy</title>
+      <link>https://www.fillmorechristian.org/episode/the-path-to-joy/</link>
+      <pubDate>Sun, 17 Apr 2022 16:50:08 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/the-path-to-joy/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b58fee3dd--April_17_202291345mp3.mp3" length="42723644" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>39:54</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>Are you Poor</title>
+      <link>https://www.fillmorechristian.org/episode/are-you-poor/</link>
+      <pubDate>Sun, 10 Apr 2022 16:39:46 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/are-you-poor/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b592e2061--April_10_20227zkaxmp3.mp3" length="35655297" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>45:33</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>We must Proclaim Godâ€™s Attributes</title>
+      <link>https://www.fillmorechristian.org/episode/we-must-proclaim-gods-attributes/</link>
+      <pubDate>Sun, 27 Mar 2022 17:39:52 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/we-must-proclaim-gods-attributes/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b59530989--March_27_20227g84xmp3.mp3" length="29298284" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>39:40</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>Godâ€™s Heart</title>
+      <link>https://www.fillmorechristian.org/episode/gods-heart/</link>
+      <pubDate>Sun, 20 Mar 2022 16:13:00 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/gods-heart/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b59875ea8--March_20_20226ympomp3.mp3" length="31309729" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>41:40</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>Of Hard Hearts and Family</title>
+      <link>https://www.fillmorechristian.org/episode/of-hard-hearts-and-family/</link>
+      <pubDate>Sun, 13 Mar 2022 16:16:07 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/of-hard-hearts-and-family/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b59a5ff49--March_13_2022bgmx4mp3.mp3" length="32001984" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>39:04</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>Lord, If You Will</title>
+      <link>https://www.fillmorechristian.org/episode/lord-if-you-will/</link>
+      <pubDate>Sun, 27 Feb 2022 17:15:31 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/lord-if-you-will/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b59c61a25--February_27_2022_Ken_Sermona7c1imp3.mp3" length="31702836" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>41:32</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>Jesus â€™s clam to be the Messiah</title>
+      <link>https://www.fillmorechristian.org/episode/jesus-s-clam-to-be-the-messiah/</link>
+      <pubDate>Sun, 06 Feb 2022 17:40:56 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/jesus-s-clam-to-be-the-messiah/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b59fc18b4--January_6_202289sctmp3.mp3" length="27461695" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>36:59</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>Jesus the God Man</title>
+      <link>https://www.fillmorechristian.org/episode/jesus-the-god-man/</link>
+      <pubDate>Sun, 16 Jan 2022 23:37:18 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/jesus-the-god-man/</guid>
+      <description><![CDATA[I missed the first part of the 3 minutes of the Sermon.]]></description>
+      <itunes:subtitle><![CDATA[I missed the first part of the 3 minutes of the Sermon.]]></itunes:subtitle>
+      <content:encoded><![CDATA[I missed the first part of the 3 minutes of the Sermon.]]></content:encoded>
+      <itunes:summary><![CDATA[I missed the first part of the 3 minutes of the Sermon.]]></itunes:summary>
+      <googleplay:description><![CDATA[I missed the first part of the 3 minutes of the Sermon.]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b5a1dce88--January_16_2022ax4pgmp3.mp3" length="31455477" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>39:35</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>The Visitors and the No-Shows</title>
+      <link>https://www.fillmorechristian.org/episode/the-visitors-and-the-no-shows/</link>
+      <pubDate>Sun, 26 Dec 2021 17:53:04 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/the-visitors-and-the-no-shows/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b5a4bc772--December_26_2021_Ken_s_Sermon7ry89mp3.mp3" length="34309264" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>47:21</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>Joseph and Mary</title>
+      <link>https://www.fillmorechristian.org/episode/joseph-and-mary/</link>
+      <pubDate>Wed, 08 Dec 2021 00:12:36 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/joseph-and-mary/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b5a748c85--December_7_2021_Wake_s_Sermon973nkmp3.mp3" length="44657216" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>32:58</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>Put on the Lord Jesus Christ</title>
+      <link>https://www.fillmorechristian.org/episode/put-on-the-lord-jesus-christ/</link>
+      <pubDate>Sun, 29 Aug 2021 17:50:29 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/put-on-the-lord-jesus-christ/</guid>
+      <description><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Â  God is at work to make us like him but we are also called to actively work with him.Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Â Â ]]></description>
+      <itunes:subtitle><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Â  God is at work to make us like him but we are also called to actively work with him.Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Â Â ]]></itunes:subtitle>
+      <content:encoded><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Â  God is at work to make us like him but we are also called to actively work with him.Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Â Â ]]></content:encoded>
+      <itunes:summary><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Â  God is at work to make us like him but we are also called to actively work with him.Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Â Â ]]></itunes:summary>
+      <googleplay:description><![CDATA[We are called to put on the Lord Jesus, to conform to his image or to impersonate him.Â  God is at work to make us like him but we are also called to actively work with him.Â  The Holy Spirit is within us to guide us into Christ-likeness. We also need to actively put on the mind of Christ which we get from Scripture.Â Â ]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b5abbb0c7--August_29_2021_Ken_Sermona3rbymp3.mp3" length="43388244" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>34:34</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+    <item>
+      <title>Romans 13: 1-7</title>
+      <link>https://www.fillmorechristian.org/episode/romans-13-1-7/</link>
+      <pubDate>Sun, 29 Aug 2021 01:57:24 +0000</pubDate>
+      <dc:creator>thechurchcodaniel</dc:creator>
+      <guid isPermaLink="false">https://fcchurch.thechurchco.com/episode/romans-13-1-7/</guid>
+      <description><![CDATA[]]></description>
+      <itunes:subtitle><![CDATA[]]></itunes:subtitle>
+      <content:encoded><![CDATA[]]></content:encoded>
+      <itunes:summary><![CDATA[]]></itunes:summary>
+      <googleplay:description><![CDATA[]]></googleplay:description>
+      <itunes:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></itunes:image>
+      <googleplay:image href="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/fcc_podcastlogo-1-1125x1125.jpg"></googleplay:image>
+      <enclosure url="https://thechurchco-production.s3.amazonaws.com/uploads/sites/6004/2022/09/6318b5b099ca7--August_22_2021_Wake_s_Sermona6g08mp3.mp3" length="79118796" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:duration>51:13</itunes:duration>
+      <itunes:author>thechurchcodaniel</itunes:author>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  PODCAST RSS FEED FOR FILLMORE CHRISTIAN CHURCH
+  ================================================
+
+  OPTION A (Recommended): Use Spotify for Podcasters
+  - This file is NOT needed if you use Spotify for Podcasters (free).
+  - Spotify for Podcasters auto-generates your RSS feed and distributes
+    to Apple Podcasts, Spotify, and other platforms.
+  - Just point the website's sermons.js to your Spotify for Podcasters RSS URL.
+
+  OPTION B: Self-hosted RSS feed
+  - If you prefer to host audio files yourself and manage your own feed,
+    use this template. Add new <item> entries for each sermon.
+  - Submit this feed URL to Apple Podcasts and Spotify for Podcasters manually.
+
+  To add a new sermon episode, copy an <item> block and update the fields.
+-->
+<rss version="2.0"
+  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/">
+
+<channel>
+  <title>Fillmore Christian Church</title>
+  <link>https://www.fillmorechristian.org</link>
+  <description>Weekly sermons from Fillmore Christian Church in Fillmore, Missouri. A non-denominational church established in 1865.</description>
+  <language>en-us</language>
+  <copyright>&#xA9; 2026 Fillmore Christian Church</copyright>
+  <atom:link href="https://www.fillmorechristian.org/feed.xml" rel="self" type="application/rss+xml"/>
+
+  <!-- iTunes/Podcast metadata -->
+  <itunes:author>Fillmore Christian Church</itunes:author>
+  <itunes:summary>Weekly sermons from Fillmore Christian Church in Fillmore, Missouri.</itunes:summary>
+  <itunes:owner>
+    <itunes:name>Fillmore Christian Church</itunes:name>
+    <itunes:email>church@fillmorechristian.org</itunes:email>
+  </itunes:owner>
+  <itunes:category text="Religion &amp; Spirituality">
+    <itunes:category text="Christianity"/>
+  </itunes:category>
+  <itunes:explicit>false</itunes:explicit>
+  <!-- Add a podcast cover image (1400x1400 to 3000x3000 px, JPEG or PNG) -->
+  <itunes:image href="https://www.fillmorechristian.org/images/podcast-cover.jpg"/>
+  <image>
+    <url>https://www.fillmorechristian.org/images/podcast-cover.jpg</url>
+    <title>Fillmore Christian Church</title>
+    <link>https://www.fillmorechristian.org</link>
+  </image>
+
+  <!-- EXAMPLE EPISODE - copy this block for each new sermon -->
+  <!--
+  <item>
+    <title>Sermon Title Here</title>
+    <description>Brief description of the sermon.</description>
+    <pubDate>Sun, 16 Mar 2026 10:00:00 -0600</pubDate>
+    <itunes:author>Wakefield Hare</itunes:author>
+    <itunes:duration>35:00</itunes:duration>
+    <itunes:summary>Brief description of the sermon.</itunes:summary>
+    <enclosure url="https://www.fillmorechristian.org/audio/2026-03-16-sermon.mp3" length="33600000" type="audio/mpeg"/>
+    <guid isPermaLink="false">fcc-2026-03-16</guid>
+  </item>
+  -->
+
+</channel>
+</rss>

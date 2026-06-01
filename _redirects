@@ -1,0 +1,4 @@
+# Keep old ChurchCo sermon URLs alive where practical.
+/episode/* /sermons.html 302
+/audio-sermons/ /sermons.html 302
+

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us | Fillmore Christian Church</title>
+  <meta name="description" content="Contact Fillmore Christian Church in Fillmore, MO. We'd love to hear from you.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="nav-brand">
+        <div class="nav-brand-text">
+          <span class="nav-brand-name">Fillmore Christian Church</span>
+          <span class="nav-brand-tagline">established in 1865</span>
+        </div>
+      </a>
+      <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li class="nav-dropdown">
+          <a href="about.html">About</a>
+          <ul class="nav-dropdown-menu">
+            <li><a href="beliefs.html">Our Beliefs</a></li>
+            <li><a href="team.html">Our Team</a></li>
+          </ul>
+        </li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="sermons.html">Past Sermons</a></li>
+        <li><a href="contact.html" class="active">Contact Us</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="page-header">
+    <div class="container">
+      <h1>Contact Us</h1>
+      <p>We'd love to hear from you</p>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="section contact-section">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-info">
+          <p style="margin-bottom:1.5em;">Whether you have a question, need prayer, or want to plan a visit, we're here for you. Don't hesitate to reach out — we'd love to connect.</p>
+
+          <div class="contact-item">
+            <span class="icon">✉️</span>
+            <div>
+              <strong>Email</strong><br>
+              <a href="mailto:church@fillmorechristian.org">church@fillmorechristian.org</a>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <span class="icon">📍</span>
+            <div>
+              <strong>Address</strong><br>
+              <a href="https://maps.google.com/?q=310+N+Florence+Street+Fillmore+MO+64449" target="_blank" rel="noopener">
+                310 N. Florence Street<br>
+                Fillmore, MO 64449
+              </a>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <span class="icon">⛪</span>
+            <div>
+              <strong>Service Times</strong><br>
+              Sunday School: 9:00 AM<br>
+              Worship: 10:00 AM
+            </div>
+          </div>
+
+          <div style="margin-top:1.5em; border-radius:8px; overflow:hidden;">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3088.0!2d-94.97!3d39.88!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2s310+N+Florence+St%2C+Fillmore%2C+MO+64449!5e0!3m2!1sen!2sus!4v1"
+              width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+
+        <form class="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+          <!--
+            SETUP: Go to formspree.io, create a free account, create a form,
+            and replace YOUR_FORM_ID above with your actual form ID.
+            Free tier allows 50 submissions/month.
+          -->
+          <label for="contact-name">Name</label>
+          <input type="text" id="contact-name" name="name" required>
+
+          <label for="contact-email">Email</label>
+          <input type="email" id="contact-email" name="email" required>
+
+          <label for="contact-subject">Subject</label>
+          <input type="text" id="contact-subject" name="subject">
+
+          <label for="contact-message">Message</label>
+          <textarea id="contact-message" name="message" rows="6" required></textarea>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Fillmore Christian Church</h4>
+          <p>A non-denominational church established in 1865, believing that Jesus is the Christ, the Son of the Living God.</p>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="about.html">About</a></li>
+            <li><a href="beliefs.html">Our Beliefs</a></li>
+            <li><a href="sermons.html">Past Sermons</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <p>
+            <a href="mailto:church@fillmorechristian.org">church@fillmorechristian.org</a><br>
+            310 N. Florence Street<br>
+            Fillmore, MO 64449
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Fillmore Christian Church. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
