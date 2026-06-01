@@ -1,6 +1,6 @@
 param(
     [string]$Bucket = "fillmore-christian-sermons",
-    [string]$BaseAudioUrl = "https://media.fillmorechristian.org",
+    [string]$BaseAudioUrl = "https://www.fillmorechristian.org/media",
     [switch]$CreateBucket,
     [switch]$SkipUpload,
     [switch]$SkipR2Verify,
@@ -98,10 +98,7 @@ if ($PodcastMediaSampleCount -lt 1) {
     throw "PodcastMediaSampleCount must be at least 1."
 }
 
-$verifyPublicMediaBeforeRewrite = -not $SkipPublicMediaVerify
-if ($VerifyPublicMedia) {
-    $verifyPublicMediaBeforeRewrite = $true
-}
+$verifyPublicMediaBeforeRewrite = $VerifyPublicMedia -or $VerifyAllPublicMedia
 if ($SkipPublicMediaVerify -and ($VerifyPublicMedia -or $VerifyAllPublicMedia)) {
     throw "SkipPublicMediaVerify cannot be combined with VerifyPublicMedia or VerifyAllPublicMedia."
 }
@@ -123,7 +120,7 @@ if ($DryRun) {
             Write-Host "Dry run: would verify $scope from the R2 public URL manifest before rewriting the feed."
             Write-Host "Dry run: would verify $scope again from the rewritten podcast feed."
         } else {
-            Write-Host "Dry run: would skip public media URL verification because SkipPublicMediaVerify was supplied."
+            Write-Host "Dry run: would skip public media URL verification until the Pages /media route is deployed and DNS points at Cloudflare."
         }
     } finally {
         if (Test-Path -LiteralPath $tempManifestPath) {
@@ -189,4 +186,5 @@ if ($verifyPublicMediaBeforeRewrite) {
 & (Join-Path $PSScriptRoot "test-migration-readiness.ps1") @readinessArgs
 & (Join-Path $PSScriptRoot "test-cloudflare-pages-local.ps1")
 
-Write-Host "Cloudflare audio migration prepared locally. Public audio URLs were verified before RSS rewrite unless SkipPublicMediaVerify was supplied. Review, commit, push, then run npm run deploy:cloudflare."
+Write-Host "Cloudflare audio migration prepared locally. Review, commit, push, then run npm run deploy:cloudflare."
+Write-Host "After DNS points at Cloudflare Pages, run npm run complete:cloudflare-cutover to verify the public /media URLs."

@@ -81,6 +81,18 @@ function Get-AudioType {
     return "audio/mpeg"
 }
 
+function Get-PageAudioUrl {
+    param([string]$Url)
+    if (-not $Url) { return "" }
+    try {
+        $uri = [Uri]$Url
+        if ($uri.Host -ieq "www.fillmorechristian.org" -and $uri.AbsolutePath.StartsWith("/media/")) {
+            return $uri.PathAndQuery
+        }
+    } catch {}
+    return $Url
+}
+
 function Get-RelativeEpisodePath {
     param([string]$Url)
 
@@ -112,6 +124,7 @@ foreach ($item in $items) {
 
     $enclosure = $item.enclosure
     $audioUrl = if ($enclosure) { [string]$enclosure.url } else { "" }
+    $pageAudioUrl = Get-PageAudioUrl $audioUrl
     $episodePath = Get-RelativeEpisodePath ([string]$item.link)
     $search = "$title $date $speaker $description"
 
@@ -129,8 +142,8 @@ foreach ($item in $items) {
         $html += "          <p class=`"sermon-description`">$(HtmlEncode $description)</p>"
     }
     if ($audioUrl) {
-        $html += "          <audio controls preload=`"none`"><source src=`"$(HtmlEncode $audioUrl)`" type=`"$(Get-AudioType $audioUrl)`">Your browser does not support audio playback.</audio>"
-        $html += "          <div class=`"sermon-actions`"><a href=`"$(HtmlEncode $audioUrl)`" class=`"sermon-download`" download>Download Audio</a></div>"
+        $html += "          <audio controls preload=`"none`"><source src=`"$(HtmlEncode $pageAudioUrl)`" type=`"$(Get-AudioType $audioUrl)`">Your browser does not support audio playback.</audio>"
+        $html += "          <div class=`"sermon-actions`"><a href=`"$(HtmlEncode $pageAudioUrl)`" class=`"sermon-download`" download>Download Audio</a></div>"
     } else {
         $html += "          <p class=`"sermon-audio-missing`">Audio is not attached to this archived feed item yet.</p>"
     }

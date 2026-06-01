@@ -3,7 +3,6 @@ param(
     [string]$SnapshotPath = "",
     [string]$OutDir = "exports\dns",
     [string]$PagesProject = "fillmorechristian-website",
-    [string]$MediaHostname = "media.fillmorechristian.org",
     [string[]]$ExpectedCloudflareNameservers = @("eric.ns.cloudflare.com", "sky.ns.cloudflare.com")
 )
 
@@ -146,11 +145,12 @@ $notes.Add(('- `{0}`' -f $Domain))
 $notes.Add("")
 $notes.Add(('Expected Pages project name: `{0}`' -f $PagesProject))
 $notes.Add("")
-$notes.Add("## Add During R2 Audio Setup")
+$notes.Add("## Verify R2 Audio Through Pages")
 $notes.Add("")
-$notes.Add(('- Configure `{0}` as the public custom domain for the R2 sermon-audio bucket.' -f $MediaHostname))
-$notes.Add("- Verify sampled and then all public media URLs before rewriting the podcast feed enclosures.")
-$notes.Add("- Keep the podcast feed pointed at TheChurchCo audio until the R2 public hostname passes verification.")
+$notes.Add("- The Cloudflare Pages project binds the ``fillmore-christian-sermons`` R2 bucket as ``SERMON_AUDIO``.")
+$notes.Add("- Podcast enclosure URLs should use ``https://www.$Domain/media/<object-key>``.")
+$notes.Add("- HTML audio players use same-origin ``/media/<object-key>`` paths so previews and the production custom domain share the same function route.")
+$notes.Add("- After nameserver cutover, verify sampled and then all public media URLs before canceling TheChurchCo.")
 $notes.Add("")
 $notes.Add("## Verify")
 $notes.Add("")

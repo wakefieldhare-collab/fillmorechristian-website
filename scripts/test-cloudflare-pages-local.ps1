@@ -327,6 +327,15 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Navigation brand"; Status = "OK"; Details = "Published output includes the official FCC logo and navigation text" })
 
+    if ($homePageContent -notmatch '<source\s+src="/media/' -or $homePageContent -match '<source\s+src="https://www\.fillmorechristian\.org/media/') {
+        throw "Built home page does not use same-origin media URLs for audio playback"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Same-origin audio playback"; Status = "OK"; Details = "Published HTML audio players use /media paths served by Pages Functions" })
+
+    $missingMedia = Invoke-NoRedirect -Url "$baseUrl/media/__missing-audio-object__.mp3" -Method "HEAD"
+    Assert-Status -Response $missingMedia -Expected @(404) -Name "Missing R2 media route"
+    $checks.Add([pscustomobject]@{ Check = "R2 media route"; Status = "OK"; Details = "Pages Function media route is available and returns 404 for missing audio objects" })
+
     $eventsScript = Invoke-NoRedirect -Url "$baseUrl/js/events.js"
     Assert-Status -Response $eventsScript -Expected @(200) -Name "Events script"
     if ($eventsScript.Content -notmatch "events\.ics" -or $eventsScript.Content -match "googleapis|GOOGLE_CALENDAR_ID|GOOGLE_API_KEY") {

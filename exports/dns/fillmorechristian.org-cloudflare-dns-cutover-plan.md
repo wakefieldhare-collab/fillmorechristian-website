@@ -1,6 +1,6 @@
 ﻿# Cloudflare DNS Cutover Plan for fillmorechristian.org
 
-Generated: 2026-06-01 16:47:08 -05:00
+Generated: 2026-06-01 17:40:18 -05:00
 
 Source snapshot: `C:\Users\wakef\Documents\AI-Projects\fcc-website\exports\dns\fillmorechristian.org-20260601-164552-records.csv`
 
@@ -36,11 +36,12 @@ Instead, let Cloudflare Pages add or verify custom domains for:
 
 Expected Pages project name: `fillmorechristian-website`
 
-## Add During R2 Audio Setup
+## Verify R2 Audio Through Pages
 
-- Configure `media.fillmorechristian.org` as the public custom domain for the R2 sermon-audio bucket.
-- Verify sampled and then all public media URLs before rewriting the podcast feed enclosures.
-- Keep the podcast feed pointed at TheChurchCo audio until the R2 public hostname passes verification.
+- The Cloudflare Pages project binds the `fillmore-christian-sermons` R2 bucket as `SERMON_AUDIO`.
+- Podcast enclosure URLs should use `https://www.fillmorechristian.org/media/<object-key>`.
+- HTML audio players use same-origin `/media/<object-key>` paths so previews and the production custom domain share the same function route.
+- After nameserver cutover, verify sampled and then all public media URLs before canceling TheChurchCo.
 
 ## Verify
 

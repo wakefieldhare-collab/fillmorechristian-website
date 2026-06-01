@@ -70,6 +70,18 @@ function Get-AudioType {
     return "audio/mpeg"
 }
 
+function Get-PageAudioUrl {
+    param([string]$Url)
+    if (-not $Url) { return "" }
+    try {
+        $uri = [Uri]$Url
+        if ($uri.Host -ieq "www.fillmorechristian.org" -and $uri.AbsolutePath.StartsWith("/media/")) {
+            return $uri.PathAndQuery
+        }
+    } catch {}
+    return $Url
+}
+
 function Get-EpisodeSlug {
     param([string]$Url)
 
@@ -254,6 +266,7 @@ for ($episodeIndex = 0; $episodeIndex -lt $items.Count; $episodeIndex++) {
 
     $enclosure = $item.enclosure
     $audioUrl = if ($enclosure) { [string]$enclosure.url } else { "" }
+    $pageAudioUrl = Get-PageAudioUrl $audioUrl
     $audioLength = if ($enclosure -and $enclosure.length) { [string]$enclosure.length } else { "" }
     $audioType = if ($audioUrl) { Get-AudioType $audioUrl } else { "" }
     $canonicalUrl = "https://www.fillmorechristian.org/episode/$slug/"
@@ -262,7 +275,7 @@ for ($episodeIndex = 0; $episodeIndex -lt $items.Count; $episodeIndex++) {
     New-Item -ItemType Directory -Path $localDir | Out-Null
 
     $downloadActionMarkup = if ($audioUrl) {
-        '              <a href="' + (HtmlEncode $audioUrl) + '" class="btn btn-outline" download>Download Audio</a>' + "`r`n"
+        '              <a href="' + (HtmlEncode $pageAudioUrl) + '" class="btn btn-outline" download>Download Audio</a>' + "`r`n"
     } else {
         ""
     }
@@ -279,7 +292,7 @@ for ($episodeIndex = 0; $episodeIndex -lt $items.Count; $episodeIndex++) {
 "@
 
     $audioMarkup = if ($audioUrl) {
-        '          <audio controls preload="none"><source src="' + (HtmlEncode $audioUrl) + '" type="' + $audioType + '">Your browser does not support audio playback.</audio>'
+        '          <audio controls preload="none"><source src="' + (HtmlEncode $pageAudioUrl) + '" type="' + $audioType + '">Your browser does not support audio playback.</audio>'
     } else {
         '          <p class="sermon-audio-missing">Audio is not attached to this archived feed item yet.</p>'
     }

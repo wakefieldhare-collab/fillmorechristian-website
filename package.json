@@ -3,7 +3,6 @@
     "build": "node scripts/build-site.mjs",
     "deploy:cloudflare": "powershell -ExecutionPolicy Bypass -File scripts/deploy-cloudflare-pages.ps1",
     "apply:cloudflare-dns": "powershell -ExecutionPolicy Bypass -File scripts/apply-cloudflare-dns-cutover-records.ps1",
-    "configure:r2-media-domain": "powershell -ExecutionPolicy Bypass -File scripts/configure-r2-media-domain.ps1",
     "complete:cloudflare-cutover": "powershell -ExecutionPolicy Bypass -File scripts/complete-cloudflare-cutover.ps1",
     "migrate:cloudflare-audio": "powershell -ExecutionPolicy Bypass -File scripts/migrate-cloudflare-audio.ps1",
     "status:migration": "powershell -ExecutionPolicy Bypass -File scripts/show-migration-status.ps1",

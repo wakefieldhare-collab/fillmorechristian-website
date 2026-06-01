@@ -7,7 +7,7 @@ param(
     [string]$CloudflareAccountId = "377eaebfa77447d2f7906a1e0c1b788c",
     [string]$CloudflarePagesProject = "fillmorechristian-website",
     [string]$R2Bucket = "fillmore-christian-sermons",
-    [string]$ExpectedAudioHost = "media.fillmorechristian.org",
+    [string]$ExpectedAudioHost = "www.fillmorechristian.org",
     [datetime]$RenewalDate = "2026-06-15",
     [datetime]$DisableAutoRenewDeadline = "2026-06-14",
     [switch]$SkipNetwork,

@@ -61,6 +61,18 @@ function Get-AudioType {
     return "audio/mpeg"
 }
 
+function Get-PageAudioUrl {
+    param([string]$Url)
+    if (-not $Url) { return "" }
+    try {
+        $uri = [Uri]$Url
+        if ($uri.Host -ieq "www.fillmorechristian.org" -and $uri.AbsolutePath.StartsWith("/media/")) {
+            return $uri.PathAndQuery
+        }
+    } catch {}
+    return $Url
+}
+
 function Get-RelativeEpisodePath {
     param([string]$Url)
 
@@ -105,6 +117,7 @@ if ($description.Length -gt 170) {
 }
 
 $audioUrl = [string]$latest.enclosure.url
+$pageAudioUrl = Get-PageAudioUrl $audioUrl
 $episodePath = Get-RelativeEpisodePath ([string]$latest.link)
 if (-not $episodePath) {
     $episodePath = "sermons.html"
@@ -128,10 +141,10 @@ if ($descriptionMarkup) {
 }
 
 $replacementLines += @(
-    "          <audio controls preload=`"none`"><source src=`"$(HtmlEncode $audioUrl)`" type=`"$(Get-AudioType $audioUrl)`">Your browser does not support audio playback.</audio>",
+    "          <audio controls preload=`"none`"><source src=`"$(HtmlEncode $pageAudioUrl)`" type=`"$(Get-AudioType $audioUrl)`">Your browser does not support audio playback.</audio>",
     "          <div class=`"latest-sermon-actions`">",
     "            <a href=`"$(HtmlEncode $episodePath)`" class=`"btn btn-light`">Open Message</a>",
-    "            <a href=`"$(HtmlEncode $audioUrl)`" class=`"btn btn-light`" download>Download Audio</a>",
+    "            <a href=`"$(HtmlEncode $pageAudioUrl)`" class=`"btn btn-light`" download>Download Audio</a>",
     "          </div>",
     "          <!-- LATEST_SERMON_END -->"
 )

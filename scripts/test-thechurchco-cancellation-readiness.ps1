@@ -2,7 +2,7 @@ param(
     [string]$Domain = "fillmorechristian.org",
     [string]$ProductionBaseUrl = "https://www.fillmorechristian.org",
     [string]$PodcastFeedPath = "podcast-category/fillmore-christian/feed/podcast",
-    [string]$ExpectedAudioHost = "media.fillmorechristian.org",
+    [string]$ExpectedAudioHost = "www.fillmorechristian.org",
     [string[]]$ExpectedCloudflareNameservers = @(),
     [switch]$VerifyAllPodcastMedia,
     [int]$PodcastMediaSampleCount = 5,

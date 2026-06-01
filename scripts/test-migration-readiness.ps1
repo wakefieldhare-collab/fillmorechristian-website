@@ -110,6 +110,19 @@ function ConvertTo-LocalAudioFileName {
     return $fileName -replace '[^\w\.\-]+', '-'
 }
 
+function ConvertTo-PageAudioUrl {
+    param([string]$Url)
+
+    if (-not $Url) { return "" }
+    try {
+        $uri = [Uri]$Url
+        if ($uri.Host -ieq "www.fillmorechristian.org" -and $uri.AbsolutePath.StartsWith("/media/")) {
+            return $uri.PathAndQuery
+        }
+    } catch {}
+    return $Url
+}
+
 function Get-EnclosureUrls {
     param([xml]$Feed)
 
@@ -668,7 +681,7 @@ if ((Test-Path -LiteralPath $statusScriptPath) -and (Test-Path -LiteralPath $pac
     if ($statusScriptText -match "npx wrangler login" -and
         $statusScriptText -match "Squarespace renewal" -and
         $statusScriptText -match "wakefieldhare-collab" -and
-        $statusScriptText -match "media\.fillmorechristian\.org" -and
+        $statusScriptText -match "www\.fillmorechristian\.org" -and
         $statusScriptText -match "apply:cloudflare-dns" -and
         $statusScriptText -match "Zone:DNS Edit" -and
         $packageJsonText -match '"status:migration"') {
@@ -710,7 +723,7 @@ if (Test-Path -LiteralPath $cancellationScriptPath) {
     $cancellationScriptText = Get-Content -Raw -LiteralPath $cancellationScriptPath
     if ($cancellationScriptText -match "Cloudflare nameservers" -and
         $cancellationScriptText -match "Production audio independence" -and
-        $cancellationScriptText -match "media\.fillmorechristian\.org" -and
+        $cancellationScriptText -match "www\.fillmorechristian\.org" -and
         $cancellationScriptText -match "sermon-audio-only" -and
         $cancellationScriptText -match "data-has-audio" -and
         $cancellationScriptText -match "Do not cancel TheChurchCo yet") {
@@ -722,36 +735,30 @@ if (Test-Path -LiteralPath $cancellationScriptPath) {
     Add-Check "TheChurchCo cancellation gate" "FAIL" "scripts\test-thechurchco-cancellation-readiness.ps1 is missing"
 }
 
-if ((Test-Path -LiteralPath $audioMigrationScriptPath) -and (Test-Path -LiteralPath $publicAudioScriptPath) -and (Test-Path -LiteralPath $mediaDomainScriptPath) -and (Test-Path -LiteralPath $cutoverScriptPath)) {
+if ((Test-Path -LiteralPath $audioMigrationScriptPath) -and (Test-Path -LiteralPath $publicAudioScriptPath) -and (Test-Path -LiteralPath $cutoverScriptPath)) {
     $audioMigrationScriptText = Get-Content -Raw -LiteralPath $audioMigrationScriptPath
     $publicAudioScriptText = Get-Content -Raw -LiteralPath $publicAudioScriptPath
-    $mediaDomainScriptText = Get-Content -Raw -LiteralPath $mediaDomainScriptPath
     $cutoverScriptText = Get-Content -Raw -LiteralPath $cutoverScriptPath
     $packageJsonPath = Join-Path $root "package.json"
     $packageJsonText = if (Test-Path -LiteralPath $packageJsonPath) { Get-Content -Raw -LiteralPath $packageJsonPath } else { "" }
     if ($audioMigrationScriptText -match "test-r2-public-audio\.ps1" -and
         $audioMigrationScriptText -match "VerifyPublicMedia" -and
         $audioMigrationScriptText -match "SkipPublicMediaVerify" -and
-        $audioMigrationScriptText -match '\$verifyPublicMediaBeforeRewrite\s*=\s*-not\s+\$SkipPublicMediaVerify' -and
-        $audioMigrationScriptText.IndexOf("test-r2-public-audio.ps1") -lt $audioMigrationScriptText.IndexOf("rewrite-podcast-audio-urls.ps1") -and
+        $audioMigrationScriptText -match "www\.fillmorechristian\.org/media" -and
         $publicAudioScriptText -match "PublicUrl" -and
         $publicAudioScriptText -match "Content-Length" -and
         $publicAudioScriptText -match "Content-Type" -and
-        $mediaDomainScriptText -match "domains/custom" -and
-        $mediaDomainScriptText -match "test-r2-public-audio\.ps1" -and
-        $mediaDomainScriptText -match "RequireActive" -and
         $cutoverScriptText -match "test-dns-cutover\.ps1" -and
-        $cutoverScriptText -match "configure-r2-media-domain\.ps1" -and
-        $cutoverScriptText -match "migrate-cloudflare-audio\.ps1" -and
+        $cutoverScriptText -match "test-r2-public-audio\.ps1" -and
+        $cutoverScriptText -match "RequireIndependentAudio" -and
         $cutoverScriptText -match "ExpectedCloudflareNameservers" -and
-        $packageJsonText -match '"configure:r2-media-domain"' -and
         $packageJsonText -match '"complete:cloudflare-cutover"') {
-        Add-Check "R2 public audio preflight" "OK" "Audio migration verifies public R2 URLs by default before rewriting podcast feeds; media hostname and cutover setup are scripted"
+        Add-Check "R2 public audio preflight" "OK" "Audio migration verifies R2 public URLs; cutover checks the Pages /media route and independent podcast feed"
     } else {
-        Add-Check "R2 public audio preflight" "FAIL" "Audio migration is missing the default public URL preflight, scripted media hostname/cutover setup, or npm alias"
+        Add-Check "R2 public audio preflight" "FAIL" "Audio migration is missing R2 public URL verification, Pages media-route cutover checks, or npm aliases"
     }
 } else {
-    Add-Check "R2 public audio preflight" "FAIL" "scripts\migrate-cloudflare-audio.ps1, scripts\configure-r2-media-domain.ps1, scripts\complete-cloudflare-cutover.ps1, or scripts\test-r2-public-audio.ps1 is missing"
+    Add-Check "R2 public audio preflight" "FAIL" "scripts\migrate-cloudflare-audio.ps1, scripts\complete-cloudflare-cutover.ps1, or scripts\test-r2-public-audio.ps1 is missing"
 }
 
 if ((Test-Path -LiteralPath $audioMigrationScriptPath) -and (Test-Path -LiteralPath $audioUploadScriptPath) -and (Test-Path -LiteralPath $audioUploadVerifierScriptPath)) {
@@ -985,11 +992,12 @@ if ($feeds.ContainsKey($feedPaths[0]) -and (Test-Path -LiteralPath $homePath)) {
     $latestAudioItem = @($feeds[$feedPaths[0]].rss.channel.item | Where-Object { $_.enclosure -and $_.enclosure.url } | Select-Object -First 1)
     $latestTitle = if ($latestAudioItem) { [string]$latestAudioItem.title } else { "" }
     $latestAudioUrl = if ($latestAudioItem) { [string]$latestAudioItem.enclosure.url } else { "" }
+    $latestPageAudioUrl = ConvertTo-PageAudioUrl $latestAudioUrl
 
     if ($latestTitle -and
         $homeHtml -match 'id="latest-sermon"' -and
         $homeHtml -match [regex]::Escape($latestTitle) -and
-        $homeHtml -match [regex]::Escape($latestAudioUrl) -and
+        $homeHtml -match [regex]::Escape($latestPageAudioUrl) -and
         $homeHtml -match "Download Audio") {
         Add-Check "Homepage latest sermon" "OK" "Latest audio item is featured on the homepage"
     } else {
@@ -1424,12 +1432,12 @@ if ((Test-Path -LiteralPath $dnsPreservePath) -and (Test-Path -LiteralPath $dnsZ
     if ($dnsPlanText -notmatch "A ``fillmorechristian\.org``.*77\.83\.141\.16" -or $dnsPlanText -notmatch "CNAME ``www\.fillmorechristian\.org``.*ssl\.thechurchco\.com") {
         $dnsIssues.Add("cutover plan does not explicitly list old website records to replace")
     }
-    if ($dnsPlanText -notmatch "media\.fillmorechristian\.org" -or $dnsPlanText -notmatch "R2 sermon-audio bucket" -or $dnsPlanText -notmatch "before rewriting the podcast feed enclosures") {
-        $dnsIssues.Add("cutover plan does not explicitly include the R2 media hostname and pre-rewrite verification")
+    if ($dnsPlanText -notmatch "SERMON_AUDIO" -or $dnsPlanText -notmatch "https://www\.fillmorechristian\.org/media/" -or $dnsPlanText -notmatch 'same-origin `/media/<object-key>`') {
+        $dnsIssues.Add("cutover plan does not explicitly include the Pages R2 media route and verification")
     }
 
     if ($dnsIssues.Count -eq 0) {
-        Add-Check "Cloudflare DNS cutover artifacts" "OK" "$($dnsRows.Count) preserve records cover mail and verification without old website records; plan includes the R2 media hostname"
+        Add-Check "Cloudflare DNS cutover artifacts" "OK" "$($dnsRows.Count) preserve records cover mail and verification without old website records; plan includes the Pages R2 media route"
     } else {
         Add-Check "Cloudflare DNS cutover artifacts" "FAIL" ($dnsIssues -join "; ")
     }

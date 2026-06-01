@@ -82,9 +82,8 @@ if (-not $dnsReady) {
 }
 
 & (Join-Path $PSScriptRoot "test-dns-cutover.ps1") -Mode After -ExpectedCloudflareNameservers $ExpectedCloudflareNameservers
-& (Join-Path $PSScriptRoot "configure-r2-media-domain.ps1") -RequireActive -VerifyAllPublicMedia
-& (Join-Path $PSScriptRoot "migrate-cloudflare-audio.ps1") -SkipUpload -SkipR2Verify -VerifyAllPublicMedia
+& (Join-Path $PSScriptRoot "test-r2-public-audio.ps1") -All
+& (Join-Path $PSScriptRoot "test-migration-readiness.ps1") -RequireIndependentAudio -VerifyPodcastMedia
 
-Write-Host "Cloudflare cutover has been prepared locally. Review the generated RSS/feed changes, commit them, push, and deploy."
-Write-Host "Skipping automatic Cloudflare Pages deploy because the feed rewrite creates local files that must be committed first."
-Write-Host "After commit and push, run: npm run deploy:cloudflare"
+Write-Host "Cloudflare cutover checks passed. The static site, podcast feed, and R2-backed /media audio are ready for production cancellation checks."
+Write-Host "Before canceling TheChurchCo, run: npm run verify:cancel-thechurchco"

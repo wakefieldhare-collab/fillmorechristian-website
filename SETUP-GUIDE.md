@@ -19,7 +19,7 @@ Static website for Fillmore Christian Church, replacing ChurchCo ($50/mo). Built
 - [x] Migration preflight script added at `scripts/test-migration-readiness.ps1`
 - [x] Podcast RSS feed exported and normalized into the static site
 - [x] 70 unique sermon audio files backed up locally with SHA-256 inventory
-- [x] R2 audio manifest prepared for `https://media.fillmorechristian.org`
+- [x] R2 audio manifest prepared for `https://www.fillmorechristian.org/media`
 - [x] R2 enabled, bucket `fillmore-christian-sermons` created, and all 70 audio objects uploaded and SHA-256 verified
 - [x] GitHub Pages staging deployment enabled from the personal repo
 - [x] Cloudflare Pages project created and deployed at `https://fillmorechristian-website.pages.dev/`
@@ -83,7 +83,7 @@ If the feed URL changes, add an `<itunes:new-feed-url>` tag and a 301 redirect f
 Cloudflare R2 preparation scripts are included. The manifest and dry runs are safe before Cloudflare authorization:
 
 ```powershell
-.\scripts\build-r2-audio-manifest.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
+.\scripts\build-r2-audio-manifest.ps1 -BaseAudioUrl "https://www.fillmorechristian.org/media"
 .\scripts\upload-podcast-audio-to-r2.ps1 -Bucket fillmore-christian-sermons -DryRun
 .\scripts\test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -DryRun
 ```
@@ -96,13 +96,11 @@ The real upload and R2 hash verification were completed on June 1, 2026:
 .\scripts\test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -VerifyHashes
 ```
 
-After `media.fillmorechristian.org` is connected to the R2 bucket and public HTTPS audio is verified, rewrite the feed and run the public checks:
+The Cloudflare Pages project binds the R2 bucket as `SERMON_AUDIO` and serves audio at `/media/<object-key>`. After DNS cutover makes `www.fillmorechristian.org` point to Cloudflare Pages, run the public checks:
 
 ```powershell
 npm run complete:cloudflare-cutover
-npm run configure:r2-media-domain -- -VerifyAllPublicMedia
 .\scripts\test-r2-public-audio.ps1 -All
-.\scripts\rewrite-podcast-audio-urls.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
 .\scripts\test-podcast-media.ps1 -All
 ```
 
@@ -113,9 +111,9 @@ npm run migrate:cloudflare-audio -- -DryRun
 npm run migrate:cloudflare-audio -- -SkipUpload -VerifyAllPublicMedia
 ```
 
-It keeps the same personal GitHub owner guard as the deploy script, uploads and verifies the R2 audio backup, verifies the public media hostname before rewriting the RSS feeds, regenerates sermon pages, builds `dist`, and runs strict local checks.
+It keeps the same personal GitHub owner guard as the deploy script, uploads and verifies the R2 audio backup, rewrites the RSS feeds to the owned Pages media route, regenerates sermon pages, builds `dist`, and runs strict local checks.
 
-The manifest, upload dry run, and R2 verifier dry run are safe before Cloudflare authorization. The real R2 upload is complete; do not rewrite the RSS feed until the public media hostname is active and `scripts\test-r2-public-audio.ps1 -All` passes.
+The manifest, upload dry run, and R2 verifier dry run are safe before Cloudflare authorization. The real R2 upload is complete; the Cloudflare Pages deployment now carries the R2 binding and feed rewrite, but production cancellation still waits for DNS cutover and `scripts\test-r2-public-audio.ps1 -All`.
 
 ### Step 3: Deploy Website To Cloudflare Pages
 
@@ -186,7 +184,7 @@ Domain registrar: Squarespace Domains, formerly Google Domains.
 - Login: https://domains.squarespace.com
 - Domain: `fillmorechristian.org`
 - Renewal notice: auto-renews June 15, 2026 for $15.00; disable by June 14 only if transfer/cutover is safe.
-- Current blocker: `fillmorechristian.org` is added to Cloudflare DNS but still pending. Verify the Cloudflare DNS records, then update Squarespace nameservers to `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`. `media.fillmorechristian.org` still needs to be connected to the R2 bucket after the zone is active before the podcast feed can move off TheChurchCo audio.
+- Current blocker: `fillmorechristian.org` is added to Cloudflare DNS but still pending. Verify the Cloudflare DNS records, then update Squarespace nameservers to `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`. The podcast feed has moved off TheChurchCo audio in the Cloudflare Pages build; public audio verification waits for DNS to point `www.fillmorechristian.org` at Pages.
 
 DNS changes needed:
 
@@ -195,7 +193,7 @@ DNS changes needed:
 3. In Squarespace, update the domain nameservers to `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`.
 4. In Cloudflare Pages, confirm custom domains for `www` and apex become active.
 5. Verify email still works before changing or deleting any mail records.
-6. After Cloudflare DNS is active, configure `media.fillmorechristian.org` on the R2 bucket and verify public audio.
+6. After Cloudflare DNS is active, verify public audio through `https://www.fillmorechristian.org/media/...`.
 7. After production website/feed/media are verified, transfer the registrar from Squarespace to Cloudflare Registrar.
 
 Current public DNS can be snapshotted with:

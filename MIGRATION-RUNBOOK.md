@@ -61,11 +61,11 @@ Current state is safe for cutover but not safe for canceling TheChurchCo:
 - The RSS feed is preserved locally and will continue to publish from `www.fillmorechristian.org`.
 - The historical MP3 files are backed up locally and hash-inventoried.
 - Podcast artwork is hosted by the static site at `https://www.fillmorechristian.org/images/podcast-cover.jpg`.
-- The live feed enclosures still point to TheChurchCo's S3 URLs, so audio could break if TheChurchCo removes those files after cancellation.
+- The Cloudflare Pages feed enclosures now point to `https://www.fillmorechristian.org/media/...`; after DNS cutover those URLs are served by the Pages Function backed by the FCC R2 bucket.
 
 Before canceling TheChurchCo, choose and complete one of these:
 
-1. **Cloudflare R2 audio hosting:** upload `exports/thechurchco-podcast/audio/` to R2, put it behind a public hostname such as `media.fillmorechristian.org`, then rewrite RSS enclosure URLs to that hostname.
+1. **Cloudflare R2 audio hosting:** upload `exports/thechurchco-podcast/audio/` to R2, bind that bucket to Cloudflare Pages as `SERMON_AUDIO`, then serve RSS enclosure URLs from `https://www.fillmorechristian.org/media/...`.
 2. **Podcast-host import:** import the preserved RSS feed into a dedicated podcast host, verify all audio imported, then add `<itunes:new-feed-url>` and redirects per Apple Podcasts guidance.
 
 Cloudflare R2 keeps the church infrastructure under the same Cloudflare account as the website and domain, so it is the cleanest ownership model if the church is comfortable with low-cost object storage.
@@ -75,7 +75,7 @@ Prepared scripts for the R2 path:
 ```powershell
 # Build the deterministic object manifest first. This validates local files,
 # inventory hashes, duplicate feed references, object keys, and public URLs.
-.\scripts\build-r2-audio-manifest.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
+.\scripts\build-r2-audio-manifest.ps1 -BaseAudioUrl "https://www.fillmorechristian.org/media"
 
 # Safe pre-auth rehearsal. This does not contact Cloudflare.
 .\scripts\upload-podcast-audio-to-r2.ps1 -Bucket fillmore-christian-sermons -DryRun
@@ -87,13 +87,12 @@ Prepared scripts for the R2 path:
 .\scripts\test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -SampleCount 5
 .\scripts\test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -VerifyHashes
 
-# After the bucket is reachable through the public hostname, but before rewriting RSS:
-npm run configure:r2-media-domain -- -VerifyAllPublicMedia
+# After DNS cutover makes www.fillmorechristian.org point to Cloudflare Pages:
 .\scripts\test-r2-public-audio.ps1 -SampleCount 5
 .\scripts\test-r2-public-audio.ps1 -All
 
-# After the public hostname is verified:
-.\scripts\rewrite-podcast-audio-urls.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
+# The feed has already been rewritten to the owned Pages media route:
+.\scripts\rewrite-podcast-audio-urls.ps1 -BaseAudioUrl "https://www.fillmorechristian.org/media"
 ```
 
 After Cloudflare authentication, the guarded one-command local preparation path is:
@@ -101,11 +100,11 @@ After Cloudflare authentication, the guarded one-command local preparation path 
 ```powershell
 npm run migrate:cloudflare-audio -- -DryRun
 
-# After `npx wrangler login`, R2 bucket/custom media hostname setup, and a clean tree:
+# After `npx wrangler login`, R2 upload, Pages R2 binding, and a clean tree:
 npm run migrate:cloudflare-audio -- -CreateBucket
 ```
 
-The media-domain command uses Cloudflare's R2 custom-domain API, refuses the work GitHub owner, waits for the Cloudflare zone to be active before attaching `media.fillmorechristian.org`, then verifies public audio URLs before the feed is rewritten.
+The active media path is the Cloudflare Pages Function route `/media/<object-key>`, backed by the `SERMON_AUDIO` R2 binding in `wrangler.toml`.
 
 After Squarespace nameservers have been changed to Cloudflare, the guarded continuation command is:
 
@@ -113,20 +112,20 @@ After Squarespace nameservers have been changed to Cloudflare, the guarded conti
 npm run complete:cloudflare-cutover
 ```
 
-It verifies Cloudflare nameservers, runs the post-cutover DNS gate, attaches and verifies the R2 media hostname, then rewrites local podcast feed enclosures only after public audio passes. If DNS is still propagating, use `npm run complete:cloudflare-cutover -- -WaitForDns`.
+It verifies Cloudflare nameservers, runs the post-cutover DNS gate, verifies the R2-backed Pages `/media/` URLs, and then runs strict independent-audio readiness checks. If DNS is still propagating, use `npm run complete:cloudflare-cutover -- -WaitForDns`.
 
-The migration command refuses the work GitHub owner, requires `https://` audio URLs, verifies Cloudflare authentication, can create the R2 bucket, uploads and hash-verifies all 70 audio objects, verifies sampled R2 public URLs by default before rewriting the podcast feeds, rewrites all three RSS feeds to `https://media.fillmorechristian.org`, regenerates episode pages/sermon archive/homepage latest-sermon links, builds `dist`, and runs strict local readiness plus the Cloudflare Pages local preflight. Use `-VerifyAllPublicMedia` before cancellation for a full public media sweep. `-SkipPublicMediaVerify` exists only as an explicit escape hatch and should not be used before canceling TheChurchCo.
+The migration command refuses the work GitHub owner, requires `https://` audio URLs, verifies Cloudflare authentication, can create the R2 bucket, uploads and hash-verifies all 70 audio objects, rewrites all three RSS feeds to `https://www.fillmorechristian.org/media`, regenerates episode pages/sermon archive/homepage latest-sermon links, builds `dist`, and runs strict local readiness plus the Cloudflare Pages local preflight. Use `npm run complete:cloudflare-cutover` and `npm run verify:cancel-thechurchco` before cancellation for a full production media sweep.
 
 After rewriting enclosure URLs, re-run local verification and push the RSS changes before canceling TheChurchCo.
 
 R2 preparation status on 2026-06-01:
 
 - `exports/thechurchco-podcast/r2-audio-manifest.csv` maps 70 local objects to 71 RSS enclosure references.
-- The manifest totals 2,315,228,157 bytes and includes the intended `https://media.fillmorechristian.org/...` public URLs.
+- The manifest totals 2,315,228,157 bytes and includes the intended `https://www.fillmorechristian.org/media/...` public URLs.
 - R2 is enabled in the Cloudflare account, bucket `fillmore-christian-sermons` exists, and all 70 audio objects were uploaded to Standard storage on June 1, 2026.
 - `scripts/test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -VerifyHashes` downloaded and SHA-256 verified all 70 R2 objects after upload.
-- `scripts/test-r2-public-audio.ps1` can verify the public `media.fillmorechristian.org` URLs from the manifest before the RSS feeds are rewritten, and the guarded migration command runs that public preflight by default.
-- The remaining R2 blocker is public access: after `fillmorechristian.org` is active in Cloudflare DNS, run `npm run complete:cloudflare-cutover`, then commit, push, and deploy the generated RSS/page updates.
+- `scripts/test-r2-public-audio.ps1` verifies the public `www.fillmorechristian.org/media/...` URLs from the manifest after DNS cutover.
+- The remaining blocker is DNS: after `fillmorechristian.org` is active in Cloudflare DNS, run `npm run complete:cloudflare-cutover`, then `npm run verify:cancel-thechurchco`.
 
 Podcast metadata cleanup:
 
@@ -171,7 +170,7 @@ The expected pre-R2 result is all checks passing with one warning: podcast audio
 The readiness script also checks that the `origin` remote and active `gh` account are using `wakefieldhare-collab`, not `wake-byte`.
 
 ```powershell
-.\scripts\build-r2-audio-manifest.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
+.\scripts\build-r2-audio-manifest.ps1 -BaseAudioUrl "https://www.fillmorechristian.org/media"
 .\scripts\test-migration-readiness.ps1 -RequireIndependentAudio
 ```
 
@@ -206,7 +205,7 @@ Before canceling TheChurchCo, run the stricter cancellation gate against product
 npm run verify:cancel-thechurchco -- -VerifyAllPodcastMedia
 ```
 
-This gate is expected to fail until Cloudflare nameservers are active, the static site is live at `https://www.fillmorechristian.org`, mail DNS is preserved, and the production podcast feed has been rewritten so all audio enclosures use `https://media.fillmorechristian.org` instead of TheChurchCo.
+This gate is expected to fail until Cloudflare nameservers are active, the static site is live at `https://www.fillmorechristian.org`, mail DNS is preserved, and the production podcast feed has been rewritten so all audio enclosures use `https://www.fillmorechristian.org/media/...` instead of TheChurchCo.
 
 ## Cloudflare Pages Status
 
@@ -263,7 +262,7 @@ For Cloudflare Pages, use the Pages custom-domain instructions generated by Clou
 - `www` -> Cloudflare Pages custom domain target
 - Apex `fillmorechristian.org` -> Cloudflare Pages apex custom domain setup
 
-For independent sermon audio, configure `media.fillmorechristian.org` as the public custom domain for the R2 sermon-audio bucket. Verify sampled and then all public `media.fillmorechristian.org` URLs before rewriting the podcast feed enclosures away from TheChurchCo.
+For independent sermon audio, use the Pages `/media/<object-key>` route backed by the `SERMON_AUDIO` R2 bucket binding. Verify sampled and then all public `https://www.fillmorechristian.org/media/...` URLs before canceling TheChurchCo.
 
 Current public DNS can be snapshotted with:
 
@@ -318,7 +317,7 @@ Latest snapshot on 2026-06-01 found:
 - Cloudflare zone: `fillmorechristian.org` exists with status `pending`.
 - Cloudflare-assigned nameservers: `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`.
 - Pages custom domains: `fillmorechristian.org` and `www.fillmorechristian.org` are attached and pending.
-- R2 custom domain: `media.fillmorechristian.org` must be configured after the Cloudflare zone is active; the API rejects the pending zone for R2 custom-domain setup.
+- R2 audio: the Pages `/media/` route is deployed with an R2 binding; public verification waits for the Cloudflare nameserver cutover so `www.fillmorechristian.org/media/...` reaches Pages.
 - NS: `ns-cloud-d1.googledomains.com` through `ns-cloud-d4.googledomains.com`
 - A: `fillmorechristian.org` -> `77.83.141.16`
 - CNAME: `www.fillmorechristian.org` -> `ssl.thechurchco.com`
