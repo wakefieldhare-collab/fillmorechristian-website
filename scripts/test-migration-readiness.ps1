@@ -284,6 +284,19 @@ if (Test-Path -LiteralPath $sermonsPath) {
         Add-Check "Static sermon archive" "FAIL" "$staticCards static cards, expected $expectedCards from the podcast feed"
     }
 
+    $cardsWithYear = ([regex]::Matches($sermonsHtml, 'class="sermon-item[^"]*"\s+data-year="\d{4}"')).Count
+    if ($expectedCards -gt 0 -and $cardsWithYear -eq $expectedCards) {
+        Add-Check "Sermon year filter data" "OK" "$cardsWithYear static cards include feed-derived years"
+    } else {
+        Add-Check "Sermon year filter data" "FAIL" "$cardsWithYear static card year value(s), expected $expectedCards"
+    }
+
+    if ($sermonsHtml -match 'id="sermon-year"') {
+        Add-Check "Sermon year filter control" "OK" "Archive page includes year filter control"
+    } else {
+        Add-Check "Sermon year filter control" "FAIL" "Archive page is missing #sermon-year"
+    }
+
     $downloadLinks = ([regex]::Matches($sermonsHtml, 'class="sermon-download"')).Count
     $expectedDownloadLinks = if ($feedEnclosureCounts.ContainsKey($feedPaths[0])) { $feedEnclosureCounts[$feedPaths[0]] } else { 0 }
     if ($expectedDownloadLinks -gt 0 -and $downloadLinks -eq $expectedDownloadLinks) {
@@ -724,6 +737,13 @@ if (-not $SkipRemote) {
                     Add-Check "Staging sermon card count" "FAIL" "$remoteCards remote cards, expected $($feedItemCounts[$feedPaths[0]])"
                 } else {
                     Add-Check "Staging sermon card count" "OK" "$remoteCards sermon cards"
+                }
+
+                $remoteCardsWithYear = ([regex]::Matches($response.Content, 'class="sermon-item[^"]*"\s+data-year="\d{4}"')).Count
+                if ($feedItemCounts.ContainsKey($feedPaths[0]) -and $remoteCardsWithYear -eq $feedItemCounts[$feedPaths[0]] -and $response.Content -match 'id="sermon-year"') {
+                    Add-Check "Staging sermon year filter" "OK" "$remoteCardsWithYear sermon cards include years and filter control is present"
+                } else {
+                    Add-Check "Staging sermon year filter" "FAIL" "$remoteCardsWithYear sermon card year value(s); filter control present: $($response.Content -match 'id=`"sermon-year`"')"
                 }
 
                 if ($response.Content -match "thechurchcodaniel|description description") {
