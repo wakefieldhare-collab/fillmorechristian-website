@@ -1047,14 +1047,15 @@ if (-not $SkipRemote) {
                 $hasPodcastAlternate = $response.Content -match "<link\s+rel=`"alternate`"\s+type=`"application/rss\+xml`"\s+title=`"Fillmore Christian Podcast`"\s+href=`"https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast`""
                 $hasOpenGraph = $response.Content -match "<meta\s+property=`"og:title`"" -and $response.Content -match "<meta\s+property=`"og:image`""
                 $hasTwitter = $response.Content -match "<meta\s+name=`"twitter:card`""
+                $hasNoGoogleFonts = $response.Content -notmatch "fonts\.googleapis\.com|fonts\.gstatic\.com"
                 $faviconHref = if ($path -eq $sampleEpisodePath) { "../../favicon\.svg" } else { "favicon\.svg" }
                 $manifestHref = if ($path -eq $sampleEpisodePath) { "../../site\.webmanifest" } else { "site\.webmanifest" }
                 $hasBrandAssets = $response.Content -match "<link\s+rel=`"icon`"\s+href=`"$faviconHref`"\s+type=`"image/svg\+xml`"" -and
                     $response.Content -match "<link\s+rel=`"manifest`"\s+href=`"$manifestHref`"" -and
                     $response.Content -match "<meta\s+name=`"theme-color`"\s+content=`"#173247`""
 
-                if ($hasCanonical -and $hasPodcastAlternate -and $hasOpenGraph -and $hasTwitter -and $hasBrandAssets) {
-                    Add-Check "Staging metadata: /$path" "OK" "Canonical, podcast RSS, brand icon, web app manifest, Open Graph, and Twitter metadata present"
+                if ($hasCanonical -and $hasPodcastAlternate -and $hasOpenGraph -and $hasTwitter -and $hasBrandAssets -and $hasNoGoogleFonts) {
+                    Add-Check "Staging metadata: /$path" "OK" "Canonical, podcast RSS, brand icon, web app manifest, Open Graph, Twitter, and self-hosted font metadata present"
                 } else {
                     $metadataDetails = @()
                     if (-not $hasCanonical) { $metadataDetails += "canonical" }
@@ -1062,6 +1063,7 @@ if (-not $SkipRemote) {
                     if (-not $hasBrandAssets) { $metadataDetails += "brand icon or web app manifest" }
                     if (-not $hasOpenGraph) { $metadataDetails += "Open Graph" }
                     if (-not $hasTwitter) { $metadataDetails += "Twitter" }
+                    if (-not $hasNoGoogleFonts) { $metadataDetails += "self-hosted fonts" }
                     Add-Check "Staging metadata: /$path" "FAIL" "Missing on staging: $($metadataDetails -join ', ')"
                 }
 
