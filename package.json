@@ -9,6 +9,7 @@
     "verify:dns-import": "powershell -ExecutionPolicy Bypass -File scripts/test-cloudflare-dns-import-readiness.ps1",
     "verify:domain-transfer": "powershell -ExecutionPolicy Bypass -File scripts/test-domain-transfer-readiness.ps1",
     "verify:r2-public-audio": "powershell -ExecutionPolicy Bypass -File scripts/test-r2-public-audio.ps1",
+    "verify:r2-pages-audio": "powershell -ExecutionPolicy Bypass -File scripts/test-r2-public-audio.ps1 -BaseUrlOverride https://fillmorechristian-website.pages.dev/media",
     "verify:cancel-thechurchco": "powershell -ExecutionPolicy Bypass -File scripts/test-thechurchco-cancellation-readiness.ps1"
   },
   "devDependencies": {}

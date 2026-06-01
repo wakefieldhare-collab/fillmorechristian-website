@@ -3,7 +3,6 @@ param(
     [string]$AccountId = "377eaebfa77447d2f7906a1e0c1b788c",
     [string]$PagesProject = "fillmorechristian-website",
     [string]$Bucket = "fillmore-christian-sermons",
-    [string]$MediaHostname = "media.fillmorechristian.org",
     [string]$PreserveCsvPath = "exports\dns\fillmorechristian.org-cloudflare-preserve-records.csv",
     [string]$PreserveZonePath = "exports\dns\fillmorechristian.org-cloudflare-preserve-records.zone"
 )
@@ -303,9 +302,9 @@ if ($cloudflareToken) {
 }
 
 if ($cloudflareZoneStatus -eq "pending" -and $assignedNameservers.Count -gt 0) {
-    Add-Check "Next dashboard step" "INFO" "In Cloudflare DNS for $Domain, verify/import the preserve records, remove old TheChurchCo web targets if present, then set Squarespace nameservers to $($assignedNameservers -join ', '). Configure $MediaHostname on the R2 bucket after the zone is active."
+    Add-Check "Next dashboard step" "INFO" "In Cloudflare DNS for $Domain, verify/import the preserve records, remove old TheChurchCo web targets if present, then set Squarespace nameservers to $($assignedNameservers -join ', '). R2 audio is served through the Pages /media route."
 } else {
-    Add-Check "Next dashboard step" "INFO" "Add $Domain at https://dash.cloudflare.com/$AccountId/domains, import the preserve records, then configure Pages custom domains and $MediaHostname on the R2 bucket. Do not update Squarespace nameservers until records are verified."
+    Add-Check "Next dashboard step" "INFO" "Add $Domain at https://dash.cloudflare.com/$AccountId/domains, import the preserve records, then configure Pages custom domains. Do not update Squarespace nameservers until records are verified."
 }
 
 $checks | Format-Table -AutoSize

@@ -71,12 +71,15 @@ The archive also includes generated static pages for every feed item under `/epi
 
 Older podcast GUID/query links such as `/?post_type=podcasts&p=603` are preserved by the generated `functions/index.js` Cloudflare Pages Function and `_routes.json`.
 
-#### Long-Term: Pick Permanent Audio Hosting
+#### Long-Term: FCC-Owned Audio Hosting
 
-The copied feed still points to TheChurchCo-hosted MP3 files. Before canceling TheChurchCo, either:
+The permanent audio-hosting path is now Cloudflare R2 plus the FCC-owned feed URL. The copied feed has been rewritten so all current audio enclosures use:
 
-1. Import the show into a podcast host such as Spotify for Creators, then use its RSS feed going forward, or
-2. Move the MP3 files to durable storage/CDN and update the copied feed enclosure URLs.
+```text
+https://www.fillmorechristian.org/media/<object-key>
+```
+
+Cloudflare Pages serves those URLs through a `/media/<object-key>` Pages Function backed by the `SERMON_AUDIO` R2 bucket binding. The same route is already verifiable on the Pages preview domain before DNS cutover.
 
 If the feed URL changes, add an `<itunes:new-feed-url>` tag and a 301 redirect from the current feed URL to the new feed URL for at least four weeks.
 
@@ -131,9 +134,7 @@ npm run build
 .\scripts\test-cloudflare-pages-local.ps1
 ```
 
-The only expected warning before R2 setup is that the podcast audio enclosures still point at TheChurchCo.
-
-The readiness script also fails if the Git remote or active GitHub CLI account points at `wake-byte`.
+The readiness script fails if the Git remote or active GitHub CLI account points at `wake-byte`, and it requires the independent R2-backed podcast audio route.
 
 After Cloudflare authorization, deploy with the guarded command:
 
@@ -144,6 +145,12 @@ npm run deploy:cloudflare
 It builds, verifies readiness, runs the local Cloudflare Pages preflight, checks the personal GitHub remote, and then deploys `dist` to the `fillmorechristian-website` Cloudflare Pages project.
 
 After the R2 audio wrapper rewrites feeds/pages, commit and push those changes to the personal GitHub repo before deploying.
+
+To verify R2 audio on the current Cloudflare Pages preview before DNS cutover:
+
+```powershell
+npm run verify:r2-pages-audio
+```
 
 To spot-check current or rewritten podcast audio URLs:
 
@@ -233,17 +240,9 @@ As of June 1, 2026, preserve at least the Mailgun MX records and these TXT/CNAME
 
 Do not delete the old TheChurchCo website records until Cloudflare Pages custom domains are configured and ready to replace them.
 
-### Step 7: Add Church Logo (Optional)
+### Step 7: Maintain Church Logo
 
-1. Save the church logo as `images/logo.png`.
-2. In the navigation on each page, add an `<img>` tag inside `.nav-brand`:
-
-   ```html
-   <a href="index.html" class="nav-brand">
-     <img src="images/logo.png" alt="FCC Logo">
-     <div class="nav-brand-text">...</div>
-   </a>
-   ```
+The official FCC navigation logo is published at `images/fcc-logo.png` and is checked by the local Pages verifier. Keep that file as the navigation logo source unless the church intentionally replaces it with a newer official mark.
 
 ## Updating Content
 
@@ -269,4 +268,4 @@ Do not delete the old TheChurchCo website records until Cloudflare Pages custom 
 - Contact form: currently mailto-based, with no third-party form service.
 - Calendar: free on Google Calendar.
 - Domain renewal: Cloudflare Registrar at-cost after transfer.
-- Podcast hosting: depends on final host choice; do not rely on TheChurchCo-hosted MP3s after cancellation.
+- Podcast hosting: Cloudflare R2 storage plus the FCC-owned Pages `/media` route.

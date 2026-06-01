@@ -1,5 +1,6 @@
 param(
     [string]$ManifestPath = "exports\thechurchco-podcast\r2-audio-manifest.csv",
+    [string]$BaseUrlOverride = "",
     [int]$SampleCount = 5,
     [switch]$All,
     [int]$TimeoutSec = 20,
@@ -60,6 +61,70 @@ function Normalize-AudioType {
     return $type
 }
 
+function Test-RangeResponse {
+    param(
+        [string]$Url,
+        [int64]$ExpectedLength,
+        [int]$TimeoutSec
+    )
+
+    $request = [System.Net.HttpWebRequest]::Create($Url)
+    $request.Method = "GET"
+    $request.Timeout = $TimeoutSec * 1000
+    $request.ReadWriteTimeout = $TimeoutSec * 1000
+    $request.AddRange(0, 1023)
+
+    $response = $null
+    try {
+        $response = $request.GetResponse()
+        $statusCode = [int]$response.StatusCode
+        $contentRange = [string]$response.Headers["Content-Range"]
+        $contentLength = [int64]$response.ContentLength
+        $issues = New-Object System.Collections.Generic.List[string]
+
+        if ($statusCode -ne 206) {
+            $issues.Add("range request returned HTTP $statusCode")
+        }
+        if ($contentLength -ne 1024) {
+            $issues.Add("range request returned $contentLength bytes")
+        }
+        if ($contentRange -notmatch "^bytes 0-1023/$ExpectedLength$") {
+            $issues.Add("Content-Range is $contentRange")
+        }
+
+        return [pscustomobject]@{
+            Ok = ($issues.Count -eq 0)
+            Details = if ($issues.Count -eq 0) { "range 0-1023 OK" } else { $issues -join "; " }
+        }
+    } catch {
+        return [pscustomobject]@{
+            Ok = $false
+            Details = $_.Exception.Message
+        }
+    } finally {
+        if ($response) {
+            $response.Close()
+        }
+    }
+}
+
+function ConvertTo-PublicUrl {
+    param(
+        [string]$ObjectKey,
+        [string]$ManifestUrl,
+        [string]$BaseUrl
+    )
+
+    if (-not $BaseUrl) {
+        return $ManifestUrl
+    }
+
+    $escapedKey = (($ObjectKey -replace "\\", "/").Split("/") | ForEach-Object {
+        [Uri]::EscapeDataString($_)
+    }) -join "/"
+    return $BaseUrl.TrimEnd("/") + "/" + $escapedKey
+}
+
 if (-not (Test-Path -LiteralPath $manifestFullPath)) {
     throw "R2 audio manifest not found: $manifestFullPath. Generate it first with scripts\build-r2-audio-manifest.ps1."
 }
@@ -87,7 +152,7 @@ $selectedRows = if ($All) {
 $results = New-Object System.Collections.Generic.List[object]
 
 foreach ($row in $selectedRows) {
-    $url = [string]$row.PublicUrl
+    $url = ConvertTo-PublicUrl -ObjectKey ([string]$row.ObjectKey) -ManifestUrl ([string]$row.PublicUrl) -BaseUrl $BaseUrlOverride
     if (-not $url.StartsWith("https://")) {
         Add-Result $results "FAIL" $row.ObjectKey $url "Public URL is not HTTPS"
         continue
@@ -128,7 +193,12 @@ foreach ($row in $selectedRows) {
             $warnings.Add("Accept-Ranges is $acceptRanges")
         }
 
-        $detailParts = @("HTTP $statusCode", "$contentType", "$contentLength bytes")
+        $rangeResult = Test-RangeResponse -Url $url -ExpectedLength $expectedLength -TimeoutSec $TimeoutSec
+        if (-not $rangeResult.Ok) {
+            $issues.Add($rangeResult.Details)
+        }
+
+        $detailParts = @("HTTP $statusCode", "$contentType", "$contentLength bytes", $rangeResult.Details)
         if ([int]$row.FeedReferenceCount -gt 1) {
             $detailParts += "$($row.FeedReferenceCount) feed references"
         }
@@ -161,4 +231,3 @@ $warnings = @($results | Where-Object { $_.Status -eq "WARN" })
 if ($warnings.Count -gt 0) {
     Write-Warning "$($warnings.Count) public R2 audio warning(s) remain."
 }
-

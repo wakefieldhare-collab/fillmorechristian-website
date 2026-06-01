@@ -42,7 +42,7 @@ The script writes:
 - `exports/thechurchco-podcast/manifest.csv` with episode metadata.
 - `exports/thechurchco-podcast/audio/` with downloaded MP3 backups when `-DownloadAudio` is used.
 
-Do not cancel TheChurchCo until the audio files are backed up and a permanent podcast-hosting decision is made. The copied feed currently keeps enclosure URLs pointed at TheChurchCo's S3-hosted MP3 files; those may stop working after cancellation.
+Do not cancel TheChurchCo until the audio files are backed up, the FCC-owned feed is verified in production, and the R2-backed `/media` route has passed a public media sweep.
 
 Export status on 2026-06-01:
 
@@ -62,13 +62,9 @@ Current state is safe for cutover but not safe for canceling TheChurchCo:
 - The historical MP3 files are backed up locally and hash-inventoried.
 - Podcast artwork is hosted by the static site at `https://www.fillmorechristian.org/images/podcast-cover.jpg`.
 - The Cloudflare Pages feed enclosures now point to `https://www.fillmorechristian.org/media/...`; after DNS cutover those URLs are served by the Pages Function backed by the FCC R2 bucket.
+- Before DNS cutover, the same R2-backed media route can be verified on `https://fillmorechristian-website.pages.dev/media/...`.
 
-Before canceling TheChurchCo, choose and complete one of these:
-
-1. **Cloudflare R2 audio hosting:** upload `exports/thechurchco-podcast/audio/` to R2, bind that bucket to Cloudflare Pages as `SERMON_AUDIO`, then serve RSS enclosure URLs from `https://www.fillmorechristian.org/media/...`.
-2. **Podcast-host import:** import the preserved RSS feed into a dedicated podcast host, verify all audio imported, then add `<itunes:new-feed-url>` and redirects per Apple Podcasts guidance.
-
-Cloudflare R2 keeps the church infrastructure under the same Cloudflare account as the website and domain, so it is the cleanest ownership model if the church is comfortable with low-cost object storage.
+Cloudflare R2 is the selected long-term audio host. It keeps the church infrastructure under the same Cloudflare account as the website and domain while preserving the existing Apple Podcasts feed URL.
 
 Prepared scripts for the R2 path:
 
@@ -90,6 +86,10 @@ Prepared scripts for the R2 path:
 # After DNS cutover makes www.fillmorechristian.org point to Cloudflare Pages:
 .\scripts\test-r2-public-audio.ps1 -SampleCount 5
 .\scripts\test-r2-public-audio.ps1 -All
+
+# Before DNS cutover, verify the same R2 objects through the Pages preview route:
+npm run verify:r2-pages-audio
+npm run verify:r2-pages-audio -- -All
 
 # The feed has already been rewritten to the owned Pages media route:
 .\scripts\rewrite-podcast-audio-urls.ps1 -BaseAudioUrl "https://www.fillmorechristian.org/media"
@@ -124,6 +124,7 @@ R2 preparation status on 2026-06-01:
 - The manifest totals 2,315,228,157 bytes and includes the intended `https://www.fillmorechristian.org/media/...` public URLs.
 - R2 is enabled in the Cloudflare account, bucket `fillmore-christian-sermons` exists, and all 70 audio objects were uploaded to Standard storage on June 1, 2026.
 - `scripts/test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -VerifyHashes` downloaded and SHA-256 verified all 70 R2 objects after upload.
+- `npm run verify:r2-pages-audio` verifies the same objects through `https://fillmorechristian-website.pages.dev/media/...` before production DNS cutover.
 - `scripts/test-r2-public-audio.ps1` verifies the public `www.fillmorechristian.org/media/...` URLs from the manifest after DNS cutover.
 - The remaining blocker is DNS: after `fillmorechristian.org` is active in Cloudflare DNS, run `npm run complete:cloudflare-cutover`, then `npm run verify:cancel-thechurchco`.
 
@@ -165,13 +166,12 @@ npm run build
 .\scripts\test-migration-readiness.ps1
 ```
 
-The expected pre-R2 result is all checks passing with one warning: podcast audio enclosures still point at TheChurchCo. After R2 audio rewrite, run the stricter form:
-
 The readiness script also checks that the `origin` remote and active `gh` account are using `wakefieldhare-collab`, not `wake-byte`.
 
 ```powershell
 .\scripts\build-r2-audio-manifest.ps1 -BaseAudioUrl "https://www.fillmorechristian.org/media"
 .\scripts\test-migration-readiness.ps1 -RequireIndependentAudio
+npm run verify:r2-pages-audio
 ```
 
 To verify Cloudflare-specific behavior locally, including `_redirects`, `_headers`, and the Pages Function for old podcast query links:
@@ -214,7 +214,7 @@ Cloudflare Pages project status on 2026-06-01:
 - Project: `fillmorechristian-website`
 - Production preview URL: `https://fillmorechristian-website.pages.dev/`
 - First deployed commit: `4431150 Add copyable calendar feed link`
-- Latest deployed commit: `5a1e1ce Add Cloudflare DNS import readiness check`
+- Latest deployed commit: run `npm run status:migration` or `git log -1 --oneline` after deployment.
 - Custom domains `fillmorechristian.org` and `www.fillmorechristian.org` are attached to the Pages project and pending Cloudflare DNS activation.
 - Current deployment source is the local guarded `npm run deploy:cloudflare` command, not a Cloudflare-connected GitHub integration.
 - The deployment publishes `_headers`, `_redirects`, `_routes.json`, and the generated Pages Function bundle.
