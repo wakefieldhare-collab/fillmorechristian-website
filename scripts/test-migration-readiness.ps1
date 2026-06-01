@@ -785,13 +785,20 @@ if (-not $SkipRemote) {
                     "https://www.fillmorechristian.org/$path"
                 }
 
-                if ($response.Content -match "<link\s+rel=`"canonical`"\s+href=`"$([regex]::Escape($expectedCanonical))`"" -and
-                    $response.Content -match "<meta\s+property=`"og:title`"" -and
-                    $response.Content -match "<meta\s+property=`"og:image`"" -and
-                    $response.Content -match "<meta\s+name=`"twitter:card`"") {
-                    Add-Check "Staging metadata: /$path" "OK" "Canonical, Open Graph, and Twitter metadata present"
+                $hasCanonical = $response.Content -match "<link\s+rel=`"canonical`"\s+href=`"$([regex]::Escape($expectedCanonical))`""
+                $hasPodcastAlternate = $response.Content -match "<link\s+rel=`"alternate`"\s+type=`"application/rss\+xml`"\s+title=`"Fillmore Christian Podcast`"\s+href=`"https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast`""
+                $hasOpenGraph = $response.Content -match "<meta\s+property=`"og:title`"" -and $response.Content -match "<meta\s+property=`"og:image`""
+                $hasTwitter = $response.Content -match "<meta\s+name=`"twitter:card`""
+
+                if ($hasCanonical -and $hasPodcastAlternate -and $hasOpenGraph -and $hasTwitter) {
+                    Add-Check "Staging metadata: /$path" "OK" "Canonical, podcast RSS, Open Graph, and Twitter metadata present"
                 } else {
-                    Add-Check "Staging metadata: /$path" "FAIL" "Missing required page metadata on staging"
+                    $metadataDetails = @()
+                    if (-not $hasCanonical) { $metadataDetails += "canonical" }
+                    if (-not $hasPodcastAlternate) { $metadataDetails += "podcast RSS autodiscovery" }
+                    if (-not $hasOpenGraph) { $metadataDetails += "Open Graph" }
+                    if (-not $hasTwitter) { $metadataDetails += "Twitter" }
+                    Add-Check "Staging metadata: /$path" "FAIL" "Missing on staging: $($metadataDetails -join ', ')"
                 }
 
                 if ($path -eq $sampleEpisodePath) {
