@@ -184,16 +184,17 @@ Domain registrar: Squarespace Domains, formerly Google Domains.
 - Login: https://domains.squarespace.com
 - Domain: `fillmorechristian.org`
 - Renewal notice: auto-renews June 15, 2026 for $15.00; disable by June 14 only if transfer/cutover is safe.
-- Current blocker: `fillmorechristian.org` still needs to be added to Cloudflare DNS, and `media.fillmorechristian.org` still needs to be connected to the R2 bucket before the podcast feed can move off TheChurchCo audio.
+- Current blocker: `fillmorechristian.org` is added to Cloudflare DNS but still pending. Verify the Cloudflare DNS records, then update Squarespace nameservers to `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`. `media.fillmorechristian.org` still needs to be connected to the R2 bucket after the zone is active before the podcast feed can move off TheChurchCo audio.
 
 DNS changes needed:
 
-1. Add `fillmorechristian.org` as a site in Cloudflare.
-2. Import/screenshot every current Squarespace DNS record first, especially Mailgun MX/TXT records.
-3. In Squarespace, update the domain nameservers to Cloudflare's assigned nameservers.
-4. In Cloudflare Pages, finish the custom domain setup for `www` and apex.
+1. In Cloudflare DNS for `fillmorechristian.org`, verify/import every preserve record first, especially Mailgun MX/TXT records.
+2. Confirm old TheChurchCo web records are not carried forward except as records to replace.
+3. In Squarespace, update the domain nameservers to `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`.
+4. In Cloudflare Pages, confirm custom domains for `www` and apex become active.
 5. Verify email still works before changing or deleting any mail records.
-6. After Cloudflare DNS is active, transfer the registrar from Squarespace to Cloudflare Registrar.
+6. After Cloudflare DNS is active, configure `media.fillmorechristian.org` on the R2 bucket and verify public audio.
+7. After production website/feed/media are verified, transfer the registrar from Squarespace to Cloudflare Registrar.
 
 Current public DNS can be snapshotted with:
 

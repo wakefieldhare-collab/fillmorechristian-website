@@ -204,6 +204,8 @@ Cloudflare Pages project status on 2026-06-01:
 - Project: `fillmorechristian-website`
 - Production preview URL: `https://fillmorechristian-website.pages.dev/`
 - First deployed commit: `4431150 Add copyable calendar feed link`
+- Latest deployed commit: `5a1e1ce Add Cloudflare DNS import readiness check`
+- Custom domains `fillmorechristian.org` and `www.fillmorechristian.org` are attached to the Pages project and pending Cloudflare DNS activation.
 - Current deployment source is the local guarded `npm run deploy:cloudflare` command, not a Cloudflare-connected GitHub integration.
 - The deployment publishes `_headers`, `_redirects`, `_routes.json`, and the generated Pages Function bundle.
 
@@ -280,6 +282,10 @@ After Cloudflare assigns nameservers and Squarespace is updated, run the after-c
 
 Latest snapshot on 2026-06-01 found:
 
+- Cloudflare zone: `fillmorechristian.org` exists with status `pending`.
+- Cloudflare-assigned nameservers: `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`.
+- Pages custom domains: `fillmorechristian.org` and `www.fillmorechristian.org` are attached and pending.
+- R2 custom domain: `media.fillmorechristian.org` must be configured after the Cloudflare zone is active; the API rejects the pending zone for R2 custom-domain setup.
 - NS: `ns-cloud-d1.googledomains.com` through `ns-cloud-d4.googledomains.com`
 - A: `fillmorechristian.org` -> `77.83.141.16`
 - CNAME: `www.fillmorechristian.org` -> `ssl.thechurchco.com`

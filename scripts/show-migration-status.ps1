@@ -4,6 +4,9 @@ param(
     [string]$ExpectedGitHubOwner = "wakefieldhare-collab",
     [string]$ExpectedGitHubRepo = "fillmorechristian-website",
     [string]$ForbiddenGitHubOwner = "wake-byte",
+    [string]$CloudflareAccountId = "377eaebfa77447d2f7906a1e0c1b788c",
+    [string]$CloudflarePagesProject = "fillmorechristian-website",
+    [string]$R2Bucket = "fillmore-christian-sermons",
     [string]$ExpectedAudioHost = "media.fillmorechristian.org",
     [datetime]$RenewalDate = "2026-06-15",
     [datetime]$DisableAutoRenewDeadline = "2026-06-14",
@@ -87,6 +90,31 @@ function Get-ContentText {
     return [string]$Response.Content
 }
 
+function Get-WranglerOAuthToken {
+    $configPath = Join-Path $env:APPDATA "xdg.config\.wrangler\config\default.toml"
+    if (-not (Test-Path -LiteralPath $configPath)) {
+        return ""
+    }
+
+    $configText = Get-Content -Raw -LiteralPath $configPath
+    $match = [regex]::Match($configText, '(?m)^oauth_token\s*=\s*"([^"]+)"')
+    if ($match.Success) {
+        return $match.Groups[1].Value
+    }
+
+    return ""
+}
+
+function Invoke-CloudflareGet {
+    param(
+        [string]$Path,
+        [string]$Token
+    )
+
+    $headers = @{ Authorization = "Bearer $Token" }
+    return Invoke-RestMethod -Method Get -Headers $headers -Uri ("https://api.cloudflare.com/client/v4/" + $Path.TrimStart("/"))
+}
+
 $today = Get-Date
 $daysUntilRenewal = [int]($RenewalDate.Date - $today.Date).TotalDays
 $daysUntilDecision = [int]($DisableAutoRenewDeadline.Date - $today.Date).TotalDays
@@ -143,12 +171,16 @@ try {
 
 $wrangler = Get-WranglerInvocation
 $cloudflareAuthenticated = $false
+$cloudflareToken = ""
+$cloudflareZoneStatus = ""
+$cloudflareZoneNameservers = @()
 if ($null -eq $wrangler) {
     Add-Status "Cloudflare auth" "FAIL" "Wrangler is not available. Install or use npx wrangler."
 } else {
     $whoamiOutput = & $wrangler.Command @($wrangler.PrefixArgs) whoami 2>&1
     if ($LASTEXITCODE -eq 0 -and (($whoamiOutput -join "`n") -notmatch "not authenticated")) {
         $cloudflareAuthenticated = $true
+        $cloudflareToken = Get-WranglerOAuthToken
         Add-Status "Cloudflare auth" "OK" "$($wrangler.Label) is authenticated."
     } else {
         Add-Status "Cloudflare auth" "AUTH" "Run npx wrangler login before R2 upload, Pages deploy, DNS, or production cutover."
@@ -228,12 +260,32 @@ if (Test-Path -LiteralPath $r2ManifestPath) {
 
 if (-not $SkipNetwork) {
     if ($cloudflareAuthenticated -and $wrangler) {
+        if ($cloudflareToken) {
+            try {
+                $zoneResponse = Invoke-CloudflareGet -Token $cloudflareToken -Path "zones?name=$Domain&account.id=$CloudflareAccountId"
+                $zone = @($zoneResponse.result | Where-Object { $_.name -eq $Domain } | Select-Object -First 1)
+                if ($zone.Count -gt 0) {
+                    $cloudflareZoneStatus = [string]$zone[0].status
+                    $cloudflareZoneNameservers = @($zone[0].name_servers | ForEach-Object { [string]$_ })
+                    if ($cloudflareZoneStatus -eq "active") {
+                        Add-Status "Cloudflare zone" "OK" "$Domain is active in Cloudflare with nameservers: $($cloudflareZoneNameservers -join ', ')."
+                    } else {
+                        Add-Status "Cloudflare zone" "AUTH" "$Domain is in Cloudflare with status $cloudflareZoneStatus; assigned nameservers: $($cloudflareZoneNameservers -join ', ')."
+                    }
+                } else {
+                    Add-Status "Cloudflare zone" "AUTH" "$Domain has not been added to Cloudflare DNS."
+                }
+            } catch {
+                Add-Status "Cloudflare zone" "WARN" "Could not inspect Cloudflare zone metadata: $($_.Exception.Message)"
+            }
+        }
+
         try {
             $pagesOutput = (& $wrangler.Command @($wrangler.PrefixArgs) pages project list 2>&1) -join "`n"
-            if ($LASTEXITCODE -eq 0 -and $pagesOutput -match "fillmorechristian-website" -and $pagesOutput -match "fillmorechristian-website\.pages\.dev") {
-                Add-Status "Cloudflare Pages" "OK" "Project fillmorechristian-website is deployed at https://fillmorechristian-website.pages.dev/."
+            if ($LASTEXITCODE -eq 0 -and $pagesOutput -match [regex]::Escape($CloudflarePagesProject) -and $pagesOutput -match "$([regex]::Escape($CloudflarePagesProject))\.pages\.dev") {
+                Add-Status "Cloudflare Pages" "OK" "Project $CloudflarePagesProject is deployed at https://$CloudflarePagesProject.pages.dev/."
             } elseif ($LASTEXITCODE -eq 0) {
-                Add-Status "Cloudflare Pages" "WARN" "Could not find fillmorechristian-website in Pages project list."
+                Add-Status "Cloudflare Pages" "WARN" "Could not find $CloudflarePagesProject in Pages project list."
             } else {
                 Add-Status "Cloudflare Pages" "WARN" "Could not list Cloudflare Pages projects."
             }
@@ -241,13 +293,34 @@ if (-not $SkipNetwork) {
             Add-Status "Cloudflare Pages" "WARN" "Could not inspect Cloudflare Pages: $($_.Exception.Message)"
         }
 
+        if ($cloudflareToken) {
+            try {
+                $pagesDomainsResponse = Invoke-CloudflareGet -Token $cloudflareToken -Path "accounts/$CloudflareAccountId/pages/projects/$CloudflarePagesProject/domains"
+                $pagesDomains = @($pagesDomainsResponse.result | Where-Object { $_.name -in @($Domain, "www.$Domain") })
+                $expectedPagesDomains = @($Domain, "www.$Domain")
+                $missingPagesDomains = @($expectedPagesDomains | Where-Object { $_ -notin @($pagesDomains.name) })
+                if ($missingPagesDomains.Count -eq 0 -and $pagesDomains.Count -gt 0) {
+                    $domainDetails = @($pagesDomains | Sort-Object name | ForEach-Object { "$($_.name):$($_.status)" })
+                    if (@($pagesDomains | Where-Object { $_.status -ne "active" }).Count -eq 0) {
+                        Add-Status "Pages custom domains" "OK" "Apex and www are active: $($domainDetails -join ', ')."
+                    } else {
+                        Add-Status "Pages custom domains" "AUTH" "Apex and www are attached but pending: $($domainDetails -join ', ')."
+                    }
+                } else {
+                    Add-Status "Pages custom domains" "AUTH" "Missing Pages custom domain(s): $($missingPagesDomains -join ', ')."
+                }
+            } catch {
+                Add-Status "Pages custom domains" "WARN" "Could not inspect Pages custom domains: $($_.Exception.Message)"
+            }
+        }
+
         try {
             $r2Output = (& $wrangler.Command @($wrangler.PrefixArgs) r2 bucket list 2>&1) -join "`n"
             if ($LASTEXITCODE -eq 0) {
-                if ($r2Output -match "fillmore-christian-sermons") {
-                    Add-Status "R2 account" "OK" "R2 is enabled and bucket fillmore-christian-sermons exists."
+                if ($r2Output -match [regex]::Escape($R2Bucket)) {
+                    Add-Status "R2 account" "OK" "R2 is enabled and bucket $R2Bucket exists."
                 } else {
-                    Add-Status "R2 account" "WARN" "R2 is enabled, but bucket fillmore-christian-sermons was not listed."
+                    Add-Status "R2 account" "WARN" "R2 is enabled, but bucket $R2Bucket was not listed."
                 }
             } elseif ($r2Output -match "enable R2|code:\s*10042") {
                 Add-Status "R2 account" "AUTH" "Enable R2 in the Cloudflare dashboard before uploading sermon audio."
@@ -304,12 +377,18 @@ if ($authNeeded.Count -gt 0) {
     $authAreas = @($authNeeded | ForEach-Object { $_.Area })
     if ("Cloudflare auth" -in $authAreas) {
         Add-Status "Next authorization" "AUTH" "Wake authorization needed next: run npx wrangler login."
+    } elseif (("Cloudflare zone" -in $authAreas) -and ($cloudflareZoneStatus -eq "pending") -and $cloudflareZoneNameservers.Count -gt 0) {
+        Add-Status "Next authorization" "AUTH" "Wake authorization needed next: verify Cloudflare DNS records, then set Squarespace nameservers to $($cloudflareZoneNameservers -join ', ')."
     } elseif (("R2 account" -in $authAreas) -and ("DNS nameservers" -in $authAreas)) {
         Add-Status "Next authorization" "AUTH" "Wake authorization needed next: enable R2, add fillmorechristian.org to Cloudflare DNS, then update Squarespace nameservers when records are verified."
     } elseif ("R2 account" -in $authAreas) {
         Add-Status "Next authorization" "AUTH" "Wake authorization needed next: enable R2 in the Cloudflare dashboard."
     } elseif ("DNS nameservers" -in $authAreas) {
-        Add-Status "Next authorization" "AUTH" "Wake authorization needed next: add fillmorechristian.org to Cloudflare DNS and update Squarespace nameservers after records are verified."
+        if ($cloudflareZoneNameservers.Count -gt 0) {
+            Add-Status "Next authorization" "AUTH" "Wake authorization needed next: verify Cloudflare DNS records, then set Squarespace nameservers to $($cloudflareZoneNameservers -join ', ')."
+        } else {
+            Add-Status "Next authorization" "AUTH" "Wake authorization needed next: add fillmorechristian.org to Cloudflare DNS and update Squarespace nameservers after records are verified."
+        }
     } else {
         Add-Status "Next authorization" "AUTH" "Wake authorization is needed for: $($authAreas -join ', ')."
     }

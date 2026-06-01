@@ -86,8 +86,36 @@ function Get-WranglerInvocation {
     return $null
 }
 
+function Get-WranglerOAuthToken {
+    $configPath = Join-Path $env:APPDATA "xdg.config\.wrangler\config\default.toml"
+    if (-not (Test-Path -LiteralPath $configPath)) {
+        return ""
+    }
+
+    $configText = Get-Content -Raw -LiteralPath $configPath
+    $match = [regex]::Match($configText, '(?m)^oauth_token\s*=\s*"([^"]+)"')
+    if ($match.Success) {
+        return $match.Groups[1].Value
+    }
+
+    return ""
+}
+
+function Invoke-CloudflareGet {
+    param(
+        [string]$Path,
+        [string]$Token
+    )
+
+    $headers = @{ Authorization = "Bearer $Token" }
+    return Invoke-RestMethod -Method Get -Headers $headers -Uri ("https://api.cloudflare.com/client/v4/" + $Path.TrimStart("/"))
+}
+
 $preserveCsvFullPath = Resolve-RepoPath $PreserveCsvPath
 $preserveZoneFullPath = Resolve-RepoPath $PreserveZonePath
+$cloudflareToken = ""
+$assignedNameservers = @()
+$cloudflareZoneStatus = ""
 
 if (-not (Test-Path -LiteralPath $preserveCsvFullPath)) {
     Add-Check "Preserve CSV" "FAIL" "Missing $preserveCsvFullPath"
@@ -196,6 +224,7 @@ if ($null -eq $wrangler) {
 } else {
     $whoamiOutput = (& $wrangler.Command @($wrangler.PrefixArgs) whoami 2>&1) -join "`n"
     if ($LASTEXITCODE -eq 0 -and $whoamiOutput -notmatch "not authenticated") {
+        $cloudflareToken = Get-WranglerOAuthToken
         Add-Check "Cloudflare auth" "OK" "$($wrangler.Label) is authenticated"
     } else {
         Add-Check "Cloudflare auth" "WARN" "Wrangler is not authenticated; dashboard setup can still proceed manually"
@@ -220,7 +249,46 @@ if ($null -eq $wrangler) {
     }
 }
 
-Add-Check "Next dashboard step" "INFO" "Add $Domain at https://dash.cloudflare.com/$AccountId/domains, import the preserve records, then configure Pages custom domains and $MediaHostname on the R2 bucket. Do not update Squarespace nameservers until records are verified."
+if ($cloudflareToken) {
+    try {
+        $zoneResponse = Invoke-CloudflareGet -Token $cloudflareToken -Path "zones?name=$Domain&account.id=$AccountId"
+        $zone = @($zoneResponse.result | Where-Object { $_.name -eq $Domain } | Select-Object -First 1)
+        if ($zone.Count -eq 0) {
+            Add-Check "Cloudflare zone" "WARN" "$Domain has not been added to Cloudflare DNS"
+        } else {
+            $cloudflareZoneStatus = [string]$zone[0].status
+            $assignedNameservers = @($zone[0].name_servers | ForEach-Object { [string]$_ })
+            if ($cloudflareZoneStatus -eq "active") {
+                Add-Check "Cloudflare zone" "OK" "$Domain is active in Cloudflare with nameservers $($assignedNameservers -join ', ')"
+            } else {
+                Add-Check "Cloudflare zone" "OK" "$Domain is in Cloudflare with status $cloudflareZoneStatus; assigned nameservers are $($assignedNameservers -join ', ')"
+            }
+        }
+    } catch {
+        Add-Check "Cloudflare zone" "WARN" "Could not inspect Cloudflare zone metadata: $($_.Exception.Message)"
+    }
+
+    try {
+        $pagesDomainsResponse = Invoke-CloudflareGet -Token $cloudflareToken -Path "accounts/$AccountId/pages/projects/$PagesProject/domains"
+        $pagesDomains = @($pagesDomainsResponse.result | Where-Object { $_.name -in @($Domain, "www.$Domain") })
+        $expectedPagesDomains = @($Domain, "www.$Domain")
+        $missingPagesDomains = @($expectedPagesDomains | Where-Object { $_ -notin @($pagesDomains.name) })
+        if ($missingPagesDomains.Count -eq 0 -and $pagesDomains.Count -gt 0) {
+            $domainDetails = @($pagesDomains | Sort-Object name | ForEach-Object { "$($_.name):$($_.status)" })
+            Add-Check "Pages custom domains" "OK" "Apex and www are attached: $($domainDetails -join ', ')"
+        } else {
+            Add-Check "Pages custom domains" "WARN" "Missing Pages custom domain(s): $($missingPagesDomains -join ', ')"
+        }
+    } catch {
+        Add-Check "Pages custom domains" "WARN" "Could not inspect Pages custom domains: $($_.Exception.Message)"
+    }
+}
+
+if ($cloudflareZoneStatus -eq "pending" -and $assignedNameservers.Count -gt 0) {
+    Add-Check "Next dashboard step" "INFO" "In Cloudflare DNS for $Domain, verify/import the preserve records, remove old TheChurchCo web targets if present, then set Squarespace nameservers to $($assignedNameservers -join ', '). Configure $MediaHostname on the R2 bucket after the zone is active."
+} else {
+    Add-Check "Next dashboard step" "INFO" "Add $Domain at https://dash.cloudflare.com/$AccountId/domains, import the preserve records, then configure Pages custom domains and $MediaHostname on the R2 bucket. Do not update Squarespace nameservers until records are verified."
+}
 
 $checks | Format-Table -AutoSize
 

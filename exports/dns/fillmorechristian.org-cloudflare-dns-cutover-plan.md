@@ -49,7 +49,14 @@ Before nameserver change:
 After Cloudflare gives assigned nameservers and Squarespace is updated:
 
 ```powershell
-.\scripts\test-dns-cutover.ps1 -Mode After -ExpectedCloudflareNameservers "name1.ns.cloudflare.com","name2.ns.cloudflare.com"
+.\scripts\test-dns-cutover.ps1 -Mode After -ExpectedCloudflareNameservers "eric.ns.cloudflare.com","sky.ns.cloudflare.com"
 ```
+
+Cloudflare assigned nameservers on 2026-06-01:
+
+- `eric.ns.cloudflare.com`
+- `sky.ns.cloudflare.com`
+
+Cloudflare Pages custom domains `fillmorechristian.org` and `www.fillmorechristian.org` are attached and pending Cloudflare DNS activation.
 
 Only cancel TheChurchCo after website, feed, media, and mail checks pass.
