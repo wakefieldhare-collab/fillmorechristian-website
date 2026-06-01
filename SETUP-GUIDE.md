@@ -17,29 +17,35 @@ Static website for Fillmore Christian Church, replacing ChurchCo ($50/mo). Built
 - [x] Cloudflare Pages `_headers` and `_redirects` files added
 - [x] Cloudflare build output prepared with `npm run build` -> `dist`
 - [x] Migration preflight script added at `scripts/test-migration-readiness.ps1`
+- [x] Podcast RSS feed exported and normalized into the static site
+- [x] 70 unique sermon audio files backed up locally with SHA-256 inventory
+- [x] R2 audio manifest prepared for `https://media.fillmorechristian.org`
+- [x] GitHub Pages staging deployment enabled from the personal repo
+- [x] DNS preserve/import artifacts prepared for Cloudflare cutover
 - [x] Project files in `C:\Users\wakef\Documents\AI-Projects\fcc-website`
 
 See `MIGRATION-RUNBOOK.md` for the current Cloudflare migration order.
 
 ## What's Left
 
-### Step 1: Export Sermon Audio from ChurchCo (DO FIRST)
+### Step 1: Keep The Sermon Audio Backup Safe
 
-This becomes impossible once you cancel ChurchCo.
+This was the first critical task because it becomes impossible once ChurchCo access is canceled. It is already done as of June 1, 2026, but the backup must be preserved until the R2 migration is complete.
 
-1. Run the export script from this folder:
+Current local backup status:
 
-   ```powershell
-   .\scripts\export-thechurchco-podcast.ps1 -DownloadAudio
-   ```
+- Feed items exported: 73
+- Items with audio enclosures: 71
+- Unique downloaded audio files: 70
+- Local backup folder: `exports/thechurchco-podcast/audio/`
+- Inventory file: `exports/thechurchco-podcast/audio-inventory.csv`
+- R2 upload manifest: `exports/thechurchco-podcast/r2-audio-manifest.csv`
 
-2. Confirm the feed and manifest were written:
-   - `podcast-category/fillmore-christian/feed/podcast`
-   - `podcast.xml`
-   - `exports/thechurchco-podcast/manifest.csv`
-   - `exports/thechurchco-podcast/audio/`
+Before canceling TheChurchCo, verify the backup again:
 
-3. Keep this backup before canceling TheChurchCo.
+```powershell
+.\scripts\test-migration-readiness.ps1 -VerifyAudioHashes
+```
 
 ### Step 2: Set Up Podcast Hosting
 
@@ -66,14 +72,21 @@ The copied feed still points to TheChurchCo-hosted MP3 files. Before canceling T
 
 If the feed URL changes, add an `<itunes:new-feed-url>` tag and a 301 redirect from the current feed URL to the new feed URL for at least four weeks.
 
-Cloudflare R2 preparation scripts are included:
+Cloudflare R2 preparation scripts are included. The manifest and dry runs are safe before Cloudflare authorization:
 
 ```powershell
 .\scripts\build-r2-audio-manifest.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
 .\scripts\upload-podcast-audio-to-r2.ps1 -Bucket fillmore-christian-sermons -DryRun
+.\scripts\test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -DryRun
+```
+
+Run the real upload and verification only after `npx wrangler login`, R2 bucket setup, and public media hostname setup:
+
+```powershell
 .\scripts\upload-podcast-audio-to-r2.ps1 -Bucket fillmore-christian-sermons
 .\scripts\test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -SampleCount 5
 .\scripts\test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -VerifyHashes
+.\scripts\test-r2-public-audio.ps1 -All
 .\scripts\rewrite-podcast-audio-urls.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
 .\scripts\test-podcast-media.ps1 -All
 ```
@@ -82,21 +95,20 @@ The safer post-login path is the wrapper command:
 
 ```powershell
 npm run migrate:cloudflare-audio -- -DryRun
-npm run migrate:cloudflare-audio -- -CreateBucket
+npm run migrate:cloudflare-audio -- -CreateBucket -VerifyAllPublicMedia
 ```
 
-It keeps the same personal GitHub owner guard as the deploy script, uploads and verifies the R2 audio backup, rewrites the podcast feeds, regenerates sermon pages, builds `dist`, and runs strict local checks. Add `-VerifyPublicMedia` after `media.fillmorechristian.org` is live.
+It keeps the same personal GitHub owner guard as the deploy script, uploads and verifies the R2 audio backup, verifies the public media hostname before rewriting the RSS feeds, regenerates sermon pages, builds `dist`, and runs strict local checks.
 
 The manifest, upload dry run, and R2 verifier dry run are safe before Cloudflare authorization. Run the real upload, real R2 verification, and feed rewrite only after Cloudflare authorization, R2 bucket creation, and public media hostname setup.
 
 ### Step 3: Deploy Website To Cloudflare Pages
 
-1. Put this folder in a GitHub repo.
-2. Keep the repo under the personal GitHub owner `wakefieldhare-collab`, not the work account `wake-byte`.
-3. In Cloudflare Pages, create a project from that repo.
-4. Use `npm run build` as the build command and `dist` as the output directory.
-5. Add custom domains for `www.fillmorechristian.org` and `fillmorechristian.org`.
-6. Keep `_headers`, `_redirects`, and `_routes.json` in the published output.
+1. Keep the source repo under the personal GitHub owner `wakefieldhare-collab`, not the work account `wake-byte`.
+2. In Cloudflare Pages, create a project from `wakefieldhare-collab/fillmorechristian-website`.
+3. Use `npm run build` as the build command and `dist` as the output directory.
+4. Add custom domains for `www.fillmorechristian.org` and `fillmorechristian.org`.
+5. Keep `_headers`, `_redirects`, and `_routes.json` in the published output.
 
 Before deploying, run:
 
@@ -159,6 +171,7 @@ Domain registrar: Squarespace Domains, formerly Google Domains.
 - Login: https://domains.squarespace.com
 - Domain: `fillmorechristian.org`
 - Renewal notice: auto-renews June 15, 2026 for $15.00; disable by June 14 only if transfer/cutover is safe.
+- Current blocker: `npx wrangler login` has not been completed on this machine.
 
 DNS changes needed:
 
@@ -186,6 +199,8 @@ As of June 1, 2026, preserve at least the Mailgun MX records and these TXT recor
 
 - `v=spf1 include:mailgun.org ~all`
 - `MS=ms48673064`
+
+Do not delete the old TheChurchCo website records until Cloudflare Pages custom domains are configured and ready to replace them.
 
 ### Step 7: Add Church Logo (Optional)
 
