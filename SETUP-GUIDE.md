@@ -63,11 +63,13 @@ If the feed URL changes, add an `<itunes:new-feed-url>` tag and a 301 redirect f
 Cloudflare R2 preparation scripts are included:
 
 ```powershell
+.\scripts\build-r2-audio-manifest.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
+.\scripts\upload-podcast-audio-to-r2.ps1 -Bucket fillmore-christian-sermons -DryRun
 .\scripts\upload-podcast-audio-to-r2.ps1 -Bucket fillmore-christian-sermons
 .\scripts\rewrite-podcast-audio-urls.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
 ```
 
-Run those only after Cloudflare authorization, R2 bucket creation, and public media hostname setup.
+The manifest and dry run are safe before Cloudflare authorization. Run the real upload and feed rewrite only after Cloudflare authorization, R2 bucket creation, and public media hostname setup.
 
 ### Step 3: Deploy Website To Cloudflare Pages
 

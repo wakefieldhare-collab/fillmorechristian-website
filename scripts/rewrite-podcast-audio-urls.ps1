@@ -2,6 +2,8 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$BaseAudioUrl,
 
+    [string]$R2ManifestPath = "exports\thechurchco-podcast\r2-audio-manifest.csv",
+
     [string[]]$FeedPaths = @(
         "podcast-category\fillmore-christian\feed\podcast",
         "podcast.xml",
@@ -13,6 +15,11 @@ $ErrorActionPreference = "Stop"
 
 $root = Resolve-Path (Join-Path $PSScriptRoot "..")
 $base = $BaseAudioUrl.TrimEnd("/")
+$r2ManifestFullPath = if ([System.IO.Path]::IsPathRooted($R2ManifestPath)) {
+    $R2ManifestPath
+} else {
+    Join-Path $root $R2ManifestPath
+}
 
 function ConvertTo-LocalAudioFileName {
     param([string]$Url)
@@ -20,6 +27,23 @@ function ConvertTo-LocalAudioFileName {
     $uri = [Uri]$Url
     $fileName = [System.IO.Path]::GetFileName($uri.AbsolutePath)
     return $fileName -replace '[^\w\.\-]+', '-'
+}
+
+$publicUrlBySourceUrl = @{}
+if (Test-Path -LiteralPath $r2ManifestFullPath) {
+    foreach ($row in @(Import-Csv -LiteralPath $r2ManifestFullPath)) {
+        if (-not $row.SourceUrls -or -not $row.ObjectKey) {
+            continue
+        }
+
+        $publicUrl = if ($row.PublicUrl) { $row.PublicUrl } else { "$base/$($row.ObjectKey)" }
+        $publicUrlBySourceUrl[$publicUrl] = $publicUrl
+        foreach ($sourceUrl in @($row.SourceUrls -split "\s+\|\s+")) {
+            if ($sourceUrl) {
+                $publicUrlBySourceUrl[$sourceUrl] = $publicUrl
+            }
+        }
+    }
 }
 
 foreach ($relativePath in $FeedPaths) {
@@ -43,7 +67,13 @@ foreach ($relativePath in $FeedPaths) {
             continue
         }
 
-        $enclosure.SetAttribute("url", "$base/$fileName")
+        $newUrl = if ($publicUrlBySourceUrl.ContainsKey([string]$enclosure.url)) {
+            $publicUrlBySourceUrl[[string]$enclosure.url]
+        } else {
+            "$base/$fileName"
+        }
+
+        $enclosure.SetAttribute("url", $newUrl)
         $rewritten++
     }
 

@@ -70,14 +70,27 @@ Cloudflare R2 keeps the church infrastructure under the same Cloudflare account 
 Prepared scripts for the R2 path:
 
 ```powershell
+# Build the deterministic object manifest first. This validates local files,
+# inventory hashes, duplicate feed references, object keys, and public URLs.
+.\scripts\build-r2-audio-manifest.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
+
+# Safe pre-auth rehearsal. This does not contact Cloudflare.
+.\scripts\upload-podcast-audio-to-r2.ps1 -Bucket fillmore-christian-sermons -DryRun
+
 # After `wrangler login` and R2 bucket creation:
 .\scripts\upload-podcast-audio-to-r2.ps1 -Bucket fillmore-christian-sermons
 
-# After the bucket is reachable through a public hostname:
+# After the bucket is reachable through the public hostname:
 .\scripts\rewrite-podcast-audio-urls.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
 ```
 
 After rewriting enclosure URLs, re-run local verification and push the RSS changes before canceling TheChurchCo.
+
+R2 preparation status on 2026-06-01:
+
+- `exports/thechurchco-podcast/r2-audio-manifest.csv` maps 70 local objects to 71 RSS enclosure references.
+- The manifest totals 2,315,228,157 bytes and includes the intended `https://media.fillmorechristian.org/...` public URLs.
+- The upload script supports `-DryRun` and reads from this manifest so the real upload follows the same object keys.
 
 Podcast metadata cleanup:
 
@@ -109,6 +122,7 @@ npm run build
 The expected pre-R2 result is all checks passing with one warning: podcast audio enclosures still point at TheChurchCo. After R2 audio rewrite, run the stricter form:
 
 ```powershell
+.\scripts\build-r2-audio-manifest.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
 .\scripts\test-migration-readiness.ps1 -RequireIndependentAudio
 ```
 

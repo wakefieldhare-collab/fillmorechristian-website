@@ -262,6 +262,9 @@ if ($feeds.ContainsKey($feedPaths[0])) {
 $manifestPath = Join-Path $root "exports\thechurchco-podcast\manifest.csv"
 $audioDir = Join-Path $root "exports\thechurchco-podcast\audio"
 $inventoryPath = Join-Path $root "exports\thechurchco-podcast\audio-inventory.csv"
+$r2ManifestPath = Join-Path $root "exports\thechurchco-podcast\r2-audio-manifest.csv"
+$manifestRows = @()
+$rowsWithAudio = @()
 
 if (Test-Path -LiteralPath $manifestPath) {
     $manifestRows = @(Import-Csv -LiteralPath $manifestPath)
@@ -316,6 +319,73 @@ if ((Test-Path -LiteralPath $inventoryPath) -and (Test-Path -LiteralPath $audioD
     }
 } else {
     Add-Check "Podcast audio inventory" "WARN" "Inventory or audio directory not present"
+}
+
+if (Test-Path -LiteralPath $r2ManifestPath) {
+    $r2Rows = @(Import-Csv -LiteralPath $r2ManifestPath)
+    $r2Issues = New-Object System.Collections.Generic.List[string]
+    $duplicateObjectKeys = @($r2Rows | Group-Object ObjectKey | Where-Object { $_.Count -gt 1 })
+    foreach ($duplicate in $duplicateObjectKeys) {
+        $r2Issues.Add("duplicate object key: $($duplicate.Name)")
+    }
+
+    $expectedR2FileNames = @($rowsWithAudio | ForEach-Object { ConvertTo-LocalAudioFileName $_.EnclosureUrl } | Where-Object { $_ } | Select-Object -Unique)
+    $manifestFileNames = @($r2Rows.FileName | Where-Object { $_ } | Select-Object -Unique)
+    $missingR2Files = @($expectedR2FileNames | Where-Object { $_ -notin $manifestFileNames })
+    $extraR2Files = @($manifestFileNames | Where-Object { $_ -notin $expectedR2FileNames })
+    if ($missingR2Files.Count -gt 0) {
+        $r2Issues.Add("missing expected files: $($missingR2Files -join ', ')")
+    }
+    if ($extraR2Files.Count -gt 0) {
+        $r2Issues.Add("extra files: $($extraR2Files -join ', ')")
+    }
+
+    $feedReferenceTotal = 0
+    foreach ($row in $r2Rows) {
+        if (-not $row.ObjectKey -or -not $row.FileName -or -not $row.ContentType) {
+            $r2Issues.Add("row missing ObjectKey, FileName, or ContentType")
+            continue
+        }
+
+        $feedReferenceTotal += [int]$row.FeedReferenceCount
+        if (Test-Path -LiteralPath $audioDir) {
+            $filePath = Join-Path $audioDir $row.FileName
+            if (-not (Test-Path -LiteralPath $filePath)) {
+                $r2Issues.Add("$($row.FileName): local audio file missing")
+                continue
+            }
+
+            $file = Get-Item -LiteralPath $filePath
+            if ($row.SizeBytes -and [int64]$row.SizeBytes -ne $file.Length) {
+                $r2Issues.Add("$($row.FileName): size mismatch")
+            }
+        }
+    }
+
+    if ($feedReferenceTotal -ne $rowsWithAudio.Count) {
+        $r2Issues.Add("feed reference total is $feedReferenceTotal, expected $($rowsWithAudio.Count)")
+    }
+
+    if ($RequireIndependentAudio) {
+        $publicUrls = @($r2Rows.PublicUrl | Where-Object { $_ })
+        $enclosureUrls = if ($feeds.ContainsKey($feedPaths[0])) { @(Get-EnclosureUrls $feeds[$feedPaths[0]]) } else { @() }
+        if ($publicUrls.Count -eq 0) {
+            $r2Issues.Add("manifest has no PublicUrl values")
+        } else {
+            $missingPublicUrls = @($enclosureUrls | Where-Object { $_ -notin $publicUrls })
+            if ($missingPublicUrls.Count -gt 0) {
+                $r2Issues.Add("$($missingPublicUrls.Count) feed enclosure URL(s) are not present in the R2 public URL set")
+            }
+        }
+    }
+
+    if ($r2Issues.Count -eq 0) {
+        Add-Check "R2 audio manifest" "OK" "$($r2Rows.Count) R2 objects cover $($rowsWithAudio.Count) feed enclosure references"
+    } else {
+        Add-Check "R2 audio manifest" "FAIL" ($r2Issues -join "; ")
+    }
+} else {
+    Add-Check "R2 audio manifest" "WARN" "R2 manifest not found; run scripts\build-r2-audio-manifest.ps1 before uploading audio"
 }
 
 if (-not $SkipRemote) {
