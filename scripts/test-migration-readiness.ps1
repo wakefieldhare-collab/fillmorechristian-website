@@ -233,6 +233,9 @@ foreach ($relativePath in $publicHtmlPages) {
     if ($html -notmatch "<link\s+rel=`"canonical`"\s+href=`"$([regex]::Escape($expectedCanonical))`"") {
         $metadataFailures.Add("$relativePath missing canonical")
     }
+    if ($html -notmatch "<link\s+rel=`"alternate`"\s+type=`"application/rss\+xml`"\s+title=`"Fillmore Christian Podcast`"\s+href=`"https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast`"") {
+        $metadataFailures.Add("$relativePath missing podcast RSS autodiscovery")
+    }
     if ($html -notmatch "<meta\s+property=`"og:title`"") {
         $metadataFailures.Add("$relativePath missing og:title")
     }
@@ -251,7 +254,7 @@ foreach ($relativePath in $publicHtmlPages) {
 }
 
 if ($metadataFailures.Count -eq 0) {
-    Add-Check "Public page metadata" "OK" "$($publicHtmlPages.Count) public pages have canonical, Open Graph, and Twitter metadata"
+    Add-Check "Public page metadata" "OK" "$($publicHtmlPages.Count) public pages have canonical, podcast RSS, Open Graph, and Twitter metadata"
 } else {
     Add-Check "Public page metadata" "FAIL" ($metadataFailures -join "; ")
 }

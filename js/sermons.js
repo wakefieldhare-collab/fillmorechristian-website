@@ -101,17 +101,19 @@ async function loadFromRSS(container) {
       const title = cleanText(getElementText(item, 'title'));
       const description = cleanDescription(cleanText(stripHtml(getElementText(item, 'description') || getElementText(item, 'itunes\\:summary') || '')));
       const audioUrl = enclosure ? enclosure.getAttribute('url') || '' : '';
+      const speaker = cleanSpeaker(cleanText(getItunesAuthor(item)));
 
       return {
         title,
         date: formatPubDate(rawDate),
         year: getYear(rawDate),
         rawDate,
-        speaker: cleanSpeaker(cleanText(getItunesAuthor(item))),
+        speaker,
+        linkUrl: getEpisodeHref(cleanText(getElementText(item, 'link'))),
         audioUrl,
         audioType: getAudioType(audioUrl),
         description,
-        searchText: [title, description, rawDate].join(' ').toLowerCase()
+        searchText: [title, description, rawDate, speaker].join(' ').toLowerCase()
       };
     });
 
@@ -151,7 +153,10 @@ function renderSermons(container, sermons) {
       card.setAttribute('data-year', sermon.year);
     }
 
-    let html = '<h3>' + escapeHtml(sermon.title || 'Untitled sermon') + '</h3>';
+    const title = escapeHtml(sermon.title || 'Untitled sermon');
+    let html = sermon.linkUrl
+      ? '<h3><a href="' + escapeHtml(sermon.linkUrl) + '">' + title + '</a></h3>'
+      : '<h3>' + title + '</h3>';
     html += '<div class="sermon-meta">';
     html += '<span>' + escapeHtml(sermon.date || sermon.rawDate || '') + '</span>';
     if (sermon.speaker) {
@@ -252,6 +257,18 @@ function getText(url) {
 function getItunesAuthor(item) {
   const itunesAuthor = item.querySelector('itunes\\:author, author');
   return itunesAuthor ? itunesAuthor.textContent.trim() : '';
+}
+
+function getEpisodeHref(url) {
+  if (!url) return '';
+
+  try {
+    const parsed = new URL(url, window.location.origin);
+    const match = parsed.pathname.match(/\/episode\/([^/]+)\/?$/);
+    return match ? 'episode/' + match[1] + '/' : '';
+  } catch (err) {
+    return '';
+  }
 }
 
 function formatPubDate(dateStr) {
