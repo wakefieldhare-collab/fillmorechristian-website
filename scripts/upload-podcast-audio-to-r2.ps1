@@ -21,6 +21,28 @@ function Resolve-RepoPath {
     return Join-Path $root $Path
 }
 
+function Get-WranglerInvocation {
+    $wranglerCommand = Get-Command wrangler -ErrorAction SilentlyContinue
+    if ($wranglerCommand) {
+        return [pscustomobject]@{
+            Command = $wranglerCommand.Source
+            PrefixArgs = @()
+            Label = "wrangler"
+        }
+    }
+
+    $npxCommand = Get-Command npx -ErrorAction SilentlyContinue
+    if ($npxCommand) {
+        return [pscustomobject]@{
+            Command = $npxCommand.Source
+            PrefixArgs = @("wrangler")
+            Label = "npx wrangler"
+        }
+    }
+
+    throw "wrangler is not installed or available through npx."
+}
+
 $root = Resolve-Path (Join-Path $PSScriptRoot "..")
 $audioPath = Resolve-RepoPath $AudioDir
 $r2ManifestPath = Resolve-RepoPath $ManifestPath
@@ -33,9 +55,7 @@ if (-not (Test-Path -LiteralPath $r2ManifestPath)) {
     throw "R2 audio manifest not found: $r2ManifestPath. Generate it first with scripts\build-r2-audio-manifest.ps1."
 }
 
-if (-not $DryRun -and -not (Get-Command wrangler -ErrorAction SilentlyContinue)) {
-    throw "wrangler is not installed or not on PATH."
-}
+$wrangler = if ($DryRun) { $null } else { Get-WranglerInvocation }
 
 $rows = @(Import-Csv -LiteralPath $r2ManifestPath | Sort-Object ObjectKey)
 if ($rows.Count -eq 0) {
@@ -72,7 +92,7 @@ if ($DryRun) {
 foreach ($row in $rows) {
     $filePath = Join-Path $audioPath $row.FileName
     Write-Host "Uploading $($row.FileName) -> r2://$Bucket/$($row.ObjectKey)"
-    & wrangler r2 object put "$Bucket/$($row.ObjectKey)" --file $filePath --content-type $row.ContentType
+    & $wrangler.Command @($wrangler.PrefixArgs) r2 object put "$Bucket/$($row.ObjectKey)" --file $filePath --content-type $row.ContentType --remote --force
     if ($LASTEXITCODE -ne 0) {
         throw "Upload failed for $filePath"
     }

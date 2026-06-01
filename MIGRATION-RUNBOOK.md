@@ -82,6 +82,10 @@ Prepared scripts for the R2 path:
 # After `wrangler login` and R2 bucket creation:
 .\scripts\upload-podcast-audio-to-r2.ps1 -Bucket fillmore-christian-sermons
 
+# Verify R2 received the uploaded files. Use -All before canceling TheChurchCo.
+.\scripts\test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -SampleCount 5
+.\scripts\test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -VerifyHashes
+
 # After the bucket is reachable through the public hostname:
 .\scripts\rewrite-podcast-audio-urls.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
 ```
@@ -92,7 +96,8 @@ R2 preparation status on 2026-06-01:
 
 - `exports/thechurchco-podcast/r2-audio-manifest.csv` maps 70 local objects to 71 RSS enclosure references.
 - The manifest totals 2,315,228,157 bytes and includes the intended `https://media.fillmorechristian.org/...` public URLs.
-- The upload script supports `-DryRun` and reads from this manifest so the real upload follows the same object keys.
+- The upload script supports `-DryRun`, uses either `wrangler` or `npx wrangler`, and reads from this manifest so the real upload follows the same object keys.
+- `scripts/test-r2-audio-upload.ps1` can verify sampled or full R2 downloads against the manifest before TheChurchCo is canceled.
 
 Podcast metadata cleanup:
 
