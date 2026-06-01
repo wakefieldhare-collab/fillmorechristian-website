@@ -67,6 +67,26 @@ Before canceling TheChurchCo, choose and complete one of these:
 
 Cloudflare R2 keeps the church infrastructure under the same Cloudflare account as the website and domain, so it is the cleanest ownership model if the church is comfortable with low-cost object storage.
 
+Prepared scripts for the R2 path:
+
+```powershell
+# After `wrangler login` and R2 bucket creation:
+.\scripts\upload-podcast-audio-to-r2.ps1 -Bucket fillmore-christian-sermons
+
+# After the bucket is reachable through a public hostname:
+.\scripts\rewrite-podcast-audio-urls.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
+```
+
+After rewriting enclosure URLs, re-run local verification and push the RSS changes before canceling TheChurchCo.
+
+## Public Staging Deployment
+
+GitHub Pages staging is enabled from `main`:
+
+- URL: `https://wakefieldhare-collab.github.io/fillmorechristian-website/`
+- Purpose: public preview and QA before Cloudflare authorization.
+- Limitation: Cloudflare `_redirects` and `_headers` are not honored by GitHub Pages. Treat this as staging only, not final production.
+
 ## Cloudflare Pages Status
 
 The repo is ready for a Cloudflare Pages static deployment. Use:

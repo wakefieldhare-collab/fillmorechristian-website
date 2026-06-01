@@ -58,6 +58,15 @@ The copied feed still points to TheChurchCo-hosted MP3 files. Before canceling T
 
 If the feed URL changes, add an `<itunes:new-feed-url>` tag and a 301 redirect from the current feed URL to the new feed URL for at least four weeks.
 
+Cloudflare R2 preparation scripts are included:
+
+```powershell
+.\scripts\upload-podcast-audio-to-r2.ps1 -Bucket fillmore-christian-sermons
+.\scripts\rewrite-podcast-audio-urls.ps1 -BaseAudioUrl "https://media.fillmorechristian.org"
+```
+
+Run those only after Cloudflare authorization, R2 bucket creation, and public media hostname setup.
+
 ### Step 3: Deploy Website To Cloudflare Pages
 
 1. Put this folder in a GitHub repo.

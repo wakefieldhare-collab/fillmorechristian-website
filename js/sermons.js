@@ -2,7 +2,7 @@
    Sermon Loader - Fetches from podcast RSS feed
    ============================================ */
 
-const PODCAST_RSS_URL = '/podcast-category/fillmore-christian/feed/podcast';
+const PODCAST_RSS_URL = 'podcast-category/fillmore-christian/feed/podcast';
 const LOCAL_SERMONS = [];
 
 let allSermons = [];
@@ -34,7 +34,7 @@ async function loadFromRSS(container) {
   container.innerHTML = '<div class="sermons-loading"><p>Loading sermons...</p></div>';
 
   try {
-    const response = await fetch(PODCAST_RSS_URL);
+    const response = await fetch(resolveSiteUrl(PODCAST_RSS_URL));
     if (!response.ok) throw new Error('RSS request failed: ' + response.status);
 
     const text = await response.text();
@@ -135,6 +135,14 @@ function updateCount(visible, total) {
 function getElementText(parent, tagName) {
   const el = parent.querySelector(tagName);
   return el ? el.textContent.trim() : '';
+}
+
+function resolveSiteUrl(path) {
+  const pagePath = window.location.pathname;
+  const basePath = pagePath.endsWith('/')
+    ? pagePath
+    : pagePath.substring(0, pagePath.lastIndexOf('/') + 1);
+  return new URL(path, window.location.origin + basePath).toString();
 }
 
 function getItunesAuthor(item) {
