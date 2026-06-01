@@ -33,15 +33,6 @@ function Get-ApiToken {
         }
     }
 
-    $wranglerConfigPath = Join-Path $env:APPDATA "xdg.config\.wrangler\config\default.toml"
-    if (Test-Path -LiteralPath $wranglerConfigPath) {
-        $configText = Get-Content -Raw -LiteralPath $wranglerConfigPath
-        $match = [regex]::Match($configText, '(?m)^oauth_token\s*=\s*"([^"]+)"')
-        if ($match.Success) {
-            return $match.Groups[1].Value
-        }
-    }
-
     return ""
 }
 
@@ -67,7 +58,20 @@ function Invoke-CloudflareApi {
         $parameters.Body = ($Body | ConvertTo-Json -Depth 10)
     }
 
-    $response = Invoke-RestMethod @parameters
+    try {
+        $response = Invoke-RestMethod @parameters
+    } catch {
+        $message = $_.Exception.Message
+        if ($_.ErrorDetails -and $_.ErrorDetails.Message) {
+            $message = $_.ErrorDetails.Message
+        }
+
+        if ($message -match "Authentication error|Unauthorized|Forbidden") {
+            throw "Cloudflare DNS API authorization failed. Create a token at https://dash.cloudflare.com/profile/api-tokens with Zone:Read and Zone:DNS Edit for $Domain, then set CLOUDFLARE_API_TOKEN."
+        }
+
+        throw
+    }
     if ($response.PSObject.Properties.Name -contains "success" -and -not $response.success) {
         $errors = @($response.errors | ForEach-Object { $_.message })
         throw "Cloudflare API failed: $($errors -join '; ')"
@@ -183,13 +187,13 @@ Write-Host "  remove old A $Domain -> 77.83.141.16 when applying"
 
 if (-not $Apply) {
     Write-Host ""
-    Write-Host "Dry run only. Rerun with -Apply and a CLOUDFLARE_API_TOKEN or CF_API_TOKEN with Zone:DNS Edit permission to write records."
+    Write-Host "Dry run only. Rerun with -Apply and a CLOUDFLARE_API_TOKEN or CF_API_TOKEN with Zone:Read and Zone:DNS Edit permission to write records."
     return
 }
 
 $token = Get-ApiToken
 if (-not $token) {
-    throw "Set CLOUDFLARE_API_TOKEN or CF_API_TOKEN to a Cloudflare token with Zone:DNS Edit permission, then rerun with -Apply."
+    throw "Set CLOUDFLARE_API_TOKEN or CF_API_TOKEN to a Cloudflare token with Zone:Read and Zone:DNS Edit permission, then rerun with -Apply. Token URL: https://dash.cloudflare.com/profile/api-tokens"
 }
 
 $zoneId = Get-ZoneId -Token $token

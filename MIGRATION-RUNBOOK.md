@@ -296,7 +296,12 @@ Preview the exact Cloudflare DNS records to preserve and replace:
 npm run apply:cloudflare-dns
 ```
 
-To apply those records through the Cloudflare API instead of clicking in the dashboard, set `CLOUDFLARE_API_TOKEN` or `CF_API_TOKEN` to a Cloudflare token with Zone:DNS Edit permission for `fillmorechristian.org`, then run:
+To apply those records through the Cloudflare API instead of clicking in the dashboard, create a Cloudflare API token at `https://dash.cloudflare.com/profile/api-tokens` with these permissions for `fillmorechristian.org`:
+
+- Zone:Read
+- Zone:DNS Edit
+
+Set `CLOUDFLARE_API_TOKEN` or `CF_API_TOKEN` to that token, then run:
 
 ```powershell
 npm run apply:cloudflare-dns -- -Apply
