@@ -395,7 +395,7 @@ if ($fontAssetIssues.Count -eq 0) {
 }
 
 $locationPanelIssues = New-Object System.Collections.Generic.List[string]
-foreach ($relativePath in @("about.html", "contact.html")) {
+foreach ($relativePath in @("index.html", "about.html", "contact.html")) {
     $htmlPath = Join-Path $root $relativePath
     if (-not (Test-Path -LiteralPath $htmlPath)) {
         $locationPanelIssues.Add("$relativePath is missing")
@@ -412,7 +412,7 @@ foreach ($relativePath in @("about.html", "contact.html")) {
 }
 
 if ($locationPanelIssues.Count -eq 0) {
-    Add-Check "Self-hosted location panels" "OK" "About and contact pages use local location panels instead of embedded maps"
+    Add-Check "Self-hosted location panels" "OK" "Home, about, and contact pages use local location panels instead of embedded maps"
 } else {
     Add-Check "Self-hosted location panels" "FAIL" ($locationPanelIssues -join "; ")
 }

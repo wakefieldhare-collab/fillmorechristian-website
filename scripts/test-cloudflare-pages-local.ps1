@@ -205,6 +205,11 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Home page"; Status = "OK"; Details = "HTTP 200" })
 
+    if ($homeResponse.Content -match "google\.com/maps/embed|<iframe" -or $homeResponse.Content -notmatch "location-panel") {
+        throw "Home page does not use the self-hosted location panel cleanly"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Home location panel"; Status = "OK"; Details = "Self-hosted location panel without embedded maps" })
+
     $expectedSecurityHeaders = @{
         "X-Content-Type-Options" = "nosniff"
         "X-Frame-Options" = "SAMEORIGIN"
