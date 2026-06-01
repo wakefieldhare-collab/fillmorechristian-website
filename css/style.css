@@ -800,6 +800,17 @@ h4 { font-size: 1.25rem; }
   margin: 1.5rem 0;
 }
 
+.contact-email-copy {
+  margin: 1.2rem 0 1.5rem;
+}
+
+.contact-email-copy label {
+  display: block;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.4rem;
+}
+
 .contact-form label {
   display: block;
   margin-bottom: 4px;

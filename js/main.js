@@ -66,12 +66,17 @@ document.addEventListener('DOMContentLoaded', function() {
       const text = button.getAttribute('data-copy-value') || '';
       const statusId = button.getAttribute('data-copy-status-target');
       const status = statusId ? document.getElementById(statusId) : null;
+      const originalLabel = button.getAttribute('data-copy-label') || button.textContent;
+      const successLabel = button.getAttribute('data-copy-label-success') || 'Copied';
+      const successMessage = button.getAttribute('data-copy-success') || 'Copied.';
+      const fallbackMessage = button.getAttribute('data-copy-fallback') || 'Text selected. Press Ctrl+C to copy it.';
+      const failureMessage = button.getAttribute('data-copy-fail') || 'Copy failed. Select the text and copy it manually.';
 
       copyText(text).then(function() {
-        if (status) status.textContent = 'RSS feed URL copied.';
-        button.textContent = 'Copied';
+        if (status) status.textContent = successMessage;
+        button.textContent = successLabel;
         window.setTimeout(function() {
-          button.textContent = 'Copy';
+          button.textContent = originalLabel;
         }, 1800);
       }).catch(function() {
         const field = button.closest('.copy-field');
@@ -79,13 +84,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (input) {
           input.focus();
           input.select();
-          if (status) status.textContent = 'RSS feed URL selected. Press Ctrl+C to copy it.';
+          if (status) status.textContent = fallbackMessage;
           button.textContent = 'Selected';
           window.setTimeout(function() {
-            button.textContent = 'Copy';
+            button.textContent = originalLabel;
           }, 1800);
         } else if (status) {
-          status.textContent = 'Copy failed. Select the feed URL and copy it manually.';
+          status.textContent = failureMessage;
         }
       });
     });

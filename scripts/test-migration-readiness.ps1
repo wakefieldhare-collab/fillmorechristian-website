@@ -429,9 +429,16 @@ if (Test-Path -LiteralPath $contactCardPath) {
     if ($contactHtml -notmatch 'href="contact\.vcf"' -or $contactHtml -notmatch '<link\s+rel="alternate"\s+type="text/vcard"') {
         $contactCardIssues.Add("contact page does not link or advertise contact.vcf")
     }
+    if ($contactHtml -notmatch 'data-mailto="church@fillmorechristian\.org"' -or $contactHtml -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or $contactHtml -notmatch 'id="contact-email-copy-status"') {
+        $contactCardIssues.Add("contact page is missing the static mailto form or copyable email fallback")
+    }
+    $homeHtml = Get-Content -Raw -LiteralPath (Join-Path $root "index.html")
+    if ($homeHtml -notmatch 'data-mailto="church@fillmorechristian\.org"' -or $homeHtml -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or $homeHtml -notmatch 'id="home-email-copy-status"') {
+        $contactCardIssues.Add("home page is missing the static contact form or copyable email fallback")
+    }
 
     if ($contactCardIssues.Count -eq 0) {
-        Add-Check "Self-hosted contact card" "OK" "contact.vcf publishes church email and address"
+        Add-Check "Self-hosted contact card" "OK" "contact.vcf, static mailto forms, and copyable email fallbacks publish church contact details"
     } else {
         Add-Check "Self-hosted contact card" "FAIL" ($contactCardIssues -join "; ")
     }

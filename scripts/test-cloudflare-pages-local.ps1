@@ -203,6 +203,9 @@ try {
     if ($homeResponse.Content -match "fonts\.googleapis\.com|fonts\.gstatic\.com") {
         throw "Home page still references Google-hosted fonts"
     }
+    if ($homeResponse.Content -notmatch 'data-mailto="church@fillmorechristian\.org"' -or $homeResponse.Content -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or $homeResponse.Content -notmatch 'id="home-email-copy-status"') {
+        throw "Home page is missing the static contact form or copyable email fallback"
+    }
     $checks.Add([pscustomobject]@{ Check = "Home page"; Status = "OK"; Details = "HTTP 200" })
 
     if ($homeResponse.Content -match "google\.com/maps/embed|<iframe" -or $homeResponse.Content -notmatch "location-panel") {
@@ -317,6 +320,11 @@ try {
         throw "Built contact page does not use the self-hosted location panel cleanly"
     }
     $checks.Add([pscustomobject]@{ Check = "Contact location panel"; Status = "OK"; Details = "No embedded map iframe" })
+
+    if ($contactPageContent -notmatch 'data-mailto="church@fillmorechristian\.org"' -or $contactPageContent -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or $contactPageContent -notmatch 'id="contact-email-copy-status"') {
+        throw "Built contact page is missing the static mailto form or copyable email fallback"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Contact fallback"; Status = "OK"; Details = "Static mailto form and copyable email fallback" })
 
     $favicon = Invoke-NoRedirect -Url "$baseUrl/favicon.svg"
     Assert-Status -Response $favicon -Expected @(200) -Name "Favicon"

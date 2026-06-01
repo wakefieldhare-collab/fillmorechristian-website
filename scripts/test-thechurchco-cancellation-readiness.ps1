@@ -152,6 +152,8 @@ if ($homeResponse) {
         $homeResponse.Content -match "Fillmore Christian Church" -and
         $homeResponse.Content -match "site\.webmanifest" -and
         $homeResponse.Content -match "favicon\.svg" -and
+        $homeResponse.Content -match 'data-mailto="church@fillmorechristian\.org"' -and
+        $homeResponse.Content -match 'data-copy-value="church@fillmorechristian\.org"' -and
         $homeResponse.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
         Add-Check "Production homepage" "OK" "$ProductionBaseUrl serves the static site shell"
     } else {
@@ -189,6 +191,19 @@ foreach ($asset in @("site.webmanifest", "contact.vcf", "events.ics")) {
         } else {
             Add-Check "Production asset: $asset" "FAIL" "HTTP $($assetResponse.StatusCode)"
         }
+    }
+}
+
+$contactResponse = Invoke-Http -Url (Join-Url $ProductionBaseUrl "/contact.html")
+if ($contactResponse) {
+    if ($contactResponse.StatusCode -eq 200 -and
+        $contactResponse.Content -match 'data-mailto="church@fillmorechristian\.org"' -and
+        $contactResponse.Content -match 'data-copy-value="church@fillmorechristian\.org"' -and
+        $contactResponse.Content -match 'id="contact-email-copy-status"' -and
+        $contactResponse.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
+        Add-Check "Production contact fallback" "OK" "Contact page has static mailto form and copyable email fallback"
+    } else {
+        Add-Check "Production contact fallback" "FAIL" "Contact page is missing static contact controls or still references TheChurchCo"
     }
 }
 
