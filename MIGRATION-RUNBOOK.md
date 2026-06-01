@@ -176,6 +176,14 @@ To verify that podcast enclosure URLs are reachable and serving audio metadata:
 .\scripts\test-migration-readiness.ps1 -VerifyPodcastMedia -VerifyAllPodcastMedia
 ```
 
+Before canceling TheChurchCo, run the stricter cancellation gate against production:
+
+```powershell
+npm run verify:cancel-thechurchco -- -VerifyAllPodcastMedia
+```
+
+This gate is expected to fail until Cloudflare nameservers are active, the static site is live at `https://www.fillmorechristian.org`, mail DNS is preserved, and the production podcast feed has been rewritten so all audio enclosures use `https://media.fillmorechristian.org` instead of TheChurchCo.
+
 ## Cloudflare Pages Status
 
 The repo is ready for a Cloudflare Pages static deployment. Use:

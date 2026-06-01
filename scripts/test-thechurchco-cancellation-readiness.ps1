@@ -1,0 +1,271 @@
+param(
+    [string]$Domain = "fillmorechristian.org",
+    [string]$ProductionBaseUrl = "https://www.fillmorechristian.org",
+    [string]$PodcastFeedPath = "podcast-category/fillmore-christian/feed/podcast",
+    [string]$ExpectedAudioHost = "media.fillmorechristian.org",
+    [string[]]$ExpectedCloudflareNameservers = @(),
+    [switch]$VerifyAllPodcastMedia,
+    [int]$PodcastMediaSampleCount = 5,
+    [int]$TimeoutSec = 20
+)
+
+$ErrorActionPreference = "Stop"
+
+$root = Resolve-Path (Join-Path $PSScriptRoot "..")
+$checks = New-Object System.Collections.Generic.List[object]
+
+function Add-Check {
+    param(
+        [string]$Name,
+        [ValidateSet("OK", "WARN", "FAIL")]
+        [string]$Status,
+        [string]$Details
+    )
+
+    $checks.Add([pscustomobject]@{
+        Status = $Status
+        Check = $Name
+        Details = $Details
+    })
+}
+
+function Join-Url {
+    param([string]$Base, [string]$Path)
+    return $Base.TrimEnd("/") + "/" + $Path.TrimStart("/")
+}
+
+function Resolve-Answers {
+    param(
+        [string]$Name,
+        [string]$Type
+    )
+
+    try {
+        return @(Resolve-DnsName -Name $Name -Type $Type -ErrorAction Stop | Where-Object { $_.Section -eq "Answer" })
+    } catch {
+        return @()
+    }
+}
+
+function Get-RecordValue {
+    param($Answer, [string]$Type)
+
+    switch ($Type) {
+        "A" { return $Answer.IPAddress }
+        "AAAA" { return $Answer.IPAddress }
+        "CNAME" { return $Answer.NameHost.TrimEnd(".") }
+        "MX" { return $Answer.NameExchange.TrimEnd(".") }
+        "NS" { return $Answer.NameHost.TrimEnd(".") }
+        "TXT" { return ($Answer.Strings -join "") }
+    }
+}
+
+function Invoke-Http {
+    param([string]$Url)
+
+    try {
+        return Invoke-WebRequest -UseBasicParsing -Uri $Url -MaximumRedirection 5 -TimeoutSec $TimeoutSec
+    } catch {
+        Add-Check "HTTP: $Url" "FAIL" $_.Exception.Message
+        return $null
+    }
+}
+
+function Get-HeaderValue {
+    param(
+        $Headers,
+        [string]$Name
+    )
+
+    foreach ($key in $Headers.Keys) {
+        if ($key -ieq $Name) {
+            $value = $Headers[$key]
+            if ($value -is [array]) {
+                return [string]$value[0]
+            }
+            return [string]$value
+        }
+    }
+    return ""
+}
+
+try {
+    $originUrl = (& git -C $root remote get-url origin 2>$null).Trim()
+    $activeStatus = (& gh auth status 2>&1) -join "`n"
+    if ($originUrl -match "wakefieldhare-collab/fillmorechristian-website(\.git)?$" -and
+        $originUrl -notmatch "wake-byte" -and
+        $activeStatus -match "account\s+wakefieldhare-collab[\s\S]*?Active account:\s+true" -and
+        $activeStatus -notmatch "account\s+wake-byte[\s\S]*?Active account:\s+true") {
+        Add-Check "Personal GitHub guard" "OK" "origin and active gh account use wakefieldhare-collab"
+    } else {
+        Add-Check "Personal GitHub guard" "FAIL" "origin or active gh account is not the personal repo/account"
+    }
+} catch {
+    Add-Check "Personal GitHub guard" "FAIL" $_.Exception.Message
+}
+
+$nsValues = @(Resolve-Answers $Domain "NS" | ForEach-Object { Get-RecordValue $_ "NS" } | Sort-Object -Unique)
+if ($ExpectedCloudflareNameservers.Count -gt 0) {
+    $normalizedActualNs = @($nsValues | ForEach-Object { $_.TrimEnd(".").ToLowerInvariant() })
+    $missingNs = @($ExpectedCloudflareNameservers | ForEach-Object { $_.TrimEnd(".").ToLowerInvariant() } | Where-Object { $_ -notin $normalizedActualNs })
+    if ($missingNs.Count -eq 0) {
+        Add-Check "Cloudflare nameservers" "OK" "Expected Cloudflare nameservers are active"
+    } else {
+        Add-Check "Cloudflare nameservers" "FAIL" "Missing expected nameservers: $($missingNs -join ', '); current: $($nsValues -join ', ')"
+    }
+} else {
+    $cloudflareNs = @($nsValues | Where-Object { $_ -like "*.ns.cloudflare.com" })
+    if ($cloudflareNs.Count -ge 2) {
+        Add-Check "Cloudflare nameservers" "OK" "Cloudflare nameservers are active: $($cloudflareNs -join ', ')"
+    } else {
+        Add-Check "Cloudflare nameservers" "FAIL" "Cloudflare nameservers are not active. Current: $($nsValues -join ', ')"
+    }
+}
+
+$apexA = @(Resolve-Answers $Domain "A" | ForEach-Object { Get-RecordValue $_ "A" } | Sort-Object -Unique)
+$wwwCname = @(Resolve-Answers "www.$Domain" "CNAME" | ForEach-Object { Get-RecordValue $_ "CNAME" } | Sort-Object -Unique)
+if ("77.83.141.16" -notin $apexA -and "ssl.thechurchco.com" -notin $wwwCname) {
+    Add-Check "Old website DNS removed" "OK" "Apex and www no longer point at TheChurchCo-era records"
+} else {
+    Add-Check "Old website DNS removed" "FAIL" "Current apex A: $($apexA -join ', '); current www CNAME: $($wwwCname -join ', ')"
+}
+
+$mxValues = @(Resolve-Answers $Domain "MX" | ForEach-Object { "{0}:{1}" -f $_.Preference, (Get-RecordValue $_ "MX") } | Sort-Object)
+$requiredMx = @("10:mxa.mailgun.org", "10:mxb.mailgun.org")
+$missingMx = @($requiredMx | Where-Object { $_ -notin $mxValues })
+if ($missingMx.Count -eq 0) {
+    Add-Check "Mail DNS preserved" "OK" "Mailgun MX records are present"
+} else {
+    Add-Check "Mail DNS preserved" "FAIL" "Missing MX: $($missingMx -join ', '); current: $($mxValues -join ', ')"
+}
+
+$txtValues = @(Resolve-Answers $Domain "TXT" | ForEach-Object { Get-RecordValue $_ "TXT" })
+if ("v=spf1 include:mailgun.org ~all" -in $txtValues) {
+    Add-Check "Mail SPF preserved" "OK" "Mailgun SPF TXT record is present"
+} else {
+    Add-Check "Mail SPF preserved" "FAIL" "SPF record is missing. Current TXT: $($txtValues -join '; ')"
+}
+
+$homeResponse = Invoke-Http -Url (Join-Url $ProductionBaseUrl "/")
+if ($homeResponse) {
+    if ($homeResponse.StatusCode -eq 200 -and
+        $homeResponse.Content -match "Fillmore Christian Church" -and
+        $homeResponse.Content -match "site\.webmanifest" -and
+        $homeResponse.Content -match "favicon\.svg" -and
+        $homeResponse.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
+        Add-Check "Production homepage" "OK" "$ProductionBaseUrl serves the static site shell"
+    } else {
+        Add-Check "Production homepage" "FAIL" "$ProductionBaseUrl did not look like the independent static site"
+    }
+}
+
+$sermons = Invoke-Http -Url (Join-Url $ProductionBaseUrl "/sermons.html")
+if ($sermons) {
+    if ($sermons.StatusCode -eq 200 -and
+        $sermons.Content -match 'id="podcast-feed-url"' -and
+        $sermons.Content -match "sermon-card" -and
+        $sermons.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
+        Add-Check "Production sermons archive" "OK" "Sermon archive and podcast subscribe control are live"
+    } else {
+        Add-Check "Production sermons archive" "FAIL" "Sermons archive is missing static archive controls or still references TheChurchCo"
+    }
+}
+
+foreach ($asset in @("site.webmanifest", "contact.vcf", "events.ics")) {
+    $assetResponse = Invoke-Http -Url (Join-Url $ProductionBaseUrl $asset)
+    if ($assetResponse) {
+        if ($assetResponse.StatusCode -eq 200) {
+            Add-Check "Production asset: $asset" "OK" "HTTP 200"
+        } else {
+            Add-Check "Production asset: $asset" "FAIL" "HTTP $($assetResponse.StatusCode)"
+        }
+    }
+}
+
+$podcastFeedUrl = Join-Url $ProductionBaseUrl $PodcastFeedPath
+$feedResponse = Invoke-Http -Url $podcastFeedUrl
+$feedXml = $null
+if ($feedResponse) {
+    try {
+        [xml]$feedXml = $feedResponse.Content
+        $items = @($feedXml.rss.channel.item)
+        $enclosures = @($items | Where-Object { $_.enclosure -and $_.enclosure.url } | ForEach-Object { [string]$_.enclosure.url })
+        if ($items.Count -ge 70 -and $enclosures.Count -ge 70) {
+            Add-Check "Production podcast feed" "OK" "$($items.Count) items, $($enclosures.Count) enclosures"
+        } else {
+            Add-Check "Production podcast feed" "FAIL" "$($items.Count) items, $($enclosures.Count) enclosures"
+        }
+
+        $dependentUrls = @($enclosures | Where-Object { $_ -match "thechurchco|ssl\.thechurchco\.com|thechurchco-production" })
+        $nonHttpsUrls = @($enclosures | Where-Object { -not $_.StartsWith("https://") })
+        $unexpectedHosts = @()
+        if ($ExpectedAudioHost) {
+            $unexpectedHosts = @(
+                $enclosures |
+                    ForEach-Object { ([Uri]$_).Host.ToLowerInvariant() } |
+                    Where-Object { $_ -ne $ExpectedAudioHost.ToLowerInvariant() } |
+                    Sort-Object -Unique
+            )
+        }
+
+        if ($dependentUrls.Count -eq 0 -and $nonHttpsUrls.Count -eq 0 -and $unexpectedHosts.Count -eq 0) {
+            Add-Check "Production audio independence" "OK" "All enclosures use https://$ExpectedAudioHost"
+        } else {
+            $details = @()
+            if ($dependentUrls.Count -gt 0) { $details += "$($dependentUrls.Count) enclosure URL(s) still depend on TheChurchCo" }
+            if ($nonHttpsUrls.Count -gt 0) { $details += "$($nonHttpsUrls.Count) enclosure URL(s) are not HTTPS" }
+            if ($unexpectedHosts.Count -gt 0) { $details += "unexpected audio host(s): $($unexpectedHosts -join ', ')" }
+            Add-Check "Production audio independence" "FAIL" ($details -join "; ")
+        }
+
+        $episodePath = ""
+        $firstLink = [string]@($items | Where-Object { $_.link } | Select-Object -First 1).link
+        if ($firstLink) {
+            try {
+                $episodePath = ([Uri]$firstLink).AbsolutePath
+            } catch {}
+        }
+        if ($episodePath) {
+            $episode = Invoke-Http -Url (Join-Url $ProductionBaseUrl $episodePath)
+            if ($episode) {
+                if ($episode.StatusCode -eq 200 -and $episode.Content -match "<audio" -and $episode.Content -match "Download Audio") {
+                    Add-Check "Production episode pages" "OK" "$episodePath includes audio player and download"
+                } else {
+                    Add-Check "Production episode pages" "FAIL" "$episodePath is missing the static episode audio UI"
+                }
+            }
+        } else {
+            Add-Check "Production episode pages" "FAIL" "Could not identify an episode URL from the production feed"
+        }
+
+        $tempFeed = [System.IO.Path]::GetTempFileName()
+        try {
+            Set-Content -LiteralPath $tempFeed -Value $feedResponse.Content -NoNewline
+            if ($VerifyAllPodcastMedia) {
+                & (Join-Path $PSScriptRoot "test-podcast-media.ps1") -FeedPath $tempFeed -SampleCount $PodcastMediaSampleCount -TimeoutSec $TimeoutSec -Quiet -All
+            } else {
+                & (Join-Path $PSScriptRoot "test-podcast-media.ps1") -FeedPath $tempFeed -SampleCount $PodcastMediaSampleCount -TimeoutSec $TimeoutSec -Quiet
+            }
+            $scope = if ($VerifyAllPodcastMedia) { "all" } else { "$PodcastMediaSampleCount sampled" }
+            Add-Check "Production audio media responses" "OK" "Verified $scope unique enclosure URL(s)"
+        } catch {
+            Add-Check "Production audio media responses" "FAIL" $_.Exception.Message
+        } finally {
+            Remove-Item -LiteralPath $tempFeed -Force -ErrorAction SilentlyContinue
+        }
+    } catch {
+        Add-Check "Production podcast feed" "FAIL" "Could not parse RSS from $podcastFeedUrl`: $($_.Exception.Message)"
+    }
+}
+
+$checks | Format-Table -AutoSize
+
+$failed = @($checks | Where-Object { $_.Status -eq "FAIL" })
+if ($failed.Count -gt 0) {
+    throw "$($failed.Count) TheChurchCo cancellation readiness check(s) failed. Do not cancel TheChurchCo yet."
+}
+
+$warnings = @($checks | Where-Object { $_.Status -eq "WARN" })
+if ($warnings.Count -gt 0) {
+    Write-Warning "$($warnings.Count) TheChurchCo cancellation readiness warning(s) remain."
+}

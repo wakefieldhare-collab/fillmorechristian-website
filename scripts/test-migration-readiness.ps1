@@ -518,6 +518,21 @@ if (Test-Path -LiteralPath $deployScriptPath) {
     Add-Check "Cloudflare deploy script" "FAIL" "scripts\deploy-cloudflare-pages.ps1 is missing"
 }
 
+$cancellationScriptPath = Join-Path $root "scripts\test-thechurchco-cancellation-readiness.ps1"
+if (Test-Path -LiteralPath $cancellationScriptPath) {
+    $cancellationScriptText = Get-Content -Raw -LiteralPath $cancellationScriptPath
+    if ($cancellationScriptText -match "Cloudflare nameservers" -and
+        $cancellationScriptText -match "Production audio independence" -and
+        $cancellationScriptText -match "media\.fillmorechristian\.org" -and
+        $cancellationScriptText -match "Do not cancel TheChurchCo yet") {
+        Add-Check "TheChurchCo cancellation gate" "OK" "Production cancellation verifier checks DNS, static site, mail, feed, and audio independence"
+    } else {
+        Add-Check "TheChurchCo cancellation gate" "FAIL" "Cancellation verifier is missing DNS, audio independence, or stop-condition checks"
+    }
+} else {
+    Add-Check "TheChurchCo cancellation gate" "FAIL" "scripts\test-thechurchco-cancellation-readiness.ps1 is missing"
+}
+
 $feedPaths = @(
     "podcast-category\fillmore-christian\feed\podcast",
     "podcast.xml",
