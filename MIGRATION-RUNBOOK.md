@@ -10,7 +10,7 @@ Last updated: 2026-06-01
 - Current website host: TheChurchCo / WordPress
 - Current `www` target: `ssl.thechurchco.com`
 - Current mail MX records: `mxa.mailgun.org` and `mxb.mailgun.org`
-- Squarespace renewal notice: auto-renew on 2026-06-15 for $15.00; disable by 2026-06-14 only if the transfer is already safely underway or complete.
+- Squarespace renewal notice: confirmed in personal Gmail message `19e8098f6dc383a7` from Squarespace on 2026-06-01; `fillmorechristian.org` auto-renews on 2026-06-15 for $15.00. Disable auto-renew by 2026-06-14 only if the transfer is already safely underway or complete.
 - Current Apple Podcasts feed URL: `https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast`
 - GitHub source repo for Cloudflare Pages: `https://github.com/wakefieldhare-collab/fillmorechristian-website`
 - GitHub owner guard: keep this repo under `wakefieldhare-collab`; do not move or deploy it from the work account `wake-byte`.
