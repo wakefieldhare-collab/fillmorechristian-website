@@ -145,6 +145,7 @@ $maxStaleTtl = 0
 if ($staleRows.Count -gt 0) {
     $maxStaleTtl = [int](@($staleRows | Where-Object { $_.Ttl } | ForEach-Object { [int]$_.Ttl } | Measure-Object -Maximum).Maximum)
 }
+$estimatedClearAt = if ($maxStaleTtl -gt 0) { $generatedAt.AddSeconds($maxStaleTtl) } else { $null }
 
 Write-Host "Fillmore Christian DNS cache status"
 Write-Host "Generated: $($generatedAt.ToString('yyyy-MM-dd HH:mm:ss zzz'))"
@@ -152,7 +153,7 @@ Write-Host ""
 $rows | Format-Table Resolver, Kind, Record, Status, Ttl, Values -AutoSize
 
 if ($staleRows.Count -gt 0) {
-    Write-Warning "$($staleRows.Count) stale DNS answer(s) remain. Longest observed stale TTL: $maxStaleTtl second(s). Do not cancel TheChurchCo yet."
+    Write-Warning "$($staleRows.Count) stale DNS answer(s) remain. Longest observed stale TTL: $maxStaleTtl second(s), estimated clear by $($estimatedClearAt.ToString('yyyy-MM-dd HH:mm:ss zzz')). Do not cancel TheChurchCo yet."
 } else {
     Write-Host "No stale old TheChurchCo/Squarespace DNS answers were observed across configured resolvers."
 }
@@ -171,6 +172,7 @@ if ($WriteReport) {
         oldWwwCname = $OldWwwCname
         staleAnswerCount = $staleRows.Count
         maxStaleTtlSeconds = $maxStaleTtl
+        estimatedClearAt = if ($estimatedClearAt) { $estimatedClearAt.ToUniversalTime().ToString("o") } else { $null }
         rows = @($rows.ToArray())
     } | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 -LiteralPath $jsonPath
 
@@ -180,6 +182,9 @@ if ($WriteReport) {
     $lines.Add("- Generated: $($generatedAt.ToUniversalTime().ToString("o"))")
     $lines.Add("- Stale answer count: $($staleRows.Count)")
     $lines.Add("- Longest observed stale TTL: $maxStaleTtl second(s)")
+    if ($estimatedClearAt) {
+        $lines.Add("- Estimated stale-cache clear time: $($estimatedClearAt.ToString("yyyy-MM-dd HH:mm:ss zzz"))")
+    }
     $lines.Add("")
     $lines.Add("| Resolver | Kind | Record | Status | TTL | Values |")
     $lines.Add("| --- | --- | --- | --- | ---: | --- |")

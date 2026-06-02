@@ -127,6 +127,36 @@ function Invoke-CloudflareGet {
     return Invoke-RestMethod -Method Get -Headers $headers -Uri ("https://api.cloudflare.com/client/v4/" + $Path.TrimStart("/"))
 }
 
+function Get-LatestProductionCutoverReport {
+    $cutoverDir = Join-Path $root "exports\cutover"
+    if (-not (Test-Path -LiteralPath $cutoverDir)) {
+        return $null
+    }
+
+    $latestReportFile = Get-ChildItem -LiteralPath $cutoverDir -Filter "$Domain-production-cutover-*.json" -File |
+        Sort-Object LastWriteTime -Descending |
+        Select-Object -First 1
+    if (-not $latestReportFile) {
+        return $null
+    }
+
+    try {
+        $report = Get-Content -Raw -LiteralPath $latestReportFile.FullName | ConvertFrom-Json
+        return [pscustomobject]@{
+            Path = $latestReportFile.FullName
+            FileName = $latestReportFile.Name
+            Report = $report
+        }
+    } catch {
+        return [pscustomobject]@{
+            Path = $latestReportFile.FullName
+            FileName = $latestReportFile.Name
+            Invalid = $true
+            Error = $_.Exception.Message
+        }
+    }
+}
+
 function Get-CloudflareDnsVerificationArtifact {
     $path = if ([System.IO.Path]::IsPathRooted($CloudflareDnsVerificationArtifactPath)) {
         $CloudflareDnsVerificationArtifactPath
@@ -298,6 +328,24 @@ if (Test-Path -LiteralPath $r2ManifestPath) {
     }
 } else {
     Add-Status "R2 manifest" "WARN" "R2 manifest is missing; run scripts\build-r2-audio-manifest.ps1."
+}
+
+$latestCutoverReport = Get-LatestProductionCutoverReport
+if ($latestCutoverReport) {
+    if ($latestCutoverReport.Invalid) {
+        Add-Status "Production cutover receipt" "WARN" "Latest cutover report could not be parsed: $($latestCutoverReport.FileName). $($latestCutoverReport.Error)"
+    } else {
+        $report = $latestCutoverReport.Report
+        $generatedAt = try { ([datetime]$report.GeneratedAt).ToUniversalTime().ToString("yyyy-MM-dd HH:mm 'UTC'") } catch { [string]$report.GeneratedAt }
+        $mediaMode = if ([bool]$report.VerifyAllPodcastMedia) { "all podcast media" } else { "sampled podcast media" }
+        if ($report.OverallStatus -eq "PASS") {
+            Add-Status "Production cutover receipt" "OK" "Latest report passed at $generatedAt with $mediaMode verified: $($latestCutoverReport.FileName)."
+        } else {
+            Add-Status "Production cutover receipt" "WARN" "Latest report status is $($report.OverallStatus) at ${generatedAt}: $($latestCutoverReport.FileName)."
+        }
+    }
+} else {
+    Add-Status "Production cutover receipt" "INFO" "No production cutover report found yet; run npm run verify:production-cutover -- -VerifyAllPodcastMedia."
 }
 
 if (-not $SkipNetwork) {
