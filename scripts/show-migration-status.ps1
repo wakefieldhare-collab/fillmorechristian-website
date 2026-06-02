@@ -185,6 +185,7 @@ $cloudflareAuthenticated = $false
 $cloudflareToken = ""
 $cloudflareDnsToken = Get-CloudflareApiToken
 if ($cloudflareDnsToken) {
+    Add-Status "Cloudflare token cleanup" "INFO" "A Cloudflare DNS API token is available in this shell; revoke temporary migration tokens after DNS cutover and cancellation readiness pass."
     Remove-Item Env:\CLOUDFLARE_API_TOKEN -ErrorAction SilentlyContinue
     Remove-Item Env:\CF_API_TOKEN -ErrorAction SilentlyContinue
 }

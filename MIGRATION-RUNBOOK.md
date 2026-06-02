@@ -309,6 +309,8 @@ If the Cloudflare DNS record set ever needs to be re-applied, set `CLOUDFLARE_AP
 npm run apply:cloudflare-dns -- -Apply
 ```
 
+Security cleanup: if a temporary Cloudflare API token was created or shared for this migration, revoke it after DNS cutover is verified and `npm run verify:cancel-thechurchco -- -VerifyAllPodcastMedia` passes.
+
 After Cloudflare assigns nameservers and Squarespace is updated, run the after-cutover verifier with the real Cloudflare nameserver names:
 
 ```powershell

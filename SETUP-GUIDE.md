@@ -218,6 +218,8 @@ The Cloudflare API apply has already been run. If the record set ever needs to b
 npm run apply:cloudflare-dns -- -Apply
 ```
 
+After DNS cutover and the production cancellation checks pass, revoke any temporary Cloudflare API token created or shared for the migration.
+
 As of June 1, 2026, preserve at least the Mailgun MX records and these TXT/CNAME records:
 
 - `v=spf1 include:mailgun.org ~all`
