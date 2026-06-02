@@ -783,9 +783,11 @@ if (Test-Path -LiteralPath $pagesWorkflowPath) {
 }
 
 $statusScriptPath = Join-Path $root "scripts\show-migration-status.ps1"
+$registrarChecklistScriptPath = Join-Path $root "scripts\show-registrar-cutover-checklist.ps1"
 $packageJsonPath = Join-Path $root "package.json"
-if ((Test-Path -LiteralPath $statusScriptPath) -and (Test-Path -LiteralPath $packageJsonPath)) {
+if ((Test-Path -LiteralPath $statusScriptPath) -and (Test-Path -LiteralPath $registrarChecklistScriptPath) -and (Test-Path -LiteralPath $packageJsonPath)) {
     $statusScriptText = Get-Content -Raw -LiteralPath $statusScriptPath
+    $registrarChecklistScriptText = Get-Content -Raw -LiteralPath $registrarChecklistScriptPath
     $packageJsonText = Get-Content -Raw -LiteralPath $packageJsonPath
     if ($statusScriptText -match "npx wrangler login" -and
         $statusScriptText -match "Squarespace renewal" -and
@@ -793,13 +795,19 @@ if ((Test-Path -LiteralPath $statusScriptPath) -and (Test-Path -LiteralPath $pac
         $statusScriptText -match "www\.fillmorechristian\.org" -and
         $statusScriptText -match "apply:cloudflare-dns" -and
         $statusScriptText -match "Zone:DNS Edit" -and
+        $registrarChecklistScriptText -match "eric\.ns\.cloudflare\.com" -and
+        $registrarChecklistScriptText -match "sky\.ns\.cloudflare\.com" -and
+        $registrarChecklistScriptText -match "complete:cloudflare-cutover" -and
+        $registrarChecklistScriptText -match "verify:production-cutover" -and
+        $registrarChecklistScriptText -match "Do not disable Squarespace auto-renew" -and
+        $packageJsonText -match '"cutover:registrar-checklist"' -and
         $packageJsonText -match '"status:migration"') {
-        Add-Check "Migration status command" "OK" "Read-only status script summarizes owner, renewal, audio, R2, DNS, staging, auth state, and DNS-token next step"
+        Add-Check "Migration status command" "OK" "Read-only status script and registrar checklist summarize owner, renewal, audio, R2, DNS, staging, auth state, exact nameservers, and post-cutover gates"
     } else {
-        Add-Check "Migration status command" "FAIL" "Migration status script or npm alias is missing key ownership/auth/audio checks"
+        Add-Check "Migration status command" "FAIL" "Migration status script, registrar checklist, or npm aliases are missing key ownership/auth/audio/cutover checks"
     }
 } else {
-    Add-Check "Migration status command" "FAIL" "scripts\show-migration-status.ps1 or package.json is missing"
+    Add-Check "Migration status command" "FAIL" "scripts\show-migration-status.ps1, scripts\show-registrar-cutover-checklist.ps1, or package.json is missing"
 }
 
 $cancellationScriptPath = Join-Path $root "scripts\test-thechurchco-cancellation-readiness.ps1"
