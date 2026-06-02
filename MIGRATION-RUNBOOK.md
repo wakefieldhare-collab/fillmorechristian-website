@@ -115,6 +115,14 @@ npm run complete:cloudflare-cutover
 
 It verifies Cloudflare nameservers, runs the post-cutover DNS gate, verifies the R2-backed Pages `/media/` URLs, and then runs strict independent-audio readiness checks. If DNS is still propagating, use `npm run complete:cloudflare-cutover -- -WaitForDns`.
 
+For the final production receipt before canceling anything, use the combined verifier:
+
+```powershell
+npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia
+```
+
+This runs the Cloudflare cutover verifier, the domain-transfer safety gate, and the TheChurchCo cancellation gate in order. It writes a timestamped non-secret Markdown and JSON report under `exports/cutover/`, stops on the first failed gate, and explicitly says not to cancel TheChurchCo or disable Squarespace auto-renew until the report passes.
+
 The migration command refuses the work GitHub owner, requires `https://` audio URLs, verifies Cloudflare authentication, can create the R2 bucket, uploads and hash-verifies all 70 audio objects, rewrites all three RSS feeds to `https://www.fillmorechristian.org/media`, regenerates episode pages/sermon archive/homepage latest-sermon links, builds `dist`, and runs strict local readiness plus the Cloudflare Pages local preflight. Use `npm run complete:cloudflare-cutover` and `npm run verify:cancel-thechurchco` before cancellation for a full production media sweep.
 
 After rewriting enclosure URLs, re-run local verification and push the RSS changes before canceling TheChurchCo.
@@ -127,7 +135,7 @@ R2 preparation status on 2026-06-01:
 - `scripts/test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -VerifyHashes` downloaded and SHA-256 verified all 70 R2 objects after upload.
 - `npm run verify:r2-pages-audio` verifies the same objects through `https://fillmorechristian-website.pages.dev/media/...` before production DNS cutover.
 - `scripts/test-r2-public-audio.ps1` verifies the public `www.fillmorechristian.org/media/...` URLs from the manifest after DNS cutover.
-- The remaining blocker is the Squarespace nameserver switch: after public DNS uses `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`, run `npm run complete:cloudflare-cutover`, then `npm run verify:cancel-thechurchco`.
+- The remaining blocker is the Squarespace nameserver switch: after public DNS uses `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`, run `npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia`.
 
 Podcast metadata cleanup can be run as one guarded command:
 
@@ -216,6 +224,14 @@ npm run verify:cancel-thechurchco -- -VerifyAllPodcastMedia
 ```
 
 This gate is expected to fail until Cloudflare nameservers are active, the static site is live at `https://www.fillmorechristian.org`, mail DNS is preserved, and the production podcast feed has been rewritten so all audio enclosures use `https://www.fillmorechristian.org/media/...` instead of TheChurchCo.
+
+The preferred final command is the combined report-writing wrapper:
+
+```powershell
+npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia
+```
+
+It includes the cancellation gate above plus the DNS cutover and domain-transfer gates, and it leaves a local report in `exports/cutover/`.
 
 ## Cloudflare Pages Status
 

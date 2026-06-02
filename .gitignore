@@ -1,6 +1,7 @@
 .wrangler/
 exports/thechurchco-podcast/audio/
 exports/thechurchco-podcast/*.tmp
+exports/cutover/
 exports/*.png
 dist/
 images/church-exterior.jpg

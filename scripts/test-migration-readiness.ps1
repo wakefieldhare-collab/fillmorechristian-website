@@ -769,6 +769,7 @@ if ((Test-Path -LiteralPath $statusScriptPath) -and (Test-Path -LiteralPath $pac
 
 $cancellationScriptPath = Join-Path $root "scripts\test-thechurchco-cancellation-readiness.ps1"
 $domainTransferScriptPath = Join-Path $root "scripts\test-domain-transfer-readiness.ps1"
+$productionCutoverScriptPath = Join-Path $root "scripts\verify-production-cutover.ps1"
 $audioMigrationScriptPath = Join-Path $root "scripts\migrate-cloudflare-audio.ps1"
 $audioUploadScriptPath = Join-Path $root "scripts\upload-podcast-audio-to-r2.ps1"
 $audioUploadVerifierScriptPath = Join-Path $root "scripts\test-r2-audio-upload.ps1"
@@ -791,6 +792,25 @@ if (Test-Path -LiteralPath $domainTransferScriptPath) {
     }
 } else {
     Add-Check "Domain transfer safety gate" "FAIL" "scripts\test-domain-transfer-readiness.ps1 is missing"
+}
+
+if ((Test-Path -LiteralPath $productionCutoverScriptPath) -and (Test-Path -LiteralPath $packageJsonPath)) {
+    $productionCutoverScriptText = Get-Content -Raw -LiteralPath $productionCutoverScriptPath
+    $packageJsonText = Get-Content -Raw -LiteralPath $packageJsonPath
+    if ($productionCutoverScriptText -match "complete-cloudflare-cutover\.ps1" -and
+        $productionCutoverScriptText -match "test-domain-transfer-readiness\.ps1" -and
+        $productionCutoverScriptText -match "test-thechurchco-cancellation-readiness\.ps1" -and
+        $productionCutoverScriptText -match "exports\\cutover" -and
+        $productionCutoverScriptText -match "VerifyAllPodcastMedia" -and
+        $productionCutoverScriptText -match "Do not cancel TheChurchCo" -and
+        $productionCutoverScriptText -match "revoke temporary Cloudflare API tokens" -and
+        $packageJsonText -match '"verify:production-cutover"') {
+        Add-Check "Production cutover report gate" "OK" "Combined verifier runs DNS cutover, domain-transfer, and cancellation gates and writes a local report"
+    } else {
+        Add-Check "Production cutover report gate" "FAIL" "Production cutover verifier is missing the ordered gates, report output, stop condition, or npm alias"
+    }
+} else {
+    Add-Check "Production cutover report gate" "FAIL" "scripts\verify-production-cutover.ps1 or package.json is missing"
 }
 
 if (Test-Path -LiteralPath $cancellationScriptPath) {

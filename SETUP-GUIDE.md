@@ -103,7 +103,7 @@ The real upload and R2 hash verification were completed on June 1, 2026:
 The Cloudflare Pages project binds the R2 bucket as `SERMON_AUDIO` and serves audio at `/media/<object-key>`. After DNS cutover makes `www.fillmorechristian.org` point to Cloudflare Pages, run the public checks:
 
 ```powershell
-npm run complete:cloudflare-cutover
+npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia
 .\scripts\test-r2-public-audio.ps1 -All
 .\scripts\test-podcast-media.ps1 -All
 ```
@@ -219,6 +219,14 @@ npm run apply:cloudflare-dns -- -Apply
 ```
 
 After DNS cutover and the production cancellation checks pass, revoke any temporary Cloudflare API token created or shared for the migration.
+
+The preferred final verifier is:
+
+```powershell
+npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia
+```
+
+It runs the Cloudflare cutover, Cloudflare Registrar safety, and TheChurchCo cancellation checks in sequence, then writes a non-secret report under `exports/cutover/`.
 
 As of June 1, 2026, preserve at least the Mailgun MX records and these TXT/CNAME records:
 

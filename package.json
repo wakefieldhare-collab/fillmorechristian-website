@@ -7,6 +7,7 @@
     "migrate:cloudflare-audio": "powershell -ExecutionPolicy Bypass -File scripts/migrate-cloudflare-audio.ps1",
     "refresh:podcast-content": "powershell -ExecutionPolicy Bypass -File scripts/refresh-podcast-content.ps1",
     "status:migration": "powershell -ExecutionPolicy Bypass -File scripts/show-migration-status.ps1",
+    "verify:production-cutover": "powershell -ExecutionPolicy Bypass -File scripts/verify-production-cutover.ps1",
     "verify:dns-import": "powershell -ExecutionPolicy Bypass -File scripts/test-cloudflare-dns-import-readiness.ps1",
     "verify:domain-transfer": "powershell -ExecutionPolicy Bypass -File scripts/test-domain-transfer-readiness.ps1",
     "verify:r2-public-audio": "powershell -ExecutionPolicy Bypass -File scripts/test-r2-public-audio.ps1",
