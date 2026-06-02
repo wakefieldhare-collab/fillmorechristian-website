@@ -276,6 +276,8 @@ $cloudflareZoneStatus = ""
 $cloudflareZoneId = ""
 $cloudflareZoneNameservers = @()
 $cloudflareDnsPrepared = $false
+$latestFullCancellationReceiptReady = $false
+$latestCancellationReceiptName = ""
 if ($null -eq $wrangler) {
     Add-Status "Cloudflare auth" "FAIL" "Wrangler is not available. Install or use npx wrangler."
 } else {
@@ -381,6 +383,15 @@ if ($latestCutoverReport) {
         $report = $latestCutoverReport.Report
         $generatedAt = try { ([datetime]$report.GeneratedAt).ToUniversalTime().ToString("yyyy-MM-dd HH:mm 'UTC'") } catch { [string]$report.GeneratedAt }
         $mediaMode = if ([bool]$report.VerifyAllPodcastMedia) { "all podcast media" } else { "sampled podcast media" }
+        $stepStatuses = @{}
+        foreach ($step in @($report.Steps)) {
+            $stepStatuses[[string]$step.Name] = [string]$step.Status
+        }
+        $latestCancellationStepReady = ($stepStatuses["TheChurchCo Cancellation Readiness"] -eq "PASS")
+        $latestFullCancellationReceiptReady = ($report.OverallStatus -eq "PASS" -and [bool]$report.VerifyAllPodcastMedia -and $latestCancellationStepReady)
+        if ($latestFullCancellationReceiptReady) {
+            $latestCancellationReceiptName = $latestCutoverReport.FileName
+        }
         if ($report.OverallStatus -eq "PASS") {
             Add-Status "Production cutover receipt" "OK" "Latest report passed at $generatedAt with $mediaMode verified: $($latestCutoverReport.FileName)."
         } else {
@@ -412,6 +423,14 @@ if ($latestDnsCacheReport) {
     }
 } else {
     Add-Status "DNS cache drainage" "INFO" "No DNS cache status report found yet; run npm run verify:dns-cache-clear."
+}
+
+if ($latestFullCancellationReceiptReady) {
+    Add-Status "TheChurchCo cancellation" "OK" "Safe to cancel website/podcast hosting based on full-media production receipt: $latestCancellationReceiptName."
+} elseif ($latestCutoverReport -and -not $latestCutoverReport.Invalid) {
+    Add-Status "TheChurchCo cancellation" "WARN" "Not cancellation-ready from the latest receipt; rerun npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia."
+} else {
+    Add-Status "TheChurchCo cancellation" "INFO" "Run npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia before any TheChurchCo cancellation."
 }
 
 if (-not $SkipNetwork) {
@@ -634,7 +653,11 @@ if ($authNeeded.Count -gt 0) {
         Add-Status "Next authorization" "AUTH" "Wake authorization is needed for: $($authAreas -join ', ')."
     }
 } else {
-    Add-Status "Next authorization" "INFO" "Next human handoff is the Squarespace transfer authorization code for Cloudflare Registrar Step 2. Keep Squarespace auto-renew on, run verify:dns-cache-clear while recursive DNS drains, and run the strict production gates before canceling TheChurchCo."
+    if ($latestFullCancellationReceiptReady) {
+        Add-Status "Next authorization" "INFO" "Next human handoff is the Squarespace transfer authorization code for Cloudflare Registrar Step 2. Keep Squarespace auto-renew on until the transfer is visibly underway or complete; TheChurchCo website/podcast hosting is cancellation-ready from the latest full production receipt."
+    } else {
+        Add-Status "Next authorization" "INFO" "Next human handoff is the Squarespace transfer authorization code for Cloudflare Registrar Step 2. Keep Squarespace auto-renew on and run the strict full-media production gates before canceling TheChurchCo."
+    }
 }
 
 if ($AsJson) {

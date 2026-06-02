@@ -7,7 +7,7 @@ Last updated: 2026-06-02
 - Domain: `fillmorechristian.org`
 - Current registrar/DNS account: Squarespace Domains / former Google Domains
 - Cloudflare assigned nameservers: `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`
-- Current public DNS: Cloudflare DNS is authoritative, but some recursive resolvers may still temporarily cache old Squarespace/TheChurchCo answers.
+- Current public DNS: Cloudflare DNS is authoritative, and the latest recursive DNS cache report found no stale Squarespace/TheChurchCo answers.
 - Current website host: Cloudflare Pages project `fillmorechristian-website`
 - Current public `www` target in Cloudflare DNS: proxied Pages custom domain
 - Cloudflare DNS records are prepared and API-verified: the old TheChurchCo web records are removed inside Cloudflare, the apex and `www` Pages CNAMEs are present, and mail/SPF/DMARC/DKIM/verification records are preserved.
@@ -25,9 +25,9 @@ Last updated: 2026-06-02
 2. Deploy this static site to Cloudflare Pages.
 3. Add `fillmorechristian.org` to Cloudflare DNS and import/verify existing DNS records. Done.
 4. Point Squarespace nameservers to Cloudflare nameservers so Cloudflare DNS becomes active. Done.
-5. Verify `www`, apex, email MX, contact form, and the legacy podcast feed URL. Done, but keep monitoring recursive DNS cache until stale old answers disappear.
+5. Verify `www`, apex, email MX, contact form, and the legacy podcast feed URL. Done.
 6. Transfer registrar from Squarespace to Cloudflare Registrar. Waiting for the Squarespace transfer authorization code that was sent to the owner contact.
-7. Only cancel TheChurchCo after the website, podcast feed, production `/media` audio route, recursive DNS cache drainage, and the final cancellation gates are verified from the new host.
+7. TheChurchCo website/podcast hosting is cancellation-ready after the 2026-06-02 full-media production receipt. Keep the receipt with the migration records.
 
 ## Podcast Export
 
@@ -44,7 +44,7 @@ The script writes:
 - `exports/thechurchco-podcast/manifest.csv` with episode metadata.
 - `exports/thechurchco-podcast/audio/` with downloaded MP3 backups when `-DownloadAudio` is used.
 
-Do not cancel TheChurchCo until the audio files are backed up, the FCC-owned feed is verified in production, and the R2-backed `/media` route has passed a public media sweep.
+TheChurchCo website/podcast hosting is cancellation-ready now that the audio files are backed up, the FCC-owned feed is verified in production, recursive DNS cache is clear, and the R2-backed `/media` route has passed a public media sweep.
 
 Export status on 2026-06-01:
 
@@ -58,7 +58,7 @@ Export status on 2026-06-01:
 
 ## Podcast Independence Plan
 
-Current state is safe for production traffic but not safe for canceling TheChurchCo:
+Current state is safe for production traffic and cancellation-ready for TheChurchCo website/podcast hosting:
 
 - The RSS feed is preserved locally and will continue to publish from `www.fillmorechristian.org`.
 - The historical MP3 files are backed up locally and hash-inventoried.
@@ -137,7 +137,7 @@ R2 preparation status on 2026-06-02:
 - `npm run verify:r2-pages-audio` verifies the same objects through `https://fillmorechristian-website.pages.dev/media/...` before production DNS cutover.
 - `scripts/test-r2-public-audio.ps1` verifies the public `www.fillmorechristian.org/media/...` URLs from the manifest after DNS cutover.
 - The remaining registrar blocker is the Squarespace transfer authorization code. Enter it in Cloudflare Dashboard > Domains > Transfers to start the Cloudflare Registrar transfer.
-- The remaining cancellation blocker is recursive DNS cache: run `npm run verify:dns-cache-clear` and wait for stale old Squarespace/TheChurchCo answers to disappear before canceling TheChurchCo.
+- The cancellation blocker is cleared: `fillmorechristian.org-production-cutover-20260602-063733.md` passed with all podcast media verified, recursive DNS cache clear, and TheChurchCo cancellation readiness green.
 
 Current registrar checklist:
 

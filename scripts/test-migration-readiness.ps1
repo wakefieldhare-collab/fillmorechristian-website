@@ -805,9 +805,9 @@ if ((Test-Path -LiteralPath $statusScriptPath) -and (Test-Path -LiteralPath $dns
         $statusScriptText -match "verify:dns-cache-clear" -and
         $registrarChecklistScriptText -match "eric\.ns\.cloudflare\.com" -and
         $registrarChecklistScriptText -match "sky\.ns\.cloudflare\.com" -and
-        $registrarChecklistScriptText -match "complete:cloudflare-cutover" -and
         $registrarChecklistScriptText -match "verify:production-cutover" -and
         $registrarChecklistScriptText -match "Do not disable Squarespace auto-renew" -and
+        $registrarChecklistScriptText -match "TheChurchCo website/podcast hosting may be canceled" -and
         $dnsCacheStatusScriptText -match "Cloudflare public" -and
         $dnsCacheStatusScriptText -match "Google public" -and
         $dnsCacheStatusScriptText -match "Authoritative" -and

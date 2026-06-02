@@ -118,7 +118,7 @@ npm run migrate:cloudflare-audio -- -SkipUpload -VerifyAllPublicMedia
 
 It keeps the same personal GitHub owner guard as the deploy script, uploads and verifies the R2 audio backup, rewrites the RSS feeds to the owned Pages media route, regenerates sermon pages, builds `dist`, and runs strict local checks.
 
-The manifest, upload dry run, and R2 verifier dry run are safe before registrar cutover. The real R2 upload is complete; the Cloudflare Pages deployment now carries the R2 binding and feed rewrite, and production audio has been verified through `www.fillmorechristian.org`. Production cancellation still waits for recursive DNS cache drainage plus the strict production/cancellation gates.
+The manifest, upload dry run, and R2 verifier dry run are safe before registrar cutover. The real R2 upload is complete; the Cloudflare Pages deployment now carries the R2 binding and feed rewrite, production audio has been verified through `www.fillmorechristian.org`, recursive DNS cache is clear, and the strict full-media production/cancellation gates have passed.
 
 ### Step 3: Deploy Website To Cloudflare Pages
 
@@ -191,8 +191,8 @@ DNS and registrar state:
 3. Squarespace nameservers have been updated to `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`.
 4. Cloudflare Pages custom domains for `www` and apex are active.
 5. Squarespace registrar lock has been turned off and an authorization code has been requested.
-6. Some recursive DNS caches may still show old Squarespace/TheChurchCo answers; run `npm run verify:dns-cache-clear` before cancellation decisions.
-7. After Cloudflare Registrar transfer is started, verify production website/feed/media again and only then make cancellation decisions.
+6. Recursive DNS caches have been cleared; the latest report found no stale Squarespace/TheChurchCo answers.
+7. TheChurchCo website/podcast hosting is cancellation-ready from the latest full-media production receipt. After Cloudflare Registrar transfer is started, re-run the production verifier and keep the receipt green.
 
 Current public DNS can be snapshotted with:
 
@@ -246,7 +246,7 @@ As of June 1, 2026, preserve at least the Mailgun MX records and these TXT/CNAME
 - `4jb3ni34htue` CNAME -> `gv-xvljhthdwk5dxh.dv.googlehosted.com`
 - `334xc4sml6cf` CNAME -> `gv-ujhethalu73pqt.dv.googlehosted.com`
 
-Do not disable Squarespace auto-renew until the Cloudflare Registrar transfer is visibly underway or complete. Do not cancel TheChurchCo until `npm run verify:dns-cache-clear`, `npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia`, and `npm run verify:cancel-thechurchco -- -VerifyAllPodcastMedia` pass.
+Do not disable Squarespace auto-renew until the Cloudflare Registrar transfer is visibly underway or complete. TheChurchCo website/podcast hosting is cancellation-ready because `npm run verify:dns-cache-clear`, `npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia`, and `npm run verify:cancel-thechurchco -- -VerifyAllPodcastMedia` have passed; preserve the latest production receipt before canceling.
 
 ### Step 7: Maintain Church Logo
 
