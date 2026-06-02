@@ -48,7 +48,7 @@ function Test-CloudflareNameservers {
         return $true
     }
 
-    Write-Warning "$Domain nameservers are not ready. Current: $($nsValues -join ', '); missing: $($missing -join ', ')"
+    Write-Host "$Domain nameservers are not ready. Current: $($nsValues -join ', '); missing: $($missing -join ', ')"
     return $false
 }
 
