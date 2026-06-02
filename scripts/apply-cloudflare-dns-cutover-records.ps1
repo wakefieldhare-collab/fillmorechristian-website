@@ -108,7 +108,7 @@ function Get-DnsRecords {
         $page += 1
     } while ($page -le $totalPages)
 
-    return @($records)
+    return @($records.ToArray())
 }
 
 function New-DesiredRecord {

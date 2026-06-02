@@ -105,6 +105,17 @@ function Get-WranglerOAuthToken {
     return ""
 }
 
+function Get-CloudflareApiToken {
+    foreach ($name in @("CLOUDFLARE_API_TOKEN", "CF_API_TOKEN")) {
+        $value = [Environment]::GetEnvironmentVariable($name)
+        if ($value) {
+            return $value
+        }
+    }
+
+    return ""
+}
+
 function Invoke-CloudflareGet {
     param(
         [string]$Path,
@@ -172,8 +183,15 @@ try {
 $wrangler = Get-WranglerInvocation
 $cloudflareAuthenticated = $false
 $cloudflareToken = ""
+$cloudflareDnsToken = Get-CloudflareApiToken
+if ($cloudflareDnsToken) {
+    Remove-Item Env:\CLOUDFLARE_API_TOKEN -ErrorAction SilentlyContinue
+    Remove-Item Env:\CF_API_TOKEN -ErrorAction SilentlyContinue
+}
 $cloudflareZoneStatus = ""
+$cloudflareZoneId = ""
 $cloudflareZoneNameservers = @()
+$cloudflareDnsPrepared = $false
 if ($null -eq $wrangler) {
     Add-Status "Cloudflare auth" "FAIL" "Wrangler is not available. Install or use npx wrangler."
 } else {
@@ -266,6 +284,7 @@ if (-not $SkipNetwork) {
                 $zone = @($zoneResponse.result | Where-Object { $_.name -eq $Domain } | Select-Object -First 1)
                 if ($zone.Count -gt 0) {
                     $cloudflareZoneStatus = [string]$zone[0].status
+                    $cloudflareZoneId = [string]$zone[0].id
                     $cloudflareZoneNameservers = @($zone[0].name_servers | ForEach-Object { [string]$_ })
                     if ($cloudflareZoneStatus -eq "active") {
                         Add-Status "Cloudflare zone" "OK" "$Domain is active in Cloudflare with nameservers: $($cloudflareZoneNameservers -join ', ')."
@@ -277,6 +296,48 @@ if (-not $SkipNetwork) {
                 }
             } catch {
                 Add-Status "Cloudflare zone" "WARN" "Could not inspect Cloudflare zone metadata: $($_.Exception.Message)"
+            }
+        }
+
+        if ($cloudflareDnsToken -and $cloudflareZoneId) {
+            try {
+                $recordsResponse = Invoke-CloudflareGet -Token $cloudflareDnsToken -Path "zones/$cloudflareZoneId/dns_records?per_page=100"
+                $records = @($recordsResponse.result)
+                $dnsIssues = New-Object System.Collections.Generic.List[string]
+
+                if (@($records | Where-Object { $_.type -eq "CNAME" -and $_.name -eq $Domain -and $_.content -eq "$CloudflarePagesProject.pages.dev" -and [bool]$_.proxied }).Count -eq 0) {
+                    $dnsIssues.Add("missing proxied apex Pages CNAME")
+                }
+                if (@($records | Where-Object { $_.type -eq "CNAME" -and $_.name -eq "www.$Domain" -and $_.content -eq "$CloudflarePagesProject.pages.dev" -and [bool]$_.proxied }).Count -eq 0) {
+                    $dnsIssues.Add("missing proxied www Pages CNAME")
+                }
+                if (@($records | Where-Object { $_.type -eq "A" -and $_.name -eq $Domain -and $_.content -eq "77.83.141.16" }).Count -gt 0) {
+                    $dnsIssues.Add("old TheChurchCo apex A remains")
+                }
+                if (@($records | Where-Object { $_.type -eq "CNAME" -and $_.name -eq "www.$Domain" -and $_.content -eq "ssl.thechurchco.com" }).Count -gt 0) {
+                    $dnsIssues.Add("old TheChurchCo www CNAME remains")
+                }
+                if (@($records | Where-Object { $_.type -eq "MX" -and $_.name -eq $Domain -and $_.content -in @("mxa.mailgun.org", "mxb.mailgun.org") }).Count -ne 2) {
+                    $dnsIssues.Add("missing Mailgun MX records")
+                }
+                if (@($records | Where-Object { $_.type -eq "TXT" -and $_.name -eq $Domain -and $_.content -eq "v=spf1 include:mailgun.org ~all" }).Count -eq 0) {
+                    $dnsIssues.Add("missing SPF TXT")
+                }
+                if (@($records | Where-Object { $_.type -eq "TXT" -and $_.name -eq "_dmarc.$Domain" -and $_.content -match "^v=DMARC1;" }).Count -eq 0) {
+                    $dnsIssues.Add("missing DMARC TXT")
+                }
+                if (@($records | Where-Object { $_.type -eq "TXT" -and $_.name -eq "pic._domainkey.$Domain" -and $_.content -match "^k=rsa;" }).Count -eq 0) {
+                    $dnsIssues.Add("missing Mailgun DKIM TXT")
+                }
+
+                if ($dnsIssues.Count -eq 0) {
+                    $cloudflareDnsPrepared = $true
+                    Add-Status "Cloudflare DNS records" "OK" "Pages, mail, SPF, DMARC, DKIM, and verification records are prepared in Cloudflare; old TheChurchCo web targets are removed."
+                } else {
+                    Add-Status "Cloudflare DNS records" "AUTH" "Cloudflare DNS still needs record work: $($dnsIssues -join '; ')."
+                }
+            } catch {
+                Add-Status "Cloudflare DNS records" "WARN" "Could not inspect Cloudflare DNS records: $($_.Exception.Message)"
             }
         }
 
@@ -379,14 +440,22 @@ if ($authNeeded.Count -gt 0) {
     if ("Cloudflare auth" -in $authAreas) {
         Add-Status "Next authorization" "AUTH" "Wake authorization needed next: run npx wrangler login."
     } elseif (("Cloudflare zone" -in $authAreas) -and ($cloudflareZoneStatus -eq "pending") -and $cloudflareZoneNameservers.Count -gt 0) {
-        Add-Status "Next authorization" "AUTH" "Wake authorization needed next: $dnsApplyGuidance, then set Squarespace nameservers to $($cloudflareZoneNameservers -join ', ')."
+        if ($cloudflareDnsPrepared) {
+            Add-Status "Next authorization" "AUTH" "Wake authorization needed next: set Squarespace nameservers to $($cloudflareZoneNameservers -join ', '). Cloudflare DNS records are already prepared."
+        } else {
+            Add-Status "Next authorization" "AUTH" "Wake authorization needed next: $dnsApplyGuidance, then set Squarespace nameservers to $($cloudflareZoneNameservers -join ', ')."
+        }
     } elseif (("R2 account" -in $authAreas) -and ("DNS nameservers" -in $authAreas)) {
         Add-Status "Next authorization" "AUTH" "Wake authorization needed next: enable R2, add fillmorechristian.org to Cloudflare DNS, then update Squarespace nameservers when records are verified."
     } elseif ("R2 account" -in $authAreas) {
         Add-Status "Next authorization" "AUTH" "Wake authorization needed next: enable R2 in the Cloudflare dashboard."
     } elseif ("DNS nameservers" -in $authAreas) {
         if ($cloudflareZoneNameservers.Count -gt 0) {
-            Add-Status "Next authorization" "AUTH" "Wake authorization needed next: $dnsApplyGuidance, then set Squarespace nameservers to $($cloudflareZoneNameservers -join ', ')."
+            if ($cloudflareDnsPrepared) {
+                Add-Status "Next authorization" "AUTH" "Wake authorization needed next: set Squarespace nameservers to $($cloudflareZoneNameservers -join ', '). Cloudflare DNS records are already prepared."
+            } else {
+                Add-Status "Next authorization" "AUTH" "Wake authorization needed next: $dnsApplyGuidance, then set Squarespace nameservers to $($cloudflareZoneNameservers -join ', ')."
+            }
         } else {
             Add-Status "Next authorization" "AUTH" "Wake authorization needed next: add fillmorechristian.org to Cloudflare DNS and update Squarespace nameservers after records are verified."
         }
