@@ -220,7 +220,7 @@ The Cloudflare API apply has already been run. If the record set ever needs to b
 npm run apply:cloudflare-dns -- -Apply
 ```
 
-After DNS cutover and the production cancellation checks pass, revoke any temporary Cloudflare API token created or shared for the migration.
+The temporary Cloudflare user API token named `FCC` was revoked in the Cloudflare dashboard on 2026-06-02 after the post-cancellation verifier passed. If another temporary token is created later, revoke it after the required verifier passes.
 
 The current registrar handoff checklist is:
 

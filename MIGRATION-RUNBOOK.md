@@ -145,7 +145,7 @@ R2 preparation status on 2026-06-02:
 - `npm run verify:r2-pages-audio` verifies the same objects through `https://fillmorechristian-website.pages.dev/media/...` before production DNS cutover.
 - `scripts/test-r2-public-audio.ps1` verifies the public `www.fillmorechristian.org/media/...` URLs from the manifest after DNS cutover.
 - The remaining registrar blocker is the Squarespace transfer authorization code. In Squarespace Domains, click `Request transfer code` if needed, check `church@fillmorechristian.org`, then enter the code in Cloudflare Dashboard > Domains > Transfers to start the Cloudflare Registrar transfer.
-- The cancellation blocker is cleared: `fillmorechristian.org-production-cutover-20260602-063733.md` passed with all podcast media verified, recursive DNS cache clear, and TheChurchCo cancellation readiness green.
+- The cancellation blocker is cleared: `fillmorechristian.org-production-cutover-20260602-070754.md` passed with all podcast media verified, recursive DNS cache clear, and TheChurchCo cancellation readiness green.
 - After canceling TheChurchCo website/podcast hosting, run `npm run verify:post-cancellation` and keep the generated receipt with the cutover records.
 
 Current registrar checklist:
@@ -355,7 +355,7 @@ npm run apply:cloudflare-dns -- -Apply
 
 On successful API verification, this writes a non-secret receipt at `exports/dns/fillmorechristian.org-cloudflare-dns-verification.json`. The migration status command uses that receipt to report the last verified Cloudflare DNS state without requiring the API token to remain in the shell.
 
-Security cleanup: if a temporary Cloudflare API token was created or shared for this migration, revoke it after DNS cutover is verified and `npm run verify:cancel-thechurchco -- -VerifyAllPodcastMedia` passes.
+Security cleanup: the temporary Cloudflare user API token named `FCC` was revoked in the Cloudflare dashboard on 2026-06-02 after `npm run verify:post-cancellation` passed. If a new temporary token is created later, revoke it after the required verifier passes.
 
 After Cloudflare assigns nameservers and Squarespace is updated, run the after-cutover verifier with the real Cloudflare nameserver names:
 
