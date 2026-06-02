@@ -1504,6 +1504,7 @@ if (Test-Path -LiteralPath $r2ManifestPath) {
 $dnsPreservePath = Join-Path $root "exports\dns\fillmorechristian.org-cloudflare-preserve-records.csv"
 $dnsZonePath = Join-Path $root "exports\dns\fillmorechristian.org-cloudflare-preserve-records.zone"
 $dnsPlanPath = Join-Path $root "exports\dns\fillmorechristian.org-cloudflare-dns-cutover-plan.md"
+$dnsVerificationPath = Join-Path $root "exports\dns\fillmorechristian.org-cloudflare-dns-verification.json"
 if ((Test-Path -LiteralPath $dnsPreservePath) -and (Test-Path -LiteralPath $dnsZonePath) -and (Test-Path -LiteralPath $dnsPlanPath)) {
     $dnsRows = @(Import-Csv -LiteralPath $dnsPreservePath)
     $dnsIssues = New-Object System.Collections.Generic.List[string]
@@ -1574,8 +1575,49 @@ if ((Test-Path -LiteralPath $dnsPreservePath) -and (Test-Path -LiteralPath $dnsZ
         $dnsIssues.Add("cutover plan does not explicitly list the Cloudflare Pages DNS records")
     }
 
+    if (Test-Path -LiteralPath $dnsVerificationPath) {
+        try {
+            $dnsVerification = Get-Content -Raw -LiteralPath $dnsVerificationPath | ConvertFrom-Json
+            $verifiedRecords = @($dnsVerification.desiredRecords)
+            if ($dnsVerification.domain -ne "fillmorechristian.org") {
+                $dnsIssues.Add("DNS verification artifact has unexpected domain")
+            }
+            if ($dnsVerification.accountId -ne "377eaebfa77447d2f7906a1e0c1b788c") {
+                $dnsIssues.Add("DNS verification artifact has unexpected Cloudflare account")
+            }
+            if ($dnsVerification.pagesTarget -ne "fillmorechristian-website.pages.dev") {
+                $dnsIssues.Add("DNS verification artifact has unexpected Pages target")
+            }
+            if (-not $dnsVerification.oldWebsiteRecordsRemoved) {
+                $dnsIssues.Add("DNS verification artifact does not confirm old website records were removed")
+            }
+            $verifiedNameservers = @($dnsVerification.expectedNameservers | ForEach-Object { [string]$_ })
+            if ("eric.ns.cloudflare.com" -notin $verifiedNameservers -or "sky.ns.cloudflare.com" -notin $verifiedNameservers) {
+                $dnsIssues.Add("DNS verification artifact is missing expected Cloudflare nameservers")
+            }
+            $requiredVerifiedRecords = @($requiredDnsRows + @(
+                @{ Name = "fillmorechristian.org"; Type = "CNAME"; Value = "fillmorechristian-website.pages.dev"; Priority = ""; Proxied = $true },
+                @{ Name = "www.fillmorechristian.org"; Type = "CNAME"; Value = "fillmorechristian-website.pages.dev"; Priority = ""; Proxied = $true }
+            ))
+            foreach ($required in $requiredVerifiedRecords) {
+                $recordMatch = @($verifiedRecords | Where-Object {
+                    $_.name -eq $required.Name -and
+                    $_.type -eq $required.Type -and
+                    $_.content -eq $required.Value
+                })
+                if ($recordMatch.Count -eq 0) {
+                    $dnsIssues.Add("DNS verification artifact missing $($required.Type) $($required.Name) -> $($required.Value)")
+                }
+            }
+        } catch {
+            $dnsIssues.Add("DNS verification artifact is not valid JSON: $($_.Exception.Message)")
+        }
+    } else {
+        $dnsIssues.Add("DNS verification artifact is missing; run npm run apply:cloudflare-dns -- -Apply after setting a DNS token")
+    }
+
     if ($dnsIssues.Count -eq 0) {
-        Add-Check "Cloudflare DNS cutover artifacts" "OK" "$($dnsRows.Count) preserve records cover mail, DMARC, and verification without old website records; plan includes the Pages R2 media route"
+        Add-Check "Cloudflare DNS cutover artifacts" "OK" "$($dnsRows.Count) preserve records and the Cloudflare API verification receipt cover mail, DMARC, Pages, and verification without old website records; plan includes the Pages R2 media route"
     } else {
         Add-Check "Cloudflare DNS cutover artifacts" "FAIL" ($dnsIssues -join "; ")
     }

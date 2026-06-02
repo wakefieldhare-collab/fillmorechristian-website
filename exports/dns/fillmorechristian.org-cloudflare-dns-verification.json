@@ -1,0 +1,92 @@
+﻿{
+    "domain":  "fillmorechristian.org",
+    "accountId":  "377eaebfa77447d2f7906a1e0c1b788c",
+    "zoneId":  "6738484e6ca0a66c85630792298b8193",
+    "verifiedAt":  "2026-06-02T01:28:56.2494222Z",
+    "pagesTarget":  "fillmorechristian-website.pages.dev",
+    "expectedNameservers":  [
+                                "eric.ns.cloudflare.com",
+                                "sky.ns.cloudflare.com"
+                            ],
+    "oldWebsiteRecordsRemoved":  true,
+    "desiredRecordCount":  11,
+    "desiredRecords":  [
+                           {
+                               "type":  "CNAME",
+                               "name":  "334xc4sml6cf.fillmorechristian.org",
+                               "content":  "gv-ujhethalu73pqt.dv.googlehosted.com",
+                               "priority":  "",
+                               "proxied":  false
+                           },
+                           {
+                               "type":  "CNAME",
+                               "name":  "4jb3ni34htue.fillmorechristian.org",
+                               "content":  "gv-xvljhthdwk5dxh.dv.googlehosted.com",
+                               "priority":  "",
+                               "proxied":  false
+                           },
+                           {
+                               "type":  "CNAME",
+                               "name":  "cbsw2pw4sdud.fillmorechristian.org",
+                               "content":  "gv-6xwzpofnvqguxs.dv.googlehosted.com",
+                               "priority":  "",
+                               "proxied":  false
+                           },
+                           {
+                               "type":  "CNAME",
+                               "name":  "fillmorechristian.org",
+                               "content":  "fillmorechristian-website.pages.dev",
+                               "priority":  "",
+                               "proxied":  true
+                           },
+                           {
+                               "type":  "CNAME",
+                               "name":  "www.fillmorechristian.org",
+                               "content":  "fillmorechristian-website.pages.dev",
+                               "priority":  "",
+                               "proxied":  true
+                           },
+                           {
+                               "type":  "MX",
+                               "name":  "fillmorechristian.org",
+                               "content":  "mxa.mailgun.org",
+                               "priority":  "10",
+                               "proxied":  false
+                           },
+                           {
+                               "type":  "MX",
+                               "name":  "fillmorechristian.org",
+                               "content":  "mxb.mailgun.org",
+                               "priority":  "10",
+                               "proxied":  false
+                           },
+                           {
+                               "type":  "TXT",
+                               "name":  "_dmarc.fillmorechristian.org",
+                               "content":  "v=DMARC1; p=none; rua=mailto:church@fillmorechristian.org",
+                               "priority":  "",
+                               "proxied":  false
+                           },
+                           {
+                               "type":  "TXT",
+                               "name":  "fillmorechristian.org",
+                               "content":  "MS=ms48673064",
+                               "priority":  "",
+                               "proxied":  false
+                           },
+                           {
+                               "type":  "TXT",
+                               "name":  "fillmorechristian.org",
+                               "content":  "v=spf1 include:mailgun.org ~all",
+                               "priority":  "",
+                               "proxied":  false
+                           },
+                           {
+                               "type":  "TXT",
+                               "name":  "pic._domainkey.fillmorechristian.org",
+                               "content":  "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDMspMJXAZ/D2ygNZBnGbLY5Z9DjNaNiLDjKY79O1JYgtYlkOERm5SVNOb1nKavNA98hqTLLN+1N7LQGoaeqY0O8ddDa8NclV57cTekdu4by/fcKN+8zycaOE2HRH9hZP1RLNmandRuUQfmTYMrXIWrjBU0xaQdbXZHMP0pN5FuQIDAQAB",
+                               "priority":  "",
+                               "proxied":  false
+                           }
+                       ]
+}

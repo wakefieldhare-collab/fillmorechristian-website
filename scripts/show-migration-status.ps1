@@ -8,6 +8,7 @@ param(
     [string]$CloudflarePagesProject = "fillmorechristian-website",
     [string]$R2Bucket = "fillmore-christian-sermons",
     [string]$ExpectedAudioHost = "www.fillmorechristian.org",
+    [string]$CloudflareDnsVerificationArtifactPath = "exports\dns\fillmorechristian.org-cloudflare-dns-verification.json",
     [datetime]$RenewalDate = "2026-06-15",
     [datetime]$DisableAutoRenewDeadline = "2026-06-14",
     [switch]$SkipNetwork,
@@ -124,6 +125,28 @@ function Invoke-CloudflareGet {
 
     $headers = @{ Authorization = "Bearer $Token" }
     return Invoke-RestMethod -Method Get -Headers $headers -Uri ("https://api.cloudflare.com/client/v4/" + $Path.TrimStart("/"))
+}
+
+function Get-CloudflareDnsVerificationArtifact {
+    $path = if ([System.IO.Path]::IsPathRooted($CloudflareDnsVerificationArtifactPath)) {
+        $CloudflareDnsVerificationArtifactPath
+    } else {
+        Join-Path $root $CloudflareDnsVerificationArtifactPath
+    }
+
+    if (-not (Test-Path -LiteralPath $path)) {
+        return $null
+    }
+
+    try {
+        return Get-Content -Raw -LiteralPath $path | ConvertFrom-Json
+    } catch {
+        return [pscustomobject]@{
+            Invalid = $true
+            Path = $path
+            Error = $_.Exception.Message
+        }
+    }
 }
 
 $today = Get-Date
@@ -341,7 +364,22 @@ if (-not $SkipNetwork) {
                 Add-Status "Cloudflare DNS records" "WARN" "Could not inspect Cloudflare DNS records: $($_.Exception.Message)"
             }
         } elseif ($cloudflareZoneId) {
-            Add-Status "Cloudflare DNS records" "INFO" "DNS records were not inspected because no CLOUDFLARE_API_TOKEN or CF_API_TOKEN is set for DNS-read access."
+            $verificationArtifact = Get-CloudflareDnsVerificationArtifact
+            if ($verificationArtifact -and $verificationArtifact.Invalid) {
+                Add-Status "Cloudflare DNS records" "WARN" "DNS records were not inspected because no CLOUDFLARE_API_TOKEN or CF_API_TOKEN is set; local verification artifact is invalid: $($verificationArtifact.Error)"
+            } elseif (
+                $verificationArtifact -and
+                $verificationArtifact.domain -eq $Domain -and
+                $verificationArtifact.accountId -eq $CloudflareAccountId -and
+                $verificationArtifact.pagesTarget -eq "$CloudflarePagesProject.pages.dev" -and
+                $verificationArtifact.oldWebsiteRecordsRemoved
+            ) {
+                $cloudflareDnsPrepared = $true
+                $verifiedAt = try { ([datetime]$verificationArtifact.verifiedAt).ToUniversalTime().ToString("yyyy-MM-dd HH:mm 'UTC'") } catch { [string]$verificationArtifact.verifiedAt }
+                Add-Status "Cloudflare DNS records" "OK" "Records were API-verified at $verifiedAt by local artifact; set CLOUDFLARE_API_TOKEN for a fresh live recheck."
+            } else {
+                Add-Status "Cloudflare DNS records" "INFO" "DNS records were not inspected because no CLOUDFLARE_API_TOKEN or CF_API_TOKEN is set for DNS-read access."
+            }
         }
 
         try {

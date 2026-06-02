@@ -309,6 +309,8 @@ If the Cloudflare DNS record set ever needs to be re-applied, set `CLOUDFLARE_AP
 npm run apply:cloudflare-dns -- -Apply
 ```
 
+On successful API verification, this writes a non-secret receipt at `exports/dns/fillmorechristian.org-cloudflare-dns-verification.json`. The migration status command uses that receipt to report the last verified Cloudflare DNS state without requiring the API token to remain in the shell.
+
 Security cleanup: if a temporary Cloudflare API token was created or shared for this migration, revoke it after DNS cutover is verified and `npm run verify:cancel-thechurchco -- -VerifyAllPodcastMedia` passes.
 
 After Cloudflare assigns nameservers and Squarespace is updated, run the after-cutover verifier with the real Cloudflare nameserver names:

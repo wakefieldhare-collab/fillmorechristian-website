@@ -2,6 +2,7 @@ param(
     [string]$Domain = "fillmorechristian.org",
     [string]$AccountId = "377eaebfa77447d2f7906a1e0c1b788c",
     [string]$PreserveCsvPath = "exports\dns\fillmorechristian.org-cloudflare-preserve-records.csv",
+    [string]$VerificationArtifactPath = "exports\dns\fillmorechristian.org-cloudflare-dns-verification.json",
     [string]$PagesTarget = "fillmorechristian-website.pages.dev",
     [string]$DmarcRecordValue = "v=DMARC1; p=none; rua=mailto:church@fillmorechristian.org",
     [switch]$Apply
@@ -14,6 +15,11 @@ $preserveCsvFullPath = if ([System.IO.Path]::IsPathRooted($PreserveCsvPath)) {
     $PreserveCsvPath
 } else {
     Join-Path $root $PreserveCsvPath
+}
+$verificationArtifactFullPath = if ([System.IO.Path]::IsPathRooted($VerificationArtifactPath)) {
+    $VerificationArtifactPath
+} else {
+    Join-Path $root $VerificationArtifactPath
 }
 
 function Assert-PersonalGitHubRemote {
@@ -157,6 +163,69 @@ function Test-SameRecord {
     return $true
 }
 
+function Get-DnsVerificationIssues {
+    param(
+        [object[]]$Records,
+        [object[]]$DesiredRecords
+    )
+
+    $issues = New-Object System.Collections.Generic.List[string]
+    foreach ($desired in $DesiredRecords) {
+        $matches = @($Records | Where-Object { Test-SameRecord -Existing $_ -Desired $desired })
+        if ($matches.Count -eq 0) {
+            $issues.Add("missing or mismatched $($desired.Type) $($desired.Name) -> $($desired.Content)")
+        }
+    }
+
+    $oldWebsiteRecords = @(
+        $Records | Where-Object {
+            ($_.type -eq "A" -and $_.name -eq $Domain -and $_.content -eq "77.83.141.16") -or
+            ($_.type -eq "AAAA" -and $_.name -eq $Domain) -or
+            ($_.type -eq "CNAME" -and $_.name -eq "www.$Domain" -and $_.content -eq "ssl.thechurchco.com")
+        }
+    )
+    foreach ($record in $oldWebsiteRecords) {
+        $issues.Add("old website record remains: $($record.type) $($record.name) -> $($record.content)")
+    }
+
+    return @($issues.ToArray())
+}
+
+function Write-VerificationArtifact {
+    param(
+        [string]$Path,
+        [string]$ZoneId,
+        [object[]]$DesiredRecords
+    )
+
+    $directory = Split-Path -Parent $Path
+    if ($directory -and -not (Test-Path -LiteralPath $directory)) {
+        New-Item -ItemType Directory -Path $directory | Out-Null
+    }
+
+    $artifact = [ordered]@{
+        domain = $Domain
+        accountId = $AccountId
+        zoneId = $ZoneId
+        verifiedAt = (Get-Date).ToUniversalTime().ToString("o")
+        pagesTarget = $PagesTarget
+        expectedNameservers = @("eric.ns.cloudflare.com", "sky.ns.cloudflare.com")
+        oldWebsiteRecordsRemoved = $true
+        desiredRecordCount = $DesiredRecords.Count
+        desiredRecords = @($DesiredRecords | Sort-Object Type, Name, Content | ForEach-Object {
+            [ordered]@{
+                type = $_.Type
+                name = $_.Name
+                content = $_.Content
+                priority = $_.Priority
+                proxied = $_.Proxied
+            }
+        })
+    }
+
+    $artifact | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 -LiteralPath $Path
+}
+
 if (-not (Test-Path -LiteralPath $preserveCsvFullPath)) {
     throw "Preserve CSV not found: $preserveCsvFullPath"
 }
@@ -246,5 +315,14 @@ foreach ($desired in $desiredRecords) {
     $existingRecords = @(Get-DnsRecords -Token $token -ZoneId $zoneId)
 }
 
+$verifiedRecords = @(Get-DnsRecords -Token $token -ZoneId $zoneId)
+$verificationIssues = @(Get-DnsVerificationIssues -Records $verifiedRecords -DesiredRecords @($desiredRecords.ToArray()))
+if ($verificationIssues.Count -gt 0) {
+    throw "Cloudflare DNS verification failed after apply: $($verificationIssues -join '; ')"
+}
+
+Write-VerificationArtifact -Path $verificationArtifactFullPath -ZoneId $zoneId -DesiredRecords @($desiredRecords.ToArray())
+
 Write-Host "Cloudflare DNS records are prepared. Now set Squarespace nameservers to eric.ns.cloudflare.com and sky.ns.cloudflare.com, then run:"
 Write-Host "  .\scripts\complete-cloudflare-cutover.ps1 -WaitForDns"
+Write-Host "Wrote non-secret verification artifact: $verificationArtifactFullPath"
