@@ -1024,11 +1024,15 @@ if (Test-Path -LiteralPath $sermonsPath) {
     if ($sermonsHtml -match 'href="podcast\.html"[^>]*>Subscribe</a>' -and
         $podcastHtml -match 'id="podcast-feed-url"' -and
         $podcastHtml -match 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -and
+        $podcastHtml -match 'class="podcast-subscription-grid"' -and
+        $podcastHtml -match 'data-subscribe-option="apple"' -and
+        $podcastHtml -match 'data-subscribe-option="spotify"' -and
+        $podcastHtml -match 'data-subscribe-option="rss"' -and
         $podcastHtml -match [regex]::Escape($expectedFeedUrl) -and
         $podcastHtml -match '"@type": "PodcastSeries"') {
-        Add-Check "Podcast subscribe controls" "OK" "Archive page links to an owned podcast landing page with a copyable canonical RSS feed URL"
+        Add-Check "Podcast subscribe controls" "OK" "Archive page links to an owned podcast landing page with app choices and a copyable canonical RSS feed URL"
     } else {
-        Add-Check "Podcast subscribe controls" "FAIL" "Archive page or podcast landing page is missing subscribe controls, structured data, or the copyable canonical RSS feed URL"
+        Add-Check "Podcast subscribe controls" "FAIL" "Archive page or podcast landing page is missing subscribe controls, app choices, structured data, or the copyable canonical RSS feed URL"
     }
 
     $downloadLinks = ([regex]::Matches($sermonsHtml, 'class="sermon-download"')).Count
@@ -1625,11 +1629,15 @@ if (-not $SkipRemote) {
             if ($path -eq "podcast.html") {
                 if ($response.Content -match 'id="podcast-feed-url"' -and
                     $response.Content -match 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -and
+                    $response.Content -match 'class="podcast-subscription-grid"' -and
+                    $response.Content -match 'data-subscribe-option="apple"' -and
+                    $response.Content -match 'data-subscribe-option="spotify"' -and
+                    $response.Content -match 'data-subscribe-option="rss"' -and
                     $response.Content -match '"@type": "PodcastSeries"' -and
                     $response.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
-                    Add-Check "Staging podcast page" "OK" "Owned podcast landing page has feed copy controls and structured data"
+                    Add-Check "Staging podcast page" "OK" "Owned podcast landing page has app choices, feed copy controls, and structured data"
                 } else {
-                    Add-Check "Staging podcast page" "FAIL" "Podcast page is missing feed copy controls, structured data, or contains old platform references"
+                    Add-Check "Staging podcast page" "FAIL" "Podcast page is missing app choices, feed copy controls, structured data, or contains old platform references"
                 }
             }
 

@@ -280,13 +280,17 @@ try {
     if ($sermonsPageContent -notmatch 'href="podcast\.html"[^>]*>Subscribe</a>' -or
         $podcastPageContent -notmatch 'id="podcast-feed-url"' -or
         $podcastPageContent -notmatch 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -or
+        $podcastPageContent -notmatch 'class="podcast-subscription-grid"' -or
+        $podcastPageContent -notmatch 'data-subscribe-option="apple"' -or
+        $podcastPageContent -notmatch 'data-subscribe-option="spotify"' -or
+        $podcastPageContent -notmatch 'data-subscribe-option="rss"' -or
         $podcastPageContent -notmatch '<a\s+href="podcast\.html"\s+class="active">Podcast</a>' -or
         $podcastPageContent -notmatch '"@type": "PodcastSeries"' -or
         $sermonsPageContent -match "being moved out of TheChurchCo|during the move|ChurchCo transition|preserved podcast RSS feed path" -or
         $podcastPageContent -match "being moved out of TheChurchCo|during the move|ChurchCo transition|preserved podcast RSS feed path") {
-        throw "Sermons or podcast page is missing the owned podcast subscribe path, copyable RSS feed URL, or stable public copy"
+        throw "Sermons or podcast page is missing the owned podcast subscribe path, app choices, copyable RSS feed URL, or stable public copy"
     }
-    $checks.Add([pscustomobject]@{ Check = "Podcast subscribe controls"; Status = "OK"; Details = "Published output includes an owned podcast landing page and copyable canonical RSS feed URL" })
+    $checks.Add([pscustomobject]@{ Check = "Podcast subscribe controls"; Status = "OK"; Details = "Published output includes an owned podcast landing page, app choices, and copyable canonical RSS feed URL" })
 
     if ($sermonsPageContent -notmatch 'id="sermon-audio-only"' -or $sermonsPageContent -notmatch 'data-has-audio="true"' -or $sermonsPageContent -notmatch 'data-has-audio="false"') {
         throw "Sermons page is missing the audio-only filter or audio availability metadata"

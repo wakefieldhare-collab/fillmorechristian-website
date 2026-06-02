@@ -1108,6 +1108,56 @@ h4 { font-size: 1.25rem; }
   color: var(--color-text-light);
 }
 
+.podcast-subscription-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.podcast-subscription-option {
+  display: block;
+  min-height: 142px;
+  background: var(--color-white);
+  border: 1px solid rgba(23, 50, 71, 0.12);
+  border-radius: 8px;
+  padding: 1rem;
+  text-decoration: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.podcast-subscription-option:hover {
+  border-color: rgba(180, 102, 54, 0.5);
+  box-shadow: 0 10px 24px rgba(23, 50, 71, 0.08);
+  transform: translateY(-1px);
+}
+
+.podcast-option-kicker {
+  display: block;
+  color: var(--color-accent);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.45rem;
+  text-transform: uppercase;
+}
+
+.podcast-subscription-option strong {
+  display: block;
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  line-height: 1.2;
+  margin-bottom: 0.35rem;
+}
+
+.podcast-subscription-option span:last-child {
+  color: var(--color-text-light);
+  display: block;
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
 .archive-controls {
   max-width: 800px;
   margin: 0 auto 1.5rem;
@@ -1607,6 +1657,14 @@ h4 { font-size: 1.25rem; }
 
   .copy-field {
     grid-template-columns: 1fr;
+  }
+
+  .podcast-subscription-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .podcast-subscription-option {
+    min-height: 0;
   }
 
   .archive-summary {
