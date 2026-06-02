@@ -46,22 +46,74 @@ function Format-ProcessArgument {
     return $value
 }
 
-function Invoke-VerificationStep {
+function ConvertTo-PowerShellLiteral {
+    param([string]$Value)
+
+    return "'" + ([string]$Value -replace "'", "''") + "'"
+}
+
+function ConvertTo-PowerShellValue {
+    param([object]$Value)
+
+    if ($null -eq $Value) {
+        return '$null'
+    }
+
+    if ($Value -is [array]) {
+        $items = @($Value | ForEach-Object { ConvertTo-PowerShellValue $_ })
+        return "@($($items -join ', '))"
+    }
+
+    if ($Value -is [bool]) {
+        if ($Value) { return '$true' }
+        return '$false'
+    }
+
+    if ($Value -is [int]) {
+        return [string]$Value
+    }
+
+    return ConvertTo-PowerShellLiteral ([string]$Value)
+}
+
+function New-InvocationCommand {
     param(
-        [string]$Name,
         [string]$ScriptPath,
-        [string[]]$Arguments
+        [System.Collections.Specialized.OrderedDictionary]$Parameters
     )
 
     if (-not (Test-Path -LiteralPath $ScriptPath)) {
         throw "Missing verifier script: $ScriptPath"
     }
 
+    $parts = New-Object System.Collections.Generic.List[string]
+    $parts.Add("& $(ConvertTo-PowerShellLiteral $ScriptPath)")
+    foreach ($entry in $Parameters.GetEnumerator()) {
+        $parts.Add("-$($entry.Key)")
+        if ($entry.Value -is [bool]) {
+            if (-not $entry.Value) {
+                $parts.RemoveAt($parts.Count - 1)
+            }
+            continue
+        }
+        $parts.Add((ConvertTo-PowerShellValue $entry.Value))
+    }
+
+    return ($parts -join " ")
+}
+
+function Invoke-VerificationStep {
+    param(
+        [string]$Name,
+        [string]$CommandText
+    )
+
     $startedAt = Get-Date
     $previousErrorActionPreference = $ErrorActionPreference
     try {
         $ErrorActionPreference = "Continue"
-        $output = @(& powershell -NoProfile -ExecutionPolicy Bypass -File $ScriptPath @Arguments 2>&1 | ForEach-Object { [string]$_ })
+        $encodedCommand = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($CommandText))
+        $output = @(& powershell -NoProfile -ExecutionPolicy Bypass -EncodedCommand $encodedCommand 2>&1 | ForEach-Object { [string]$_ })
         $exitCode = $LASTEXITCODE
     } finally {
         $ErrorActionPreference = $previousErrorActionPreference
@@ -75,30 +127,15 @@ function Invoke-VerificationStep {
         StartedAt = $startedAt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         FinishedAt = $finishedAt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         DurationSeconds = [Math]::Round(($finishedAt - $startedAt).TotalSeconds, 2)
-        Command = Format-CommandForReport -ScriptPath $ScriptPath -Arguments $Arguments
+        Command = "powershell -NoProfile -ExecutionPolicy Bypass -Command $(Format-ProcessArgument $CommandText)"
         Output = $output
     }
 }
 
-function Add-NameserverArguments {
-    param([System.Collections.Generic.List[string]]$Arguments)
-
+function Add-NameserverParameter {
+    param([System.Collections.Specialized.OrderedDictionary]$Parameters)
     if ($ExpectedCloudflareNameservers.Count -gt 0) {
-        $Arguments.Add("-ExpectedCloudflareNameservers")
-        foreach ($nameserver in $ExpectedCloudflareNameservers) {
-            $Arguments.Add($nameserver)
-        }
-    }
-}
-
-function Add-Arguments {
-    param(
-        [System.Collections.Generic.List[string]]$Arguments,
-        [object[]]$Values
-    )
-
-    foreach ($value in $Values) {
-        $Arguments.Add([string]$value)
+        $Parameters["ExpectedCloudflareNameservers"] = @($ExpectedCloudflareNameservers)
     }
 }
 
@@ -126,61 +163,59 @@ $jsonReportPath = Join-Path $reportPath "$Domain-production-cutover-$timestamp.j
 $steps = New-Object System.Collections.Generic.List[object]
 $overallStatus = "PASS"
 
-$cutoverArgs = New-Object System.Collections.Generic.List[string]
-Add-Arguments -Arguments $cutoverArgs -Values @(
-    "-Domain", $Domain,
-    "-ProductionBaseUrl", $ProductionBaseUrl,
-    "-MaxAttempts", [string]$MaxAttempts,
-    "-DelaySeconds", [string]$DelaySeconds
-)
-Add-NameserverArguments -Arguments $cutoverArgs
+$cutoverParameters = [ordered]@{
+    Domain = $Domain
+    ProductionBaseUrl = $ProductionBaseUrl
+    MaxAttempts = $MaxAttempts
+    DelaySeconds = $DelaySeconds
+}
+Add-NameserverParameter -Parameters $cutoverParameters
 if ($WaitForDns) {
-    $cutoverArgs.Add("-WaitForDns")
+    $cutoverParameters["WaitForDns"] = $true
 }
 
-$domainTransferArgs = New-Object System.Collections.Generic.List[string]
-Add-Arguments -Arguments $domainTransferArgs -Values @(
-    "-Domain", $Domain,
-    "-ProductionBaseUrl", $ProductionBaseUrl,
-    "-ExpectedFeedUrl", (Join-Url $ProductionBaseUrl "podcast-category/fillmore-christian/feed/podcast"),
-    "-TimeoutSec", [string]$TimeoutSec
-)
-Add-NameserverArguments -Arguments $domainTransferArgs
+$domainTransferParameters = [ordered]@{
+    Domain = $Domain
+    ProductionBaseUrl = $ProductionBaseUrl
+    ExpectedFeedUrl = (Join-Url $ProductionBaseUrl "podcast-category/fillmore-christian/feed/podcast")
+    TimeoutSec = $TimeoutSec
+}
+Add-NameserverParameter -Parameters $domainTransferParameters
 
 $audioHost = try { ([Uri]$ProductionBaseUrl).Host } catch { "www.$Domain" }
-$cancellationArgs = New-Object System.Collections.Generic.List[string]
-Add-Arguments -Arguments $cancellationArgs -Values @(
-    "-Domain", $Domain,
-    "-ProductionBaseUrl", $ProductionBaseUrl,
-    "-ExpectedAudioHost", $audioHost,
-    "-PodcastMediaSampleCount", [string]$PodcastMediaSampleCount,
-    "-TimeoutSec", [string]$TimeoutSec
-)
-Add-NameserverArguments -Arguments $cancellationArgs
+$cancellationParameters = [ordered]@{
+    Domain = $Domain
+    ProductionBaseUrl = $ProductionBaseUrl
+    ExpectedAudioHost = $audioHost
+    PodcastMediaSampleCount = $PodcastMediaSampleCount
+    TimeoutSec = $TimeoutSec
+}
+Add-NameserverParameter -Parameters $cancellationParameters
 if ($VerifyAllPodcastMedia) {
-    $cancellationArgs.Add("-VerifyAllPodcastMedia")
+    $cancellationParameters["VerifyAllPodcastMedia"] = $true
 }
 
 $stepDefinitions = @(
     @{
         Name = "Complete Cloudflare Cutover"
         ScriptPath = Join-Path $PSScriptRoot "complete-cloudflare-cutover.ps1"
-        Arguments = [string[]]$cutoverArgs.ToArray()
+        Parameters = $cutoverParameters
     },
     @{
         Name = "Domain Transfer Readiness"
         ScriptPath = Join-Path $PSScriptRoot "test-domain-transfer-readiness.ps1"
-        Arguments = [string[]]$domainTransferArgs.ToArray()
+        Parameters = $domainTransferParameters
     },
     @{
         Name = "TheChurchCo Cancellation Readiness"
         ScriptPath = Join-Path $PSScriptRoot "test-thechurchco-cancellation-readiness.ps1"
-        Arguments = [string[]]$cancellationArgs.ToArray()
+        Parameters = $cancellationParameters
     }
 )
 
 foreach ($definition in $stepDefinitions) {
-    $result = Invoke-VerificationStep -Name $definition.Name -ScriptPath $definition.ScriptPath -Arguments $definition.Arguments
+    $commandText = New-InvocationCommand -ScriptPath $definition.ScriptPath -Parameters $definition.Parameters
+    $result = Invoke-VerificationStep -Name $definition.Name -CommandText $commandText
     $steps.Add($result)
     if ($result.Status -ne "PASS") {
         $overallStatus = "FAIL"
