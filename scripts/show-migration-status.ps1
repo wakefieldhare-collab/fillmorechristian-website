@@ -209,6 +209,42 @@ function Get-CloudflareDnsVerificationArtifact {
     }
 }
 
+function Get-RdapVcardFullName {
+    param([object]$Entity)
+
+    if (-not $Entity.vcardArray -or $Entity.vcardArray.Count -lt 2) {
+        return ""
+    }
+
+    foreach ($entry in @($Entity.vcardArray[1])) {
+        if ($entry.Count -ge 4 -and [string]$entry[0] -eq "fn") {
+            return [string]$entry[3]
+        }
+    }
+
+    return ""
+}
+
+function Get-RdapRegistrationSummary {
+    param([string]$LookupDomain)
+
+    $rdap = Invoke-RestMethod -Uri "https://rdap.org/domain/$LookupDomain" -TimeoutSec 20
+    $registrarEntities = @($rdap.entities | Where-Object { "registrar" -in @($_.roles) })
+    $registrarNames = @($registrarEntities | ForEach-Object { Get-RdapVcardFullName -Entity $_ } | Where-Object { $_ } | Select-Object -Unique)
+    $nameservers = @($rdap.nameservers | ForEach-Object {
+        if ($_.ldhName) {
+            [string]$_.ldhName.ToLowerInvariant().TrimEnd(".")
+        }
+    } | Sort-Object -Unique)
+    $rdapUpdatedEvent = @($rdap.events | Where-Object { $_.eventAction -eq "last update of RDAP database" } | Select-Object -First 1)
+
+    return [pscustomobject]@{
+        RegistrarNames = $registrarNames
+        Nameservers = $nameservers
+        RdapUpdatedAt = if ($rdapUpdatedEvent) { [string]$rdapUpdatedEvent.eventDate } else { "" }
+    }
+}
+
 $today = Get-Date
 $daysUntilRenewal = [int]($RenewalDate.Date - $today.Date).TotalDays
 $daysUntilDecision = [int]($DisableAutoRenewDeadline.Date - $today.Date).TotalDays
@@ -603,6 +639,28 @@ if (-not $SkipNetwork) {
         } else {
             Add-Status "DNS nameservers" "WARN" "Could not resolve nameservers: $($_.Exception.Message)"
         }
+    }
+
+    try {
+        $rdapSummary = Get-RdapRegistrationSummary -LookupDomain $Domain
+        $registrarDetails = if ($rdapSummary.RegistrarNames.Count -gt 0) {
+            $rdapSummary.RegistrarNames -join "; "
+        } else {
+            "unknown"
+        }
+        $rdapUpdateDetails = if ($rdapSummary.RdapUpdatedAt) {
+            " RDAP database update: $($rdapSummary.RdapUpdatedAt)."
+        } else {
+            ""
+        }
+
+        if ($registrarDetails -match "Cloudflare Registrar") {
+            Add-Status "Registrar ownership" "OK" "RDAP registrar is $registrarDetails; nameservers: $($rdapSummary.Nameservers -join ', ').$rdapUpdateDetails"
+        } else {
+            Add-Status "Registrar ownership" "INFO" "RDAP registrar is still $registrarDetails. After the Cloudflare Registrar transfer completes, run npm run verify:registrar-ownership.$rdapUpdateDetails"
+        }
+    } catch {
+        Add-Status "Registrar ownership" "WARN" "Could not inspect RDAP registrar ownership: $($_.Exception.Message)"
     }
 
     try {

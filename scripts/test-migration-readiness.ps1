@@ -804,6 +804,9 @@ if ((Test-Path -LiteralPath $statusScriptPath) -and (Test-Path -LiteralPath $dns
         $statusScriptText -match "Get-LatestDnsCacheStatusReport" -and
         $statusScriptText -match "verify:dns-cache-clear" -and
         $statusScriptText -match "Squarespace email verification if prompted" -and
+        $statusScriptText -match "Get-RdapRegistrationSummary" -and
+        $statusScriptText -match "Registrar ownership" -and
+        $statusScriptText -match "verify:registrar-ownership" -and
         $registrarChecklistScriptText -match "eric\.ns\.cloudflare\.com" -and
         $registrarChecklistScriptText -match "sky\.ns\.cloudflare\.com" -and
         $registrarChecklistScriptText -match "verify:production-cutover" -and
