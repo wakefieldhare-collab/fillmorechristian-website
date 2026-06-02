@@ -144,7 +144,7 @@ Deploy with the guarded command:
 npm run deploy:cloudflare
 ```
 
-It verifies Cloudflare Pages access through the available Wrangler OAuth session, builds, verifies readiness, runs the local Cloudflare Pages preflight, checks the personal GitHub remote, and then deploys `dist` to the `fillmorechristian-website` Cloudflare Pages project.
+It verifies Cloudflare Pages access through the available Wrangler OAuth session, builds, verifies readiness, runs the local Cloudflare Pages preflight, checks the personal GitHub remote, requires the commit to be pushed to `origin/main`, and then deploys `dist` to the `fillmorechristian-website` Cloudflare Pages project.
 
 After the R2 audio wrapper rewrites feeds/pages, commit and push those changes to the personal GitHub repo before deploying.
 

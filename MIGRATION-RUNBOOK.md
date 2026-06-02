@@ -270,11 +270,13 @@ The guarded deploy command is:
 npm run deploy:cloudflare
 ```
 
-That command refuses the work GitHub owner, requires a clean working tree by default, verifies Pages access through the available Wrangler OAuth session, runs `npm run build`, local readiness, and Cloudflare Pages local preflight, then runs `wrangler pages deploy dist --project-name fillmorechristian-website --branch main` with the current Git commit hash and message. For a rehearsal without publishing, use:
+That command refuses the work GitHub owner, requires a clean working tree by default, requires `HEAD` to be pushed to the personal repo's `origin/main`, verifies Pages access through the available Wrangler OAuth session, runs `npm run build`, local readiness, and Cloudflare Pages local preflight, then runs `wrangler pages deploy dist --project-name fillmorechristian-website --branch main` with the current Git commit hash and message. For a rehearsal without publishing, use:
 
 ```powershell
 .\scripts\deploy-cloudflare-pages.ps1 -DryRun -AllowDirty
 ```
+
+Use `-AllowUnpushed` only for a deliberate local-only deployment. Normal production deploys should stay tied to `wakefieldhare-collab/fillmorechristian-website` on `main`.
 
 If podcast audio has just been migrated to R2, commit and push the generated feed/page changes before running `npm run deploy:cloudflare` so the Cloudflare deployment is tied to a personal-GitHub commit.
 

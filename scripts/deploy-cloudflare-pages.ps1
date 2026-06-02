@@ -5,7 +5,8 @@ param(
     [string]$BuildOutputDir = "dist",
     [switch]$DryRun,
     [switch]$SkipPreflight,
-    [switch]$AllowDirty
+    [switch]$AllowDirty,
+    [switch]$AllowUnpushed
 )
 
 $ErrorActionPreference = "Stop"
@@ -62,6 +63,18 @@ if ($dirtyFiles.Count -gt 0 -and -not $AllowDirty) {
     throw "Working tree is dirty. Commit or stash changes before deployment, or rerun with -AllowDirty."
 }
 
+$commitHash = (& git -C $root rev-parse HEAD).Trim()
+$commitMessage = (& git -C $root log -1 --pretty=%s).Trim()
+if (-not $AllowUnpushed) {
+    $remoteHead = (& git -C $root ls-remote origin "refs/heads/$Branch" 2>$null | ForEach-Object { ($_ -split "\s+")[0] } | Select-Object -First 1)
+    if (-not $remoteHead) {
+        throw "Could not verify origin/$Branch. Push the personal repo branch first, or rerun with -AllowUnpushed for a deliberate local-only deployment."
+    }
+    if ($remoteHead -ne $commitHash) {
+        throw "HEAD $commitHash is not pushed to origin/$Branch ($remoteHead). Push to wakefieldhare-collab first, or rerun with -AllowUnpushed for a deliberate local-only deployment."
+    }
+}
+
 if (-not $DryRun) {
     $authOutput = & (Join-Path $PSScriptRoot "test-cloudflare-pages-deploy-auth.ps1") -AccountId $AccountId -ProjectName $ProjectName 2>&1
     $authOutput | ForEach-Object { Write-Host $_ }
@@ -94,8 +107,6 @@ if (-not (Test-Path -LiteralPath $buildOutputPath)) {
     throw "Build output not found: $buildOutputPath"
 }
 
-$commitHash = (& git -C $root rev-parse HEAD).Trim()
-$commitMessage = (& git -C $root log -1 --pretty=%s).Trim()
 $deployArgs = @(
     "pages",
     "deploy",
