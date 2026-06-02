@@ -32,7 +32,21 @@ function Resolve-Answers {
     )
 
     try {
-        return @(Resolve-DnsName -Name $Name -Type $Type -ErrorAction Stop | Where-Object { $_.Section -eq "Answer" })
+        $expectedName = $Name.TrimEnd(".").ToLowerInvariant()
+        return @(Resolve-DnsName -Name $Name -Type $Type -ErrorAction Stop | Where-Object {
+            if ($_.Section -eq "Answer") { return $true }
+            $recordName = if ($_.Name) { $_.Name.TrimEnd(".").ToLowerInvariant() } else { "" }
+            if ($recordName -and $recordName -ne $expectedName) { return $false }
+
+            switch ($Type) {
+                "A" { return [bool]$_.IPAddress }
+                "AAAA" { return [bool]$_.IPAddress }
+                "CNAME" { return [bool]$_.NameHost }
+                "MX" { return [bool]$_.NameExchange }
+                "NS" { return [bool]$_.NameHost }
+                "TXT" { return [bool]$_.Strings }
+            }
+        })
     } catch {
         return @()
     }
