@@ -24,6 +24,7 @@ Static website for Fillmore Christian Church, replacing ChurchCo ($50/mo). Built
 - [x] GitHub Pages staging deployment enabled from the personal repo
 - [x] Cloudflare Pages project created and deployed at `https://fillmorechristian-website.pages.dev/`
 - [x] DNS preserve/import artifacts prepared for Cloudflare cutover
+- [x] Cloudflare DNS records applied and API-verified for Pages, mail, SPF, DMARC, DKIM, and verification records
 - [x] Project files in `C:\Users\wakef\Documents\AI-Projects\fcc-website`
 
 See `MIGRATION-RUNBOOK.md` for the current Cloudflare migration order.
@@ -179,12 +180,12 @@ Domain registrar: Squarespace Domains, formerly Google Domains.
 - Login: https://domains.squarespace.com
 - Domain: `fillmorechristian.org`
 - Renewal notice: auto-renews June 15, 2026 for $15.00; disable by June 14 only if transfer/cutover is safe.
-- Current blocker: `fillmorechristian.org` is added to Cloudflare DNS but still pending. Verify the Cloudflare DNS records, then update Squarespace nameservers to `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`. The podcast feed has moved off TheChurchCo audio in the Cloudflare Pages build; public audio verification waits for DNS to point `www.fillmorechristian.org` at Pages.
+- Current blocker: `fillmorechristian.org` is added to Cloudflare DNS and the Cloudflare DNS records are prepared. Update Squarespace nameservers to `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`. The podcast feed has moved off TheChurchCo audio in the Cloudflare Pages build; public audio verification waits for DNS to point `www.fillmorechristian.org` at Pages.
 
 DNS changes needed:
 
-1. In Cloudflare DNS for `fillmorechristian.org`, verify/import every preserve record first, especially Mailgun MX/TXT records, `_dmarc` DMARC, `pic._domainkey` DKIM, and Google verification CNAMEs.
-2. Confirm old TheChurchCo web records are not carried forward except as records to replace.
+1. In Cloudflare DNS for `fillmorechristian.org`, the preserve records have already been applied and API-verified, including Mailgun MX/TXT records, `_dmarc` DMARC, `pic._domainkey` DKIM, and Google verification CNAMEs.
+2. The old TheChurchCo web records have already been removed inside Cloudflare and replaced with proxied Pages CNAMEs.
 3. In Squarespace, update the domain nameservers to `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`.
 4. In Cloudflare Pages, confirm custom domains for `www` and apex become active.
 5. Verify email still works before changing or deleting any mail records.
@@ -211,7 +212,7 @@ Preview the Cloudflare DNS records to keep and replace:
 npm run apply:cloudflare-dns
 ```
 
-Apply them through the Cloudflare API only after creating a token at `https://dash.cloudflare.com/profile/api-tokens` with Zone:Read and Zone:DNS Edit permission for `fillmorechristian.org`, then setting `CLOUDFLARE_API_TOKEN` or `CF_API_TOKEN`:
+The Cloudflare API apply has already been run. If the record set ever needs to be re-applied, create a token at `https://dash.cloudflare.com/profile/api-tokens` with Zone:Read and Zone:DNS Edit permission for `fillmorechristian.org`, then set `CLOUDFLARE_API_TOKEN` or `CF_API_TOKEN`:
 
 ```powershell
 npm run apply:cloudflare-dns -- -Apply
@@ -227,7 +228,7 @@ As of June 1, 2026, preserve at least the Mailgun MX records and these TXT/CNAME
 - `4jb3ni34htue` CNAME -> `gv-xvljhthdwk5dxh.dv.googlehosted.com`
 - `334xc4sml6cf` CNAME -> `gv-ujhethalu73pqt.dv.googlehosted.com`
 
-Do not delete the old TheChurchCo website records until Cloudflare Pages custom domains are configured and ready to replace them.
+Do not disable/cancel TheChurchCo until Cloudflare nameservers are active and the production website/feed/audio cancellation checks pass.
 
 ### Step 7: Maintain Church Logo
 

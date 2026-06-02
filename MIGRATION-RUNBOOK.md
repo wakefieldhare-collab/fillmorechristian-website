@@ -6,9 +6,10 @@ Last updated: 2026-06-01
 
 - Domain: `fillmorechristian.org`
 - Current registrar/DNS account: Squarespace Domains / former Google Domains
-- Current nameservers: `ns-cloud-d1.googledomains.com` through `ns-cloud-d4.googledomains.com`
-- Current website host: TheChurchCo / WordPress
-- Current `www` target: `ssl.thechurchco.com`
+- Current public nameservers: `ns-cloud-d1.googledomains.com` through `ns-cloud-d4.googledomains.com`
+- Current public website host until nameservers change: TheChurchCo / WordPress
+- Current public `www` target until nameservers change: `ssl.thechurchco.com`
+- Cloudflare DNS records are prepared and API-verified: the old TheChurchCo web records are removed inside Cloudflare, the apex and `www` Pages CNAMEs are present, and mail/SPF/DMARC/DKIM/verification records are preserved.
 - Current mail MX records: `mxa.mailgun.org` and `mxb.mailgun.org`
 - Squarespace renewal notice: confirmed in personal Gmail message `19e8098f6dc383a7` from Squarespace on 2026-06-01; `fillmorechristian.org` auto-renews on 2026-06-15 for $15.00. Disable auto-renew by 2026-06-14 only if the transfer is already safely underway or complete.
 - Current Apple Podcasts feed URL: `https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast`
@@ -21,8 +22,8 @@ Last updated: 2026-06-01
 
 1. Export the podcast feed and audio before canceling TheChurchCo.
 2. Deploy this static site to Cloudflare Pages.
-3. Add `fillmorechristian.org` to Cloudflare DNS and import/verify existing DNS records.
-4. Point Squarespace nameservers to Cloudflare nameservers so Cloudflare DNS becomes active.
+3. Add `fillmorechristian.org` to Cloudflare DNS and import/verify existing DNS records. Done.
+4. Point Squarespace nameservers to Cloudflare nameservers so Cloudflare DNS becomes active. Waiting on Squarespace.
 5. Verify `www`, apex, email MX, contact form, and the legacy podcast feed URL.
 6. After DNS is stable, transfer registrar from Squarespace to Cloudflare Registrar.
 7. Only cancel TheChurchCo after the website and podcast feed are verified from the new host.
@@ -126,7 +127,7 @@ R2 preparation status on 2026-06-01:
 - `scripts/test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -VerifyHashes` downloaded and SHA-256 verified all 70 R2 objects after upload.
 - `npm run verify:r2-pages-audio` verifies the same objects through `https://fillmorechristian-website.pages.dev/media/...` before production DNS cutover.
 - `scripts/test-r2-public-audio.ps1` verifies the public `www.fillmorechristian.org/media/...` URLs from the manifest after DNS cutover.
-- The remaining blocker is DNS: after `fillmorechristian.org` is active in Cloudflare DNS, run `npm run complete:cloudflare-cutover`, then `npm run verify:cancel-thechurchco`.
+- The remaining blocker is the Squarespace nameserver switch: after public DNS uses `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`, run `npm run complete:cloudflare-cutover`, then `npm run verify:cancel-thechurchco`.
 
 Podcast metadata cleanup:
 
@@ -244,7 +245,9 @@ That command refuses the work GitHub owner, requires a clean working tree by def
 
 If podcast audio has just been migrated to R2, commit and push the generated feed/page changes before running `npm run deploy:cloudflare` so the Cloudflare deployment is tied to a personal-GitHub commit.
 
-## Cloudflare DNS Records To Preserve
+## Cloudflare DNS Cutover Records
+
+Status on 2026-06-01: these records have already been applied and API-verified inside Cloudflare. The public internet will not use them until Squarespace nameservers are replaced with Cloudflare's assigned nameservers.
 
 Before changing nameservers, screenshot/export all current Squarespace DNS records. At minimum preserve:
 
@@ -283,14 +286,13 @@ This writes:
 - `exports/dns/fillmorechristian.org-cloudflare-preserve-records.zone`
 - `exports/dns/fillmorechristian.org-cloudflare-dns-cutover-plan.md`
 
-The preserve files intentionally keep the Mailgun/Microsoft/DMARC/DKIM/Google verification records and exclude the old TheChurchCo web records. Before changing nameservers, run:
+The preserve files intentionally keep the Mailgun/Microsoft/DMARC/DKIM/Google verification records and exclude the old TheChurchCo web records. The Cloudflare API apply has already been run successfully. Before changing nameservers, a final public pre-cutover check can still be run:
 
 ```powershell
-.\scripts\test-cloudflare-dns-import-readiness.ps1
 .\scripts\test-dns-cutover.ps1 -Mode Before
 ```
 
-Preview the exact Cloudflare DNS records to preserve and replace:
+Preview the exact Cloudflare DNS records that were preserved and replaced:
 
 ```powershell
 npm run apply:cloudflare-dns
@@ -301,7 +303,7 @@ To apply those records through the Cloudflare API instead of clicking in the das
 - Zone:Read
 - Zone:DNS Edit
 
-Set `CLOUDFLARE_API_TOKEN` or `CF_API_TOKEN` to that token, then run:
+If the Cloudflare DNS record set ever needs to be re-applied, set `CLOUDFLARE_API_TOKEN` or `CF_API_TOKEN` to that token, then run:
 
 ```powershell
 npm run apply:cloudflare-dns -- -Apply
@@ -313,11 +315,12 @@ After Cloudflare assigns nameservers and Squarespace is updated, run the after-c
 .\scripts\test-dns-cutover.ps1 -Mode After -ExpectedCloudflareNameservers "name1.ns.cloudflare.com","name2.ns.cloudflare.com"
 ```
 
-Latest snapshot on 2026-06-01 found:
+Latest public snapshot on 2026-06-01 found:
 
 - Cloudflare zone: `fillmorechristian.org` exists with status `pending`.
 - Cloudflare-assigned nameservers: `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`.
 - Pages custom domains: `fillmorechristian.org` and `www.fillmorechristian.org` are attached and pending.
+- Cloudflare DNS records: prepared and API-verified; public DNS still waits on the Squarespace nameserver switch.
 - R2 audio: the Pages `/media/` route is deployed with an R2 binding; public verification waits for the Cloudflare nameserver cutover so `www.fillmorechristian.org/media/...` reaches Pages.
 - NS: `ns-cloud-d1.googledomains.com` through `ns-cloud-d4.googledomains.com`
 - A: `fillmorechristian.org` -> `77.83.141.16`
