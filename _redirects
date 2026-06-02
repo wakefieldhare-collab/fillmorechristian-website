@@ -1,5 +1,7 @@
 # Preserve old ChurchCo pretty URLs after static-site cutover.
 /about/ /about.html 301
+/visit/ /visit.html 301
+/plan-a-visit/ /visit.html 301
 /beliefs/ /beliefs.html 301
 /our-team/ /team.html 301
 /team/ /team.html 301

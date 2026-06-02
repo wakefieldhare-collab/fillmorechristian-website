@@ -26,6 +26,7 @@ const publishPaths = [
   "site.webmanifest",
   "sitemap.xml",
   "team.html",
+  "visit.html",
   "_headers",
   "_routes.json",
   "_redirects",

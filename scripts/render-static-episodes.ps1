@@ -114,6 +114,7 @@ function Write-Sitemap {
     $publicPages = @(
         @{ Loc = "https://www.fillmorechristian.org/"; Priority = "1.0" },
         @{ Loc = "https://www.fillmorechristian.org/about.html"; Priority = "0.8" },
+        @{ Loc = "https://www.fillmorechristian.org/visit.html"; Priority = "0.9" },
         @{ Loc = "https://www.fillmorechristian.org/beliefs.html"; Priority = "0.8" },
         @{ Loc = "https://www.fillmorechristian.org/team.html"; Priority = "0.7" },
         @{ Loc = "https://www.fillmorechristian.org/events.html"; Priority = "0.7" },

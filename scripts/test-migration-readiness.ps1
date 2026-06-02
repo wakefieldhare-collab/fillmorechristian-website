@@ -224,6 +224,7 @@ if ($gitHubIssues.Count -gt 0) {
 $requiredFiles = @(
     "index.html",
     "about.html",
+    "visit.html",
     "beliefs.html",
     "events.ics",
     "events.html",
@@ -338,6 +339,7 @@ if (Test-Path -LiteralPath $wranglerConfigPath) {
 $publicHtmlPages = @(
     "index.html",
     "about.html",
+    "visit.html",
     "beliefs.html",
     "events.html",
     "sermons.html",
@@ -451,6 +453,26 @@ if (Test-Path -LiteralPath $homeHtmlPath) {
     }
 } else {
     Add-Check "Homepage visitor guide" "FAIL" "index.html is missing"
+}
+
+$visitHtmlPath = Join-Path $root "visit.html"
+if (Test-Path -LiteralPath $visitHtmlPath) {
+    $visitHtml = Get-Content -Raw -LiteralPath $visitHtmlPath
+    if ($visitHtml -match 'id="visit-service-times"' -and
+        $visitHtml -match "Sunday School starts at 9:00 AM" -and
+        $visitHtml -match "Worship begins at 10:00 AM" -and
+        $visitHtml -match "Children are welcome in worship" -and
+        $visitHtml -match "Get Directions" -and
+        $visitHtml -match "Ask a Question" -and
+        $visitHtml -match "events\.ics" -and
+        $visitHtml -match "contact\.vcf" -and
+        $visitHtml -match 'data-mailto="church@fillmorechristian.org"') {
+        Add-Check "Plan a visit page" "OK" "Visit page includes Sunday timing, family guidance, directions, contact actions, and downloadable calendar/contact links"
+    } else {
+        Add-Check "Plan a visit page" "FAIL" "visit.html is missing timing, family guidance, directions, contact actions, calendar/contact links, or the mailto fallback form"
+    }
+} else {
+    Add-Check "Plan a visit page" "FAIL" "visit.html is missing"
 }
 
 $brandAssetIssues = New-Object System.Collections.Generic.List[string]
