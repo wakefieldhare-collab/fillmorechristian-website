@@ -169,16 +169,16 @@ function renderEvents(container, events) {
 
 function getStaticEventsHtml() {
   return '' +
-    '<div class="event-item" data-static-event="true">' +
-      '<div class="event-date-box"><span class="month">Sun</span><span class="day">9</span></div>' +
+    '<div class="event-item" data-static-event="true" data-recurring-event="sunday-school">' +
+      '<div class="event-date-box event-date-box-recurring"><span class="month">Every</span><span class="day">Sun</span></div>' +
       '<div class="event-details">' +
         '<h4>Sunday School</h4>' +
         '<span class="event-time">Every Sunday at 9:00 AM</span>' +
         '<p>Classes for learning Scripture together before worship.</p>' +
       '</div>' +
     '</div>' +
-    '<div class="event-item" data-static-event="true">' +
-      '<div class="event-date-box"><span class="month">Sun</span><span class="day">10</span></div>' +
+    '<div class="event-item" data-static-event="true" data-recurring-event="sunday-worship">' +
+      '<div class="event-date-box event-date-box-recurring"><span class="month">Every</span><span class="day">Sun</span></div>' +
       '<div class="event-details">' +
         '<h4>Sunday Worship</h4>' +
         '<span class="event-time">Every Sunday at 10:00 AM</span>' +

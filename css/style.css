@@ -786,6 +786,11 @@ h4 { font-size: 1.25rem; }
   line-height: 1.2;
 }
 
+.event-date-box-recurring .day {
+  font-size: 1.1rem;
+  letter-spacing: 0;
+}
+
 .event-details h4 {
   margin-bottom: 0.3em;
 }

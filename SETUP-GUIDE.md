@@ -166,23 +166,11 @@ The site also publishes `contact.vcf`, a self-hosted contact card with the churc
 
 Later, the form can be upgraded to Cloudflare Pages Functions, Formspree, or another form service after the church chooses where form submissions should be stored and who should receive notifications.
 
-### Step 5: Set Up Google Calendar (Events)
+### Step 5: Maintain Events
 
-The site already publishes a self-hosted recurring Sunday calendar at `events.ics` for Sunday School and Sunday Worship. The Events page links it directly, and the build/readiness checks verify that it ships with the public site.
+The site publishes a self-hosted recurring Sunday calendar at `events.ics` for Sunday School and Sunday Worship. The Events page links it directly, the homepage and Events page include a clear static recurring-Sunday fallback, and `js/events.js` expands the iCal feed into upcoming dated occurrences in the browser.
 
-1. Create a Google Calendar for the church, or use an existing one.
-2. Make it public: Calendar Settings > Access permissions > Make available to public.
-3. Copy the Calendar ID from Settings > Integrate calendar.
-4. Get a Google API key:
-   - Go to https://console.cloud.google.com.
-   - Create a project, or use an existing one.
-   - Enable Google Calendar API.
-   - Create an API key under Credentials.
-   - Restrict the key to Google Calendar API and your domain.
-5. Update `js/events.js`:
-   - Set `GOOGLE_CALENDAR_ID` to your calendar ID.
-   - Set `GOOGLE_API_KEY` to your API key.
-6. Until a calendar is connected, the site shows the built-in Sunday School and Sunday Worship schedule.
+For ordinary schedule changes, edit `events.ics`, then keep the static fallback copy in `index.html`, `events.html`, and `js/events.js` aligned with the feed. The build/readiness checks verify that the self-hosted feed ships with the public site and that no Google Calendar API key is required.
 
 ### Step 6: Move DNS To Cloudflare
 
@@ -255,7 +243,9 @@ The official FCC navigation logo is published at `images/fcc-logo.png` and is ch
 
 ### Adding Or Editing Events
 
-- Add events to the Google Calendar; the website pulls them automatically once configured.
+- Edit `events.ics` for recurring or dated events.
+- Keep the visible static fallback schedule in `index.html`, `events.html`, and `js/events.js` aligned with the iCal feed.
+- Run `npm run build`, `scripts\test-migration-readiness.ps1 -RequireIndependentAudio`, and `scripts\test-cloudflare-pages-local.ps1` before deploying.
 
 ### Editing Page Content
 
@@ -266,6 +256,6 @@ The official FCC navigation logo is published at `images/fcc-logo.png` and is ch
 
 - Website hosting: free on Cloudflare Pages.
 - Contact form: currently mailto-based, with no third-party form service.
-- Calendar: free on Google Calendar.
+- Calendar: self-hosted `events.ics` feed.
 - Domain renewal: Cloudflare Registrar at-cost after transfer.
 - Podcast hosting: Cloudflare R2 storage plus the FCC-owned Pages `/media` route.

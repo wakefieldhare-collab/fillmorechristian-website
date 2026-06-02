@@ -349,9 +349,19 @@ try {
         $eventsPageContent -notmatch 'id="calendar-copy-status"\s+class="copy-status"\s+aria-live="polite"') {
         throw "Events page is missing the copyable calendar feed URL"
     }
+    if ($eventsPageContent -notmatch 'data-recurring-event="sunday-school"' -or
+        $eventsPageContent -notmatch 'data-recurring-event="sunday-worship"' -or
+        $eventsPageContent -notmatch 'event-date-box-recurring') {
+        throw "Events page is missing the clear recurring Sunday fallback schedule"
+    }
     $checks.Add([pscustomobject]@{ Check = "Calendar subscribe controls"; Status = "OK"; Details = "Published output includes copyable canonical iCal feed URL" })
 
     $homePageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "index.html")
+    if ($homePageContent -notmatch 'data-recurring-event="sunday-school"' -or
+        $homePageContent -notmatch 'data-recurring-event="sunday-worship"' -or
+        $homePageContent -notmatch 'event-date-box-recurring') {
+        throw "Home page is missing the clear recurring Sunday fallback schedule"
+    }
     if ($homePageContent -notmatch '<img\s+src="images/fcc-logo-mark\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or
         $homePageContent -notmatch '<img\s+src="images/fcc-logo\.png"\s+alt="Fillmore Christian Church"\s+class="hero-logo"\s+width="2048"\s+height="2048"\s+decoding="async">' -or
         $homePageContent -notmatch '<a\s+href="podcast\.html">Podcast</a>' -or
@@ -382,6 +392,9 @@ try {
     Assert-Status -Response $eventsScript -Expected @(200) -Name "Events script"
     if ($eventsScript.Content -notmatch "events\.ics" -or $eventsScript.Content -match "googleapis|GOOGLE_CALENDAR_ID|GOOGLE_API_KEY") {
         throw "Events script does not use the self-hosted iCal feed cleanly"
+    }
+    if ($eventsScript.Content -notmatch 'data-recurring-event="sunday-school"' -or $eventsScript.Content -notmatch 'event-date-box-recurring') {
+        throw "Events script fallback does not preserve the clear recurring Sunday schedule"
     }
     if ($eventsScript.Content -notmatch "generateUpcomingOccurrences" -or $eventsScript.Content -notmatch "loadUpcomingEvents\(upcomingContainer, 4\)") {
         throw "Events script does not expand recurring events into dated upcoming occurrences"

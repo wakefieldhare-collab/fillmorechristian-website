@@ -624,6 +624,13 @@ if (Test-Path -LiteralPath $calendarPath) {
     if ($indexHtml -notmatch 'href="events\.ics"' -or $eventsHtml -notmatch 'href="events\.ics"') {
         $calendarIssues.Add("index or events page does not link events.ics")
     }
+    if ($indexHtml -notmatch 'data-recurring-event="sunday-school"' -or
+        $indexHtml -notmatch 'data-recurring-event="sunday-worship"' -or
+        $eventsHtml -notmatch 'data-recurring-event="sunday-school"' -or
+        $eventsHtml -notmatch 'data-recurring-event="sunday-worship"' -or
+        $eventsHtml -notmatch 'event-date-box-recurring') {
+        $calendarIssues.Add("home or events page is missing the clear recurring Sunday fallback schedule")
+    }
     if ($eventsHtml -notmatch '<link\s+rel="alternate"\s+type="text/calendar"') {
         $calendarIssues.Add("events page missing calendar autodiscovery")
     }
@@ -655,6 +662,9 @@ if (Test-Path -LiteralPath $calendarPath) {
         $eventsScript = Get-Content -Raw -LiteralPath $eventsScriptPath
         if ($eventsScript -notmatch "events\.ics") { $calendarIssues.Add("events script does not load the self-hosted iCal feed") }
         if ($eventsScript -match "googleapis|GOOGLE_CALENDAR_ID|GOOGLE_API_KEY") { $calendarIssues.Add("events script still references Google Calendar API") }
+        if ($eventsScript -notmatch 'data-recurring-event="sunday-school"' -or $eventsScript -notmatch 'event-date-box-recurring') {
+            $calendarIssues.Add("events script fallback does not preserve the clear recurring Sunday schedule")
+        }
         if ($eventsScript -notmatch "generateUpcomingOccurrences" -or $eventsScript -notmatch "loadUpcomingEvents\(upcomingContainer, 4\)") {
             $calendarIssues.Add("events script does not expand weekly recurring events into upcoming dated occurrences")
         }
