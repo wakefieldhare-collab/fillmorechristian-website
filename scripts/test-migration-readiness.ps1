@@ -831,6 +831,7 @@ if ((Test-Path -LiteralPath $statusScriptPath) -and (Test-Path -LiteralPath $dns
 $cancellationScriptPath = Join-Path $root "scripts\test-thechurchco-cancellation-readiness.ps1"
 $cancellationChecklistScriptPath = Join-Path $root "scripts\show-thechurchco-cancellation-checklist.ps1"
 $domainTransferScriptPath = Join-Path $root "scripts\test-domain-transfer-readiness.ps1"
+$registrarOwnershipScriptPath = Join-Path $root "scripts\test-registrar-ownership.ps1"
 $productionCutoverScriptPath = Join-Path $root "scripts\verify-production-cutover.ps1"
 $postCancellationScriptPath = Join-Path $root "scripts\verify-post-cancellation.ps1"
 $audioMigrationScriptPath = Join-Path $root "scripts\migrate-cloudflare-audio.ps1"
@@ -856,6 +857,23 @@ if (Test-Path -LiteralPath $domainTransferScriptPath) {
     }
 } else {
     Add-Check "Domain transfer safety gate" "FAIL" "scripts\test-domain-transfer-readiness.ps1 is missing"
+}
+
+if ((Test-Path -LiteralPath $registrarOwnershipScriptPath) -and (Test-Path -LiteralPath $packageJsonPath)) {
+    $registrarOwnershipScriptText = Get-Content -Raw -LiteralPath $registrarOwnershipScriptPath
+    $packageJsonText = Get-Content -Raw -LiteralPath $packageJsonPath
+    if ($registrarOwnershipScriptText -match "rdap\.org/domain" -and
+        $registrarOwnershipScriptText -match "Cloudflare Registrar" -and
+        $registrarOwnershipScriptText -match "Registrar ownership" -and
+        $registrarOwnershipScriptText -match "RDAP nameservers" -and
+        $registrarOwnershipScriptText -match "Keep Squarespace auto-renew enabled" -and
+        $packageJsonText -match '"verify:registrar-ownership"') {
+        Add-Check "Registrar ownership proof gate" "OK" "Post-transfer verifier checks public RDAP registrar ownership and Cloudflare nameservers"
+    } else {
+        Add-Check "Registrar ownership proof gate" "FAIL" "Registrar ownership verifier is missing RDAP lookup, expected Cloudflare registrar, nameserver, auto-renew warning, or npm alias"
+    }
+} else {
+    Add-Check "Registrar ownership proof gate" "FAIL" "scripts\test-registrar-ownership.ps1 or package.json is missing"
 }
 
 if ((Test-Path -LiteralPath $productionCutoverScriptPath) -and (Test-Path -LiteralPath $packageJsonPath)) {

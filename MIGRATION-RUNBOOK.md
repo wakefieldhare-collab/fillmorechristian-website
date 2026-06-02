@@ -140,6 +140,14 @@ npm run verify:post-cancellation
 
 This reruns the full-media production verifier and preserves the reminder to keep Squarespace auto-renew enabled until Cloudflare Registrar shows the transfer in progress or complete.
 
+After Cloudflare Registrar shows the transfer complete, prove the public registrar ownership state with:
+
+```powershell
+npm run verify:registrar-ownership
+```
+
+This checks public RDAP registration data for `Cloudflare Registrar` and confirms the Cloudflare nameservers remain attached. It is expected to fail while RDAP still lists Squarespace as the registrar.
+
 The migration command refuses the work GitHub owner, requires `https://` audio URLs, verifies Cloudflare authentication, can create the R2 bucket, uploads and hash-verifies all 70 audio objects, rewrites all three RSS feeds to `https://www.fillmorechristian.org/media`, regenerates episode pages/sermon archive/homepage latest-sermon links, builds `dist`, and runs strict local readiness plus the Cloudflare Pages local preflight. Use `npm run complete:cloudflare-cutover` and `npm run verify:cancel-thechurchco` before cancellation for a full production media sweep.
 
 After rewriting enclosure URLs, re-run local verification and push the RSS changes before canceling TheChurchCo.
@@ -409,6 +417,7 @@ This is expected to fail until Cloudflare nameservers are active, the old TheChu
 3. Request the transfer/auth/EPP code.
 4. In Cloudflare Registrar, start the transfer and enter the auth code.
 5. Keep the Squarespace account active until the registrar transfer completes.
+6. After Cloudflare shows the transfer complete, run `npm run verify:registrar-ownership`.
 
 ## Verification Checklist
 

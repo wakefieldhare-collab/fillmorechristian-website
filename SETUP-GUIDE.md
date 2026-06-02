@@ -252,6 +252,14 @@ npm run verify:post-cancellation
 
 That command reruns the full-media production verifier and keeps the Squarespace auto-renew warning visible until Cloudflare Registrar shows the transfer in progress or complete.
 
+After Cloudflare Registrar shows the transfer complete, run:
+
+```powershell
+npm run verify:registrar-ownership
+```
+
+That command checks public RDAP registration data for `Cloudflare Registrar` and confirms the Cloudflare nameservers remain attached.
+
 As of June 1, 2026, preserve at least the Mailgun MX records and these TXT/CNAME records:
 
 - `v=spf1 include:mailgun.org ~all`
