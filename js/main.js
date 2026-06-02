@@ -156,6 +156,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 const AUDIO_SPEED_STORAGE_KEY = 'fcc-audio-playback-rate';
+const AUDIO_POSITION_STORAGE_PREFIX = 'fcc-audio-position:';
+const AUDIO_POSITION_MIN_SAVE_SECONDS = 10;
+const AUDIO_POSITION_END_BUFFER_SECONDS = 20;
 const AUDIO_SPEED_OPTIONS = ['0.75', '1', '1.25', '1.5', '1.75', '2'];
 
 function initializeAudioEnhancements() {
@@ -193,9 +196,20 @@ function enhanceAudioPlayers(scope) {
     if (player.getAttribute('data-audio-enhanced') === 'true') return;
 
     player.setAttribute('data-audio-enhanced', 'true');
+    const positionKey = getAudioPositionKey(player);
     setPlayerRate(player, getSavedPlaybackRate());
     player.addEventListener('loadedmetadata', function() {
       setPlayerRate(player, getSavedPlaybackRate());
+      restorePlayerPosition(player, positionKey);
+    });
+    player.addEventListener('timeupdate', function() {
+      savePlayerPosition(player, positionKey);
+    });
+    player.addEventListener('pause', function() {
+      savePlayerPosition(player, positionKey);
+    });
+    player.addEventListener('ended', function() {
+      clearPlayerPosition(positionKey);
     });
 
     const controls = document.createElement('div');
@@ -236,6 +250,50 @@ function enhanceAudioPlayers(scope) {
     controls.appendChild(select);
     player.insertAdjacentElement('afterend', controls);
   });
+}
+
+function getAudioPositionKey(player) {
+  const source = player.currentSrc || (player.querySelector('source') ? player.querySelector('source').getAttribute('src') : '');
+  if (!source) return '';
+
+  try {
+    const url = new URL(source, window.location.href);
+    return AUDIO_POSITION_STORAGE_PREFIX + url.pathname;
+  } catch (err) {
+    return AUDIO_POSITION_STORAGE_PREFIX + source;
+  }
+}
+
+function restorePlayerPosition(player, positionKey) {
+  if (!positionKey) return;
+
+  try {
+    const savedTime = Number(window.localStorage.getItem(positionKey) || '0');
+    if (!Number.isFinite(savedTime) || savedTime < AUDIO_POSITION_MIN_SAVE_SECONDS || player.currentTime > 2) return;
+    if (Number.isFinite(player.duration) && savedTime >= player.duration - AUDIO_POSITION_END_BUFFER_SECONDS) return;
+    player.currentTime = savedTime;
+  } catch (err) {}
+}
+
+function savePlayerPosition(player, positionKey) {
+  if (!positionKey) return;
+
+  try {
+    if (!Number.isFinite(player.currentTime) || player.currentTime < AUDIO_POSITION_MIN_SAVE_SECONDS) return;
+    if (Number.isFinite(player.duration) && player.currentTime >= player.duration - AUDIO_POSITION_END_BUFFER_SECONDS) {
+      clearPlayerPosition(positionKey);
+      return;
+    }
+    window.localStorage.setItem(positionKey, String(Math.floor(player.currentTime)));
+  } catch (err) {}
+}
+
+function clearPlayerPosition(positionKey) {
+  if (!positionKey) return;
+
+  try {
+    window.localStorage.removeItem(positionKey);
+  } catch (err) {}
 }
 
 function createSeekButton(player, seconds, label) {
