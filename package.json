@@ -5,6 +5,7 @@
     "apply:cloudflare-dns": "powershell -ExecutionPolicy Bypass -File scripts/apply-cloudflare-dns-cutover-records.ps1",
     "complete:cloudflare-cutover": "powershell -ExecutionPolicy Bypass -File scripts/complete-cloudflare-cutover.ps1",
     "migrate:cloudflare-audio": "powershell -ExecutionPolicy Bypass -File scripts/migrate-cloudflare-audio.ps1",
+    "refresh:podcast-content": "powershell -ExecutionPolicy Bypass -File scripts/refresh-podcast-content.ps1",
     "status:migration": "powershell -ExecutionPolicy Bypass -File scripts/show-migration-status.ps1",
     "verify:dns-import": "powershell -ExecutionPolicy Bypass -File scripts/test-cloudflare-dns-import-readiness.ps1",
     "verify:domain-transfer": "powershell -ExecutionPolicy Bypass -File scripts/test-domain-transfer-readiness.ps1",

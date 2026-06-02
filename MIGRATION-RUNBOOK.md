@@ -129,7 +129,15 @@ R2 preparation status on 2026-06-01:
 - `scripts/test-r2-public-audio.ps1` verifies the public `www.fillmorechristian.org/media/...` URLs from the manifest after DNS cutover.
 - The remaining blocker is the Squarespace nameserver switch: after public DNS uses `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`, run `npm run complete:cloudflare-cutover`, then `npm run verify:cancel-thechurchco`.
 
-Podcast metadata cleanup:
+Podcast metadata cleanup can be run as one guarded command:
+
+```powershell
+npm run refresh:podcast-content
+```
+
+That wrapper normalizes the feed, regenerates episode pages, updates the sermon archive, updates the homepage latest-sermon block, updates the podcast page latest-message fallback cards, and builds `dist`.
+
+The individual commands remain available when you need to run one step:
 
 ```powershell
 .\scripts\normalize-podcast-metadata.ps1

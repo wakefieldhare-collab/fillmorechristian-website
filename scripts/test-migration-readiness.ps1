@@ -1356,11 +1356,14 @@ if ($feeds.ContainsKey($feedPaths[0])) {
 
 $podcastScriptPath = Join-Path $root "js\podcast.js"
 $podcastLatestRendererPath = Join-Path $root "scripts\render-podcast-latest.ps1"
+$podcastRefreshScriptPath = Join-Path $root "scripts\refresh-podcast-content.ps1"
 $podcastPagePath = Join-Path $root "podcast.html"
 if (Test-Path -LiteralPath $podcastScriptPath) {
     $podcastScript = Get-Content -Raw -LiteralPath $podcastScriptPath
     $podcastPageText = if (Test-Path -LiteralPath $podcastPagePath) { Get-Content -Raw -LiteralPath $podcastPagePath } else { "" }
+    $packageJsonText = Get-Content -Raw -LiteralPath (Join-Path $root "package.json")
     $migrateAudioScriptText = Get-Content -Raw -LiteralPath (Join-Path $root "scripts\migrate-cloudflare-audio.ps1")
+    $podcastRefreshScriptText = if (Test-Path -LiteralPath $podcastRefreshScriptPath) { Get-Content -Raw -LiteralPath $podcastRefreshScriptPath } else { "" }
     $staticLatestCount = ([regex]::Matches($podcastPageText, 'data-static-podcast-latest="true"')).Count
     $latestAudioItem = if ($feeds.ContainsKey($feedPaths[0])) {
         @($feeds[$feedPaths[0]].rss.channel.item | Where-Object { $_.enclosure -and $_.enclosure.url } | Select-Object -First 1)
@@ -1376,15 +1379,25 @@ if (Test-Path -LiteralPath $podcastScriptPath) {
         $podcastScript -match "hasStaticLatestCards" -and
         $podcastScript -notmatch "https?://[^'`"]*thechurchco|ssl\.thechurchco\.com" -and
         (Test-Path -LiteralPath $podcastLatestRendererPath) -and
+        (Test-Path -LiteralPath $podcastRefreshScriptPath) -and
+        $packageJsonText -match '"refresh:podcast-content"\s*:\s*"powershell -ExecutionPolicy Bypass -File scripts/refresh-podcast-content\.ps1"' -and
         $migrateAudioScriptText -match "render-podcast-latest\.ps1" -and
+        $podcastRefreshScriptText -match "normalize-podcast-metadata\.ps1" -and
+        $podcastRefreshScriptText -match "render-static-episodes\.ps1" -and
+        $podcastRefreshScriptText -match "render-static-sermons\.ps1" -and
+        $podcastRefreshScriptText -match "render-homepage-latest-sermon\.ps1" -and
+        $podcastRefreshScriptText -match "render-podcast-latest\.ps1" -and
+        $podcastRefreshScriptText -match "npm run build" -and
+        $podcastRefreshScriptText -match "wakefieldhare-collab/fillmorechristian-website" -and
+        $podcastRefreshScriptText -match "wake-byte" -and
         $podcastPageText -match "PODCAST_LATEST_START" -and
         $podcastPageText -match "PODCAST_LATEST_END" -and
         $staticLatestCount -eq 3 -and
         $podcastPageText -match "/media/" -and
         (-not $latestTitle -or $podcastPageText -match [regex]::Escape($latestTitle))) {
-        Add-Check "Podcast latest messages" "OK" "Podcast page has three static latest-message cards plus feed refresh script with same-origin media URLs"
+        Add-Check "Podcast latest messages" "OK" "Podcast page has three static latest-message cards plus a guarded one-command refresh path"
     } else {
-        Add-Check "Podcast latest messages" "FAIL" "Podcast latest messages are missing static feed cards, renderer wiring, feed refresh behavior, same-origin media handling, or contain old platform references"
+        Add-Check "Podcast latest messages" "FAIL" "Podcast latest messages are missing static feed cards, renderer wiring, one-command refresh behavior, same-origin media handling, or contain old platform references"
     }
 } else {
     Add-Check "Podcast latest messages" "FAIL" "js\podcast.js is missing"

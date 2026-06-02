@@ -242,7 +242,7 @@ The official FCC navigation logo is published at `images/fcc-logo.png` and is ch
 
 - Add the audio file to durable hosting.
 - Add a new `<item>` entry in `podcast.xml` and in `podcast-category/fillmore-christian/feed/podcast`.
-- Run `.\scripts\normalize-podcast-metadata.ps1`, `.\scripts\render-static-episodes.ps1`, `.\scripts\render-static-sermons.ps1`, `.\scripts\render-homepage-latest-sermon.ps1`, and `.\scripts\render-podcast-latest.ps1`.
+- Run `npm run refresh:podcast-content`.
 - Keep the sermons page pointed at the podcast feed in `js/sermons.js`.
 
 ### Adding Or Editing Events
