@@ -1466,6 +1466,7 @@ h4 { font-size: 1.25rem; }
 .sermon-actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.75rem;
   margin-top: 0.75rem;
 }
@@ -1478,6 +1479,12 @@ h4 { font-size: 1.25rem; }
 
 .sermon-download:hover {
   color: var(--color-accent);
+}
+
+.sermon-copy-link {
+  min-height: 36px;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.9rem;
 }
 
 .sermon-description {

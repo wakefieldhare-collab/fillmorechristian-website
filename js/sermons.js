@@ -290,14 +290,40 @@ function renderSermons(container, sermons, sortMode) {
 
     if (sermon.audioUrl) {
       html += '<audio controls preload="none"><source src="' + escapeHtml(sermon.audioUrl) + '" type="' + escapeHtml(sermon.audioType) + '">Your browser does not support audio playback.</audio>';
-      html += '<div class="sermon-actions"><a href="' + escapeHtml(sermon.audioUrl) + '" class="sermon-download" download>Download Audio</a></div>';
+      html += '<div class="sermon-actions"><a href="' + escapeHtml(sermon.audioUrl) + '" class="sermon-download" download>Download Audio</a>';
+      if (sermon.linkUrl) {
+        html += renderSermonCopyButton(sermon.linkUrl);
+      }
+      html += '</div>';
     } else {
       html += '<p class="sermon-audio-missing">Audio is not attached to this archived feed item yet.</p>';
+      if (sermon.linkUrl) {
+        html += '<div class="sermon-actions">' + renderSermonCopyButton(sermon.linkUrl) + '</div>';
+      }
     }
 
     card.innerHTML = html;
     container.appendChild(card);
   });
+}
+
+function renderSermonCopyButton(linkUrl) {
+  const canonicalUrl = getCanonicalSermonUrl(linkUrl);
+  if (!canonicalUrl) return '';
+
+  return '<button class="copy-button sermon-copy-link" type="button" data-copy-value="' + escapeHtml(canonicalUrl) + '" data-copy-label="Copy Link" data-copy-label-success="Copied" data-copy-success="Sermon link copied." data-copy-fallback="Sermon link selected. Press Ctrl+C to copy it." data-copy-fail="Copy failed. Open the sermon and copy the page address.">Copy Link</button>';
+}
+
+function getCanonicalSermonUrl(linkUrl) {
+  if (!linkUrl) return '';
+
+  try {
+    const parsed = new URL(linkUrl, window.location.origin + '/');
+    const match = parsed.pathname.match(/\/episode\/([^/]+)\/?$/);
+    return match ? 'https://www.fillmorechristian.org/episode/' + match[1] + '/' : '';
+  } catch (err) {
+    return '';
+  }
 }
 
 function sortCards(cards, sortMode) {

@@ -107,6 +107,12 @@ function Get-RelativeEpisodePath {
     return ""
 }
 
+function Get-CanonicalEpisodeUrl {
+    param([string]$RelativePath)
+    if (-not $RelativePath) { return "" }
+    return "https://www.fillmorechristian.org/$RelativePath"
+}
+
 function Build-ArchiveSummaryHtml {
     param($Items)
 
@@ -161,6 +167,7 @@ foreach ($item in $items) {
     $audioUrl = if ($enclosure) { [string]$enclosure.url } else { "" }
     $pageAudioUrl = Get-PageAudioUrl $audioUrl
     $episodePath = Get-RelativeEpisodePath ([string]$item.link)
+    $episodeCanonicalUrl = Get-CanonicalEpisodeUrl $episodePath
     $search = "$title $date $speaker $description"
 
     $cardClass = if ($audioUrl) { "sermon-item" } else { "sermon-item no-audio" }
@@ -178,9 +185,16 @@ foreach ($item in $items) {
     }
     if ($audioUrl) {
         $html += "          <audio controls preload=`"none`"><source src=`"$(HtmlEncode $pageAudioUrl)`" type=`"$(Get-AudioType $audioUrl)`">Your browser does not support audio playback.</audio>"
-        $html += "          <div class=`"sermon-actions`"><a href=`"$(HtmlEncode $pageAudioUrl)`" class=`"sermon-download`" download>Download Audio</a></div>"
+        $actionLinks = @("<a href=`"$(HtmlEncode $pageAudioUrl)`" class=`"sermon-download`" download>Download Audio</a>")
+        if ($episodeCanonicalUrl) {
+            $actionLinks += "<button class=`"copy-button sermon-copy-link`" type=`"button`" data-copy-value=`"$(HtmlEncode $episodeCanonicalUrl)`" data-copy-label=`"Copy Link`" data-copy-label-success=`"Copied`" data-copy-success=`"Sermon link copied.`" data-copy-fallback=`"Sermon link selected. Press Ctrl+C to copy it.`" data-copy-fail=`"Copy failed. Open the sermon and copy the page address.`">Copy Link</button>"
+        }
+        $html += "          <div class=`"sermon-actions`">$($actionLinks -join '')</div>"
     } else {
         $html += "          <p class=`"sermon-audio-missing`">Audio is not attached to this archived feed item yet.</p>"
+        if ($episodeCanonicalUrl) {
+            $html += "          <div class=`"sermon-actions`"><button class=`"copy-button sermon-copy-link`" type=`"button`" data-copy-value=`"$(HtmlEncode $episodeCanonicalUrl)`" data-copy-label=`"Copy Link`" data-copy-label-success=`"Copied`" data-copy-success=`"Sermon link copied.`" data-copy-fallback=`"Sermon link selected. Press Ctrl+C to copy it.`" data-copy-fail=`"Copy failed. Open the sermon and copy the page address.`">Copy Link</button></div>"
+        }
     }
     $html += "        </article>"
     $cards.Add(($html -join "`r`n"))

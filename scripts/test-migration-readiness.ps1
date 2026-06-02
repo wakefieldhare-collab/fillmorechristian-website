@@ -1139,6 +1139,17 @@ if (Test-Path -LiteralPath $sermonsPath) {
         Add-Check "Sermon audio downloads" "FAIL" "$downloadLinks downloadable audio link(s), expected $expectedDownloadLinks from the podcast feed"
     }
 
+    $sermonCopyLinks = ([regex]::Matches($sermonsHtml, 'class="copy-button sermon-copy-link"')).Count
+    $expectedSermonCopyLinks = 0
+    if ($feeds.ContainsKey($feedPaths[0])) {
+        $expectedSermonCopyLinks = @($feeds[$feedPaths[0]].rss.channel.item | Where-Object { [string]$_.link -match "/episode/" }).Count
+    }
+    if ($expectedSermonCopyLinks -gt 0 -and $sermonCopyLinks -eq $expectedSermonCopyLinks -and $sermonsHtml -match 'data-copy-success="Sermon link copied\."') {
+        Add-Check "Sermon share links" "OK" "$sermonCopyLinks archive sermon card(s) expose copyable canonical sermon links"
+    } else {
+        Add-Check "Sermon share links" "FAIL" "$sermonCopyLinks copyable sermon link(s), expected $expectedSermonCopyLinks from the podcast feed"
+    }
+
     $mainScriptPath = Join-Path $root "js\main.js"
     if (Test-Path -LiteralPath $mainScriptPath) {
         $mainScriptText = Get-Content -Raw -LiteralPath $mainScriptPath
