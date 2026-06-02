@@ -367,8 +367,8 @@ function updateCount(visible, total) {
   }
 
   count.textContent = visible === total
-    ? total + ' archived messages'
-    : visible + ' of ' + total + ' archived messages';
+    ? 'Showing all ' + total + ' archived messages'
+    : 'Showing ' + visible + ' of ' + total + ' archived messages';
 }
 
 function getElementText(parent, tagName) {

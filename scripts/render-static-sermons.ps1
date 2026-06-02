@@ -107,6 +107,41 @@ function Get-RelativeEpisodePath {
     return ""
 }
 
+function Build-ArchiveSummaryHtml {
+    param($Items)
+
+    $totalCount = @($Items).Count
+    $audioCount = @($Items | Where-Object { $_.enclosure -and [string]$_.enclosure.url }).Count
+    $years = @(
+        $Items |
+            ForEach-Object { Format-Year ([string]$_.pubDate) } |
+            Where-Object { $_ } |
+            Sort-Object -Unique
+    )
+    $yearRange = if ($years.Count -gt 1) {
+        "$($years[0])-$($years[$years.Count - 1])"
+    } elseif ($years.Count -eq 1) {
+        $years[0]
+    } else {
+        "Archive"
+    }
+
+    return @(
+        '        <div class="archive-summary-item">',
+        "          <span class=""archive-summary-value"">$(HtmlEncode ([string]$totalCount))</span>",
+        '          <span class="archive-summary-label">messages archived</span>',
+        '        </div>',
+        '        <div class="archive-summary-item">',
+        "          <span class=""archive-summary-value"">$(HtmlEncode ([string]$audioCount))</span>",
+        '          <span class="archive-summary-label">with audio</span>',
+        '        </div>',
+        '        <div class="archive-summary-item">',
+        "          <span class=""archive-summary-value"">$(HtmlEncode $yearRange)</span>",
+        '          <span class="archive-summary-label">teaching years</span>',
+        '        </div>'
+    ) -join "`r`n"
+}
+
 [xml]$feed = Get-Content -Raw -LiteralPath $feedFile
 $items = @($feed.rss.channel.item)
 $cards = New-Object System.Collections.Generic.List[string]
@@ -163,7 +198,20 @@ if ($start -lt 0 -or $end -lt 0 -or $end -lt $start) {
 
 $replacement = $startMarker + "`r`n" + ($cards -join "`r`n") + "`r`n" + "        " + $endMarker.Trim()
 $updated = $page.Substring(0, $start) + $replacement + $page.Substring($end + $endMarker.Length)
+
+$summaryStartMarker = "        <!-- SERMON_ARCHIVE_SUMMARY_START -->"
+$summaryEndMarker = "        <!-- SERMON_ARCHIVE_SUMMARY_END -->"
+$summaryStart = $updated.IndexOf($summaryStartMarker)
+$summaryEnd = $updated.IndexOf($summaryEndMarker)
+
+if ($summaryStart -lt 0 -or $summaryEnd -lt 0 -or $summaryEnd -lt $summaryStart) {
+    throw "Could not find sermon archive summary markers in $pageFile"
+}
+
+$summaryReplacement = $summaryStartMarker + "`r`n" + (Build-ArchiveSummaryHtml $items) + "`r`n" + "        " + $summaryEndMarker.Trim()
+$updated = $updated.Substring(0, $summaryStart) + $summaryReplacement + $updated.Substring($summaryEnd + $summaryEndMarker.Length)
+
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 [System.IO.File]::WriteAllText($pageFile, $updated.TrimEnd() + "`r`n", $utf8NoBom)
 
-Write-Host "Rendered $($cards.Count) static sermon cards into $SermonsPage"
+Write-Host "Rendered $($cards.Count) static sermon cards and archive summary into $SermonsPage"

@@ -293,6 +293,16 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Sermons audio filter"; Status = "OK"; Details = "Published output includes audio-only filter and audio availability metadata" })
 
+    $sermonsScriptContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "js\sermons.js")
+    if ($sermonsPageContent -notmatch 'id="sermon-archive-summary"' -or
+        $sermonsPageContent -notmatch 'messages archived' -or
+        $sermonsPageContent -notmatch 'with audio' -or
+        $sermonsPageContent -notmatch 'teaching years' -or
+        $sermonsScriptContent -notmatch 'Showing all') {
+        throw "Sermons page is missing the feed-derived archive summary or clear count copy"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Sermons archive summary"; Status = "OK"; Details = "Published output includes feed-derived archive summary and clear count copy" })
+
     $mainScriptContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "js\main.js")
     if ($mainScriptContent -notmatch "document\.addEventListener\('play'" -or $mainScriptContent -notmatch "querySelectorAll\('audio'\)" -or $mainScriptContent -notmatch "\.pause\(\)") {
         throw "Main script is missing the one-at-a-time audio playback guard"

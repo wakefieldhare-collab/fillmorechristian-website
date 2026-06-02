@@ -936,6 +936,30 @@ if (Test-Path -LiteralPath $sermonsPath) {
         Add-Check "Static sermon archive" "FAIL" "$staticCards static cards, expected $expectedCards from the podcast feed"
     }
 
+    $expectedAudioCards = if ($feedEnclosureCounts.ContainsKey($feedPaths[0])) { $feedEnclosureCounts[$feedPaths[0]] } else { 0 }
+    $sermonYears = [regex]::Matches($sermonsHtml, 'data-year="(\d{4})"') |
+        ForEach-Object { $_.Groups[1].Value } |
+        Sort-Object -Unique
+    $expectedYearRange = if ($sermonYears.Count -gt 1) {
+        "$($sermonYears[0])-$($sermonYears[$sermonYears.Count - 1])"
+    } elseif ($sermonYears.Count -eq 1) {
+        $sermonYears[0]
+    } else {
+        ""
+    }
+    if ($expectedCards -gt 0 -and
+        $sermonsHtml -match 'id="sermon-archive-summary"' -and
+        $sermonsHtml -match 'SERMON_ARCHIVE_SUMMARY_START' -and
+        $sermonsHtml -match 'SERMON_ARCHIVE_SUMMARY_END' -and
+        $sermonsHtml -match "<span class=`"archive-summary-value`">$expectedCards</span>\s*<span class=`"archive-summary-label`">messages archived</span>" -and
+        $sermonsHtml -match "<span class=`"archive-summary-value`">$expectedAudioCards</span>\s*<span class=`"archive-summary-label`">with audio</span>" -and
+        $expectedYearRange -and
+        $sermonsHtml -match "<span class=`"archive-summary-value`">$([regex]::Escape($expectedYearRange))</span>\s*<span class=`"archive-summary-label`">teaching years</span>") {
+        Add-Check "Sermon archive summary" "OK" "$expectedCards messages, $expectedAudioCards with audio, $expectedYearRange teaching years"
+    } else {
+        Add-Check "Sermon archive summary" "FAIL" "Archive summary is missing or does not match feed-derived counts and years"
+    }
+
     $cardsWithYear = ([regex]::Matches($sermonsHtml, 'class="sermon-item[^"]*"\s+data-year="\d{4}"')).Count
     if ($expectedCards -gt 0 -and $cardsWithYear -eq $expectedCards) {
         Add-Check "Sermon year filter data" "OK" "$cardsWithYear static cards include feed-derived years"
@@ -952,7 +976,6 @@ if (Test-Path -LiteralPath $sermonsPath) {
 
     $cardsWithAudioFlag = ([regex]::Matches($sermonsHtml, 'class="sermon-item[^"]*"\s+data-year="\d{4}"\s+data-has-audio="(?:true|false)"')).Count
     $audioCardCount = ([regex]::Matches($sermonsHtml, 'data-has-audio="true"')).Count
-    $expectedAudioCards = if ($feedEnclosureCounts.ContainsKey($feedPaths[0])) { $feedEnclosureCounts[$feedPaths[0]] } else { 0 }
     if ($expectedCards -gt 0 -and $cardsWithAudioFlag -eq $expectedCards -and $audioCardCount -eq $expectedAudioCards -and $sermonsHtml -match 'id="sermon-audio-only"') {
         Add-Check "Sermon audio filter" "OK" "$audioCardCount cards have audio and the audio-only control is present"
     } else {
@@ -984,10 +1007,12 @@ if (Test-Path -LiteralPath $sermonsPath) {
             $sermonsScriptText -match "history\.replaceState" -and
             $sermonsScriptText -match "applyArchiveStateFromUrl" -and
             $sermonsScriptText -match "updateArchiveUrl" -and
-            $sermonsScriptText -match "updateArchiveShareLink") {
+            $sermonsScriptText -match "updateArchiveShareLink" -and
+            $sermonsScriptText -match "Showing all" -and
+            $sermonsScriptText -match "Showing ") {
             Add-Check "Sermon filter deep links" "OK" "Archive filters can load from and write to URL query parameters and copy the current filtered link"
         } else {
-            Add-Check "Sermon filter deep links" "FAIL" "Archive filters are missing URL query parameter persistence or copyable filtered-link sync"
+            Add-Check "Sermon filter deep links" "FAIL" "Archive filters are missing URL query parameter persistence, copyable filtered-link sync, or clear count copy"
         }
     } else {
         Add-Check "Sermon filter deep links" "FAIL" "js\sermons.js is missing"
@@ -1616,6 +1641,28 @@ if (-not $SkipRemote) {
                     Add-Check "Staging sermon card count" "OK" "$remoteCards sermon cards"
                 }
 
+                $expectedRemoteAudioCards = if ($feedEnclosureCounts.ContainsKey($feedPaths[0])) { $feedEnclosureCounts[$feedPaths[0]] } else { 0 }
+                $remoteYears = [regex]::Matches($response.Content, 'data-year="(\d{4})"') |
+                    ForEach-Object { $_.Groups[1].Value } |
+                    Sort-Object -Unique
+                $expectedRemoteYearRange = if ($remoteYears.Count -gt 1) {
+                    "$($remoteYears[0])-$($remoteYears[$remoteYears.Count - 1])"
+                } elseif ($remoteYears.Count -eq 1) {
+                    $remoteYears[0]
+                } else {
+                    ""
+                }
+                if ($feedItemCounts.ContainsKey($feedPaths[0]) -and
+                    $response.Content -match 'id="sermon-archive-summary"' -and
+                    $response.Content -match "<span class=`"archive-summary-value`">$($feedItemCounts[$feedPaths[0]])</span>\s*<span class=`"archive-summary-label`">messages archived</span>" -and
+                    $response.Content -match "<span class=`"archive-summary-value`">$expectedRemoteAudioCards</span>\s*<span class=`"archive-summary-label`">with audio</span>" -and
+                    $expectedRemoteYearRange -and
+                    $response.Content -match "<span class=`"archive-summary-value`">$([regex]::Escape($expectedRemoteYearRange))</span>\s*<span class=`"archive-summary-label`">teaching years</span>") {
+                    Add-Check "Staging sermon archive summary" "OK" "$remoteCards messages, $expectedRemoteAudioCards with audio, $expectedRemoteYearRange teaching years"
+                } else {
+                    Add-Check "Staging sermon archive summary" "FAIL" "Archive summary is missing or does not match feed-derived counts and years"
+                }
+
                 $remoteCardsWithYear = ([regex]::Matches($response.Content, 'class="sermon-item[^"]*"\s+data-year="\d{4}"')).Count
                 if ($feedItemCounts.ContainsKey($feedPaths[0]) -and $remoteCardsWithYear -eq $feedItemCounts[$feedPaths[0]] -and $response.Content -match 'id="sermon-year"') {
                     Add-Check "Staging sermon year filter" "OK" "$remoteCardsWithYear sermon cards include years and filter control is present"
@@ -1632,7 +1679,7 @@ if (-not $SkipRemote) {
 
                 $remoteCardsWithAudioFlag = ([regex]::Matches($response.Content, 'class="sermon-item[^"]*"\s+data-year="\d{4}"\s+data-has-audio="(?:true|false)"')).Count
                 $remoteAudioCards = ([regex]::Matches($response.Content, 'data-has-audio="true"')).Count
-                if ($feedItemCounts.ContainsKey($feedPaths[0]) -and $feedEnclosureCounts.ContainsKey($feedPaths[0]) -and $remoteCardsWithAudioFlag -eq $feedItemCounts[$feedPaths[0]] -and $remoteAudioCards -eq $feedEnclosureCounts[$feedPaths[0]] -and $response.Content -match 'id="sermon-audio-only"') {
+                if ($feedItemCounts.ContainsKey($feedPaths[0]) -and $feedEnclosureCounts.ContainsKey($feedPaths[0]) -and $remoteCardsWithAudioFlag -eq $feedItemCounts[$feedPaths[0]] -and $remoteAudioCards -eq $expectedRemoteAudioCards -and $response.Content -match 'id="sermon-audio-only"') {
                     Add-Check "Staging sermon audio filter" "OK" "$remoteAudioCards cards have audio and audio-only control is present"
                 } else {
                     Add-Check "Staging sermon audio filter" "FAIL" "$remoteCardsWithAudioFlag audio flag(s), $remoteAudioCards audio card(s), audio control present: $($response.Content -match 'id=`"sermon-audio-only`"')"
