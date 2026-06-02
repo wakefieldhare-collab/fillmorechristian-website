@@ -136,6 +136,7 @@ Podcast metadata cleanup:
 .\scripts\render-static-episodes.ps1
 .\scripts\render-static-sermons.ps1
 .\scripts\render-homepage-latest-sermon.ps1
+.\scripts\render-podcast-latest.ps1
 ```
 
 This keeps old ChurchCo account author values such as `thechurchcodaniel` out of the public RSS feed and sermon archive, and it creates one static page for every feed episode so old `/episode/.../` links remain useful after the static-site cutover.

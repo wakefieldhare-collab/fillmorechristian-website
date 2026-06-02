@@ -18,14 +18,20 @@ async function loadLatestPodcastMessages(list) {
       .slice(0, PODCAST_LATEST_LIMIT);
 
     if (items.length === 0) {
+      if (hasStaticLatestCards(list)) return;
       list.innerHTML = '<div class="podcast-latest-card podcast-latest-loading"><p>Latest messages will appear here as the podcast feed is updated.</p></div>';
       return;
     }
 
     list.innerHTML = items.map(renderPodcastItem).join('');
   } catch (err) {
+    if (hasStaticLatestCards(list)) return;
     list.innerHTML = '<div class="podcast-latest-card podcast-latest-loading"><p>Latest messages are unavailable right now. Open the full archive for the sermon list.</p></div>';
   }
+}
+
+function hasStaticLatestCards(list) {
+  return !!list.querySelector('[data-static-podcast-latest="true"]');
 }
 
 function parsePodcastItem(item) {

@@ -162,6 +162,7 @@ if ($verifyPublicMediaBeforeRewrite) {
 & (Join-Path $PSScriptRoot "render-static-episodes.ps1")
 & (Join-Path $PSScriptRoot "render-static-sermons.ps1")
 & (Join-Path $PSScriptRoot "render-homepage-latest-sermon.ps1")
+& (Join-Path $PSScriptRoot "render-podcast-latest.ps1")
 
 Push-Location $root
 try {

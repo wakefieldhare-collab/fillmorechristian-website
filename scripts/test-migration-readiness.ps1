@@ -1355,16 +1355,36 @@ if ($feeds.ContainsKey($feedPaths[0])) {
 }
 
 $podcastScriptPath = Join-Path $root "js\podcast.js"
+$podcastLatestRendererPath = Join-Path $root "scripts\render-podcast-latest.ps1"
+$podcastPagePath = Join-Path $root "podcast.html"
 if (Test-Path -LiteralPath $podcastScriptPath) {
     $podcastScript = Get-Content -Raw -LiteralPath $podcastScriptPath
+    $podcastPageText = if (Test-Path -LiteralPath $podcastPagePath) { Get-Content -Raw -LiteralPath $podcastPagePath } else { "" }
+    $migrateAudioScriptText = Get-Content -Raw -LiteralPath (Join-Path $root "scripts\migrate-cloudflare-audio.ps1")
+    $staticLatestCount = ([regex]::Matches($podcastPageText, 'data-static-podcast-latest="true"')).Count
+    $latestAudioItem = if ($feeds.ContainsKey($feedPaths[0])) {
+        @($feeds[$feedPaths[0]].rss.channel.item | Where-Object { $_.enclosure -and $_.enclosure.url } | Select-Object -First 1)
+    } else {
+        @()
+    }
+    $latestTitle = if ($latestAudioItem) { [string]$latestAudioItem.title } else { "" }
+
     if ($podcastScript -match "podcast-latest-list" -and
         $podcastScript -match "PODCAST_FEED_PATH" -and
         $podcastScript -match "episode/" -and
         $podcastScript -match "toPageMediaUrl" -and
-        $podcastScript -notmatch "https?://[^'`"]*thechurchco|ssl\.thechurchco\.com") {
-        Add-Check "Podcast latest messages" "OK" "Podcast page renders recent messages from the owned feed with same-origin media URLs"
+        $podcastScript -match "hasStaticLatestCards" -and
+        $podcastScript -notmatch "https?://[^'`"]*thechurchco|ssl\.thechurchco\.com" -and
+        (Test-Path -LiteralPath $podcastLatestRendererPath) -and
+        $migrateAudioScriptText -match "render-podcast-latest\.ps1" -and
+        $podcastPageText -match "PODCAST_LATEST_START" -and
+        $podcastPageText -match "PODCAST_LATEST_END" -and
+        $staticLatestCount -eq 3 -and
+        $podcastPageText -match "/media/" -and
+        (-not $latestTitle -or $podcastPageText -match [regex]::Escape($latestTitle))) {
+        Add-Check "Podcast latest messages" "OK" "Podcast page has three static latest-message cards plus feed refresh script with same-origin media URLs"
     } else {
-        Add-Check "Podcast latest messages" "FAIL" "js\podcast.js is missing feed loading, episode links, same-origin media handling, or contains old platform references"
+        Add-Check "Podcast latest messages" "FAIL" "Podcast latest messages are missing static feed cards, renderer wiring, feed refresh behavior, same-origin media handling, or contain old platform references"
     }
 } else {
     Add-Check "Podcast latest messages" "FAIL" "js\podcast.js is missing"
@@ -1722,8 +1742,11 @@ if (-not $SkipRemote) {
             if ($path -eq "podcast.html") {
                 if ($response.Content -match 'id="podcast-feed-url"' -and
                     $response.Content -match 'id="podcast-latest-list"' -and
+                    ([regex]::Matches($response.Content, 'data-static-podcast-latest="true"')).Count -eq 3 -and
                     $response.Content -match 'js/podcast\.js\?v=' -and
                     $response.Content -match 'Latest messages' -and
+                    $response.Content -match 'Open Message' -and
+                    $response.Content -match '/media/' -and
                     $response.Content -match 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -and
                     $response.Content -match 'class="podcast-subscription-grid"' -and
                     $response.Content -match 'data-subscribe-option="apple"' -and

@@ -196,9 +196,13 @@ if ($sermons) {
 
 $podcastPage = Invoke-Http -Url (Join-Url $ProductionBaseUrl "/podcast.html")
 if ($podcastPage) {
+    $staticLatestCount = ([regex]::Matches($podcastPage.Content, 'data-static-podcast-latest="true"')).Count
     if ($podcastPage.StatusCode -eq 200 -and
         $podcastPage.Content -match 'id="podcast-feed-url"' -and
         $podcastPage.Content -match 'id="podcast-latest-list"' -and
+        $staticLatestCount -eq 3 -and
+        $podcastPage.Content -match '/media/' -and
+        $podcastPage.Content -match 'Open Message' -and
         $podcastPage.Content -match 'js/podcast\.js\?v=' -and
         $podcastPage.Content -match 'class="podcast-subscription-grid"' -and
         $podcastPage.Content -match 'data-subscribe-option="apple"' -and
