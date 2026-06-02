@@ -124,6 +124,14 @@ npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia
 
 This runs the Cloudflare cutover verifier, the domain-transfer safety gate, the recursive DNS cache-clear gate, and the TheChurchCo cancellation gate in order. It verifies both `https://www.fillmorechristian.org/` and `https://fillmorechristian.org/`, writes a timestamped non-secret Markdown and JSON report under `exports/cutover/`, stops on the first failed gate, and explicitly says not to cancel TheChurchCo or disable Squarespace auto-renew until the report passes.
 
+For the click-by-click cancellation handoff, use the read-only checklist:
+
+```powershell
+npm run cutover:thechurchco-cancellation-checklist
+```
+
+It reads the latest production and recursive DNS-cache receipts, refuses to call cancellation safe unless the latest receipt is a full-media PASS with green DNS-cache and TheChurchCo cancellation steps, and prints the exact post-cancellation verifier to run.
+
 After TheChurchCo website/podcast hosting is canceled, or after the Cloudflare Registrar transfer is started, rerun the named post-cancellation gate:
 
 ```powershell
@@ -146,6 +154,7 @@ R2 preparation status on 2026-06-02:
 - `scripts/test-r2-public-audio.ps1` verifies the public `www.fillmorechristian.org/media/...` URLs from the manifest after DNS cutover.
 - The remaining registrar blocker is the Squarespace transfer authorization code. In Squarespace Domains, click `Request transfer code` if needed, check `church@fillmorechristian.org`, then enter the code in Cloudflare Dashboard > Domains > Transfers to start the Cloudflare Registrar transfer.
 - The cancellation blocker is cleared: `fillmorechristian.org-production-cutover-20260602-070754.md` passed with all podcast media verified, recursive DNS cache clear, and TheChurchCo cancellation readiness green.
+- The cancellation handoff command is `npm run cutover:thechurchco-cancellation-checklist`; run it from the repo before clicking any final TheChurchCo billing cancellation control.
 - After canceling TheChurchCo website/podcast hosting, run `npm run verify:post-cancellation` and keep the generated receipt with the cutover records.
 
 Current registrar checklist:

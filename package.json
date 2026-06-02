@@ -6,6 +6,7 @@
     "apply:cloudflare-dns": "powershell -ExecutionPolicy Bypass -File scripts/apply-cloudflare-dns-cutover-records.ps1",
     "complete:cloudflare-cutover": "powershell -ExecutionPolicy Bypass -File scripts/complete-cloudflare-cutover.ps1",
     "cutover:registrar-checklist": "powershell -ExecutionPolicy Bypass -File scripts/show-registrar-cutover-checklist.ps1",
+    "cutover:thechurchco-cancellation-checklist": "powershell -ExecutionPolicy Bypass -File scripts/show-thechurchco-cancellation-checklist.ps1",
     "migrate:cloudflare-audio": "powershell -ExecutionPolicy Bypass -File scripts/migrate-cloudflare-audio.ps1",
     "refresh:podcast-content": "powershell -ExecutionPolicy Bypass -File scripts/refresh-podcast-content.ps1",
     "refresh:podcast-durations": "powershell -ExecutionPolicy Bypass -File scripts/update-podcast-durations.ps1",

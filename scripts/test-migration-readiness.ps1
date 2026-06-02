@@ -826,6 +826,7 @@ if ((Test-Path -LiteralPath $statusScriptPath) -and (Test-Path -LiteralPath $dns
 }
 
 $cancellationScriptPath = Join-Path $root "scripts\test-thechurchco-cancellation-readiness.ps1"
+$cancellationChecklistScriptPath = Join-Path $root "scripts\show-thechurchco-cancellation-checklist.ps1"
 $domainTransferScriptPath = Join-Path $root "scripts\test-domain-transfer-readiness.ps1"
 $productionCutoverScriptPath = Join-Path $root "scripts\verify-production-cutover.ps1"
 $postCancellationScriptPath = Join-Path $root "scripts\verify-post-cancellation.ps1"
@@ -902,6 +903,26 @@ if (Test-Path -LiteralPath $cancellationScriptPath) {
     }
 } else {
     Add-Check "TheChurchCo cancellation gate" "FAIL" "scripts\test-thechurchco-cancellation-readiness.ps1 is missing"
+}
+
+if ((Test-Path -LiteralPath $cancellationChecklistScriptPath) -and (Test-Path -LiteralPath $packageJsonPath)) {
+    $cancellationChecklistScriptText = Get-Content -Raw -LiteralPath $cancellationChecklistScriptPath
+    $packageJsonText = Get-Content -Raw -LiteralPath $packageJsonPath
+    if ($cancellationChecklistScriptText -match "Latest full-media production receipt" -and
+        $cancellationChecklistScriptText -match "Do not cancel TheChurchCo if" -and
+        $cancellationChecklistScriptText -match "VerifyAllPodcastMedia" -and
+        $cancellationChecklistScriptText -match "Recursive DNS Cache Drainage" -and
+        $cancellationChecklistScriptText -match "TheChurchCo Cancellation Readiness" -and
+        $cancellationChecklistScriptText -match "verify:post-cancellation" -and
+        $cancellationChecklistScriptText -match "church@fillmorechristian\.org" -and
+        $cancellationChecklistScriptText -match "cutover:registrar-checklist" -and
+        $packageJsonText -match '"cutover:thechurchco-cancellation-checklist"') {
+        Add-Check "TheChurchCo cancellation checklist" "OK" "Read-only handoff command summarizes the latest full-media receipt, DNS-cache/cancellation gates, post-cancellation verification, and separate registrar code step"
+    } else {
+        Add-Check "TheChurchCo cancellation checklist" "FAIL" "Cancellation checklist is missing the production receipt, DNS-cache/cancellation gates, post-cancellation command, registrar handoff, or npm alias"
+    }
+} else {
+    Add-Check "TheChurchCo cancellation checklist" "FAIL" "scripts\show-thechurchco-cancellation-checklist.ps1 or package.json is missing"
 }
 
 if ((Test-Path -LiteralPath $postCancellationScriptPath) -and (Test-Path -LiteralPath $packageJsonPath)) {
