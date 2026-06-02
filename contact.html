@@ -142,6 +142,11 @@
 
           <button type="submit" class="btn btn-primary" style="width:100%;">Send Message</button>
           <p id="contact-form-status" class="form-status" aria-live="polite">Your email app will open with the message ready to send.</p>
+          <div class="mailto-fallback" data-mailto-fallback hidden>
+            <label for="contact-message-draft">Message draft</label>
+            <textarea id="contact-message-draft" class="mailto-draft" readonly></textarea>
+            <button class="copy-button" type="button" data-copy-source="contact-message-draft" data-copy-status-target="contact-form-status" data-copy-label="Copy Draft" data-copy-success="Message draft copied." data-copy-fallback="Message draft selected. Press Ctrl+C to copy it." data-copy-fail="Copy failed. Select the draft and copy it manually.">Copy Draft</button>
+          </div>
         </form>
       </div>
     </div>

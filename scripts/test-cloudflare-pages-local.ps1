@@ -206,9 +206,12 @@ try {
     if ($homeResponse.Content -notmatch 'data-mailto="church@fillmorechristian\.org"' -or
         $homeResponse.Content -notmatch 'data-status-target="home-contact-form-status"' -or
         $homeResponse.Content -notmatch 'id="home-contact-form-status"\s+class="form-status"\s+aria-live="polite"' -or
+        $homeResponse.Content -notmatch 'data-mailto-fallback' -or
+        $homeResponse.Content -notmatch 'id="home-message-draft"' -or
+        $homeResponse.Content -notmatch 'data-copy-source="home-message-draft"' -or
         $homeResponse.Content -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or
         $homeResponse.Content -notmatch 'id="home-email-copy-status"') {
-        throw "Home page is missing the static contact form status or copyable email fallback"
+        throw "Home page is missing the static contact form status, copyable draft, or copyable email fallback"
     }
     $checks.Add([pscustomobject]@{ Check = "Home page"; Status = "OK"; Details = "HTTP 200" })
 
@@ -423,16 +426,23 @@ try {
     if ($contactPageContent -notmatch 'data-mailto="church@fillmorechristian\.org"' -or
         $contactPageContent -notmatch 'data-status-target="contact-form-status"' -or
         $contactPageContent -notmatch 'id="contact-form-status"\s+class="form-status"\s+aria-live="polite"' -or
+        $contactPageContent -notmatch 'data-mailto-fallback' -or
+        $contactPageContent -notmatch 'id="contact-message-draft"' -or
+        $contactPageContent -notmatch 'data-copy-source="contact-message-draft"' -or
         $contactPageContent -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or
         $contactPageContent -notmatch 'id="contact-email-copy-status"') {
-        throw "Built contact page is missing the static mailto form status or copyable email fallback"
+        throw "Built contact page is missing the static mailto form status, copyable draft, or copyable email fallback"
     }
     $mainScript = Invoke-NoRedirect -Url "$baseUrl/js/main.js"
     Assert-Status -Response $mainScript -Expected @(200) -Name "Main script"
-    if ($mainScript.Content -notmatch "data-status-target" -or $mainScript.Content -notmatch "email app should now have a draft") {
-        throw "Main script is missing contact form status messaging"
+    if ($mainScript.Content -notmatch "data-status-target" -or
+        $mainScript.Content -notmatch "data-mailto-fallback" -or
+        $mainScript.Content -notmatch "data-copy-source" -or
+        $mainScript.Content -notmatch "message draft below" -or
+        $mainScript.Content -notmatch "email app should now have a draft") {
+        throw "Main script is missing contact form status messaging or copyable draft support"
     }
-    $checks.Add([pscustomobject]@{ Check = "Contact fallback"; Status = "OK"; Details = "Static mailto form, visible status message, and copyable email fallback" })
+    $checks.Add([pscustomobject]@{ Check = "Contact fallback"; Status = "OK"; Details = "Static mailto form, visible status message, copyable draft, and copyable email fallback" })
 
     $favicon = Invoke-NoRedirect -Url "$baseUrl/favicon.svg"
     Assert-Status -Response $favicon -Expected @(200) -Name "Favicon"

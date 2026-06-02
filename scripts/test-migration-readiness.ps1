@@ -571,26 +571,36 @@ if (Test-Path -LiteralPath $contactCardPath) {
     if ($contactHtml -notmatch 'data-mailto="church@fillmorechristian\.org"' -or
         $contactHtml -notmatch 'data-status-target="contact-form-status"' -or
         $contactHtml -notmatch 'id="contact-form-status"\s+class="form-status"\s+aria-live="polite"' -or
+        $contactHtml -notmatch 'data-mailto-fallback' -or
+        $contactHtml -notmatch 'id="contact-message-draft"' -or
+        $contactHtml -notmatch 'data-copy-source="contact-message-draft"' -or
         $contactHtml -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or
         $contactHtml -notmatch 'id="contact-email-copy-status"') {
-        $contactCardIssues.Add("contact page is missing the static mailto form status or copyable email fallback")
+        $contactCardIssues.Add("contact page is missing the static mailto form status, copyable draft, or copyable email fallback")
     }
     $homeHtml = Get-Content -Raw -LiteralPath (Join-Path $root "index.html")
     if ($homeHtml -notmatch 'data-mailto="church@fillmorechristian\.org"' -or
         $homeHtml -notmatch 'data-status-target="home-contact-form-status"' -or
         $homeHtml -notmatch 'id="home-contact-form-status"\s+class="form-status"\s+aria-live="polite"' -or
+        $homeHtml -notmatch 'data-mailto-fallback' -or
+        $homeHtml -notmatch 'id="home-message-draft"' -or
+        $homeHtml -notmatch 'data-copy-source="home-message-draft"' -or
         $homeHtml -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or
         $homeHtml -notmatch 'id="home-email-copy-status"') {
-        $contactCardIssues.Add("home page is missing the static contact form status or copyable email fallback")
+        $contactCardIssues.Add("home page is missing the static contact form status, copyable draft, or copyable email fallback")
     }
 
     $mainScriptText = Get-Content -Raw -LiteralPath (Join-Path $root "js\main.js")
-    if ($mainScriptText -notmatch "data-status-target" -or $mainScriptText -notmatch "church@fillmorechristian\.org" -or $mainScriptText -notmatch "email app should now have a draft") {
-        $contactCardIssues.Add("main script is missing contact form status messaging")
+    if ($mainScriptText -notmatch "data-status-target" -or
+        $mainScriptText -notmatch "data-mailto-fallback" -or
+        $mainScriptText -notmatch "data-copy-source" -or
+        $mainScriptText -notmatch "message draft below" -or
+        $mainScriptText -notmatch "email app should now have a draft") {
+        $contactCardIssues.Add("main script is missing contact form status messaging or copyable draft support")
     }
 
     if ($contactCardIssues.Count -eq 0) {
-        Add-Check "Self-hosted contact card" "OK" "contact.vcf, static mailto forms with status messaging, and copyable email fallbacks publish church contact details"
+        Add-Check "Self-hosted contact card" "OK" "contact.vcf, static mailto forms with status messaging, copyable drafts, and copyable email fallbacks publish church contact details"
     } else {
         Add-Check "Self-hosted contact card" "FAIL" ($contactCardIssues -join "; ")
     }
@@ -775,15 +785,18 @@ if (Test-Path -LiteralPath $cancellationScriptPath) {
         $cancellationScriptText -match "Production audio independence" -and
         $cancellationScriptText -match "www\.fillmorechristian\.org" -and
         $cancellationScriptText -match "Production podcast page" -and
+        $cancellationScriptText -match "data-subscribe-option=`"rss`"" -and
+        $cancellationScriptText -match "data-copy-source=`"contact-message-draft`"" -and
+        $cancellationScriptText -match "data-copy-source=`"home-message-draft`"" -and
         $cancellationScriptText -match "sermon-audio-only" -and
         $cancellationScriptText -match "data-has-audio" -and
         $cancellationScriptText -match "test-r2-public-audio\.ps1" -and
         $cancellationScriptText -match "BaseUrlOverride" -and
         $cancellationScriptText -match "Production R2 media route" -and
         $cancellationScriptText -match "Do not cancel TheChurchCo yet") {
-        Add-Check "TheChurchCo cancellation gate" "OK" "Production cancellation verifier checks DNS, static site, podcast page, sermon archive filters, mail, feed, audio independence, and the production Pages /media route"
+        Add-Check "TheChurchCo cancellation gate" "OK" "Production cancellation verifier checks DNS, static site, contact fallbacks, podcast page, sermon archive filters, mail, feed, audio independence, and the production Pages /media route"
     } else {
-        Add-Check "TheChurchCo cancellation gate" "FAIL" "Cancellation verifier is missing DNS, podcast page, sermon archive filter, audio independence, production media-route, or stop-condition checks"
+        Add-Check "TheChurchCo cancellation gate" "FAIL" "Cancellation verifier is missing DNS, contact fallback, podcast page, sermon archive filter, audio independence, production media-route, or stop-condition checks"
     }
 } else {
     Add-Check "TheChurchCo cancellation gate" "FAIL" "scripts\test-thechurchco-cancellation-readiness.ps1 is missing"

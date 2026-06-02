@@ -154,9 +154,11 @@ if ($homeResponse) {
         $homeResponse.Content -match "site\.webmanifest" -and
         $homeResponse.Content -match "favicon\.svg" -and
         $homeResponse.Content -match 'data-mailto="church@fillmorechristian\.org"' -and
+        $homeResponse.Content -match 'data-mailto-fallback' -and
+        $homeResponse.Content -match 'data-copy-source="home-message-draft"' -and
         $homeResponse.Content -match 'data-copy-value="church@fillmorechristian\.org"' -and
         $homeResponse.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
-        Add-Check "Production homepage" "OK" "$ProductionBaseUrl serves the static site shell"
+        Add-Check "Production homepage" "OK" "$ProductionBaseUrl serves the static site shell with contact fallbacks"
     } else {
         Add-Check "Production homepage" "FAIL" "$ProductionBaseUrl did not look like the independent static site"
     }
@@ -188,12 +190,16 @@ $podcastPage = Invoke-Http -Url (Join-Url $ProductionBaseUrl "/podcast.html")
 if ($podcastPage) {
     if ($podcastPage.StatusCode -eq 200 -and
         $podcastPage.Content -match 'id="podcast-feed-url"' -and
+        $podcastPage.Content -match 'class="podcast-subscription-grid"' -and
+        $podcastPage.Content -match 'data-subscribe-option="apple"' -and
+        $podcastPage.Content -match 'data-subscribe-option="spotify"' -and
+        $podcastPage.Content -match 'data-subscribe-option="rss"' -and
         $podcastPage.Content -match 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -and
         $podcastPage.Content -match '"@type": "PodcastSeries"' -and
         $podcastPage.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
-        Add-Check "Production podcast page" "OK" "Owned podcast subscription page is live"
+        Add-Check "Production podcast page" "OK" "Owned podcast subscription page is live with app choices"
     } else {
-        Add-Check "Production podcast page" "FAIL" "Podcast page is missing feed copy controls, structured data, or still references TheChurchCo"
+        Add-Check "Production podcast page" "FAIL" "Podcast page is missing app choices, feed copy controls, structured data, or still references TheChurchCo"
     }
 }
 
@@ -212,10 +218,12 @@ $contactResponse = Invoke-Http -Url (Join-Url $ProductionBaseUrl "/contact.html"
 if ($contactResponse) {
     if ($contactResponse.StatusCode -eq 200 -and
         $contactResponse.Content -match 'data-mailto="church@fillmorechristian\.org"' -and
+        $contactResponse.Content -match 'data-mailto-fallback' -and
+        $contactResponse.Content -match 'data-copy-source="contact-message-draft"' -and
         $contactResponse.Content -match 'data-copy-value="church@fillmorechristian\.org"' -and
         $contactResponse.Content -match 'id="contact-email-copy-status"' -and
         $contactResponse.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
-        Add-Check "Production contact fallback" "OK" "Contact page has static mailto form and copyable email fallback"
+        Add-Check "Production contact fallback" "OK" "Contact page has static mailto form, copyable draft fallback, and copyable email fallback"
     } else {
         Add-Check "Production contact fallback" "FAIL" "Contact page is missing static contact controls or still references TheChurchCo"
     }

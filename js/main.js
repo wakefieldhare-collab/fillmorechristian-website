@@ -81,20 +81,35 @@ document.addEventListener('DOMContentLoaded', function() {
         '',
         message
       ].join('\n');
+      const draftText = [
+        'To: ' + to,
+        'Subject: ' + subject,
+        '',
+        body
+      ].join('\n');
+
+      const fallback = form.querySelector('[data-mailto-fallback]');
+      const draft = fallback ? fallback.querySelector('.mailto-draft') : null;
+      if (fallback && draft) {
+        draft.value = draftText;
+        fallback.hidden = false;
+      }
 
       window.location.href = 'mailto:' + encodeURIComponent(to) +
         '?subject=' + encodeURIComponent(subject) +
         '&body=' + encodeURIComponent(body);
 
       if (status) {
-        status.textContent = 'Your email app should now have a draft addressed to church@fillmorechristian.org. If it did not open, copy the church email address and send your message manually.';
+        status.textContent = 'Your email app should now have a draft addressed to church@fillmorechristian.org. If it did not open, copy the message draft below and send it manually.';
       }
     });
   });
 
-  document.querySelectorAll('[data-copy-value]').forEach(function(button) {
+  document.querySelectorAll('[data-copy-value], [data-copy-source]').forEach(function(button) {
     button.addEventListener('click', function() {
-      const text = button.getAttribute('data-copy-value') || '';
+      const sourceId = button.getAttribute('data-copy-source');
+      const source = sourceId ? document.getElementById(sourceId) : null;
+      const text = source ? source.value || source.textContent || '' : button.getAttribute('data-copy-value') || '';
       const statusId = button.getAttribute('data-copy-status-target');
       const status = statusId ? document.getElementById(statusId) : null;
       const originalLabel = button.getAttribute('data-copy-label') || button.textContent;
@@ -111,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 1800);
       }).catch(function() {
         const field = button.closest('.copy-field');
-        const input = field ? field.querySelector('input') : null;
+        const input = source || (field ? field.querySelector('input') : null);
         if (input) {
           input.focus();
           input.select();
