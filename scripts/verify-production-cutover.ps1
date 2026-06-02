@@ -9,7 +9,8 @@ param(
     [switch]$VerifyAllPodcastMedia,
     [int]$PodcastMediaSampleCount = 5,
     [int]$TimeoutSec = 20,
-    [string]$ReportDir = "exports\cutover"
+    [string]$ReportDir = "exports\cutover",
+    [int]$MaxReportOutputLines = 1200
 )
 
 $ErrorActionPreference = "Stop"
@@ -145,6 +146,7 @@ try {
         Remove-Item -LiteralPath $stderrPath -Force -ErrorAction SilentlyContinue
     }
     $finishedAt = Get-Date
+    $reportOutput = Limit-ReportOutput -Lines $output
 
     return [pscustomobject]@{
         Name = $Name
@@ -154,7 +156,9 @@ try {
         FinishedAt = $finishedAt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         DurationSeconds = [Math]::Round(($finishedAt - $startedAt).TotalSeconds, 2)
         Command = "powershell -NoProfile -ExecutionPolicy Bypass -Command $(Format-ProcessArgument $CommandText)"
-        Output = $output
+        Output = $reportOutput
+        OutputLineCount = $output.Count
+        OutputWasTruncated = $output.Count -gt $reportOutput.Count
     }
 }
 
@@ -173,6 +177,28 @@ function ConvertTo-MarkdownFenceText {
     }
 
     return ($Lines -join "`n")
+}
+
+function Limit-ReportOutput {
+    param([string[]]$Lines)
+
+    if ($MaxReportOutputLines -lt 50) {
+        throw "MaxReportOutputLines must be at least 50."
+    }
+
+    if ($Lines.Count -le $MaxReportOutputLines) {
+        return @($Lines)
+    }
+
+    $headCount = [Math]::Floor($MaxReportOutputLines / 2)
+    $tailCount = $MaxReportOutputLines - $headCount - 1
+    $omittedCount = $Lines.Count - $headCount - $tailCount
+
+    return @(
+        $Lines | Select-Object -First $headCount
+        "[output truncated: $omittedCount line(s) omitted from the middle to keep this cutover report bounded]"
+        $Lines | Select-Object -Last $tailCount
+    )
 }
 
 $reportPath = if ([System.IO.Path]::IsPathRooted($ReportDir)) {
@@ -306,6 +332,7 @@ foreach ($step in $steps) {
     $markdown.Add("- Started: $($step.StartedAt)")
     $markdown.Add("- Finished: $($step.FinishedAt)")
     $markdown.Add("- Duration: $($step.DurationSeconds) seconds")
+    $markdown.Add("- Output lines captured: $($step.Output.Count) of $($step.OutputLineCount)")
     $markdown.Add("")
     $markdown.Add('```powershell')
     $markdown.Add($step.Command)
