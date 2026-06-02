@@ -157,6 +157,36 @@ function Get-LatestProductionCutoverReport {
     }
 }
 
+function Get-LatestDnsCacheStatusReport {
+    $cutoverDir = Join-Path $root "exports\cutover"
+    if (-not (Test-Path -LiteralPath $cutoverDir)) {
+        return $null
+    }
+
+    $latestReportFile = Get-ChildItem -LiteralPath $cutoverDir -Filter "$Domain-dns-cache-status-*.json" -File |
+        Sort-Object LastWriteTime -Descending |
+        Select-Object -First 1
+    if (-not $latestReportFile) {
+        return $null
+    }
+
+    try {
+        $report = Get-Content -Raw -LiteralPath $latestReportFile.FullName | ConvertFrom-Json
+        return [pscustomobject]@{
+            Path = $latestReportFile.FullName
+            FileName = $latestReportFile.Name
+            Report = $report
+        }
+    } catch {
+        return [pscustomobject]@{
+            Path = $latestReportFile.FullName
+            FileName = $latestReportFile.Name
+            Invalid = $true
+            Error = $_.Exception.Message
+        }
+    }
+}
+
 function Get-CloudflareDnsVerificationArtifact {
     $path = if ([System.IO.Path]::IsPathRooted($CloudflareDnsVerificationArtifactPath)) {
         $CloudflareDnsVerificationArtifactPath
@@ -359,6 +389,29 @@ if ($latestCutoverReport) {
     }
 } else {
     Add-Status "Production cutover receipt" "INFO" "No production cutover report found yet; run npm run verify:production-cutover -- -VerifyAllPodcastMedia."
+}
+
+$latestDnsCacheReport = Get-LatestDnsCacheStatusReport
+if ($latestDnsCacheReport) {
+    if ($latestDnsCacheReport.Invalid) {
+        Add-Status "DNS cache drainage" "WARN" "Latest DNS cache report could not be parsed: $($latestDnsCacheReport.FileName). $($latestDnsCacheReport.Error)"
+    } else {
+        $dnsCache = $latestDnsCacheReport.Report
+        $generatedAt = try { ([datetime]$dnsCache.generatedAt).ToUniversalTime().ToString("yyyy-MM-dd HH:mm 'UTC'") } catch { [string]$dnsCache.generatedAt }
+        $staleCount = [int]$dnsCache.staleAnswerCount
+        if ($staleCount -gt 0) {
+            $estimatedClear = if ($dnsCache.estimatedClearAt) {
+                try { ([datetime]$dnsCache.estimatedClearAt).ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss zzz") } catch { [string]$dnsCache.estimatedClearAt }
+            } else {
+                "unknown"
+            }
+            Add-Status "DNS cache drainage" "WARN" "$staleCount stale old DNS answer(s) remained at $generatedAt; longest TTL $($dnsCache.maxStaleTtlSeconds) second(s), estimated clear by $estimatedClear. Do not cancel TheChurchCo."
+        } else {
+            Add-Status "DNS cache drainage" "OK" "Latest DNS cache report at $generatedAt found no stale old Squarespace/TheChurchCo answers: $($latestDnsCacheReport.FileName)."
+        }
+    }
+} else {
+    Add-Status "DNS cache drainage" "INFO" "No DNS cache status report found yet; run npm run verify:dns-cache-clear."
 }
 
 if (-not $SkipNetwork) {
@@ -581,7 +634,7 @@ if ($authNeeded.Count -gt 0) {
         Add-Status "Next authorization" "AUTH" "Wake authorization is needed for: $($authAreas -join ', ')."
     }
 } else {
-    Add-Status "Next authorization" "INFO" "Next human handoff is the Squarespace transfer authorization code for Cloudflare Registrar Step 2. Keep Squarespace auto-renew on, run status:dns-cache while recursive DNS drains, and run the strict production gates before canceling TheChurchCo."
+    Add-Status "Next authorization" "INFO" "Next human handoff is the Squarespace transfer authorization code for Cloudflare Registrar Step 2. Keep Squarespace auto-renew on, run verify:dns-cache-clear while recursive DNS drains, and run the strict production gates before canceling TheChurchCo."
 }
 
 if ($AsJson) {

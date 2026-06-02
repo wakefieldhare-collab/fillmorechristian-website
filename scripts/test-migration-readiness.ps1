@@ -797,6 +797,9 @@ if ((Test-Path -LiteralPath $statusScriptPath) -and (Test-Path -LiteralPath $dns
         $statusScriptText -match "www\.fillmorechristian\.org" -and
         $statusScriptText -match "apply:cloudflare-dns" -and
         $statusScriptText -match "Zone:DNS Edit" -and
+        $statusScriptText -match "DNS cache drainage" -and
+        $statusScriptText -match "Get-LatestDnsCacheStatusReport" -and
+        $statusScriptText -match "verify:dns-cache-clear" -and
         $registrarChecklistScriptText -match "eric\.ns\.cloudflare\.com" -and
         $registrarChecklistScriptText -match "sky\.ns\.cloudflare\.com" -and
         $registrarChecklistScriptText -match "complete:cloudflare-cutover" -and
