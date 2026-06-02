@@ -84,7 +84,7 @@ Cloudflare Pages serves those URLs through a `/media/<object-key>` Pages Functio
 
 If the feed URL changes, add an `<itunes:new-feed-url>` tag and a 301 redirect from the current feed URL to the new feed URL for at least four weeks.
 
-Cloudflare R2 preparation scripts are included. The manifest and dry runs are safe before Cloudflare authorization:
+Cloudflare R2 preparation scripts are included. The manifest and dry runs are safe before registrar cutover:
 
 ```powershell
 .\scripts\build-r2-audio-manifest.ps1 -BaseAudioUrl "https://www.fillmorechristian.org/media"
@@ -117,7 +117,7 @@ npm run migrate:cloudflare-audio -- -SkipUpload -VerifyAllPublicMedia
 
 It keeps the same personal GitHub owner guard as the deploy script, uploads and verifies the R2 audio backup, rewrites the RSS feeds to the owned Pages media route, regenerates sermon pages, builds `dist`, and runs strict local checks.
 
-The manifest, upload dry run, and R2 verifier dry run are safe before Cloudflare authorization. The real R2 upload is complete; the Cloudflare Pages deployment now carries the R2 binding and feed rewrite, but production cancellation still waits for DNS cutover and `scripts\test-r2-public-audio.ps1 -All`.
+The manifest, upload dry run, and R2 verifier dry run are safe before registrar cutover. The real R2 upload is complete; the Cloudflare Pages deployment now carries the R2 binding and feed rewrite, but production cancellation still waits for DNS cutover and `scripts\test-r2-public-audio.ps1 -All`.
 
 ### Step 3: Deploy Website To Cloudflare Pages
 
@@ -137,13 +137,13 @@ npm run build
 
 The readiness script fails if the Git remote or active GitHub CLI account points at `wake-byte`, and it requires the independent R2-backed podcast audio route.
 
-After Cloudflare authorization, deploy with the guarded command:
+Deploy with the guarded command:
 
 ```powershell
 npm run deploy:cloudflare
 ```
 
-It builds, verifies readiness, runs the local Cloudflare Pages preflight, checks the personal GitHub remote, and then deploys `dist` to the `fillmorechristian-website` Cloudflare Pages project.
+It verifies Cloudflare Pages access through the available Wrangler OAuth session, builds, verifies readiness, runs the local Cloudflare Pages preflight, checks the personal GitHub remote, and then deploys `dist` to the `fillmorechristian-website` Cloudflare Pages project.
 
 After the R2 audio wrapper rewrites feeds/pages, commit and push those changes to the personal GitHub repo before deploying.
 
@@ -151,6 +151,7 @@ To verify R2 audio on the current Cloudflare Pages preview before DNS cutover:
 
 ```powershell
 npm run verify:r2-pages-audio
+npm run verify:r2-pages-audio -- -All
 ```
 
 To spot-check current or rewritten podcast audio URLs:

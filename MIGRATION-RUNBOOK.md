@@ -96,12 +96,12 @@ npm run verify:r2-pages-audio -- -All
 .\scripts\rewrite-podcast-audio-urls.ps1 -BaseAudioUrl "https://www.fillmorechristian.org/media"
 ```
 
-After Cloudflare authentication, the guarded one-command local preparation path is:
+The guarded one-command local preparation path is:
 
 ```powershell
 npm run migrate:cloudflare-audio -- -DryRun
 
-# After `npx wrangler login`, R2 upload, Pages R2 binding, and a clean tree:
+# With authenticated Wrangler, R2 upload, Pages R2 binding, and a clean tree:
 npm run migrate:cloudflare-audio -- -CreateBucket
 ```
 
@@ -164,7 +164,7 @@ The episode renderer also writes `exports/thechurchco-podcast/legacy-podcast-red
 GitHub Pages staging is enabled from `main`:
 
 - URL: `https://wakefieldhare-collab.github.io/fillmorechristian-website/`
-- Purpose: public preview and QA before Cloudflare authorization.
+- Purpose: public preview and QA before Cloudflare DNS cutover.
 - Deployment: `.github/workflows/pages.yml` builds with `npm run build` and publishes `dist`, matching the Cloudflare Pages output directory.
 - Safety gate: deploy waits for a Windows readiness job that runs `npm run build` and `scripts/test-migration-readiness.ps1 -SkipRemote -SkipLocalAudioBackup`. The skip applies only to the large local audio backup folder that is intentionally not checked into GitHub; local cancellation checks still run without that skip.
 - Limitation: Cloudflare `_redirects`, `_headers`, `_routes.json`, and Pages Functions are not honored by GitHub Pages. Treat this as staging only, not final production.
@@ -256,13 +256,13 @@ The build copies only public website assets into `dist` so migration notes, scri
 
 `wrangler` is installed locally and authenticated to `wakefield.hare@gmail.com` as of 2026-06-01.
 
-After Cloudflare authentication, the guarded deploy command is:
+The guarded deploy command is:
 
 ```powershell
 npm run deploy:cloudflare
 ```
 
-That command refuses the work GitHub owner, requires a clean working tree by default, runs `npm run build`, local readiness, and Cloudflare Pages local preflight, then runs `wrangler pages deploy dist --project-name fillmorechristian-website --branch main` with the current Git commit hash and message. Before authentication, use this rehearsal form:
+That command refuses the work GitHub owner, requires a clean working tree by default, verifies Pages access through the available Wrangler OAuth session, runs `npm run build`, local readiness, and Cloudflare Pages local preflight, then runs `wrangler pages deploy dist --project-name fillmorechristian-website --branch main` with the current Git commit hash and message. For a rehearsal without publishing, use:
 
 ```powershell
 .\scripts\deploy-cloudflare-pages.ps1 -DryRun -AllowDirty
@@ -350,7 +350,7 @@ Latest public snapshot on 2026-06-01 found:
 - Cloudflare-assigned nameservers: `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`.
 - Pages custom domains: `fillmorechristian.org` and `www.fillmorechristian.org` are attached and pending.
 - Cloudflare DNS records: prepared and API-verified; public DNS still waits on the Squarespace nameserver switch.
-- R2 audio: the Pages `/media/` route is deployed with an R2 binding; public verification waits for the Cloudflare nameserver cutover so `www.fillmorechristian.org/media/...` reaches Pages.
+- R2 audio: the Pages `/media/` route is deployed with an R2 binding and has been fully verified on the `pages.dev` preview; final public verification still waits for the Cloudflare nameserver cutover so `www.fillmorechristian.org/media/...` reaches Pages.
 - NS: `ns-cloud-d1.googledomains.com` through `ns-cloud-d4.googledomains.com`
 - A: `fillmorechristian.org` -> `77.83.141.16`
 - CNAME: `www.fillmorechristian.org` -> `ssl.thechurchco.com`

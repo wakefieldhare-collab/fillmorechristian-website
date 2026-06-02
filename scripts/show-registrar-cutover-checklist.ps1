@@ -90,6 +90,12 @@ Write-Host "- Do not cancel TheChurchCo yet."
 Write-Host "- Do not remove Mailgun/Microsoft/DKIM/Google verification DNS records."
 Write-Host ""
 
+Write-Host "Final pre-save checks"
+Write-Host "1. Run: npm run verify:cloudflare-pages-auth"
+Write-Host "2. Run: npm run verify:r2-pages-audio -- -All"
+Write-Host "3. Confirm Squarespace will replace nameservers with only the two Cloudflare nameservers above."
+Write-Host ""
+
 Write-Host "After saving nameservers"
 Write-Host "1. Run: npm run complete:cloudflare-cutover -- -WaitForDns"
 Write-Host "2. Run: npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia"
