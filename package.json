@@ -2,6 +2,7 @@
   "scripts": {
     "build": "node scripts/build-site.mjs",
     "deploy:cloudflare": "powershell -ExecutionPolicy Bypass -File scripts/deploy-cloudflare-pages.ps1",
+    "verify:cloudflare-pages-auth": "powershell -ExecutionPolicy Bypass -File scripts/test-cloudflare-pages-deploy-auth.ps1",
     "apply:cloudflare-dns": "powershell -ExecutionPolicy Bypass -File scripts/apply-cloudflare-dns-cutover-records.ps1",
     "complete:cloudflare-cutover": "powershell -ExecutionPolicy Bypass -File scripts/complete-cloudflare-cutover.ps1",
     "migrate:cloudflare-audio": "powershell -ExecutionPolicy Bypass -File scripts/migrate-cloudflare-audio.ps1",

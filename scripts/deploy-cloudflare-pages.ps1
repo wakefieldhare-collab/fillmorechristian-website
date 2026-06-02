@@ -1,5 +1,6 @@
 param(
     [string]$ProjectName = "fillmorechristian-website",
+    [string]$AccountId = "377eaebfa77447d2f7906a1e0c1b788c",
     [string]$Branch = "main",
     [string]$BuildOutputDir = "dist",
     [switch]$DryRun,
@@ -61,6 +62,10 @@ if ($dirtyFiles.Count -gt 0 -and -not $AllowDirty) {
     throw "Working tree is dirty. Commit or stash changes before deployment, or rerun with -AllowDirty."
 }
 
+if (-not $DryRun) {
+    & (Join-Path $PSScriptRoot "test-cloudflare-pages-deploy-auth.ps1") -AccountId $AccountId -ProjectName $ProjectName
+}
+
 if (-not $SkipPreflight) {
     Push-Location $root
     try {
@@ -108,7 +113,7 @@ if ($DryRun) {
 
 $whoamiOutput = & $wrangler.Command @($wrangler.PrefixArgs) whoami 2>&1
 if ($LASTEXITCODE -ne 0 -or ($whoamiOutput -join "`n") -match "not authenticated") {
-    throw "Cloudflare is not authenticated. Run `npx wrangler login` first."
+    throw "Cloudflare is not authenticated. Set CLOUDFLARE_API_TOKEN/CF_API_TOKEN with Account:Cloudflare Pages Edit access, or run `npx wrangler login`."
 }
 
 Invoke-Wrangler -Wrangler $wrangler -Arguments $deployArgs

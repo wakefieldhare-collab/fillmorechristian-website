@@ -739,15 +739,26 @@ if (Test-Path -LiteralPath $buildOutputPath) {
 }
 
 $deployScriptPath = Join-Path $root "scripts\deploy-cloudflare-pages.ps1"
-if (Test-Path -LiteralPath $deployScriptPath) {
+$pagesAuthScriptPath = Join-Path $root "scripts\test-cloudflare-pages-deploy-auth.ps1"
+$packageJsonPath = Join-Path $root "package.json"
+if ((Test-Path -LiteralPath $deployScriptPath) -and (Test-Path -LiteralPath $pagesAuthScriptPath)) {
     $deployScriptText = Get-Content -Raw -LiteralPath $deployScriptPath
-    if ($deployScriptText -match "wake-byte" -and $deployScriptText -match "test-cloudflare-pages-local\.ps1" -and $deployScriptText -match "pages[\s`"']*,[\s`"']*deploy") {
-        Add-Check "Cloudflare deploy script" "OK" "Guarded Pages deploy script checks owner, preflight, and Wrangler deploy"
+    $pagesAuthScriptText = Get-Content -Raw -LiteralPath $pagesAuthScriptPath
+    $packageJsonText = if (Test-Path -LiteralPath $packageJsonPath) { Get-Content -Raw -LiteralPath $packageJsonPath } else { "" }
+    if ($deployScriptText -match "wake-byte" -and
+        $deployScriptText -match "test-cloudflare-pages-local\.ps1" -and
+        $deployScriptText -match "test-cloudflare-pages-deploy-auth\.ps1" -and
+        $deployScriptText -match "pages[\s`"']*,[\s`"']*deploy" -and
+        $pagesAuthScriptText -match "user/tokens/verify" -and
+        $pagesAuthScriptText -match "pages/projects" -and
+        $pagesAuthScriptText -match "Cloudflare Pages Edit" -and
+        $packageJsonText -match '"verify:cloudflare-pages-auth"') {
+        Add-Check "Cloudflare deploy script" "OK" "Guarded Pages deploy script checks owner, Pages-token/project auth, local preflight, and Wrangler deploy"
     } else {
-        Add-Check "Cloudflare deploy script" "FAIL" "Deploy script is missing owner guard, preflight, or Wrangler deploy command"
+        Add-Check "Cloudflare deploy script" "FAIL" "Deploy script is missing owner guard, Pages-token preflight, local preflight, npm auth alias, or Wrangler deploy command"
     }
 } else {
-    Add-Check "Cloudflare deploy script" "FAIL" "scripts\deploy-cloudflare-pages.ps1 is missing"
+    Add-Check "Cloudflare deploy script" "FAIL" "scripts\deploy-cloudflare-pages.ps1 or scripts\test-cloudflare-pages-deploy-auth.ps1 is missing"
 }
 
 $pagesWorkflowPath = Join-Path $root ".github\workflows\pages.yml"
