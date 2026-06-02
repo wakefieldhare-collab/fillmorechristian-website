@@ -713,7 +713,7 @@ if (Test-Path -LiteralPath $pagesWorkflowPath) {
         $pagesWorkflowText -match "actions/checkout@v6" -and
         $pagesWorkflowText -match "actions/setup-node@v6" -and
         $pagesWorkflowText -match "actions/upload-pages-artifact@v4" -and
-        $pagesWorkflowText -match "runs-on:\s+windows-2025" -and
+        $pagesWorkflowText -match "runs-on:\s+windows-2025-vs2026" -and
         $pagesWorkflowText -match "(?s)needs:\s*\r?\n\s+- build\s*\r?\n\s+- readiness") {
         Add-Check "Staging CI readiness gate" "OK" "GitHub Pages deploy waits for the migration readiness job and uses Node 24-ready Actions/runtime labels"
     } else {
