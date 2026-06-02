@@ -117,6 +117,14 @@ if ("v=spf1 include:mailgun.org ~all" -in $txtValues) {
     Add-Check "Mail SPF preserved" "FAIL" "SPF record is missing. Current TXT: $($txtValues -join '; ')"
 }
 
+$dmarcValues = @(Resolve-Answers "_dmarc.$Domain" "TXT" | ForEach-Object { Get-RecordValue $_ "TXT" })
+$publishedDmarc = @($dmarcValues | Where-Object { $_ -match "^v=DMARC1;" })
+if ($publishedDmarc.Count -gt 0) {
+    Add-Check "Mail DMARC published" "OK" "DMARC TXT record is present at _dmarc.$Domain"
+} else {
+    Add-Check "Mail DMARC published" "FAIL" "DMARC TXT record is missing. Current _dmarc TXT: $($dmarcValues -join '; ')"
+}
+
 $apexA = @(Resolve-Answers $Domain "A" | ForEach-Object { Get-RecordValue $_ "A" } | Sort-Object -Unique)
 $wwwCname = @(Resolve-Answers "www.$Domain" "CNAME" | ForEach-Object { Get-RecordValue $_ "CNAME" } | Sort-Object -Unique)
 if ("77.83.141.16" -notin $apexA -and "ssl.thechurchco.com" -notin $wwwCname) {

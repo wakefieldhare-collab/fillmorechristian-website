@@ -1,4 +1,5 @@
 ﻿"Name","Type","Value","Priority","TTL"
+"_dmarc.fillmorechristian.org","TXT","v=DMARC1; p=none; rua=mailto:church@fillmorechristian.org","","300"
 "334xc4sml6cf.fillmorechristian.org","CNAME","gv-ujhethalu73pqt.dv.googlehosted.com","","14400"
 "4jb3ni34htue.fillmorechristian.org","CNAME","gv-xvljhthdwk5dxh.dv.googlehosted.com","","14400"
 "cbsw2pw4sdud.fillmorechristian.org","CNAME","gv-6xwzpofnvqguxs.dv.googlehosted.com","","14400"

@@ -115,12 +115,15 @@ $preserveZoneFullPath = Resolve-RepoPath $PreserveZonePath
 $cloudflareToken = ""
 $assignedNameservers = @()
 $cloudflareZoneStatus = ""
+$expectedDmarcValue = "v=DMARC1; p=none; rua=mailto:church@fillmorechristian.org"
+$expectedDkimValue = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDMspMJXAZ/D2ygNZBnGbLY5Z9DjNaNiLDjKY79O1JYgtYlkOERm5SVNOb1nKavNA98hqTLLN+1N7LQGoaeqY0O8ddDa8NclV57cTekdu4by/fcKN+8zycaOE2HRH9hZP1RLNmandRuUQfmTYMrXIWrjBU0xaQdbXZHMP0pN5FuQIDAQAB"
 $expectedPreserveRecords = @(
     @{ Name = $Domain; Type = "MX"; Value = "mxa.mailgun.org"; Priority = "10" },
     @{ Name = $Domain; Type = "MX"; Value = "mxb.mailgun.org"; Priority = "10" },
     @{ Name = $Domain; Type = "TXT"; Value = "MS=ms48673064"; Priority = "" },
     @{ Name = $Domain; Type = "TXT"; Value = "v=spf1 include:mailgun.org ~all"; Priority = "" },
-    @{ Name = "pic._domainkey.$Domain"; Type = "TXT"; Value = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDMspMJXAZ/D2ygNZBnGbLY5Z9DjNaNiLDjKY79O1JYgtYlkOERm5SVNOb1nKavNA98hqTLLN+1N7LQGoaeqY0O8ddDa8NclV57cTekdu4by/fcKN+8zycaOE2HRH9hZP1RLNmandRuUQfmTYMrXIWrjBU0xaQdbXZHMP0pN5FuQIDAQAB"; Priority = "" },
+    @{ Name = "_dmarc.$Domain"; Type = "TXT"; Value = $expectedDmarcValue; Priority = "" },
+    @{ Name = "pic._domainkey.$Domain"; Type = "TXT"; Value = $expectedDkimValue; Priority = "" },
     @{ Name = "cbsw2pw4sdud.$Domain"; Type = "CNAME"; Value = "gv-6xwzpofnvqguxs.dv.googlehosted.com"; Priority = "" },
     @{ Name = "4jb3ni34htue.$Domain"; Type = "CNAME"; Value = "gv-xvljhthdwk5dxh.dv.googlehosted.com"; Priority = "" },
     @{ Name = "334xc4sml6cf.$Domain"; Type = "CNAME"; Value = "gv-ujhethalu73pqt.dv.googlehosted.com"; Priority = "" }
@@ -164,7 +167,7 @@ if (-not (Test-Path -LiteralPath $preserveCsvFullPath)) {
         }
     }
     if ($missing.Count -eq 0) {
-        Add-Check "Required preserve records" "OK" "Mailgun, Microsoft, DKIM, and Google verification records are present"
+        Add-Check "Required preserve records" "OK" "Mailgun, Microsoft, DMARC, DKIM, and Google verification records are present"
     } else {
         Add-Check "Required preserve records" "FAIL" "Missing: $($missing -join '; ')"
     }
@@ -175,7 +178,7 @@ if (-not (Test-Path -LiteralPath $preserveZoneFullPath)) {
 } else {
     $zoneText = Get-Content -Raw -LiteralPath $preserveZoneFullPath
     $zoneIssues = New-Object System.Collections.Generic.List[string]
-    foreach ($needle in @("mxa.mailgun.org.", "mxb.mailgun.org.", '"MS=ms48673064"', '"v=spf1 include:mailgun.org ~all"', "pic._domainkey", "gv-6xwzpofnvqguxs.dv.googlehosted.com.", "gv-xvljhthdwk5dxh.dv.googlehosted.com.", "gv-ujhethalu73pqt.dv.googlehosted.com.")) {
+    foreach ($needle in @("mxa.mailgun.org.", "mxb.mailgun.org.", '"MS=ms48673064"', '"v=spf1 include:mailgun.org ~all"', "_dmarc", '"v=DMARC1; p=none; rua=mailto:church@fillmorechristian.org"', "pic._domainkey", "gv-6xwzpofnvqguxs.dv.googlehosted.com.", "gv-xvljhthdwk5dxh.dv.googlehosted.com.", "gv-ujhethalu73pqt.dv.googlehosted.com.")) {
         if ($zoneText -notmatch [regex]::Escape($needle)) {
             $zoneIssues.Add($needle)
         }
@@ -185,7 +188,7 @@ if (-not (Test-Path -LiteralPath $preserveZoneFullPath)) {
     }
 
     if ($zoneIssues.Count -eq 0) {
-        Add-Check "BIND zone import file" "OK" "Zone import file contains preserve records and excludes old website targets"
+        Add-Check "BIND zone import file" "OK" "Zone import file contains preserve records, DMARC, and excludes old website targets"
     } else {
         Add-Check "BIND zone import file" "FAIL" "Issues: $($zoneIssues -join '; ')"
     }
@@ -216,7 +219,7 @@ foreach ($requiredTxt in @("MS=ms48673064", "v=spf1 include:mailgun.org ~all")) 
     }
 }
 $dkimValues = @(Resolve-Answers "pic._domainkey.$Domain" "TXT" | ForEach-Object { Get-RecordValue $_ "TXT" })
-if ($expectedPreserveRecords[4].Value -notin $dkimValues) {
+if ($expectedDkimValue -notin $dkimValues) {
     $mailIssues.Add("missing public DKIM TXT pic._domainkey.$Domain")
 }
 foreach ($requiredCname in @(

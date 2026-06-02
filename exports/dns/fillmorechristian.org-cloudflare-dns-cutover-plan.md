@@ -1,6 +1,6 @@
 ﻿# Cloudflare DNS Cutover Plan for fillmorechristian.org
 
-Generated: 2026-06-01 18:05:07 -05:00
+Generated: 2026-06-01 20:02:36 -05:00
 
 Source snapshot: `C:\Users\wakef\Documents\AI-Projects\fcc-website\exports\dns\fillmorechristian.org-20260601-164552-records.csv`
 
@@ -11,8 +11,9 @@ Import or manually create the records in:
 - `C:\Users\wakef\Documents\AI-Projects\fcc-website\exports\dns\fillmorechristian.org-cloudflare-preserve-records.csv`
 - `C:\Users\wakef\Documents\AI-Projects\fcc-website\exports\dns\fillmorechristian.org-cloudflare-preserve-records.zone`
 
-These records intentionally exclude the old TheChurchCo website records. They preserve mail and verification records only.
+These records intentionally exclude the old TheChurchCo website records. They preserve mail and verification records, and add a conservative DMARC monitoring record if one was missing from the snapshot.
 
+- TXT `_dmarc.fillmorechristian.org` -> `v=DMARC1; p=none; rua=mailto:church@fillmorechristian.org`
 - CNAME `334xc4sml6cf.fillmorechristian.org` -> `gv-ujhethalu73pqt.dv.googlehosted.com`
 - CNAME `4jb3ni34htue.fillmorechristian.org` -> `gv-xvljhthdwk5dxh.dv.googlehosted.com`
 - CNAME `cbsw2pw4sdud.fillmorechristian.org` -> `gv-6xwzpofnvqguxs.dv.googlehosted.com`

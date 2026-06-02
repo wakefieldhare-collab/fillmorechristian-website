@@ -252,6 +252,7 @@ Before changing nameservers, screenshot/export all current Squarespace DNS recor
 - MX: `@` -> `mxb.mailgun.org`, priority 10
 - TXT: `@` -> `v=spf1 include:mailgun.org ~all`
 - TXT: `@` -> `MS=ms48673064`
+- TXT: `_dmarc` -> `v=DMARC1; p=none; rua=mailto:church@fillmorechristian.org`
 - TXT: `pic._domainkey` DKIM
 - CNAME: `cbsw2pw4sdud` -> `gv-6xwzpofnvqguxs.dv.googlehosted.com`
 - CNAME: `4jb3ni34htue` -> `gv-xvljhthdwk5dxh.dv.googlehosted.com`
@@ -282,7 +283,7 @@ This writes:
 - `exports/dns/fillmorechristian.org-cloudflare-preserve-records.zone`
 - `exports/dns/fillmorechristian.org-cloudflare-dns-cutover-plan.md`
 
-The preserve files intentionally keep the Mailgun/Microsoft/DKIM/Google verification records and exclude the old TheChurchCo web records. Before changing nameservers, run:
+The preserve files intentionally keep the Mailgun/Microsoft/DMARC/DKIM/Google verification records and exclude the old TheChurchCo web records. Before changing nameservers, run:
 
 ```powershell
 .\scripts\test-cloudflare-dns-import-readiness.ps1
@@ -325,6 +326,7 @@ Latest snapshot on 2026-06-01 found:
 - MX: `fillmorechristian.org` -> `mxb.mailgun.org`, priority 10
 - TXT: `v=spf1 include:mailgun.org ~all`
 - TXT: `MS=ms48673064`
+- TXT: `_dmarc.fillmorechristian.org` -> `v=DMARC1; p=none; rua=mailto:church@fillmorechristian.org` is prepared for Cloudflare because the current public DNS snapshot does not include DMARC.
 - TXT: `pic._domainkey.fillmorechristian.org` -> Mailgun DKIM key
 - CNAME: `cbsw2pw4sdud.fillmorechristian.org` -> `gv-6xwzpofnvqguxs.dv.googlehosted.com`
 - CNAME: `4jb3ni34htue.fillmorechristian.org` -> `gv-xvljhthdwk5dxh.dv.googlehosted.com`

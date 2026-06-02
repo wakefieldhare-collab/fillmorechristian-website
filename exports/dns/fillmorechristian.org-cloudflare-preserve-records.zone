@@ -1,5 +1,6 @@
 ﻿$ORIGIN fillmorechristian.org.
 $TTL 300
+_dmarc 300 IN TXT "v=DMARC1; p=none; rua=mailto:church@fillmorechristian.org"
 334xc4sml6cf 14400 IN CNAME gv-ujhethalu73pqt.dv.googlehosted.com.
 4jb3ni34htue 14400 IN CNAME gv-xvljhthdwk5dxh.dv.googlehosted.com.
 cbsw2pw4sdud 14400 IN CNAME gv-6xwzpofnvqguxs.dv.googlehosted.com.

@@ -3,6 +3,7 @@ param(
     [string]$SnapshotPath = "",
     [string]$OutDir = "exports\dns",
     [string]$PagesProject = "fillmorechristian-website",
+    [string]$DmarcRecordValue = "v=DMARC1; p=none; rua=mailto:church@fillmorechristian.org",
     [string[]]$ExpectedCloudflareNameservers = @("eric.ns.cloudflare.com", "sky.ns.cloudflare.com")
 )
 
@@ -82,6 +83,19 @@ $preserveRecords = @(
     } | Sort-Object Name, Type, Priority, Value -Unique
 )
 
+$dmarcName = "_dmarc.$Domain"
+$existingDmarc = @($preserveRecords | Where-Object { $_.Name -eq $dmarcName -and $_.Type -eq "TXT" })
+if ($existingDmarc.Count -eq 0) {
+    $preserveRecords += [pscustomobject]@{
+        Name = $dmarcName
+        Type = "TXT"
+        Value = $DmarcRecordValue
+        Priority = ""
+        TTL = "300"
+    }
+    $preserveRecords = @($preserveRecords | Sort-Object Name, Type, Priority, Value -Unique)
+}
+
 $preserveCsvPath = Join-Path $outputDir "$Domain-cloudflare-preserve-records.csv"
 $zonePath = Join-Path $outputDir "$Domain-cloudflare-preserve-records.zone"
 $planPath = Join-Path $outputDir "$Domain-cloudflare-dns-cutover-plan.md"
@@ -117,7 +131,7 @@ $notes.Add("")
 $notes.Add(('- `{0}`' -f $preserveCsvPath))
 $notes.Add(('- `{0}`' -f $zonePath))
 $notes.Add("")
-$notes.Add("These records intentionally exclude the old TheChurchCo website records. They preserve mail and verification records only.")
+$notes.Add("These records intentionally exclude the old TheChurchCo website records. They preserve mail and verification records, and add a conservative DMARC monitoring record if one was missing from the snapshot.")
 $notes.Add("")
 foreach ($record in $verificationRecords) {
     if ($record.Type -eq "MX") {

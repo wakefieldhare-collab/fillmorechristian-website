@@ -147,6 +147,14 @@ if ("v=spf1 include:mailgun.org ~all" -in $txtValues) {
     Add-Check "Mail SPF preserved" "FAIL" "SPF record is missing. Current TXT: $($txtValues -join '; ')"
 }
 
+$dmarcValues = @(Resolve-Answers "_dmarc.$Domain" "TXT" | ForEach-Object { Get-RecordValue $_ "TXT" })
+$publishedDmarc = @($dmarcValues | Where-Object { $_ -match "^v=DMARC1;" })
+if ($publishedDmarc.Count -gt 0) {
+    Add-Check "Mail DMARC published" "OK" "DMARC TXT record is present at _dmarc.$Domain"
+} else {
+    Add-Check "Mail DMARC published" "FAIL" "DMARC TXT record is missing. Current _dmarc TXT: $($dmarcValues -join '; ')"
+}
+
 $homeResponse = Invoke-Http -Url (Join-Url $ProductionBaseUrl "/")
 if ($homeResponse) {
     if ($homeResponse.StatusCode -eq 200 -and

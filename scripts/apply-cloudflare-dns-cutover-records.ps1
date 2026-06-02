@@ -3,6 +3,7 @@ param(
     [string]$AccountId = "377eaebfa77447d2f7906a1e0c1b788c",
     [string]$PreserveCsvPath = "exports\dns\fillmorechristian.org-cloudflare-preserve-records.csv",
     [string]$PagesTarget = "fillmorechristian-website.pages.dev",
+    [string]$DmarcRecordValue = "v=DMARC1; p=none; rua=mailto:church@fillmorechristian.org",
     [switch]$Apply
 )
 
@@ -170,6 +171,11 @@ if ($preserveRows.Count -eq 0) {
 $desiredRecords = New-Object System.Collections.Generic.List[object]
 foreach ($row in $preserveRows) {
     $desiredRecords.Add((New-DesiredRecord -Name $row.Name -Type $row.Type -Content $row.Value -Priority $row.Priority -Proxied:$false))
+}
+$dmarcName = "_dmarc.$Domain"
+$hasDmarc = @($desiredRecords | Where-Object { $_.Name -eq $dmarcName -and $_.Type -eq "TXT" }).Count -gt 0
+if (-not $hasDmarc) {
+    $desiredRecords.Add((New-DesiredRecord -Name $dmarcName -Type "TXT" -Content $DmarcRecordValue -Proxied:$false))
 }
 $desiredRecords.Add((New-DesiredRecord -Name $Domain -Type "CNAME" -Content $PagesTarget -Proxied:$true))
 $desiredRecords.Add((New-DesiredRecord -Name "www.$Domain" -Type "CNAME" -Content $PagesTarget -Proxied:$true))

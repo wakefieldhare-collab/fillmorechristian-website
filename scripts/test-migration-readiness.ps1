@@ -1524,6 +1524,7 @@ if ((Test-Path -LiteralPath $dnsPreservePath) -and (Test-Path -LiteralPath $dnsZ
         @{ Name = "fillmorechristian.org"; Type = "MX"; Value = "mxb.mailgun.org"; Priority = "10" },
         @{ Name = "fillmorechristian.org"; Type = "TXT"; Value = "v=spf1 include:mailgun.org ~all"; Priority = "" },
         @{ Name = "fillmorechristian.org"; Type = "TXT"; Value = "MS=ms48673064"; Priority = "" },
+        @{ Name = "_dmarc.fillmorechristian.org"; Type = "TXT"; Value = "v=DMARC1; p=none; rua=mailto:church@fillmorechristian.org"; Priority = "" },
         @{ Name = "pic._domainkey.fillmorechristian.org"; Type = "TXT"; Value = "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDMspMJXAZ/D2ygNZBnGbLY5Z9DjNaNiLDjKY79O1JYgtYlkOERm5SVNOb1nKavNA98hqTLLN+1N7LQGoaeqY0O8ddDa8NclV57cTekdu4by/fcKN+8zycaOE2HRH9hZP1RLNmandRuUQfmTYMrXIWrjBU0xaQdbXZHMP0pN5FuQIDAQAB"; Priority = "" },
         @{ Name = "cbsw2pw4sdud.fillmorechristian.org"; Type = "CNAME"; Value = "gv-6xwzpofnvqguxs.dv.googlehosted.com"; Priority = "" },
         @{ Name = "4jb3ni34htue.fillmorechristian.org"; Type = "CNAME"; Value = "gv-xvljhthdwk5dxh.dv.googlehosted.com"; Priority = "" },
@@ -1550,16 +1551,20 @@ if ((Test-Path -LiteralPath $dnsPreservePath) -and (Test-Path -LiteralPath $dnsZ
     }
 
     $zoneText = Get-Content -Raw -LiteralPath $dnsZonePath
-    if ($zoneText -notmatch "mxa\.mailgun\.org\." -or $zoneText -notmatch "mxb\.mailgun\.org\." -or $zoneText -notmatch "include:mailgun\.org" -or $zoneText -notmatch "pic\._domainkey" -or $zoneText -notmatch "gv-6xwzpofnvqguxs\.dv\.googlehosted\.com\." -or $zoneText -notmatch "gv-xvljhthdwk5dxh\.dv\.googlehosted\.com\." -or $zoneText -notmatch "gv-ujhethalu73pqt\.dv\.googlehosted\.com\.") {
-        $dnsIssues.Add("zone file does not contain expected mail, DKIM, and Google verification records")
+    if ($zoneText -notmatch "mxa\.mailgun\.org\." -or $zoneText -notmatch "mxb\.mailgun\.org\." -or $zoneText -notmatch "include:mailgun\.org" -or $zoneText -notmatch "_dmarc" -or $zoneText -notmatch "v=DMARC1; p=none; rua=mailto:church@fillmorechristian\.org" -or $zoneText -notmatch "pic\._domainkey" -or $zoneText -notmatch "gv-6xwzpofnvqguxs\.dv\.googlehosted\.com\." -or $zoneText -notmatch "gv-xvljhthdwk5dxh\.dv\.googlehosted\.com\." -or $zoneText -notmatch "gv-ujhethalu73pqt\.dv\.googlehosted\.com\.") {
+        $dnsIssues.Add("zone file does not contain expected mail, DMARC, DKIM, and Google verification records")
     }
 
     $dnsPlanText = Get-Content -Raw -LiteralPath $dnsPlanPath
+    $dnsApplyScriptText = if (Test-Path -LiteralPath $dnsApplyScriptPath) { Get-Content -Raw -LiteralPath $dnsApplyScriptPath } else { "" }
     if ($dnsPlanText -notmatch "A ``fillmorechristian\.org``.*77\.83\.141\.16" -or $dnsPlanText -notmatch "CNAME ``www\.fillmorechristian\.org``.*ssl\.thechurchco\.com") {
         $dnsIssues.Add("cutover plan does not explicitly list old website records to replace")
     }
     if ($dnsPlanText -notmatch "SERMON_AUDIO" -or $dnsPlanText -notmatch "https://www\.fillmorechristian\.org/media/" -or $dnsPlanText -notmatch 'same-origin `/media/<object-key>`') {
         $dnsIssues.Add("cutover plan does not explicitly include the Pages R2 media route and verification")
+    }
+    if ($dnsPlanText -notmatch "_dmarc\.fillmorechristian\.org" -or $dnsPlanText -notmatch "v=DMARC1; p=none; rua=mailto:church@fillmorechristian\.org" -or $dnsApplyScriptText -notmatch '_dmarc\.\$Domain') {
+        $dnsIssues.Add("cutover plan/apply script does not include the DMARC monitoring record")
     }
     if ($dnsPlanText -notmatch "CNAME ``fillmorechristian\.org`` -> ``fillmorechristian-website\.pages\.dev``" -or
         $dnsPlanText -notmatch "CNAME ``www\.fillmorechristian\.org`` -> ``fillmorechristian-website\.pages\.dev``") {
@@ -1567,7 +1572,7 @@ if ((Test-Path -LiteralPath $dnsPreservePath) -and (Test-Path -LiteralPath $dnsZ
     }
 
     if ($dnsIssues.Count -eq 0) {
-        Add-Check "Cloudflare DNS cutover artifacts" "OK" "$($dnsRows.Count) preserve records cover mail and verification without old website records; plan includes the Pages R2 media route"
+        Add-Check "Cloudflare DNS cutover artifacts" "OK" "$($dnsRows.Count) preserve records cover mail, DMARC, and verification without old website records; plan includes the Pages R2 media route"
     } else {
         Add-Check "Cloudflare DNS cutover artifacts" "FAIL" ($dnsIssues -join "; ")
     }
