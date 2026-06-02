@@ -709,10 +709,15 @@ if (Test-Path -LiteralPath $pagesWorkflowPath) {
     $pagesWorkflowText = Get-Content -Raw -LiteralPath $pagesWorkflowPath
     if ($pagesWorkflowText -match "(?m)^\s+readiness:\s*$" -and
         $pagesWorkflowText -match "test-migration-readiness\.ps1\s+-SkipRemote\s+-SkipLocalAudioBackup" -and
+        $pagesWorkflowText -match "FORCE_JAVASCRIPT_ACTIONS_TO_NODE24:\s+true" -and
+        $pagesWorkflowText -match "actions/checkout@v6" -and
+        $pagesWorkflowText -match "actions/setup-node@v6" -and
+        $pagesWorkflowText -match "actions/upload-pages-artifact@v4" -and
+        $pagesWorkflowText -match "runs-on:\s+windows-2025" -and
         $pagesWorkflowText -match "(?s)needs:\s*\r?\n\s+- build\s*\r?\n\s+- readiness") {
-        Add-Check "Staging CI readiness gate" "OK" "GitHub Pages deploy waits for the migration readiness job"
+        Add-Check "Staging CI readiness gate" "OK" "GitHub Pages deploy waits for the migration readiness job and uses Node 24-ready Actions/runtime labels"
     } else {
-        Add-Check "Staging CI readiness gate" "FAIL" "GitHub Pages workflow does not require the migration readiness job before deploy"
+        Add-Check "Staging CI readiness gate" "FAIL" "GitHub Pages workflow is missing the readiness job requirement, Node 24-ready actions, or explicit Windows runner label"
     }
 } else {
     Add-Check "Staging CI readiness gate" "FAIL" ".github\workflows\pages.yml is missing"
