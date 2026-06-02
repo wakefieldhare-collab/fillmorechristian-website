@@ -209,6 +209,13 @@ $domainTransferParameters = [ordered]@{
 }
 Add-NameserverParameter -Parameters $domainTransferParameters
 
+$dnsCacheParameters = [ordered]@{
+    Domain = $Domain
+    WriteReport = $true
+    FailOnStale = $true
+}
+Add-NameserverParameter -Parameters $dnsCacheParameters
+
 $audioHost = try { ([Uri]$ProductionBaseUrl).Host } catch { "www.$Domain" }
 $cancellationParameters = [ordered]@{
     Domain = $Domain
@@ -235,6 +242,11 @@ $stepDefinitions = @(
         Parameters = $domainTransferParameters
     },
     @{
+        Name = "Recursive DNS Cache Drainage"
+        ScriptPath = Join-Path $PSScriptRoot "show-dns-cache-status.ps1"
+        Parameters = $dnsCacheParameters
+    },
+    @{
         Name = "TheChurchCo Cancellation Readiness"
         ScriptPath = Join-Path $PSScriptRoot "test-thechurchco-cancellation-readiness.ps1"
         Parameters = $cancellationParameters
@@ -252,9 +264,9 @@ foreach ($definition in $stepDefinitions) {
 }
 
 $nextAction = if ($overallStatus -eq "PASS") {
-    "Production cutover, registrar-transfer safety, and TheChurchCo cancellation gates passed. Keep Squarespace active until the Cloudflare Registrar transfer is visibly underway or complete, then revoke temporary Cloudflare API tokens."
+    "Production cutover, registrar-transfer safety, recursive DNS cache drainage, and TheChurchCo cancellation gates passed. Keep Squarespace active until the Cloudflare Registrar transfer is visibly underway or complete, then revoke temporary Cloudflare API tokens."
 } else {
-    "Do not cancel TheChurchCo or disable Squarespace auto-renew yet. Resolve the first failed verifier step and rerun this command."
+    "Do not cancel TheChurchCo or disable Squarespace auto-renew yet. Resolve the first failed verifier step, wait for stale recursive DNS caches if needed, and rerun this command."
 }
 
 $report = [pscustomobject]@{

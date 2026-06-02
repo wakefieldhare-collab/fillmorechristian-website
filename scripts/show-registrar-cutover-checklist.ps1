@@ -101,7 +101,7 @@ Write-Host ""
 Write-Host "Before starting the transfer"
 Write-Host "1. Run: npm run verify:cloudflare-pages-auth"
 Write-Host "2. Run: npm run verify:r2-pages-audio -- -All"
-Write-Host "3. Run: npm run status:dns-cache"
+Write-Host "3. Run: npm run verify:dns-cache-clear"
 Write-Host "4. Keep auto-renew enabled because $Domain is within 30 days of renewal."
 Write-Host ""
 

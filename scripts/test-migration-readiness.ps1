@@ -809,6 +809,7 @@ if ((Test-Path -LiteralPath $statusScriptPath) -and (Test-Path -LiteralPath $dns
         $dnsCacheStatusScriptText -match "Do not cancel TheChurchCo" -and
         $packageJsonText -match '"cutover:registrar-checklist"' -and
         $packageJsonText -match '"status:dns-cache"' -and
+        $packageJsonText -match '"verify:dns-cache-clear"' -and
         $packageJsonText -match '"status:migration"') {
         Add-Check "Migration status command" "OK" "Read-only status scripts and registrar checklist summarize owner, renewal, audio, R2, DNS, recursive cache, staging, auth state, exact nameservers, and post-cutover gates"
     } else {
@@ -851,6 +852,9 @@ if ((Test-Path -LiteralPath $productionCutoverScriptPath) -and (Test-Path -Liter
     $packageJsonText = Get-Content -Raw -LiteralPath $packageJsonPath
     if ($productionCutoverScriptText -match "complete-cloudflare-cutover\.ps1" -and
         $productionCutoverScriptText -match "test-domain-transfer-readiness\.ps1" -and
+        $productionCutoverScriptText -match "show-dns-cache-status\.ps1" -and
+        $productionCutoverScriptText -match "Recursive DNS Cache Drainage" -and
+        $productionCutoverScriptText -match "FailOnStale" -and
         $productionCutoverScriptText -match "test-thechurchco-cancellation-readiness\.ps1" -and
         $productionCutoverScriptText -match "exports\\cutover" -and
         $productionCutoverScriptText -match "ApexBaseUrl" -and
@@ -858,9 +862,9 @@ if ((Test-Path -LiteralPath $productionCutoverScriptPath) -and (Test-Path -Liter
         $productionCutoverScriptText -match "Do not cancel TheChurchCo" -and
         $productionCutoverScriptText -match "revoke temporary Cloudflare API tokens" -and
         $packageJsonText -match '"verify:production-cutover"') {
-        Add-Check "Production cutover report gate" "OK" "Combined verifier runs DNS cutover, domain-transfer, and cancellation gates and writes a local report"
+        Add-Check "Production cutover report gate" "OK" "Combined verifier runs DNS cutover, domain-transfer, recursive-cache-drainage, and cancellation gates and writes a local report"
     } else {
-        Add-Check "Production cutover report gate" "FAIL" "Production cutover verifier is missing the ordered gates, report output, stop condition, or npm alias"
+        Add-Check "Production cutover report gate" "FAIL" "Production cutover verifier is missing the ordered gates, DNS-cache stop condition, report output, or npm alias"
     }
 } else {
     Add-Check "Production cutover report gate" "FAIL" "scripts\verify-production-cutover.ps1 or package.json is missing"
