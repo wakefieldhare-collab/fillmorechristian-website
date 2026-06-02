@@ -1,6 +1,7 @@
 param(
     [string]$Domain = "fillmorechristian.org",
     [string]$ProductionBaseUrl = "https://www.fillmorechristian.org",
+    [string]$ApexBaseUrl = "https://fillmorechristian.org",
     [string]$PodcastFeedPath = "podcast-category/fillmore-christian/feed/podcast",
     [string]$R2ManifestPath = "exports\thechurchco-podcast\r2-audio-manifest.csv",
     [string]$ExpectedAudioHost = "www.fillmorechristian.org",
@@ -169,6 +170,19 @@ if ($homeResponse) {
         Add-Check "Production homepage" "OK" "$ProductionBaseUrl serves the static site shell with contact fallbacks"
     } else {
         Add-Check "Production homepage" "FAIL" "$ProductionBaseUrl did not look like the independent static site"
+    }
+}
+
+$apexHomeResponse = Invoke-Http -Url (Join-Url $ApexBaseUrl "/")
+if ($apexHomeResponse) {
+    if ($apexHomeResponse.StatusCode -eq 200 -and
+        $apexHomeResponse.Content -match "Fillmore Christian Church" -and
+        $apexHomeResponse.Content -match "site\.webmanifest" -and
+        $apexHomeResponse.Content -match "favicon\.svg" -and
+        $apexHomeResponse.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
+        Add-Check "Production apex homepage" "OK" "$ApexBaseUrl serves or redirects to the independent static site shell"
+    } else {
+        Add-Check "Production apex homepage" "FAIL" "$ApexBaseUrl did not look like the independent static site"
     }
 }
 

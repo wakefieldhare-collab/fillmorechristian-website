@@ -784,9 +784,10 @@ if (Test-Path -LiteralPath $domainTransferScriptPath) {
         $domainTransferScriptText -match "Cloudflare DNS active" -and
         $domainTransferScriptText -match "Mail MX preserved" -and
         $domainTransferScriptText -match "Old website DNS removed" -and
+        $domainTransferScriptText -match "Apex production website" -and
         $domainTransferScriptText -match "Do not disable Squarespace auto-renew" -and
         $packageJsonText -match '"verify:domain-transfer"') {
-        Add-Check "Domain transfer safety gate" "OK" "Registrar transfer verifier guards renewal timing, Cloudflare DNS, mail, and old website DNS"
+        Add-Check "Domain transfer safety gate" "OK" "Registrar transfer verifier guards renewal timing, Cloudflare DNS, apex/www website reachability, mail, and old website DNS"
     } else {
         Add-Check "Domain transfer safety gate" "FAIL" "Domain transfer verifier is missing renewal, DNS, mail, old-record, or npm-script checks"
     }
@@ -801,6 +802,7 @@ if ((Test-Path -LiteralPath $productionCutoverScriptPath) -and (Test-Path -Liter
         $productionCutoverScriptText -match "test-domain-transfer-readiness\.ps1" -and
         $productionCutoverScriptText -match "test-thechurchco-cancellation-readiness\.ps1" -and
         $productionCutoverScriptText -match "exports\\cutover" -and
+        $productionCutoverScriptText -match "ApexBaseUrl" -and
         $productionCutoverScriptText -match "VerifyAllPodcastMedia" -and
         $productionCutoverScriptText -match "Do not cancel TheChurchCo" -and
         $productionCutoverScriptText -match "revoke temporary Cloudflare API tokens" -and
@@ -818,6 +820,7 @@ if (Test-Path -LiteralPath $cancellationScriptPath) {
     if ($cancellationScriptText -match "Cloudflare nameservers" -and
         $cancellationScriptText -match "Production audio independence" -and
         $cancellationScriptText -match "www\.fillmorechristian\.org" -and
+        $cancellationScriptText -match "Production apex homepage" -and
         $cancellationScriptText -match "Production podcast page" -and
         $cancellationScriptText -match "data-subscribe-option=`"rss`"" -and
         $cancellationScriptText -match "data-copy-source=`"contact-message-draft`"" -and
@@ -828,7 +831,7 @@ if (Test-Path -LiteralPath $cancellationScriptPath) {
         $cancellationScriptText -match "BaseUrlOverride" -and
         $cancellationScriptText -match "Production R2 media route" -and
         $cancellationScriptText -match "Do not cancel TheChurchCo yet") {
-        Add-Check "TheChurchCo cancellation gate" "OK" "Production cancellation verifier checks DNS, static site, contact fallbacks, podcast page, sermon archive filters, mail, feed, audio independence, and the production Pages /media route"
+        Add-Check "TheChurchCo cancellation gate" "OK" "Production cancellation verifier checks DNS, apex/www static site, contact fallbacks, podcast page, sermon archive filters, mail, feed, audio independence, and the production Pages /media route"
     } else {
         Add-Check "TheChurchCo cancellation gate" "FAIL" "Cancellation verifier is missing DNS, contact fallback, podcast page, sermon archive filter, audio independence, production media-route, or stop-condition checks"
     }

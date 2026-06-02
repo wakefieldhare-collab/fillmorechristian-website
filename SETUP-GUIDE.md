@@ -226,7 +226,7 @@ The preferred final verifier is:
 npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia
 ```
 
-It runs the Cloudflare cutover, Cloudflare Registrar safety, and TheChurchCo cancellation checks in sequence, then writes a non-secret report under `exports/cutover/`.
+It runs the Cloudflare cutover, Cloudflare Registrar safety, and TheChurchCo cancellation checks in sequence, verifies both the `www` and apex production URLs, then writes a non-secret report under `exports/cutover/`.
 
 As of June 1, 2026, preserve at least the Mailgun MX records and these TXT/CNAME records:
 

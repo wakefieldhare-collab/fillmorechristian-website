@@ -1,6 +1,7 @@
 param(
     [string]$Domain = "fillmorechristian.org",
     [string]$ProductionBaseUrl = "https://www.fillmorechristian.org",
+    [string]$ApexBaseUrl = "https://fillmorechristian.org",
     [string[]]$ExpectedCloudflareNameservers = @("eric.ns.cloudflare.com", "sky.ns.cloudflare.com"),
     [switch]$WaitForDns,
     [int]$MaxAttempts = 30,
@@ -202,6 +203,7 @@ if ($WaitForDns) {
 $domainTransferParameters = [ordered]@{
     Domain = $Domain
     ProductionBaseUrl = $ProductionBaseUrl
+    ApexBaseUrl = $ApexBaseUrl
     ExpectedFeedUrl = (Join-Url $ProductionBaseUrl "podcast-category/fillmore-christian/feed/podcast")
     TimeoutSec = $TimeoutSec
 }
@@ -211,6 +213,7 @@ $audioHost = try { ([Uri]$ProductionBaseUrl).Host } catch { "www.$Domain" }
 $cancellationParameters = [ordered]@{
     Domain = $Domain
     ProductionBaseUrl = $ProductionBaseUrl
+    ApexBaseUrl = $ApexBaseUrl
     ExpectedAudioHost = $audioHost
     PodcastMediaSampleCount = $PodcastMediaSampleCount
     TimeoutSec = $TimeoutSec
@@ -258,6 +261,7 @@ $report = [pscustomobject]@{
     GeneratedAt = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
     Domain = $Domain
     ProductionBaseUrl = $ProductionBaseUrl
+    ApexBaseUrl = $ApexBaseUrl
     ExpectedCloudflareNameservers = @($ExpectedCloudflareNameservers)
     VerifyAllPodcastMedia = [bool]$VerifyAllPodcastMedia
     OverallStatus = $overallStatus
@@ -273,6 +277,7 @@ $markdown.Add("")
 $markdown.Add("- Generated: $($report.GeneratedAt)")
 $markdown.Add("- Domain: $Domain")
 $markdown.Add("- Production base URL: $ProductionBaseUrl")
+$markdown.Add("- Apex base URL: $ApexBaseUrl")
 $markdown.Add("- Expected Cloudflare nameservers: $($ExpectedCloudflareNameservers -join ', ')")
 $markdown.Add("- Verify all podcast media: $([bool]$VerifyAllPodcastMedia)")
 $markdown.Add("- Overall status: $overallStatus")

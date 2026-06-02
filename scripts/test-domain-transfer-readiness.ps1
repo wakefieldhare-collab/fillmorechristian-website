@@ -1,6 +1,7 @@
 param(
     [string]$Domain = "fillmorechristian.org",
     [string]$ProductionBaseUrl = "https://www.fillmorechristian.org",
+    [string]$ApexBaseUrl = "https://fillmorechristian.org",
     [string]$ExpectedFeedUrl = "https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast",
     [string[]]$ExpectedCloudflareNameservers = @(),
     [datetime]$RenewalDate = "2026-06-15",
@@ -143,6 +144,19 @@ if ($homeResponse) {
         Add-Check "Production website" "OK" "$ProductionBaseUrl serves the static site shell"
     } else {
         Add-Check "Production website" "FAIL" "$ProductionBaseUrl did not look like the independent static site"
+    }
+}
+
+$apexHomeResponse = Invoke-Http -Url $ApexBaseUrl
+if ($apexHomeResponse) {
+    if ($apexHomeResponse.StatusCode -eq 200 -and
+        $apexHomeResponse.Content -match "Fillmore Christian Church" -and
+        $apexHomeResponse.Content -match "site\.webmanifest" -and
+        $apexHomeResponse.Content -match "favicon\.svg" -and
+        $apexHomeResponse.Content -notmatch "ssl\.thechurchco\.com") {
+        Add-Check "Apex production website" "OK" "$ApexBaseUrl serves or redirects to the independent static site shell"
+    } else {
+        Add-Check "Apex production website" "FAIL" "$ApexBaseUrl did not look like the independent static site"
     }
 }
 

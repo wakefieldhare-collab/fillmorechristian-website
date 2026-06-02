@@ -121,7 +121,7 @@ For the final production receipt before canceling anything, use the combined ver
 npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia
 ```
 
-This runs the Cloudflare cutover verifier, the domain-transfer safety gate, and the TheChurchCo cancellation gate in order. It writes a timestamped non-secret Markdown and JSON report under `exports/cutover/`, stops on the first failed gate, and explicitly says not to cancel TheChurchCo or disable Squarespace auto-renew until the report passes.
+This runs the Cloudflare cutover verifier, the domain-transfer safety gate, and the TheChurchCo cancellation gate in order. It verifies both `https://www.fillmorechristian.org/` and `https://fillmorechristian.org/`, writes a timestamped non-secret Markdown and JSON report under `exports/cutover/`, stops on the first failed gate, and explicitly says not to cancel TheChurchCo or disable Squarespace auto-renew until the report passes.
 
 The migration command refuses the work GitHub owner, requires `https://` audio URLs, verifies Cloudflare authentication, can create the R2 bucket, uploads and hash-verifies all 70 audio objects, rewrites all three RSS feeds to `https://www.fillmorechristian.org/media`, regenerates episode pages/sermon archive/homepage latest-sermon links, builds `dist`, and runs strict local readiness plus the Cloudflare Pages local preflight. Use `npm run complete:cloudflare-cutover` and `npm run verify:cancel-thechurchco` before cancellation for a full production media sweep.
 
@@ -374,7 +374,7 @@ Run the transfer safety gate before starting the Cloudflare Registrar transfer o
 npm run verify:domain-transfer
 ```
 
-This is expected to fail until Cloudflare nameservers are active, the old TheChurchCo website DNS records are gone, mail records are preserved, and the production website/feed are live. Do not disable Squarespace auto-renew merely because the gate passes; keep it enabled until the Cloudflare Registrar transfer is visibly underway or complete.
+This is expected to fail until Cloudflare nameservers are active, the old TheChurchCo website DNS records are gone, mail records are preserved, and the production apex/www website plus feed are live. Do not disable Squarespace auto-renew merely because the gate passes; keep it enabled until the Cloudflare Registrar transfer is visibly underway or complete.
 
 1. In Squarespace Domains, confirm DNSSEC is disabled.
 2. Unlock `fillmorechristian.org`.
