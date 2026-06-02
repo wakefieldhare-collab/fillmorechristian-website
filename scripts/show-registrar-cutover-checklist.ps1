@@ -62,7 +62,7 @@ $pagesFeed = Test-HttpOk -Url "https://$PagesProject.pages.dev/podcast-category/
 $daysUntilRenewal = [int][Math]::Ceiling(($RenewalDate.Date - $now.Date).TotalDays)
 $daysUntilDeadline = [int][Math]::Ceiling(($DisableAutoRenewDeadline.Date - $now.Date).TotalDays)
 
-Write-Host "Fillmore Christian registrar cutover checklist"
+Write-Host "Fillmore Christian Cloudflare Registrar transfer checklist"
 Write-Host "Generated: $($now.ToString('yyyy-MM-dd HH:mm:ss zzz'))"
 Write-Host ""
 
@@ -78,26 +78,36 @@ Write-Host "- Current www CNAME: $(if ($currentWwwCname.Count -gt 0) { $currentW
 Write-Host "- Squarespace renewal: $($RenewalDate.ToString('yyyy-MM-dd')); auto-renew decision deadline: $($DisableAutoRenewDeadline.ToString('yyyy-MM-dd')) ($daysUntilDeadline day(s) left)"
 Write-Host ""
 
-Write-Host "Set in Squarespace Domains"
-foreach ($nameserver in $ExpectedCloudflareNameservers) {
-    Write-Host "- $nameserver"
-}
+Write-Host "Already completed"
+Write-Host "- Cloudflare DNS zone is active for $Domain."
+Write-Host "- Squarespace nameservers have been changed to Cloudflare: $($ExpectedCloudflareNameservers -join ', ')."
+Write-Host "- Squarespace registrar lock has been turned off."
+Write-Host "- Squarespace has sent a transfer authorization code to the owner contact."
 Write-Host ""
 
-Write-Host "Do not change these during the nameserver update"
+Write-Host "Next Cloudflare Registrar step"
+Write-Host "1. Open Cloudflare Dashboard > Domains > Transfers."
+Write-Host "2. Confirm $Domain is selected and shows Ready for transfer."
+Write-Host "3. Enter the Squarespace transfer authorization code in Step 2."
+Write-Host "4. Continue to payment and start the transfer in Cloudflare."
+Write-Host ""
+
+Write-Host "Do not change these while the transfer and DNS cache settle"
 Write-Host "- Do not disable Squarespace auto-renew yet."
 Write-Host "- Do not cancel TheChurchCo yet."
 Write-Host "- Do not remove Mailgun/Microsoft/DKIM/Google verification DNS records."
 Write-Host ""
 
-Write-Host "Final pre-save checks"
+Write-Host "Before starting the transfer"
 Write-Host "1. Run: npm run verify:cloudflare-pages-auth"
 Write-Host "2. Run: npm run verify:r2-pages-audio -- -All"
-Write-Host "3. Confirm Squarespace will replace nameservers with only the two Cloudflare nameservers above."
+Write-Host "3. Run: npm run status:dns-cache"
+Write-Host "4. Keep auto-renew enabled because $Domain is within 30 days of renewal."
 Write-Host ""
 
-Write-Host "After saving nameservers"
-Write-Host "1. Run: npm run complete:cloudflare-cutover -- -WaitForDns"
-Write-Host "2. Run: npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia"
-Write-Host "3. Only after the production report passes, run: npm run verify:cancel-thechurchco -- -VerifyAllPodcastMedia"
-Write-Host "4. Revoke temporary Cloudflare API tokens after the cancellation readiness report passes."
+Write-Host "After starting the registrar transfer"
+Write-Host "1. Confirm Cloudflare shows the transfer in progress or complete."
+Write-Host "2. Run: npm run complete:cloudflare-cutover -- -WaitForDns"
+Write-Host "3. Run: npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia"
+Write-Host "4. Only after the production report passes, run: npm run verify:cancel-thechurchco -- -VerifyAllPodcastMedia"
+Write-Host "5. Revoke temporary Cloudflare API tokens after the cancellation readiness report passes."

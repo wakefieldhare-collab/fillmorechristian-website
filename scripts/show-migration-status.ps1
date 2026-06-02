@@ -520,7 +520,7 @@ if ($authNeeded.Count -gt 0) {
         Add-Status "Next authorization" "AUTH" "Wake authorization is needed for: $($authAreas -join ', ')."
     }
 } else {
-    Add-Status "Next authorization" "INFO" "No immediate auth blocker detected; run the strict readiness gates before production changes."
+    Add-Status "Next authorization" "INFO" "Next human handoff is the Squarespace transfer authorization code for Cloudflare Registrar Step 2. Keep Squarespace auto-renew on, run status:dns-cache while recursive DNS drains, and run the strict production gates before canceling TheChurchCo."
 }
 
 if ($AsJson) {

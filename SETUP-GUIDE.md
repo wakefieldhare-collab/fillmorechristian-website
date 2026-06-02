@@ -174,24 +174,24 @@ The site publishes a self-hosted recurring Sunday calendar at `events.ics` for S
 
 For ordinary schedule changes, edit `events.ics`, then keep the static fallback copy in `index.html`, `events.html`, and `js/events.js` aligned with the feed. The build/readiness checks verify that the self-hosted feed ships with the public site and that no Google Calendar API key is required.
 
-### Step 6: Move DNS To Cloudflare
+### Step 6: Move DNS And Registrar To Cloudflare
 
 Domain registrar: Squarespace Domains, formerly Google Domains.
 
 - Login: https://domains.squarespace.com
 - Domain: `fillmorechristian.org`
 - Renewal notice: auto-renews June 15, 2026 for $15.00; disable by June 14 only if transfer/cutover is safe.
-- Current blocker: `fillmorechristian.org` is added to Cloudflare DNS and the Cloudflare DNS records are prepared. Update Squarespace nameservers to `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`. The podcast feed has moved off TheChurchCo audio in the Cloudflare Pages build; public audio verification waits for DNS to point `www.fillmorechristian.org` at Pages.
+- Current blocker: Squarespace has sent the transfer authorization code to the owner contact. Enter that code in Cloudflare Dashboard > Domains > Transfers to start the Cloudflare Registrar transfer. Keep Squarespace auto-renew enabled until Cloudflare shows the transfer in progress or complete.
 
-DNS changes needed:
+DNS and registrar state:
 
 1. In Cloudflare DNS for `fillmorechristian.org`, the preserve records have already been applied and API-verified, including Mailgun MX/TXT records, `_dmarc` DMARC, `pic._domainkey` DKIM, and Google verification CNAMEs.
 2. The old TheChurchCo web records have already been removed inside Cloudflare and replaced with proxied Pages CNAMEs.
-3. In Squarespace, update the domain nameservers to `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`.
-4. In Cloudflare Pages, confirm custom domains for `www` and apex become active.
-5. Verify email still works before changing or deleting any mail records.
-6. After Cloudflare DNS is active, verify public audio through `https://www.fillmorechristian.org/media/...`.
-7. After production website/feed/media are verified, transfer the registrar from Squarespace to Cloudflare Registrar.
+3. Squarespace nameservers have been updated to `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`.
+4. Cloudflare Pages custom domains for `www` and apex are active.
+5. Squarespace registrar lock has been turned off and an authorization code has been requested.
+6. Some recursive DNS caches may still show old Squarespace/TheChurchCo answers; run `npm run status:dns-cache` before cancellation decisions.
+7. After Cloudflare Registrar transfer is started, verify production website/feed/media again and only then make cancellation decisions.
 
 Current public DNS can be snapshotted with:
 
@@ -221,6 +221,12 @@ npm run apply:cloudflare-dns -- -Apply
 
 After DNS cutover and the production cancellation checks pass, revoke any temporary Cloudflare API token created or shared for the migration.
 
+The current registrar handoff checklist is:
+
+```powershell
+npm run cutover:registrar-checklist
+```
+
 The preferred final verifier is:
 
 ```powershell
@@ -239,7 +245,7 @@ As of June 1, 2026, preserve at least the Mailgun MX records and these TXT/CNAME
 - `4jb3ni34htue` CNAME -> `gv-xvljhthdwk5dxh.dv.googlehosted.com`
 - `334xc4sml6cf` CNAME -> `gv-ujhethalu73pqt.dv.googlehosted.com`
 
-Do not disable/cancel TheChurchCo until Cloudflare nameservers are active and the production website/feed/audio cancellation checks pass.
+Do not disable Squarespace auto-renew until the Cloudflare Registrar transfer is visibly underway or complete. Do not cancel TheChurchCo until the production website/feed/audio cancellation checks pass.
 
 ### Step 7: Maintain Church Logo
 

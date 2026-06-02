@@ -1,14 +1,15 @@
 # Fillmore Christian Website Migration Runbook
 
-Last updated: 2026-06-01
+Last updated: 2026-06-02
 
 ## Current Facts
 
 - Domain: `fillmorechristian.org`
 - Current registrar/DNS account: Squarespace Domains / former Google Domains
-- Current public nameservers: `ns-cloud-d1.googledomains.com` through `ns-cloud-d4.googledomains.com`
-- Current public website host until nameservers change: TheChurchCo / WordPress
-- Current public `www` target until nameservers change: `ssl.thechurchco.com`
+- Cloudflare assigned nameservers: `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`
+- Current public DNS: Cloudflare DNS is authoritative, but some recursive resolvers may still temporarily cache old Squarespace/TheChurchCo answers.
+- Current website host: Cloudflare Pages project `fillmorechristian-website`
+- Current public `www` target in Cloudflare DNS: proxied Pages custom domain
 - Cloudflare DNS records are prepared and API-verified: the old TheChurchCo web records are removed inside Cloudflare, the apex and `www` Pages CNAMEs are present, and mail/SPF/DMARC/DKIM/verification records are preserved.
 - Current mail MX records: `mxa.mailgun.org` and `mxb.mailgun.org`
 - Squarespace renewal notice: confirmed in personal Gmail message `19e8098f6dc383a7` from Squarespace on 2026-06-01; `fillmorechristian.org` auto-renews on 2026-06-15 for $15.00. Disable auto-renew by 2026-06-14 only if the transfer is already safely underway or complete.
@@ -23,9 +24,9 @@ Last updated: 2026-06-01
 1. Export the podcast feed and audio before canceling TheChurchCo.
 2. Deploy this static site to Cloudflare Pages.
 3. Add `fillmorechristian.org` to Cloudflare DNS and import/verify existing DNS records. Done.
-4. Point Squarespace nameservers to Cloudflare nameservers so Cloudflare DNS becomes active. Waiting on Squarespace.
-5. Verify `www`, apex, email MX, contact form, and the legacy podcast feed URL.
-6. After DNS is stable, transfer registrar from Squarespace to Cloudflare Registrar.
+4. Point Squarespace nameservers to Cloudflare nameservers so Cloudflare DNS becomes active. Done.
+5. Verify `www`, apex, email MX, contact form, and the legacy podcast feed URL. Done, but keep monitoring recursive DNS cache until stale old answers disappear.
+6. Transfer registrar from Squarespace to Cloudflare Registrar. Waiting for the Squarespace transfer authorization code that was sent to the owner contact.
 7. Only cancel TheChurchCo after the website and podcast feed are verified from the new host.
 
 ## Podcast Export
@@ -127,7 +128,7 @@ The migration command refuses the work GitHub owner, requires `https://` audio U
 
 After rewriting enclosure URLs, re-run local verification and push the RSS changes before canceling TheChurchCo.
 
-R2 preparation status on 2026-06-01:
+R2 preparation status on 2026-06-02:
 
 - `exports/thechurchco-podcast/r2-audio-manifest.csv` maps 70 local objects to 71 RSS enclosure references.
 - The manifest totals 2,315,228,157 bytes and includes the intended `https://www.fillmorechristian.org/media/...` public URLs.
@@ -135,7 +136,14 @@ R2 preparation status on 2026-06-01:
 - `scripts/test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -VerifyHashes` downloaded and SHA-256 verified all 70 R2 objects after upload.
 - `npm run verify:r2-pages-audio` verifies the same objects through `https://fillmorechristian-website.pages.dev/media/...` before production DNS cutover.
 - `scripts/test-r2-public-audio.ps1` verifies the public `www.fillmorechristian.org/media/...` URLs from the manifest after DNS cutover.
-- The remaining blocker is the Squarespace nameserver switch: after public DNS uses `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`, run `npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia`.
+- The remaining registrar blocker is the Squarespace transfer authorization code. Enter it in Cloudflare Dashboard > Domains > Transfers to start the Cloudflare Registrar transfer.
+- The remaining cancellation blocker is recursive DNS cache: run `npm run status:dns-cache` and wait for stale old Squarespace/TheChurchCo answers to disappear before canceling TheChurchCo.
+
+Current registrar checklist:
+
+```powershell
+npm run cutover:registrar-checklist
+```
 
 Podcast metadata cleanup can be run as one guarded command:
 
