@@ -579,10 +579,36 @@ $episodeNavMarkup
     </section>
   </main>
 
-  <footer>
+  <footer class="footer">
     <div class="container">
-      <p>&copy; 2026 Fillmore Christian Church. All rights reserved.</p>
-      <p>Fillmore, Missouri</p>
+      <div class="footer-grid">
+        <div>
+          <h4>Fillmore Christian Church</h4>
+          <p>A non-denominational church established in 1865, believing that Jesus is the Christ, the Son of the Living God.</p>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="../../about.html">About</a></li>
+            <li><a href="../../beliefs.html">Our Beliefs</a></li>
+            <li><a href="../../sermons.html">Past Sermons</a></li>
+            <li><a href="../../podcast.html">Podcast</a></li>
+            <li><a href="../../events.html">Events</a></li>
+            <li><a href="../../contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <p>
+            <a href="mailto:church@fillmorechristian.org">church@fillmorechristian.org</a><br>
+            310 N. Florence Street<br>
+            Fillmore, MO 64449
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Fillmore Christian Church. All rights reserved.</p>
+      </div>
     </div>
   </footer>
 

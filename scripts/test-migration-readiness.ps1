@@ -1052,10 +1052,13 @@ if (Test-Path -LiteralPath $sermonsPath) {
         $podcastHtml -match 'data-subscribe-option="spotify"' -and
         $podcastHtml -match 'data-subscribe-option="rss"' -and
         $podcastHtml -match [regex]::Escape($expectedFeedUrl) -and
+        $podcastHtml -match '<footer\s+class="footer">' -and
+        $podcastHtml -match 'Quick Links' -and
+        $podcastHtml -match 'href="contact\.html">Contact Us</a>' -and
         $podcastHtml -match '"@type": "PodcastSeries"') {
-        Add-Check "Podcast subscribe controls" "OK" "Archive page links to an owned podcast landing page with app choices and a copyable canonical RSS feed URL"
+        Add-Check "Podcast subscribe controls" "OK" "Archive page links to an owned podcast landing page with app choices, full footer, and a copyable canonical RSS feed URL"
     } else {
-        Add-Check "Podcast subscribe controls" "FAIL" "Archive page or podcast landing page is missing subscribe controls, app choices, structured data, or the copyable canonical RSS feed URL"
+        Add-Check "Podcast subscribe controls" "FAIL" "Archive page or podcast landing page is missing subscribe controls, app choices, full footer, structured data, or the copyable canonical RSS feed URL"
     }
 
     $downloadLinks = ([regex]::Matches($sermonsHtml, 'class="sermon-download"')).Count
@@ -1632,10 +1635,10 @@ if (-not $SkipRemote) {
 
                 if ($path -eq $sampleEpisodePath) {
                     $sampleEpisodeCanonical = "https://www.fillmorechristian.org/$sampleEpisodePath"
-                    if ($response.Content -match "<audio\s+controls" -and $response.Content -match "Download Audio" -and $response.Content -match "All Sermons" -and $response.Content -match 'href="../../podcast\.html"' -and $response.Content -match 'class="episode-nav"' -and $response.Content -match "Older Message" -and $response.Content -match '"@type":"PodcastEpisode"' -and $response.Content -match '"associatedMedia":\{"@type":"AudioObject"' -and $response.Content -match 'id="episode-link-url"' -and $response.Content -match [regex]::Escape('data-copy-value="' + $sampleEpisodeCanonical + '"') -and $response.Content -match 'id="episode-copy-status"') {
-                        Add-Check "Staging episode page" "OK" "Sample episode page has audio, download, archive navigation, podcast navigation, episode navigation, structured data, and copyable sermon link"
+                    if ($response.Content -match "<audio\s+controls" -and $response.Content -match "Download Audio" -and $response.Content -match "All Sermons" -and $response.Content -match 'href="../../podcast\.html"' -and $response.Content -match 'class="episode-nav"' -and $response.Content -match '<footer\s+class="footer">' -and $response.Content -match 'href="../../contact\.html">Contact Us</a>' -and $response.Content -match "Older Message" -and $response.Content -match '"@type":"PodcastEpisode"' -and $response.Content -match '"associatedMedia":\{"@type":"AudioObject"' -and $response.Content -match 'id="episode-link-url"' -and $response.Content -match [regex]::Escape('data-copy-value="' + $sampleEpisodeCanonical + '"') -and $response.Content -match 'id="episode-copy-status"') {
+                        Add-Check "Staging episode page" "OK" "Sample episode page has audio, download, archive navigation, podcast navigation, full footer, episode navigation, structured data, and copyable sermon link"
                     } else {
-                        Add-Check "Staging episode page" "FAIL" "Sample episode page is missing audio, download, archive navigation, podcast navigation, episode navigation, structured data, or copyable sermon link"
+                        Add-Check "Staging episode page" "FAIL" "Sample episode page is missing audio, download, archive navigation, podcast navigation, full footer, episode navigation, structured data, or copyable sermon link"
                     }
                 }
 
@@ -1661,11 +1664,13 @@ if (-not $SkipRemote) {
                     $response.Content -match 'data-subscribe-option="apple"' -and
                     $response.Content -match 'data-subscribe-option="spotify"' -and
                     $response.Content -match 'data-subscribe-option="rss"' -and
+                    $response.Content -match '<footer\s+class="footer">' -and
+                    $response.Content -match 'href="contact\.html">Contact Us</a>' -and
                     $response.Content -match '"@type": "PodcastSeries"' -and
                     $response.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
-                    Add-Check "Staging podcast page" "OK" "Owned podcast landing page has app choices, feed copy controls, and structured data"
+                    Add-Check "Staging podcast page" "OK" "Owned podcast landing page has app choices, feed copy controls, full footer, and structured data"
                 } else {
-                    Add-Check "Staging podcast page" "FAIL" "Podcast page is missing app choices, feed copy controls, structured data, or contains old platform references"
+                    Add-Check "Staging podcast page" "FAIL" "Podcast page is missing app choices, feed copy controls, full footer, structured data, or contains old platform references"
                 }
             }
 
