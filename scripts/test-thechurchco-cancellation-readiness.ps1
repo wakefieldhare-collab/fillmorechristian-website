@@ -243,11 +243,13 @@ $podcastPage = Invoke-Http -Url (Join-Url $ProductionBaseUrl "/podcast.html")
 if ($podcastPage) {
     $staticLatestCount = ([regex]::Matches($podcastPage.Content, 'data-static-podcast-latest="true"')).Count
     $latestAudioSizeCount = ([regex]::Matches($podcastPage.Content, 'Audio \d+(?:\.\d+)? (?:KB|MB|GB|bytes)')).Count
+    $latestDurationCount = ([regex]::Matches($podcastPage.Content, 'Duration \d+ (?:hr \d+ min|min \d+ sec)')).Count
     if ($podcastPage.StatusCode -eq 200 -and
         $podcastPage.Content -match 'id="podcast-feed-url"' -and
         $podcastPage.Content -match 'id="podcast-latest-list"' -and
         $staticLatestCount -eq 3 -and
         $latestAudioSizeCount -eq 3 -and
+        $latestDurationCount -eq 3 -and
         $podcastPage.Content -match '/media/' -and
         $podcastPage.Content -match 'Open Message' -and
         $podcastPage.Content -match 'js/podcast\.js\?v=' -and
@@ -258,9 +260,9 @@ if ($podcastPage) {
         $podcastPage.Content -match 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -and
         $podcastPage.Content -match '"@type": "PodcastSeries"' -and
         $podcastPage.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
-        Add-Check "Production podcast page" "OK" "Owned podcast subscription page is live with app choices and recent-message feed enhancement with audio sizes"
+        Add-Check "Production podcast page" "OK" "Owned podcast subscription page is live with app choices and recent-message feed enhancement with audio sizes and durations"
     } else {
-        Add-Check "Production podcast page" "FAIL" "Podcast page is missing app choices, feed copy controls, recent-message feed enhancement/audio sizes, structured data, or still references TheChurchCo"
+        Add-Check "Production podcast page" "FAIL" "Podcast page is missing app choices, feed copy controls, recent-message feed enhancement/audio sizes/durations, structured data, or still references TheChurchCo"
     }
 }
 
@@ -298,10 +300,13 @@ if ($feedResponse) {
         [xml]$feedXml = $feedResponse.Content
         $items = @($feedXml.rss.channel.item)
         $enclosures = @($items | Where-Object { $_.enclosure -and $_.enclosure.url } | ForEach-Object { [string]$_.enclosure.url })
-        if ($items.Count -ge 70 -and $enclosures.Count -ge 70) {
-            Add-Check "Production podcast feed" "OK" "$($items.Count) items, $($enclosures.Count) enclosures"
+        $durationItems = @($items | Where-Object {
+            $_.enclosure -and $_.enclosure.url -and @($_.ChildNodes | Where-Object { $_.LocalName -eq "duration" -and $_.InnerText -match '^\d{2}:\d{2}:\d{2}$' }).Count -gt 0
+        })
+        if ($items.Count -ge 70 -and $enclosures.Count -ge 70 -and $durationItems.Count -eq $enclosures.Count) {
+            Add-Check "Production podcast feed" "OK" "$($items.Count) items, $($enclosures.Count) enclosures with durations"
         } else {
-            Add-Check "Production podcast feed" "FAIL" "$($items.Count) items, $($enclosures.Count) enclosures"
+            Add-Check "Production podcast feed" "FAIL" "$($items.Count) items, $($enclosures.Count) enclosures, $($durationItems.Count) durations"
         }
 
         $dependentUrls = @($enclosures | Where-Object { $_ -match "thechurchco|ssl\.thechurchco\.com|thechurchco-production" })
@@ -336,10 +341,10 @@ if ($feedResponse) {
         if ($episodePath) {
             $episode = Invoke-Http -Url (Join-Url $ProductionBaseUrl $episodePath)
             if ($episode) {
-                if ($episode.StatusCode -eq 200 -and $episode.Content -match "<audio" -and $episode.Content -match "Download Audio") {
-                    Add-Check "Production episode pages" "OK" "$episodePath includes audio player and download"
+                if ($episode.StatusCode -eq 200 -and $episode.Content -match "<audio" -and $episode.Content -match "Download Audio" -and $episode.Content -match 'class="sermon-duration"') {
+                    Add-Check "Production episode pages" "OK" "$episodePath includes audio player, duration, and download"
                 } else {
-                    Add-Check "Production episode pages" "FAIL" "$episodePath is missing the static episode audio UI"
+                    Add-Check "Production episode pages" "FAIL" "$episodePath is missing the static episode audio UI or duration"
                 }
             }
         } else {

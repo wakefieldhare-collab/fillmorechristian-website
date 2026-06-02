@@ -84,6 +84,31 @@ function Format-FileSize {
     return "$bytes bytes"
 }
 
+function Format-DurationLabel {
+    param([string]$DurationText)
+
+    if (-not $DurationText) { return "" }
+    $clean = ($DurationText -replace '[^\d:]', '').Trim()
+    if (-not $clean) { return "" }
+    $parts = @($clean -split ":" | ForEach-Object { [int]$_ })
+    $seconds = 0
+    if ($parts.Count -eq 3) {
+        $seconds = ($parts[0] * 3600) + ($parts[1] * 60) + $parts[2]
+    } elseif ($parts.Count -eq 2) {
+        $seconds = ($parts[0] * 60) + $parts[1]
+    } elseif ($parts.Count -eq 1) {
+        $seconds = $parts[0]
+    }
+    if ($seconds -le 0) { return "" }
+
+    $span = [TimeSpan]::FromSeconds($seconds)
+    $minutes = [int][Math]::Floor($span.TotalMinutes)
+    if ($minutes -ge 60) {
+        return ("{0} hr {1} min" -f [int][Math]::Floor($span.TotalHours), $span.Minutes)
+    }
+    return ("{0} min {1} sec" -f $minutes, $span.Seconds)
+}
+
 function Get-AudioType {
     param([string]$Url)
     $lower = $Url.ToLowerInvariant()
@@ -122,6 +147,20 @@ function Get-CanonicalEpisodeUrl {
     param([string]$RelativePath)
     if (-not $RelativePath) { return "" }
     return "https://www.fillmorechristian.org/$RelativePath"
+}
+
+function Get-ElementTextByLocalName {
+    param(
+        [System.Xml.XmlElement]$Element,
+        [string]$LocalName
+    )
+
+    foreach ($child in @($Element.ChildNodes)) {
+        if ($child.NodeType -eq [System.Xml.XmlNodeType]::Element -and $child.LocalName -eq $LocalName) {
+            return [string]$child.InnerText
+        }
+    }
+    return ""
 }
 
 function Build-ArchiveSummaryHtml {
@@ -178,9 +217,10 @@ foreach ($item in $items) {
     $audioUrl = if ($enclosure) { [string]$enclosure.url } else { "" }
     $pageAudioUrl = Get-PageAudioUrl $audioUrl
     $audioSizeLabel = if ($enclosure -and $enclosure.length) { Format-FileSize ([string]$enclosure.length) } else { "" }
+    $durationLabel = Format-DurationLabel (Get-ElementTextByLocalName $item "duration")
     $episodePath = Get-RelativeEpisodePath ([string]$item.link)
     $episodeCanonicalUrl = Get-CanonicalEpisodeUrl $episodePath
-    $search = "$title $date $speaker $description $audioSizeLabel"
+    $search = "$title $date $speaker $description $audioSizeLabel $durationLabel"
 
     $cardClass = if ($audioUrl) { "sermon-item" } else { "sermon-item no-audio" }
     $hasAudio = if ($audioUrl) { "true" } else { "false" }
@@ -194,6 +234,9 @@ foreach ($item in $items) {
     $metaParts = @("<span>$(HtmlEncode $date)</span>", "<span>$(HtmlEncode $speaker)</span>")
     if ($audioSizeLabel) {
         $metaParts += "<span class=`"sermon-audio-size`">Audio $(HtmlEncode $audioSizeLabel)</span>"
+    }
+    if ($durationLabel) {
+        $metaParts += "<span class=`"sermon-duration`">Duration $(HtmlEncode $durationLabel)</span>"
     }
     $html += "          <div class=`"sermon-meta`">$($metaParts -join ' &middot; ')</div>"
     if ($description) {

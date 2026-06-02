@@ -159,6 +159,7 @@ if ($verifyPublicMediaBeforeRewrite) {
 }
 
 & (Join-Path $PSScriptRoot "rewrite-podcast-audio-urls.ps1") -BaseAudioUrl $BaseAudioUrl -R2ManifestPath $manifestPath
+& (Join-Path $PSScriptRoot "update-podcast-durations.ps1")
 & (Join-Path $PSScriptRoot "render-static-episodes.ps1")
 & (Join-Path $PSScriptRoot "render-static-sermons.ps1")
 & (Join-Path $PSScriptRoot "render-homepage-latest-sermon.ps1")

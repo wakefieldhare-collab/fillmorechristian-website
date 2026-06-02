@@ -251,11 +251,12 @@ try {
 
     if ($homeResponse.Content -notmatch 'id="latest-sermon"' -or
         $homeResponse.Content -notmatch 'class="latest-sermon-meta"[^>]*>[^<]*Audio \d+(?:\.\d+)? (?:KB|MB|GB|bytes)' -or
+        $homeResponse.Content -notmatch 'class="latest-sermon-meta"[^>]*>[^<]*Duration \d+ (?:hr \d+ min|min \d+ sec)' -or
         $homeResponse.Content -notmatch "Download Audio" -or
         $homeResponse.Content -notmatch '<a\s+href="podcast\.html"\s+class="btn btn-outline">Subscribe to Podcast</a>') {
-        throw "Home page is missing the latest sermon block, audio-size metadata, download link, or podcast subscription CTA"
+        throw "Home page is missing the latest sermon block, audio-size/duration metadata, download link, or podcast subscription CTA"
     }
-    $checks.Add([pscustomobject]@{ Check = "Homepage latest sermon"; Status = "OK"; Details = "Published output includes latest sermon audio with download size and podcast subscription CTA" })
+    $checks.Add([pscustomobject]@{ Check = "Homepage latest sermon"; Status = "OK"; Details = "Published output includes latest sermon audio with download size, duration, and podcast subscription CTA" })
 
     $legacyQuery = Invoke-NoRedirect -Url "$baseUrl/?post_type=podcasts&p=603"
     Assert-Status -Response $legacyQuery -Expected @(301) -Name "Legacy podcast query redirect"
@@ -296,6 +297,7 @@ try {
         $podcastPageContent -notmatch 'data-subscribe-option="spotify"' -or
         $podcastPageContent -notmatch 'data-subscribe-option="rss"' -or
         ([regex]::Matches($podcastPageContent, 'Audio \d+(?:\.\d+)? (?:KB|MB|GB|bytes)')).Count -ne 3 -or
+        ([regex]::Matches($podcastPageContent, 'Duration \d+ (?:hr \d+ min|min \d+ sec)')).Count -ne 3 -or
         $podcastPageContent -notmatch '<a\s+href="podcast\.html"\s+class="active">Podcast</a>' -or
         $podcastPageContent -notmatch '<footer\s+class="footer">' -or
         $podcastPageContent -notmatch 'Quick Links' -or
@@ -303,9 +305,9 @@ try {
         $podcastPageContent -notmatch '"@type": "PodcastSeries"' -or
         $sermonsPageContent -match "being moved out of TheChurchCo|during the move|ChurchCo transition|preserved podcast RSS feed path" -or
         $podcastPageContent -match "being moved out of TheChurchCo|during the move|ChurchCo transition|preserved podcast RSS feed path") {
-        throw "Sermons or podcast page is missing the owned podcast subscribe path, app choices, latest-message audio sizes, copyable RSS feed URL, full footer, or stable public copy"
+        throw "Sermons or podcast page is missing the owned podcast subscribe path, app choices, latest-message audio sizes/durations, copyable RSS feed URL, full footer, or stable public copy"
     }
-    $checks.Add([pscustomobject]@{ Check = "Podcast subscribe controls"; Status = "OK"; Details = "Published output includes an owned podcast landing page, app choices, latest-message audio sizes, full footer, and copyable canonical RSS feed URL" })
+    $checks.Add([pscustomobject]@{ Check = "Podcast subscribe controls"; Status = "OK"; Details = "Published output includes an owned podcast landing page, app choices, latest-message audio sizes and durations, full footer, and copyable canonical RSS feed URL" })
 
     if ($sermonsPageContent -notmatch 'id="sermon-audio-only"' -or $sermonsPageContent -notmatch 'data-has-audio="true"' -or $sermonsPageContent -notmatch 'data-has-audio="false"') {
         throw "Sermons page is missing the audio-only filter or audio availability metadata"
@@ -498,10 +500,10 @@ try {
     if ($episode.Content -match "fonts\.googleapis\.com|fonts\.gstatic\.com") {
         throw "Static episode page still references Google-hosted fonts"
     }
-    if ($episode.Content -notmatch "<audio\s+controls" -or $episode.Content -notmatch "Download Audio" -or $episode.Content -notmatch "All Sermons" -or $episode.Content -notmatch 'href="../../podcast\.html"' -or $episode.Content -notmatch 'class="episode-nav"' -or $episode.Content -notmatch "Newer Message" -or $episode.Content -notmatch "Older Message" -or $episode.Content -notmatch 'href="../../favicon\.svg"' -or $episode.Content -notmatch 'href="../../site\.webmanifest"' -or $episode.Content -notmatch 'id="episode-link-url"' -or $episode.Content -notmatch 'data-copy-value="https://www\.fillmorechristian\.org/episode/be-ready-luke-12/"' -or $episode.Content -notmatch 'id="episode-copy-status"') {
-        throw "Static episode page is missing audio, download, archive navigation, podcast navigation, episode navigation, brand asset links, or copyable canonical sermon link"
+    if ($episode.Content -notmatch "<audio\s+controls" -or $episode.Content -notmatch "Download Audio" -or $episode.Content -notmatch 'class="sermon-duration"' -or $episode.Content -notmatch "All Sermons" -or $episode.Content -notmatch 'href="../../podcast\.html"' -or $episode.Content -notmatch 'class="episode-nav"' -or $episode.Content -notmatch "Newer Message" -or $episode.Content -notmatch "Older Message" -or $episode.Content -notmatch 'href="../../favicon\.svg"' -or $episode.Content -notmatch 'href="../../site\.webmanifest"' -or $episode.Content -notmatch 'id="episode-link-url"' -or $episode.Content -notmatch 'data-copy-value="https://www\.fillmorechristian\.org/episode/be-ready-luke-12/"' -or $episode.Content -notmatch 'id="episode-copy-status"') {
+        throw "Static episode page is missing audio, duration, download, archive navigation, podcast navigation, episode navigation, brand asset links, or copyable canonical sermon link"
     }
-    $checks.Add([pscustomobject]@{ Check = "Static episode page"; Status = "OK"; Details = "Audio player, download, archive navigation, podcast navigation, episode navigation, brand asset links, and copyable sermon link" })
+    $checks.Add([pscustomobject]@{ Check = "Static episode page"; Status = "OK"; Details = "Audio player, duration, download, archive navigation, podcast navigation, episode navigation, brand asset links, and copyable sermon link" })
 
     $checks | Format-Table -AutoSize
 } finally {

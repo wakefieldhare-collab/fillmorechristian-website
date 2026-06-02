@@ -263,6 +263,7 @@ $feedPath = Join-Path $root "podcast-category\fillmore-christian\feed\podcast"
 $manifestPath = Join-Path $root "exports\thechurchco-podcast\manifest.csv"
 $audioDir = Join-Path $root "exports\thechurchco-podcast\audio"
 $inventoryPath = Join-Path $root "exports\thechurchco-podcast\audio-inventory.csv"
+$durationInventoryPath = Join-Path $root "exports\thechurchco-podcast\audio-duration-inventory.csv"
 $r2ManifestPath = Join-Path $root "exports\thechurchco-podcast\r2-audio-manifest.csv"
 $feedEnclosureUrls = @()
 
@@ -312,6 +313,18 @@ if (Test-Path -LiteralPath $inventoryPath) {
     Add-Status "Audio inventory" "OK" "$($inventoryRows.Count) local audio inventory row(s) with recorded size and SHA-256."
 } else {
     Add-Status "Audio inventory" "WARN" "Audio inventory is missing."
+}
+
+if (Test-Path -LiteralPath $durationInventoryPath) {
+    $durationRows = @(Import-Csv -LiteralPath $durationInventoryPath)
+    $validDurationRows = @($durationRows | Where-Object { $_.Duration -match '^\d{2}:\d{2}:\d{2}$' -and [int]$_.DurationSeconds -gt 0 })
+    if ($durationRows.Count -gt 0 -and $validDurationRows.Count -eq $durationRows.Count) {
+        Add-Status "Audio durations" "OK" "$($durationRows.Count) local audio duration row(s) are recorded for podcast metadata."
+    } else {
+        Add-Status "Audio durations" "WARN" "$($validDurationRows.Count) valid duration row(s), expected $($durationRows.Count)."
+    }
+} else {
+    Add-Status "Audio durations" "WARN" "Audio duration inventory is missing; run npm run refresh:podcast-durations."
 }
 
 if (Test-Path -LiteralPath $r2ManifestPath) {

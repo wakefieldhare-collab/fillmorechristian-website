@@ -975,6 +975,26 @@ if ($feedItemCounts.Count -eq $feedPaths.Count) {
     }
 }
 
+$durationIssues = New-Object System.Collections.Generic.List[string]
+foreach ($relativePath in $feedPaths) {
+    if (-not $feeds.ContainsKey($relativePath)) {
+        continue
+    }
+
+    $audioItems = @($feeds[$relativePath].rss.channel.item | Where-Object { $_.enclosure -and $_.enclosure.url })
+    $durationItems = @($audioItems | Where-Object {
+        @($_.ChildNodes | Where-Object { $_.LocalName -eq "duration" -and $_.InnerText -match '^\d{2}:\d{2}:\d{2}$' }).Count -gt 0
+    })
+    if ($durationItems.Count -ne $audioItems.Count) {
+        $durationIssues.Add("$relativePath has $($durationItems.Count) duration(s) for $($audioItems.Count) audio enclosure(s)")
+    }
+}
+if ($durationIssues.Count -eq 0 -and $feedEnclosureCounts.Count -gt 0) {
+    Add-Check "Podcast duration metadata" "OK" "All feed audio enclosures have iTunes duration metadata"
+} else {
+    Add-Check "Podcast duration metadata" "FAIL" ($durationIssues -join "; ")
+}
+
 $podcastOwnershipIssues = New-Object System.Collections.Generic.List[string]
 $canonicalPodcastFeedUrl = "https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast"
 $ownedPodcastGenerator = "Fillmore Christian Church static podcast feed"
@@ -1262,6 +1282,7 @@ if ($feeds.ContainsKey($feedPaths[0])) {
     $missingEpisodeBrandAssets = New-Object System.Collections.Generic.List[string]
     $missingEpisodeCopyLinks = New-Object System.Collections.Generic.List[string]
     $missingEpisodeAudioSizes = New-Object System.Collections.Generic.List[string]
+    $missingEpisodeDurations = New-Object System.Collections.Generic.List[string]
     foreach ($item in $feedItems) {
         $slug = Get-EpisodeSlug ([string]$item.link)
         if (-not $slug) {
@@ -1289,6 +1310,9 @@ if ($feeds.ContainsKey($feedPaths[0])) {
         if ($item.enclosure -and [string]$item.enclosure.url -and $episodeHtml -notmatch 'class="sermon-audio-size"') {
             $missingEpisodeAudioSizes.Add($slug)
         }
+        if ($item.enclosure -and [string]$item.enclosure.url -and $episodeHtml -notmatch 'class="sermon-duration"') {
+            $missingEpisodeDurations.Add($slug)
+        }
     }
     if ($missingEpisodeNavigation.Count -gt 0) {
         $episodeIssues.Add("episode navigation missing from: $($missingEpisodeNavigation -join ', ')")
@@ -1304,6 +1328,9 @@ if ($feeds.ContainsKey($feedPaths[0])) {
     }
     if ($missingEpisodeAudioSizes.Count -gt 0) {
         $episodeIssues.Add("episode audio size labels missing from: $($missingEpisodeAudioSizes -join ', ')")
+    }
+    if ($missingEpisodeDurations.Count -gt 0) {
+        $episodeIssues.Add("episode duration labels missing from: $($missingEpisodeDurations -join ', ')")
     }
 
     $redirectsPath = Join-Path $root "_redirects"
@@ -1493,19 +1520,24 @@ if (Test-Path -LiteralPath $podcastScriptPath) {
     }
     $latestTitle = if ($latestAudioItem) { [string]$latestAudioItem.title } else { "" }
     $podcastLatestAudioSizeLabels = ([regex]::Matches($podcastPageText, 'Audio \d+(?:\.\d+)? (?:KB|MB|GB|bytes)')).Count
+    $podcastLatestDurationLabels = ([regex]::Matches($podcastPageText, 'Duration \d+ (?:hr \d+ min|min \d+ sec)')).Count
 
     if ($podcastScript -match "podcast-latest-list" -and
         $podcastScript -match "PODCAST_FEED_PATH" -and
         $podcastScript -match "episode/" -and
         $podcastScript -match "toPageMediaUrl" -and
         $podcastScript -match "formatPodcastFileSize" -and
+        $podcastScript -match "formatPodcastDuration" -and
         $podcastScript -match "hasStaticLatestCards" -and
         $podcastScript -notmatch "https?://[^'`"]*thechurchco|ssl\.thechurchco\.com" -and
         (Test-Path -LiteralPath $podcastLatestRendererPath) -and
         (Test-Path -LiteralPath $podcastRefreshScriptPath) -and
         $packageJsonText -match '"refresh:podcast-content"\s*:\s*"powershell -ExecutionPolicy Bypass -File scripts/refresh-podcast-content\.ps1"' -and
+        $packageJsonText -match '"refresh:podcast-durations"\s*:\s*"powershell -ExecutionPolicy Bypass -File scripts/update-podcast-durations\.ps1"' -and
+        $migrateAudioScriptText -match "update-podcast-durations\.ps1" -and
         $migrateAudioScriptText -match "render-podcast-latest\.ps1" -and
         $podcastRefreshScriptText -match "normalize-podcast-metadata\.ps1" -and
+        $podcastRefreshScriptText -match "update-podcast-durations\.ps1" -and
         $podcastRefreshScriptText -match "render-static-episodes\.ps1" -and
         $podcastRefreshScriptText -match "render-static-sermons\.ps1" -and
         $podcastRefreshScriptText -match "render-homepage-latest-sermon\.ps1" -and
@@ -1517,11 +1549,12 @@ if (Test-Path -LiteralPath $podcastScriptPath) {
         $podcastPageText -match "PODCAST_LATEST_END" -and
         $staticLatestCount -eq 3 -and
         $podcastLatestAudioSizeLabels -eq 3 -and
+        $podcastLatestDurationLabels -eq 3 -and
         $podcastPageText -match "/media/" -and
         (-not $latestTitle -or $podcastPageText -match [regex]::Escape($latestTitle))) {
-        Add-Check "Podcast latest messages" "OK" "Podcast page has three static latest-message cards with audio-size metadata plus a guarded one-command refresh path"
+        Add-Check "Podcast latest messages" "OK" "Podcast page has three static latest-message cards with audio-size and duration metadata plus a guarded one-command refresh path"
     } else {
-        Add-Check "Podcast latest messages" "FAIL" "Podcast latest messages are missing static feed cards, audio-size metadata, renderer wiring, one-command refresh behavior, same-origin media handling, or contain old platform references"
+        Add-Check "Podcast latest messages" "FAIL" "Podcast latest messages are missing static feed cards, audio-size/duration metadata, renderer wiring, one-command refresh behavior, same-origin media handling, or contain old platform references"
     }
 } else {
     Add-Check "Podcast latest messages" "FAIL" "js\podcast.js is missing"
@@ -1530,6 +1563,7 @@ if (Test-Path -LiteralPath $podcastScriptPath) {
 $manifestPath = Join-Path $root "exports\thechurchco-podcast\manifest.csv"
 $audioDir = Join-Path $root "exports\thechurchco-podcast\audio"
 $inventoryPath = Join-Path $root "exports\thechurchco-podcast\audio-inventory.csv"
+$durationInventoryPath = Join-Path $root "exports\thechurchco-podcast\audio-duration-inventory.csv"
 $r2ManifestPath = Join-Path $root "exports\thechurchco-podcast\r2-audio-manifest.csv"
 $manifestRows = @()
 $rowsWithAudio = @()
@@ -1589,6 +1623,18 @@ if ((Test-Path -LiteralPath $inventoryPath) -and (Test-Path -LiteralPath $audioD
     }
 } else {
     Add-Check "Podcast audio inventory" "WARN" "Inventory or audio directory not present"
+}
+
+if (Test-Path -LiteralPath $durationInventoryPath) {
+    $durationRows = @(Import-Csv -LiteralPath $durationInventoryPath)
+    $validDurationRows = @($durationRows | Where-Object { $_.Duration -match '^\d{2}:\d{2}:\d{2}$' -and [int]$_.DurationSeconds -gt 0 })
+    if ($durationRows.Count -gt 0 -and $validDurationRows.Count -eq $durationRows.Count) {
+        Add-Check "Podcast duration inventory" "OK" "$($durationRows.Count) local audio duration row(s) with HH:MM:SS metadata"
+    } else {
+        Add-Check "Podcast duration inventory" "FAIL" "$($validDurationRows.Count) valid duration row(s), expected $($durationRows.Count)"
+    }
+} else {
+    Add-Check "Podcast duration inventory" "FAIL" "Audio duration inventory file is missing"
 }
 
 if ($VerifyPodcastMedia) {

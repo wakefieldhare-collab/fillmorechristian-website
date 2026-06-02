@@ -216,6 +216,7 @@ async function loadFromRSS(container) {
       const description = cleanDescription(cleanText(stripHtml(getElementText(item, 'description') || getElementText(item, 'itunes\\:summary') || '')));
       const audioUrl = enclosure ? enclosure.getAttribute('url') || '' : '';
       const audioSizeLabel = enclosure ? formatFileSize(enclosure.getAttribute('length')) : '';
+      const durationLabel = formatDuration(getElementText(item, 'itunes\\:duration') || getElementText(item, 'duration'));
       const speaker = cleanSpeaker(cleanText(getItunesAuthor(item)));
 
       return {
@@ -228,8 +229,9 @@ async function loadFromRSS(container) {
         audioUrl,
         audioType: getAudioType(audioUrl),
         audioSizeLabel,
+        durationLabel,
         description,
-        searchText: [title, description, rawDate, speaker, audioSizeLabel].join(' ').toLowerCase()
+        searchText: [title, description, rawDate, speaker, audioSizeLabel, durationLabel].join(' ').toLowerCase()
       };
     });
 
@@ -283,6 +285,9 @@ function renderSermons(container, sermons, sortMode) {
     }
     if (sermon.audioSizeLabel) {
       html += ' &middot; <span class="sermon-audio-size">Audio ' + escapeHtml(sermon.audioSizeLabel) + '</span>';
+    }
+    if (sermon.durationLabel) {
+      html += ' &middot; <span class="sermon-duration">Duration ' + escapeHtml(sermon.durationLabel) + '</span>';
     }
     html += '</div>';
 
@@ -490,6 +495,29 @@ function formatFileSize(bytesText) {
   if (bytes >= 1048576) return (bytes / 1048576).toFixed(1) + ' MB';
   if (bytes >= 1024) return Math.round(bytes / 1024) + ' KB';
   return String(bytes) + ' bytes';
+}
+
+function formatDuration(durationText) {
+  if (!durationText) return '';
+  const clean = String(durationText).replace(/[^\d:]/g, '').trim();
+  if (!clean) return '';
+  const parts = clean.split(':').map(function(part) { return Number(part); });
+  if (parts.some(function(part) { return !Number.isFinite(part); })) return '';
+  let seconds = 0;
+  if (parts.length === 3) {
+    seconds = (parts[0] * 3600) + (parts[1] * 60) + parts[2];
+  } else if (parts.length === 2) {
+    seconds = (parts[0] * 60) + parts[1];
+  } else if (parts.length === 1) {
+    seconds = parts[0];
+  }
+  if (seconds <= 0) return '';
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  if (hours > 0) return hours + ' hr ' + minutes + ' min';
+  return minutes + ' min ' + remainingSeconds + ' sec';
 }
 
 function cleanText(str) {

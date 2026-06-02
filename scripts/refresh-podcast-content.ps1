@@ -33,6 +33,10 @@ Invoke-Step "Normalize podcast metadata" {
     & (Join-Path $PSScriptRoot "normalize-podcast-metadata.ps1")
 }
 
+Invoke-Step "Update podcast durations" {
+    & (Join-Path $PSScriptRoot "update-podcast-durations.ps1")
+}
+
 Invoke-Step "Render static episode pages" {
     & (Join-Path $PSScriptRoot "render-static-episodes.ps1")
 }

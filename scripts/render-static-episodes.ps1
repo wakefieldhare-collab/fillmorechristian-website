@@ -73,6 +73,31 @@ function Format-FileSize {
     return "$bytes bytes"
 }
 
+function Format-DurationLabel {
+    param([string]$DurationText)
+
+    if (-not $DurationText) { return "" }
+    $clean = ($DurationText -replace '[^\d:]', '').Trim()
+    if (-not $clean) { return "" }
+    $parts = @($clean -split ":" | ForEach-Object { [int]$_ })
+    $seconds = 0
+    if ($parts.Count -eq 3) {
+        $seconds = ($parts[0] * 3600) + ($parts[1] * 60) + $parts[2]
+    } elseif ($parts.Count -eq 2) {
+        $seconds = ($parts[0] * 60) + $parts[1]
+    } elseif ($parts.Count -eq 1) {
+        $seconds = $parts[0]
+    }
+    if ($seconds -le 0) { return "" }
+
+    $span = [TimeSpan]::FromSeconds($seconds)
+    $minutes = [int][Math]::Floor($span.TotalMinutes)
+    if ($minutes -ge 60) {
+        return ("{0} hr {1} min" -f [int][Math]::Floor($span.TotalHours), $span.Minutes)
+    }
+    return ("{0} min {1} sec" -f $minutes, $span.Seconds)
+}
+
 function Get-AudioType {
     param([string]$Url)
     $lower = $Url.ToLowerInvariant()
@@ -418,6 +443,7 @@ for ($episodeIndex = 0; $episodeIndex -lt $items.Count; $episodeIndex++) {
     $pageAudioUrl = Get-PageAudioUrl $audioUrl
     $audioLength = if ($enclosure -and $enclosure.length) { [string]$enclosure.length } else { "" }
     $audioSizeLabel = if ($audioLength) { Format-FileSize $audioLength } else { "" }
+    $durationLabel = Format-DurationLabel (Get-ElementTextByLocalName $item "duration")
     $audioType = if ($audioUrl) { Get-AudioType $audioUrl } else { "" }
     $canonicalUrl = "https://www.fillmorechristian.org/episode/$slug/"
     $canonicalPath = "/episode/$slug/"
@@ -455,6 +481,9 @@ for ($episodeIndex = 0; $episodeIndex -lt $items.Count; $episodeIndex++) {
     $episodeMetaParts = @("<span>$(HtmlEncode $date)</span>", "<span>$(HtmlEncode $speaker)</span>")
     if ($audioSizeLabel) {
         $episodeMetaParts += "<span class=""sermon-audio-size"">Audio $(HtmlEncode $audioSizeLabel)</span>"
+    }
+    if ($durationLabel) {
+        $episodeMetaParts += "<span class=""sermon-duration"">Duration $(HtmlEncode $durationLabel)</span>"
     }
     $episodeMetaMarkup = '<div class="sermon-meta">' + ($episodeMetaParts -join ' &middot; ') + '</div>'
 

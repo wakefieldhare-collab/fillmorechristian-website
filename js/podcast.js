@@ -40,6 +40,7 @@ function parsePodcastItem(item) {
   const audioUrl = enclosure ? enclosure.getAttribute('url') || '' : '';
   const pageAudioUrl = toPageMediaUrl(audioUrl);
   const audioSizeLabel = enclosure ? formatPodcastFileSize(enclosure.getAttribute('length')) : '';
+  const durationLabel = formatPodcastDuration(getPodcastElementText(item, 'itunes\\:duration') || getPodcastElementText(item, 'duration'));
 
   return {
     title: cleanPodcastText(getPodcastElementText(item, 'title')),
@@ -48,13 +49,19 @@ function parsePodcastItem(item) {
     episodeHref: getEpisodeHref(getPodcastElementText(item, 'link')),
     audioUrl: pageAudioUrl,
     audioType: getPodcastAudioType(pageAudioUrl),
-    audioSizeLabel
+    audioSizeLabel,
+    durationLabel
   };
 }
 
 function renderPodcastItem(item) {
   const title = escapePodcastHtml(item.title || 'Untitled message');
-  const meta = [item.date, item.speaker, item.audioSizeLabel ? 'Audio ' + item.audioSizeLabel : ''].filter(Boolean).map(escapePodcastHtml).join(' &middot; ');
+  const meta = [
+    item.date,
+    item.speaker,
+    item.audioSizeLabel ? 'Audio ' + item.audioSizeLabel : '',
+    item.durationLabel ? 'Duration ' + item.durationLabel : ''
+  ].filter(Boolean).map(escapePodcastHtml).join(' &middot; ');
   const titleMarkup = item.episodeHref
     ? '<h3><a href="' + escapePodcastHtml(item.episodeHref) + '">' + title + '</a></h3>'
     : '<h3>' + title + '</h3>';
@@ -145,6 +152,29 @@ function formatPodcastFileSize(bytesText) {
   if (bytes >= 1048576) return (bytes / 1048576).toFixed(1) + ' MB';
   if (bytes >= 1024) return Math.round(bytes / 1024) + ' KB';
   return String(bytes) + ' bytes';
+}
+
+function formatPodcastDuration(durationText) {
+  if (!durationText) return '';
+  const clean = String(durationText).replace(/[^\d:]/g, '').trim();
+  if (!clean) return '';
+  const parts = clean.split(':').map(function(part) { return Number(part); });
+  if (parts.some(function(part) { return !Number.isFinite(part); })) return '';
+  let seconds = 0;
+  if (parts.length === 3) {
+    seconds = (parts[0] * 3600) + (parts[1] * 60) + parts[2];
+  } else if (parts.length === 2) {
+    seconds = (parts[0] * 60) + parts[1];
+  } else if (parts.length === 1) {
+    seconds = parts[0];
+  }
+  if (seconds <= 0) return '';
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  if (hours > 0) return hours + ' hr ' + minutes + ' min';
+  return minutes + ' min ' + remainingSeconds + ' sec';
 }
 
 function cleanPodcastText(str) {

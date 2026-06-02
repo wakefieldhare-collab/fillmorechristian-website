@@ -8,6 +8,7 @@
     "cutover:registrar-checklist": "powershell -ExecutionPolicy Bypass -File scripts/show-registrar-cutover-checklist.ps1",
     "migrate:cloudflare-audio": "powershell -ExecutionPolicy Bypass -File scripts/migrate-cloudflare-audio.ps1",
     "refresh:podcast-content": "powershell -ExecutionPolicy Bypass -File scripts/refresh-podcast-content.ps1",
+    "refresh:podcast-durations": "powershell -ExecutionPolicy Bypass -File scripts/update-podcast-durations.ps1",
     "status:migration": "powershell -ExecutionPolicy Bypass -File scripts/show-migration-status.ps1",
     "status:dns-cache": "powershell -ExecutionPolicy Bypass -File scripts/show-dns-cache-status.ps1",
     "verify:production-cutover": "powershell -ExecutionPolicy Bypass -File scripts/verify-production-cutover.ps1",
