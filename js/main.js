@@ -142,6 +142,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  initializeAudioEnhancements();
+
   document.addEventListener('play', function(e) {
     if (!e.target || e.target.tagName !== 'AUDIO') return;
 
@@ -152,6 +154,111 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }, true);
 });
+
+const AUDIO_SPEED_STORAGE_KEY = 'fcc-audio-playback-rate';
+const AUDIO_SPEED_OPTIONS = ['0.75', '1', '1.25', '1.5', '1.75', '2'];
+
+function initializeAudioEnhancements() {
+  enhanceAudioPlayers(document);
+
+  if (typeof MutationObserver === 'function') {
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        mutation.addedNodes.forEach(function(node) {
+          if (!node || node.nodeType !== 1) return;
+          enhanceAudioPlayers(node);
+        });
+      });
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
+}
+
+function enhanceAudioPlayers(scope) {
+  const players = [];
+  if (scope.tagName === 'AUDIO') {
+    players.push(scope);
+  }
+  if (typeof scope.querySelectorAll === 'function') {
+    scope.querySelectorAll('audio').forEach(function(player) {
+      players.push(player);
+    });
+  }
+
+  players.forEach(function(player) {
+    if (player.getAttribute('data-audio-enhanced') === 'true') return;
+
+    player.setAttribute('data-audio-enhanced', 'true');
+    setPlayerRate(player, getSavedPlaybackRate());
+    player.addEventListener('loadedmetadata', function() {
+      setPlayerRate(player, getSavedPlaybackRate());
+    });
+
+    const controls = document.createElement('div');
+    controls.className = 'audio-tools';
+    controls.setAttribute('data-audio-speed-control', 'true');
+
+    const label = document.createElement('label');
+    label.className = 'audio-speed-label';
+    label.textContent = 'Speed';
+
+    const select = document.createElement('select');
+    select.className = 'audio-speed-select';
+    select.setAttribute('aria-label', 'Audio playback speed');
+
+    AUDIO_SPEED_OPTIONS.forEach(function(rate) {
+      const option = document.createElement('option');
+      option.value = rate;
+      option.textContent = rate + 'x';
+      select.appendChild(option);
+    });
+
+    select.value = getSavedPlaybackRate();
+    select.addEventListener('change', function() {
+      const rate = normalizePlaybackRate(select.value);
+      savePlaybackRate(rate);
+      document.querySelectorAll('audio').forEach(function(audio) {
+        setPlayerRate(audio, rate);
+      });
+      document.querySelectorAll('.audio-speed-select').forEach(function(otherSelect) {
+        otherSelect.value = rate;
+      });
+    });
+
+    controls.appendChild(label);
+    controls.appendChild(select);
+    player.insertAdjacentElement('afterend', controls);
+  });
+}
+
+function getSavedPlaybackRate() {
+  try {
+    return normalizePlaybackRate(window.localStorage.getItem(AUDIO_SPEED_STORAGE_KEY) || '1');
+  } catch (err) {
+    return '1';
+  }
+}
+
+function savePlaybackRate(rate) {
+  try {
+    window.localStorage.setItem(AUDIO_SPEED_STORAGE_KEY, normalizePlaybackRate(rate));
+  } catch (err) {}
+}
+
+function normalizePlaybackRate(rate) {
+  const normalized = String(rate || '1');
+  return AUDIO_SPEED_OPTIONS.indexOf(normalized) !== -1 ? normalized : '1';
+}
+
+function setPlayerRate(player, rate) {
+  try {
+    player.playbackRate = Number(normalizePlaybackRate(rate));
+  } catch (err) {}
+}
 
 function setNavigationOpen(isOpen) {
   const navToggle = document.querySelector('.nav-toggle');

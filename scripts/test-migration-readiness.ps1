@@ -1148,6 +1148,15 @@ if (Test-Path -LiteralPath $sermonsPath) {
             Add-Check "Sermon audio playback guard" "FAIL" "Main script is missing the one-at-a-time audio playback guard"
         }
 
+        if ($mainScriptText -match "AUDIO_SPEED_STORAGE_KEY" -and
+            $mainScriptText -match "data-audio-speed-control" -and
+            $mainScriptText -match "playbackRate" -and
+            $mainScriptText -match "MutationObserver") {
+            Add-Check "Sermon audio speed controls" "OK" "Audio players get remembered playback-speed controls, including dynamically rendered podcast cards"
+        } else {
+            Add-Check "Sermon audio speed controls" "FAIL" "Main script is missing remembered playback-speed controls for sermon audio"
+        }
+
         if ($mainScriptText -match "aria-expanded" -and
             $mainScriptText -match "aria-controls" -and
             $mainScriptText -match "setNavigationOpen" -and

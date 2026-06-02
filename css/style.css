@@ -1433,6 +1433,36 @@ h4 { font-size: 1.25rem; }
   margin-top: 0.5em;
 }
 
+.audio-tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.45rem;
+}
+
+.audio-speed-label {
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.audio-speed-select {
+  min-width: 76px;
+  min-height: 34px;
+  border: 1px solid rgba(23, 50, 71, 0.2);
+  border-radius: 4px;
+  background: var(--color-white);
+  color: var(--color-primary);
+  font: 700 0.9rem var(--font-body);
+  padding: 0.25rem 0.5rem;
+}
+
+.audio-speed-select:focus {
+  outline: 2px solid rgba(154, 115, 24, 0.35);
+  outline-offset: 2px;
+}
+
 .sermon-actions {
   display: flex;
   flex-wrap: wrap;
@@ -1830,6 +1860,10 @@ h4 { font-size: 1.25rem; }
   .archive-share-row {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .audio-tools {
+    justify-content: flex-start;
   }
 
   .archive-clear {
