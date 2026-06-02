@@ -152,7 +152,7 @@ R2 preparation status on 2026-06-02:
 - `scripts/test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -VerifyHashes` downloaded and SHA-256 verified all 70 R2 objects after upload.
 - `npm run verify:r2-pages-audio` verifies the same objects through `https://fillmorechristian-website.pages.dev/media/...` before production DNS cutover.
 - `scripts/test-r2-public-audio.ps1` verifies the public `www.fillmorechristian.org/media/...` URLs from the manifest after DNS cutover.
-- The remaining registrar blocker is the Squarespace transfer authorization code. In Squarespace Domains, click `Request transfer code` if needed, check `church@fillmorechristian.org`, then enter the code in Cloudflare Dashboard > Domains > Transfers to start the Cloudflare Registrar transfer.
+- The remaining registrar blocker is the Squarespace transfer authorization code. If Squarespace shows a `Verify your email address` banner for `church@fillmorechristian.org`, complete that email verification first. Then click `Request transfer code` if needed, check `church@fillmorechristian.org`, and enter the code in Cloudflare Dashboard > Domains > Transfers to start the Cloudflare Registrar transfer.
 - The cancellation blocker is cleared: `fillmorechristian.org-production-cutover-20260602-070754.md` passed with all podcast media verified, recursive DNS cache clear, and TheChurchCo cancellation readiness green.
 - The cancellation handoff command is `npm run cutover:thechurchco-cancellation-checklist`; run it from the repo before clicking any final TheChurchCo billing cancellation control.
 - After canceling TheChurchCo website/podcast hosting, run `npm run verify:post-cancellation` and keep the generated receipt with the cutover records.

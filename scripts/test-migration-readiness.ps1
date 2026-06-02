@@ -803,9 +803,12 @@ if ((Test-Path -LiteralPath $statusScriptPath) -and (Test-Path -LiteralPath $dns
         $statusScriptText -match "DNS cache drainage" -and
         $statusScriptText -match "Get-LatestDnsCacheStatusReport" -and
         $statusScriptText -match "verify:dns-cache-clear" -and
+        $statusScriptText -match "Squarespace email verification if prompted" -and
         $registrarChecklistScriptText -match "eric\.ns\.cloudflare\.com" -and
         $registrarChecklistScriptText -match "sky\.ns\.cloudflare\.com" -and
         $registrarChecklistScriptText -match "verify:production-cutover" -and
+        $registrarChecklistScriptText -match "Verify your email address" -and
+        $registrarChecklistScriptText -match "church@fillmorechristian\.org" -and
         $registrarChecklistScriptText -match "Do not disable Squarespace auto-renew" -and
         $registrarChecklistScriptText -match "TheChurchCo website/podcast hosting may be canceled" -and
         $dnsCacheStatusScriptText -match "Cloudflare public" -and

@@ -654,9 +654,9 @@ if ($authNeeded.Count -gt 0) {
     }
 } else {
     if ($latestFullCancellationReceiptReady) {
-        Add-Status "Next authorization" "INFO" "Next human handoff is the Squarespace transfer authorization code for Cloudflare Registrar Step 2. Keep Squarespace auto-renew on until the transfer is visibly underway or complete; TheChurchCo website/podcast hosting is cancellation-ready from the latest full production receipt."
+        Add-Status "Next authorization" "INFO" "Next human handoff is Squarespace email verification if prompted, then the transfer authorization code for Cloudflare Registrar Step 2. Keep Squarespace auto-renew on until the transfer is visibly underway or complete; TheChurchCo website/podcast hosting is cancellation-ready from the latest full production receipt."
     } else {
-        Add-Status "Next authorization" "INFO" "Next human handoff is the Squarespace transfer authorization code for Cloudflare Registrar Step 2. Keep Squarespace auto-renew on and run the strict full-media production gates before canceling TheChurchCo."
+        Add-Status "Next authorization" "INFO" "Next human handoff is Squarespace email verification if prompted, then the transfer authorization code for Cloudflare Registrar Step 2. Keep Squarespace auto-renew on and run the strict full-media production gates before canceling TheChurchCo."
     }
 }
 
