@@ -63,7 +63,12 @@ if ($dirtyFiles.Count -gt 0 -and -not $AllowDirty) {
 }
 
 if (-not $DryRun) {
-    & (Join-Path $PSScriptRoot "test-cloudflare-pages-deploy-auth.ps1") -AccountId $AccountId -ProjectName $ProjectName
+    $authOutput = & (Join-Path $PSScriptRoot "test-cloudflare-pages-deploy-auth.ps1") -AccountId $AccountId -ProjectName $ProjectName 2>&1
+    $authOutput | ForEach-Object { Write-Host $_ }
+    if (($authOutput -join "`n") -match "AuthMode:\s+WranglerOAuth") {
+        [Environment]::SetEnvironmentVariable("CLOUDFLARE_API_TOKEN", $null, "Process")
+        [Environment]::SetEnvironmentVariable("CF_API_TOKEN", $null, "Process")
+    }
 }
 
 if (-not $SkipPreflight) {

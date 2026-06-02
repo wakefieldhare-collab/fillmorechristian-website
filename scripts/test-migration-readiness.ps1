@@ -751,9 +751,11 @@ if ((Test-Path -LiteralPath $deployScriptPath) -and (Test-Path -LiteralPath $pag
         $deployScriptText -match "pages[\s`"']*,[\s`"']*deploy" -and
         $pagesAuthScriptText -match "user/tokens/verify" -and
         $pagesAuthScriptText -match "pages/projects" -and
+        $pagesAuthScriptText -match "pages project list" -and
+        $pagesAuthScriptText -match "AuthMode:\s+WranglerOAuth" -and
         $pagesAuthScriptText -match "Cloudflare Pages Edit" -and
         $packageJsonText -match '"verify:cloudflare-pages-auth"') {
-        Add-Check "Cloudflare deploy script" "OK" "Guarded Pages deploy script checks owner, Pages-token/project auth, local preflight, and Wrangler deploy"
+        Add-Check "Cloudflare deploy script" "OK" "Guarded Pages deploy script checks owner, Pages-token or Wrangler OAuth project auth, local preflight, and Wrangler deploy"
     } else {
         Add-Check "Cloudflare deploy script" "FAIL" "Deploy script is missing owner guard, Pages-token preflight, local preflight, npm auth alias, or Wrangler deploy command"
     }
