@@ -65,10 +65,27 @@ function Get-RecordValue {
 function Invoke-Http {
     param([string]$Url)
 
+    $currentUrl = $Url
     try {
-        return Invoke-WebRequest -UseBasicParsing -Uri $Url -MaximumRedirection 5 -TimeoutSec $TimeoutSec
+        for ($redirectCount = 0; $redirectCount -le 5; $redirectCount++) {
+            $response = Invoke-WebRequest -UseBasicParsing -Uri $currentUrl -MaximumRedirection 0 -TimeoutSec $TimeoutSec
+            if ($response.StatusCode -notin @(301, 302, 303, 307, 308)) {
+                return $response
+            }
+
+            $location = Get-HeaderValue -Headers $response.Headers -Name "Location"
+            if (-not $location) {
+                Add-Check "HTTP: $currentUrl" "FAIL" "HTTP $($response.StatusCode) redirect did not include a Location header"
+                return $null
+            }
+
+            $currentUrl = [Uri]::new([Uri]$currentUrl, $location).AbsoluteUri
+        }
+
+        Add-Check "HTTP: $Url" "FAIL" "Exceeded redirect limit"
+        return $null
     } catch {
-        Add-Check "HTTP: $Url" "FAIL" $_.Exception.Message
+        Add-Check "HTTP: $currentUrl" "FAIL" $_.Exception.Message
         return $null
     }
 }
