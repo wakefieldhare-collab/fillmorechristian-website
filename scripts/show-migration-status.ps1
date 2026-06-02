@@ -451,13 +451,25 @@ if (-not $SkipNetwork) {
 
     try {
         $nsValues = @(Resolve-DnsName -Name $Domain -Type NS -ErrorAction Stop | Where-Object { $_.NameHost } | ForEach-Object { $_.NameHost.TrimEnd(".").ToLowerInvariant() } | Sort-Object -Unique)
-        if ($nsValues -match "cloudflare\.com$") {
+        if ($cloudflareZoneStatus -eq "active" -and $cloudflareZoneNameservers.Count -gt 0) {
+            $nsDetails = "$Domain is active in Cloudflare with assigned nameservers: $($cloudflareZoneNameservers -join ', ')."
+            if ($nsValues -match "cloudflare\.com$") {
+                $nsDetails += " Recursive DNS currently returns: $($nsValues -join ', ')."
+            } else {
+                $nsDetails += " Recursive DNS cache is still draining and currently returns: $($nsValues -join ', ')."
+            }
+            Add-Status "DNS nameservers" "OK" $nsDetails
+        } elseif ($nsValues -match "cloudflare\.com$") {
             Add-Status "DNS nameservers" "OK" "$Domain is using Cloudflare nameservers: $($nsValues -join ', ')."
         } else {
             Add-Status "DNS nameservers" "AUTH" "$Domain is still using pre-cutover nameservers: $($nsValues -join ', ')."
         }
     } catch {
-        Add-Status "DNS nameservers" "WARN" "Could not resolve nameservers: $($_.Exception.Message)"
+        if ($cloudflareZoneStatus -eq "active" -and $cloudflareZoneNameservers.Count -gt 0) {
+            Add-Status "DNS nameservers" "OK" "$Domain is active in Cloudflare with assigned nameservers: $($cloudflareZoneNameservers -join ', '). Recursive DNS lookup failed: $($_.Exception.Message)"
+        } else {
+            Add-Status "DNS nameservers" "WARN" "Could not resolve nameservers: $($_.Exception.Message)"
+        }
     }
 
     try {
