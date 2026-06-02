@@ -118,9 +118,7 @@ function Add-NameserverArguments {
 
     if ($ExpectedCloudflareNameservers.Count -gt 0) {
         $Arguments.Add("-ExpectedCloudflareNameservers")
-        foreach ($nameserver in $ExpectedCloudflareNameservers) {
-            $Arguments.Add($nameserver)
-        }
+        $Arguments.Add(($ExpectedCloudflareNameservers -join ","))
     }
 }
 
