@@ -877,6 +877,9 @@ if (Test-Path -LiteralPath $cancellationScriptPath) {
         $cancellationScriptText -match "www\.fillmorechristian\.org" -and
         $cancellationScriptText -match "Production apex homepage" -and
         $cancellationScriptText -match "Production podcast page" -and
+        $cancellationScriptText -match "Recursive DNS cache cleared" -and
+        $cancellationScriptText -match "show-dns-cache-status\.ps1" -and
+        $cancellationScriptText -match "FailOnStale" -and
         $cancellationScriptText -match "data-subscribe-option=`"rss`"" -and
         $cancellationScriptText -match "data-copy-source=`"contact-message-draft`"" -and
         $cancellationScriptText -match "data-copy-source=`"home-message-draft`"" -and
@@ -886,9 +889,9 @@ if (Test-Path -LiteralPath $cancellationScriptPath) {
         $cancellationScriptText -match "BaseUrlOverride" -and
         $cancellationScriptText -match "Production R2 media route" -and
         $cancellationScriptText -match "Do not cancel TheChurchCo yet") {
-        Add-Check "TheChurchCo cancellation gate" "OK" "Production cancellation verifier checks DNS, apex/www static site, contact fallbacks, podcast page, sermon archive filters, mail, feed, audio independence, and the production Pages /media route"
+        Add-Check "TheChurchCo cancellation gate" "OK" "Production cancellation verifier checks DNS, recursive-cache drainage, apex/www static site, contact fallbacks, podcast page, sermon archive filters, mail, feed, audio independence, and the production Pages /media route"
     } else {
-        Add-Check "TheChurchCo cancellation gate" "FAIL" "Cancellation verifier is missing DNS, contact fallback, podcast page, sermon archive filter, audio independence, production media-route, or stop-condition checks"
+        Add-Check "TheChurchCo cancellation gate" "FAIL" "Cancellation verifier is missing DNS, recursive-cache drainage, contact fallback, podcast page, sermon archive filter, audio independence, production media-route, or stop-condition checks"
     }
 } else {
     Add-Check "TheChurchCo cancellation gate" "FAIL" "scripts\test-thechurchco-cancellation-readiness.ps1 is missing"

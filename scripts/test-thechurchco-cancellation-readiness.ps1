@@ -163,6 +163,20 @@ if ("77.83.141.16" -notin $apexA -and "ssl.thechurchco.com" -notin $wwwCname) {
     Add-Check "Old website DNS removed" "FAIL" "Current apex A: $($apexA -join ', '); current www CNAME: $($wwwCname -join ', ')"
 }
 
+$dnsCacheStatusScript = Join-Path $PSScriptRoot "show-dns-cache-status.ps1"
+if (Test-Path -LiteralPath $dnsCacheStatusScript) {
+    try {
+        $dnsCacheOutput = @(& $dnsCacheStatusScript -Domain $Domain -ExpectedCloudflareNameservers $ExpectedCloudflareNameservers -WriteReport -FailOnStale *>&1)
+        $clearLine = @($dnsCacheOutput | Where-Object { [string]$_ -match "No stale old TheChurchCo/Squarespace DNS answers" } | Select-Object -First 1)
+        $details = if ($clearLine.Count -gt 0) { [string]$clearLine[0] } else { "No stale old DNS answers observed across configured public resolvers" }
+        Add-Check "Recursive DNS cache cleared" "OK" $details
+    } catch {
+        Add-Check "Recursive DNS cache cleared" "FAIL" "$($_.Exception.Message). Do not cancel TheChurchCo yet."
+    }
+} else {
+    Add-Check "Recursive DNS cache cleared" "FAIL" "Missing DNS cache verifier script: $dnsCacheStatusScript"
+}
+
 $mxValues = @(Resolve-Answers $Domain "MX" | ForEach-Object { "{0}:{1}" -f $_.Preference, (Get-RecordValue $_ "MX") } | Sort-Object)
 $requiredMx = @("10:mxa.mailgun.org", "10:mxb.mailgun.org")
 $missingMx = @($requiredMx | Where-Object { $_ -notin $mxValues })
