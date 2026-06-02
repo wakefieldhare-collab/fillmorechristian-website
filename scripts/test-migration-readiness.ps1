@@ -1161,11 +1161,14 @@ if (Test-Path -LiteralPath $sermonsPath) {
 
         if ($mainScriptText -match "AUDIO_SPEED_STORAGE_KEY" -and
             $mainScriptText -match "data-audio-speed-control" -and
+            $mainScriptText -match "data-audio-seek" -and
+            $mainScriptText -match "createSeekButton" -and
+            $mainScriptText -match "currentTime" -and
             $mainScriptText -match "playbackRate" -and
             $mainScriptText -match "MutationObserver") {
-            Add-Check "Sermon audio speed controls" "OK" "Audio players get remembered playback-speed controls, including dynamically rendered podcast cards"
+            Add-Check "Sermon audio controls" "OK" "Audio players get remembered playback-speed controls and quick seek buttons, including dynamically rendered podcast cards"
         } else {
-            Add-Check "Sermon audio speed controls" "FAIL" "Main script is missing remembered playback-speed controls for sermon audio"
+            Add-Check "Sermon audio controls" "FAIL" "Main script is missing remembered playback-speed controls or quick seek buttons for sermon audio"
         }
 
         if ($mainScriptText -match "aria-expanded" -and

@@ -1447,6 +1447,23 @@ h4 { font-size: 1.25rem; }
   font-weight: 700;
 }
 
+.audio-seek-button {
+  min-height: 34px;
+  border: 1px solid rgba(23, 50, 71, 0.2);
+  border-radius: 4px;
+  background: var(--color-white);
+  color: var(--color-primary);
+  cursor: pointer;
+  font: 700 0.85rem var(--font-body);
+  padding: 0.25rem 0.55rem;
+}
+
+.audio-seek-button:hover,
+.audio-seek-button:focus {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
 .audio-speed-select {
   min-width: 76px;
   min-height: 34px;
@@ -1871,6 +1888,7 @@ h4 { font-size: 1.25rem; }
 
   .audio-tools {
     justify-content: flex-start;
+    flex-wrap: wrap;
   }
 
   .archive-clear {

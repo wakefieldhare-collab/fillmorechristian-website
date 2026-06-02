@@ -202,6 +202,9 @@ function enhanceAudioPlayers(scope) {
     controls.className = 'audio-tools';
     controls.setAttribute('data-audio-speed-control', 'true');
 
+    controls.appendChild(createSeekButton(player, -15, 'Back 15'));
+    controls.appendChild(createSeekButton(player, 30, 'Forward 30'));
+
     const label = document.createElement('label');
     label.className = 'audio-speed-label';
     label.textContent = 'Speed';
@@ -233,6 +236,24 @@ function enhanceAudioPlayers(scope) {
     controls.appendChild(select);
     player.insertAdjacentElement('afterend', controls);
   });
+}
+
+function createSeekButton(player, seconds, label) {
+  const button = document.createElement('button');
+  button.className = 'audio-seek-button';
+  button.type = 'button';
+  button.textContent = label;
+  button.setAttribute('data-audio-seek', String(seconds));
+  button.setAttribute('aria-label', label + ' seconds');
+
+  button.addEventListener('click', function() {
+    const duration = Number.isFinite(player.duration) ? player.duration : null;
+    const nextTime = player.currentTime + seconds;
+    const boundedTime = Math.max(0, duration === null ? nextTime : Math.min(duration, nextTime));
+    player.currentTime = boundedTime;
+  });
+
+  return button;
 }
 
 function getSavedPlaybackRate() {
