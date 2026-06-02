@@ -65,9 +65,13 @@ if ($dirtyFiles.Count -gt 0 -and -not $AllowDirty) {
 if (-not $DryRun) {
     $authOutput = & (Join-Path $PSScriptRoot "test-cloudflare-pages-deploy-auth.ps1") -AccountId $AccountId -ProjectName $ProjectName 2>&1
     $authOutput | ForEach-Object { Write-Host $_ }
-    if (($authOutput -join "`n") -match "AuthMode:\s+WranglerOAuth") {
+    $authText = $authOutput | Out-String
+    if ($authText -match "AuthMode:\s+WranglerOAuth") {
         [Environment]::SetEnvironmentVariable("CLOUDFLARE_API_TOKEN", $null, "Process")
         [Environment]::SetEnvironmentVariable("CF_API_TOKEN", $null, "Process")
+        Remove-Item Env:\CLOUDFLARE_API_TOKEN -ErrorAction SilentlyContinue
+        Remove-Item Env:\CF_API_TOKEN -ErrorAction SilentlyContinue
+        Write-Host "Using Wrangler OAuth for deploy; cleared CLOUDFLARE_API_TOKEN and CF_API_TOKEN for this process."
     }
 }
 

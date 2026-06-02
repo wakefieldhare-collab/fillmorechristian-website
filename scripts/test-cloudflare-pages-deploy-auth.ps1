@@ -86,8 +86,8 @@ function Test-CloudflareTokenPagesAccess {
         throw "Cloudflare token from $($TokenInfo.Name) did not return Pages project $ProjectName."
     }
 
-    Write-Host "AuthMode: EnvToken"
-    Write-Host "Cloudflare Pages auth preflight OK: token from $($TokenInfo.Name) is active and can access project $ProjectName in account $AccountId."
+    Write-Output "AuthMode: EnvToken"
+    Write-Output "Cloudflare Pages auth preflight OK: token from $($TokenInfo.Name) is active and can access project $ProjectName in account $AccountId."
 }
 
 function Test-WranglerOAuthPagesAccess {
@@ -113,8 +113,8 @@ function Test-WranglerOAuthPagesAccess {
             throw "$($wrangler.Label) is authenticated, but project $ProjectName was not found in account $AccountId."
         }
 
-        Write-Host "AuthMode: WranglerOAuth"
-        Write-Host "Cloudflare Pages auth preflight OK: Wrangler OAuth can access project $ProjectName in account $AccountId."
+        Write-Output "AuthMode: WranglerOAuth"
+        Write-Output "Cloudflare Pages auth preflight OK: Wrangler OAuth can access project $ProjectName in account $AccountId."
     } finally {
         [Environment]::SetEnvironmentVariable("CLOUDFLARE_API_TOKEN", $savedCloudflareToken, "Process")
         [Environment]::SetEnvironmentVariable("CF_API_TOKEN", $savedCfToken, "Process")
