@@ -1304,7 +1304,12 @@ if ($feeds.ContainsKey($feedPaths[0])) {
         if ($episodeHtml -notmatch 'class="episode-nav"' -or $episodeHtml -notmatch "Newer Message" -or $episodeHtml -notmatch "Older Message") {
             $missingEpisodeNavigation.Add($slug)
         }
-        if ($episodeHtml -notmatch '<script\s+type="application/ld\+json">(?s).*"@type":"PodcastEpisode"' -or $episodeHtml -notmatch '"isPartOf":\{"@type":"PodcastSeries","name":"Fillmore Christian"' -or $episodeHtml -notmatch '"publisher":\{"@type":"Church","name":"Fillmore Christian Church"') {
+        if ($episodeHtml -notmatch '<script\s+type="application/ld\+json">(?s).*"@type":"PodcastEpisode"' -or
+            $episodeHtml -notmatch '"isPartOf":\{"@type":"PodcastSeries","name":"Fillmore Christian"' -or
+            $episodeHtml -notmatch '"publisher":\{"@type":"Church","name":"Fillmore Christian Church"' -or
+            $episodeHtml -notmatch '"mainEntityOfPage":\{"@type":"WebPage","@id":"https://www\.fillmorechristian\.org/episode/' -or
+            $episodeHtml -notmatch '"inLanguage":"en-US"' -or
+            ($item.enclosure -and [string]$item.enclosure.url -and ($episodeHtml -notmatch '"duration":"PT[0-9HMS]+' -or $episodeHtml -notmatch '"associatedMedia":\{"@type":"AudioObject","name":' -or $episodeHtml -notmatch '"encodingFormat":"audio/(?:mpeg|mp4|wav)"'))) {
             $missingEpisodeStructuredData.Add($slug)
         }
         if ($episodeHtml -notmatch '<link\s+rel="icon"\s+href="../../favicon\.svg"\s+type="image/svg\+xml">' -or $episodeHtml -notmatch '<img\s+src="../../images/fcc-logo-mark\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or $episodeHtml -notmatch '<a\s+href="../../podcast\.html">Podcast</a>' -or $episodeHtml -notmatch '<link\s+rel="manifest"\s+href="../../site\.webmanifest">' -or $episodeHtml -notmatch '<meta\s+name="theme-color"\s+content="#173247">') {

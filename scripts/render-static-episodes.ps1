@@ -73,21 +73,29 @@ function Format-FileSize {
     return "$bytes bytes"
 }
 
+function ConvertTo-DurationSeconds {
+    param([string]$DurationText)
+
+    if (-not $DurationText) { return 0 }
+    $clean = ($DurationText -replace '[^\d:]', '').Trim()
+    if (-not $clean) { return 0 }
+    $parts = @($clean -split ":" | ForEach-Object { [int]$_ })
+    if ($parts.Count -eq 3) {
+        return ($parts[0] * 3600) + ($parts[1] * 60) + $parts[2]
+    }
+    if ($parts.Count -eq 2) {
+        return ($parts[0] * 60) + $parts[1]
+    }
+    if ($parts.Count -eq 1) {
+        return $parts[0]
+    }
+    return 0
+}
+
 function Format-DurationLabel {
     param([string]$DurationText)
 
-    if (-not $DurationText) { return "" }
-    $clean = ($DurationText -replace '[^\d:]', '').Trim()
-    if (-not $clean) { return "" }
-    $parts = @($clean -split ":" | ForEach-Object { [int]$_ })
-    $seconds = 0
-    if ($parts.Count -eq 3) {
-        $seconds = ($parts[0] * 3600) + ($parts[1] * 60) + $parts[2]
-    } elseif ($parts.Count -eq 2) {
-        $seconds = ($parts[0] * 60) + $parts[1]
-    } elseif ($parts.Count -eq 1) {
-        $seconds = $parts[0]
-    }
+    $seconds = ConvertTo-DurationSeconds $DurationText
     if ($seconds -le 0) { return "" }
 
     $span = [TimeSpan]::FromSeconds($seconds)
@@ -96,6 +104,27 @@ function Format-DurationLabel {
         return ("{0} hr {1} min" -f [int][Math]::Floor($span.TotalHours), $span.Minutes)
     }
     return ("{0} min {1} sec" -f $minutes, $span.Seconds)
+}
+
+function Format-IsoDuration {
+    param([int]$Seconds)
+
+    if ($Seconds -le 0) { return "" }
+
+    $span = [TimeSpan]::FromSeconds($Seconds)
+    $parts = New-Object System.Collections.Generic.List[string]
+    if ($span.Hours -gt 0 -or $span.Days -gt 0) {
+        $hours = ([int]$span.TotalHours)
+        $parts.Add("${hours}H")
+    }
+    if ($span.Minutes -gt 0) {
+        $parts.Add("$($span.Minutes)M")
+    }
+    if ($span.Seconds -gt 0 -or $parts.Count -eq 0) {
+        $parts.Add("$($span.Seconds)S")
+    }
+
+    return "PT$($parts -join '')"
 }
 
 function Get-AudioType {
@@ -443,7 +472,10 @@ for ($episodeIndex = 0; $episodeIndex -lt $items.Count; $episodeIndex++) {
     $pageAudioUrl = Get-PageAudioUrl $audioUrl
     $audioLength = if ($enclosure -and $enclosure.length) { [string]$enclosure.length } else { "" }
     $audioSizeLabel = if ($audioLength) { Format-FileSize $audioLength } else { "" }
-    $durationLabel = Format-DurationLabel (Get-ElementTextByLocalName $item "duration")
+    $durationText = Get-ElementTextByLocalName $item "duration"
+    $durationSeconds = ConvertTo-DurationSeconds $durationText
+    $durationLabel = Format-DurationLabel $durationText
+    $durationIso = Format-IsoDuration $durationSeconds
     $audioType = if ($audioUrl) { Get-AudioType $audioUrl } else { "" }
     $canonicalUrl = "https://www.fillmorechristian.org/episode/$slug/"
     $canonicalPath = "/episode/$slug/"
@@ -513,7 +545,12 @@ $olderNavMarkup
         "name" = $title
         "description" = $summary
         "url" = $canonicalUrl
+        "mainEntityOfPage" = [ordered]@{
+            "@type" = "WebPage"
+            "@id" = $canonicalUrl
+        }
         "datePublished" = $lastMod
+        "inLanguage" = "en-US"
         "isPartOf" = [ordered]@{
             "@type" = "PodcastSeries"
             "name" = "Fillmore Christian"
@@ -525,12 +562,20 @@ $olderNavMarkup
             "url" = "https://www.fillmorechristian.org/"
         }
     }
+    if ($durationIso) {
+        $jsonLd["duration"] = $durationIso
+    }
 
     if ($audioUrl) {
         $audioObject = [ordered]@{
             "@type" = "AudioObject"
+            "name" = $title
             "contentUrl" = $audioUrl
             "encodingFormat" = $audioType
+            "inLanguage" = "en-US"
+        }
+        if ($durationIso) {
+            $audioObject["duration"] = $durationIso
         }
         if ($audioLength) {
             $audioObject["contentSize"] = $audioLength
