@@ -32,7 +32,24 @@ function Format-CommandForReport {
         $ScriptPath
     ) + @($Arguments)
 
-    return ($parts | ForEach-Object {
+    return ($parts | ForEach-Object { Format-ProcessArgument $_ }) -join " "
+}
+
+function Format-ProcessArgument {
+    param([string]$Argument)
+
+    $value = [string]$Argument
+    if ($value -match '[\s"]') {
+        return '"' + ($value -replace '"', '\"') + '"'
+    }
+
+    return $value
+}
+
+function Get-ProcessArgumentText {
+    param([string[]]$Arguments)
+
+    return ($Arguments | ForEach-Object {
         $value = [string]$_
         if ($value -match '[\s"]') {
             '"' + ($value -replace '"', '\"') + '"'
@@ -54,8 +71,34 @@ function Invoke-VerificationStep {
     }
 
     $startedAt = Get-Date
-    $output = @(& powershell -NoProfile -ExecutionPolicy Bypass -File $ScriptPath @Arguments 2>&1 | ForEach-Object { [string]$_ })
-    $exitCode = $LASTEXITCODE
+    $stdoutPath = [System.IO.Path]::GetTempFileName()
+    $stderrPath = [System.IO.Path]::GetTempFileName()
+    $processArgs = @(
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        $ScriptPath
+    ) + @($Arguments)
+
+    try {
+        $process = Start-Process -FilePath "powershell" -ArgumentList (Get-ProcessArgumentText -Arguments $processArgs) -NoNewWindow -Wait -PassThru -RedirectStandardOutput $stdoutPath -RedirectStandardError $stderrPath
+        $output = @()
+        if (Test-Path -LiteralPath $stdoutPath) {
+            $output += @(Get-Content -LiteralPath $stdoutPath -ErrorAction SilentlyContinue)
+        }
+        if (Test-Path -LiteralPath $stderrPath) {
+            $stderrOutput = @(Get-Content -LiteralPath $stderrPath -ErrorAction SilentlyContinue)
+            if ($stderrOutput.Count -gt 0) {
+                $output += @("--- STDERR ---")
+                $output += $stderrOutput
+            }
+        }
+        $exitCode = $process.ExitCode
+    } finally {
+        Remove-Item -LiteralPath $stdoutPath -Force -ErrorAction SilentlyContinue
+        Remove-Item -LiteralPath $stderrPath -Force -ErrorAction SilentlyContinue
+    }
     $finishedAt = Get-Date
 
     return [pscustomobject]@{
@@ -78,6 +121,17 @@ function Add-NameserverArguments {
         foreach ($nameserver in $ExpectedCloudflareNameservers) {
             $Arguments.Add($nameserver)
         }
+    }
+}
+
+function Add-Arguments {
+    param(
+        [System.Collections.Generic.List[string]]$Arguments,
+        [object[]]$Values
+    )
+
+    foreach ($value in $Values) {
+        $Arguments.Add([string]$value)
     }
 }
 
@@ -106,35 +160,35 @@ $steps = New-Object System.Collections.Generic.List[object]
 $overallStatus = "PASS"
 
 $cutoverArgs = New-Object System.Collections.Generic.List[string]
-$cutoverArgs.AddRange(@(
+Add-Arguments -Arguments $cutoverArgs -Values @(
     "-Domain", $Domain,
     "-ProductionBaseUrl", $ProductionBaseUrl,
     "-MaxAttempts", [string]$MaxAttempts,
     "-DelaySeconds", [string]$DelaySeconds
-))
+)
 Add-NameserverArguments -Arguments $cutoverArgs
 if ($WaitForDns) {
     $cutoverArgs.Add("-WaitForDns")
 }
 
 $domainTransferArgs = New-Object System.Collections.Generic.List[string]
-$domainTransferArgs.AddRange(@(
+Add-Arguments -Arguments $domainTransferArgs -Values @(
     "-Domain", $Domain,
     "-ProductionBaseUrl", $ProductionBaseUrl,
     "-ExpectedFeedUrl", (Join-Url $ProductionBaseUrl "podcast-category/fillmore-christian/feed/podcast"),
     "-TimeoutSec", [string]$TimeoutSec
-))
+)
 Add-NameserverArguments -Arguments $domainTransferArgs
 
 $audioHost = try { ([Uri]$ProductionBaseUrl).Host } catch { "www.$Domain" }
 $cancellationArgs = New-Object System.Collections.Generic.List[string]
-$cancellationArgs.AddRange(@(
+Add-Arguments -Arguments $cancellationArgs -Values @(
     "-Domain", $Domain,
     "-ProductionBaseUrl", $ProductionBaseUrl,
     "-ExpectedAudioHost", $audioHost,
     "-PodcastMediaSampleCount", [string]$PodcastMediaSampleCount,
     "-TimeoutSec", [string]$TimeoutSec
-))
+)
 Add-NameserverArguments -Arguments $cancellationArgs
 if ($VerifyAllPodcastMedia) {
     $cancellationArgs.Add("-VerifyAllPodcastMedia")
@@ -167,19 +221,21 @@ foreach ($definition in $stepDefinitions) {
     }
 }
 
+$nextAction = if ($overallStatus -eq "PASS") {
+    "Production cutover, registrar-transfer safety, and TheChurchCo cancellation gates passed. Keep Squarespace active until the Cloudflare Registrar transfer is visibly underway or complete, then revoke temporary Cloudflare API tokens."
+} else {
+    "Do not cancel TheChurchCo or disable Squarespace auto-renew yet. Resolve the first failed verifier step and rerun this command."
+}
+
 $report = [pscustomobject]@{
     GeneratedAt = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
     Domain = $Domain
     ProductionBaseUrl = $ProductionBaseUrl
-    ExpectedCloudflareNameservers = $ExpectedCloudflareNameservers
+    ExpectedCloudflareNameservers = @($ExpectedCloudflareNameservers)
     VerifyAllPodcastMedia = [bool]$VerifyAllPodcastMedia
     OverallStatus = $overallStatus
-    NextAction = if ($overallStatus -eq "PASS") {
-        "Production cutover, registrar-transfer safety, and TheChurchCo cancellation gates passed. Keep Squarespace active until the Cloudflare Registrar transfer is visibly underway or complete, then revoke temporary Cloudflare API tokens."
-    } else {
-        "Do not cancel TheChurchCo or disable Squarespace auto-renew yet. Resolve the first failed verifier step and rerun this command."
-    }
-    Steps = @($steps)
+    NextAction = $nextAction
+    Steps = @($steps.ToArray())
 }
 
 $report | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $jsonReportPath -Encoding UTF8
