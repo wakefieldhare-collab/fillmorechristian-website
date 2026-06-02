@@ -339,6 +339,8 @@ if (-not $SkipNetwork) {
             } catch {
                 Add-Status "Cloudflare DNS records" "WARN" "Could not inspect Cloudflare DNS records: $($_.Exception.Message)"
             }
+        } elseif ($cloudflareZoneId) {
+            Add-Status "Cloudflare DNS records" "INFO" "DNS records were not inspected because no CLOUDFLARE_API_TOKEN or CF_API_TOKEN is set for DNS-read access."
         }
 
         try {
@@ -442,6 +444,8 @@ if ($authNeeded.Count -gt 0) {
     } elseif (("Cloudflare zone" -in $authAreas) -and ($cloudflareZoneStatus -eq "pending") -and $cloudflareZoneNameservers.Count -gt 0) {
         if ($cloudflareDnsPrepared) {
             Add-Status "Next authorization" "AUTH" "Wake authorization needed next: set Squarespace nameservers to $($cloudflareZoneNameservers -join ', '). Cloudflare DNS records are already prepared."
+        } elseif (-not $cloudflareDnsToken) {
+            Add-Status "Next authorization" "AUTH" "Wake authorization needed next: verify Cloudflare DNS records with a DNS-read token or dashboard, then set Squarespace nameservers to $($cloudflareZoneNameservers -join ', ')."
         } else {
             Add-Status "Next authorization" "AUTH" "Wake authorization needed next: $dnsApplyGuidance, then set Squarespace nameservers to $($cloudflareZoneNameservers -join ', ')."
         }
@@ -453,6 +457,8 @@ if ($authNeeded.Count -gt 0) {
         if ($cloudflareZoneNameservers.Count -gt 0) {
             if ($cloudflareDnsPrepared) {
                 Add-Status "Next authorization" "AUTH" "Wake authorization needed next: set Squarespace nameservers to $($cloudflareZoneNameservers -join ', '). Cloudflare DNS records are already prepared."
+            } elseif (-not $cloudflareDnsToken) {
+                Add-Status "Next authorization" "AUTH" "Wake authorization needed next: verify Cloudflare DNS records with a DNS-read token or dashboard, then set Squarespace nameservers to $($cloudflareZoneNameservers -join ', ')."
             } else {
                 Add-Status "Next authorization" "AUTH" "Wake authorization needed next: $dnsApplyGuidance, then set Squarespace nameservers to $($cloudflareZoneNameservers -join ', ')."
             }
