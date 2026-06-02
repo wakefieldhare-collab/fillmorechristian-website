@@ -17,7 +17,8 @@
     "verify:domain-transfer": "powershell -ExecutionPolicy Bypass -File scripts/test-domain-transfer-readiness.ps1",
     "verify:r2-public-audio": "powershell -ExecutionPolicy Bypass -File scripts/test-r2-public-audio.ps1",
     "verify:r2-pages-audio": "powershell -ExecutionPolicy Bypass -File scripts/test-r2-public-audio.ps1 -BaseUrlOverride https://fillmorechristian-website.pages.dev/media",
-    "verify:cancel-thechurchco": "powershell -ExecutionPolicy Bypass -File scripts/test-thechurchco-cancellation-readiness.ps1"
+    "verify:cancel-thechurchco": "powershell -ExecutionPolicy Bypass -File scripts/test-thechurchco-cancellation-readiness.ps1",
+    "verify:post-cancellation": "powershell -ExecutionPolicy Bypass -File scripts/verify-post-cancellation.ps1"
   },
   "devDependencies": {}
 }

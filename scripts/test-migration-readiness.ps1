@@ -828,6 +828,7 @@ if ((Test-Path -LiteralPath $statusScriptPath) -and (Test-Path -LiteralPath $dns
 $cancellationScriptPath = Join-Path $root "scripts\test-thechurchco-cancellation-readiness.ps1"
 $domainTransferScriptPath = Join-Path $root "scripts\test-domain-transfer-readiness.ps1"
 $productionCutoverScriptPath = Join-Path $root "scripts\verify-production-cutover.ps1"
+$postCancellationScriptPath = Join-Path $root "scripts\verify-post-cancellation.ps1"
 $audioMigrationScriptPath = Join-Path $root "scripts\migrate-cloudflare-audio.ps1"
 $audioUploadScriptPath = Join-Path $root "scripts\upload-podcast-audio-to-r2.ps1"
 $audioUploadVerifierScriptPath = Join-Path $root "scripts\test-r2-audio-upload.ps1"
@@ -901,6 +902,22 @@ if (Test-Path -LiteralPath $cancellationScriptPath) {
     }
 } else {
     Add-Check "TheChurchCo cancellation gate" "FAIL" "scripts\test-thechurchco-cancellation-readiness.ps1 is missing"
+}
+
+if ((Test-Path -LiteralPath $postCancellationScriptPath) -and (Test-Path -LiteralPath $packageJsonPath)) {
+    $postCancellationScriptText = Get-Content -Raw -LiteralPath $postCancellationScriptPath
+    $packageJsonText = Get-Content -Raw -LiteralPath $packageJsonPath
+    if ($postCancellationScriptText -match "verify-production-cutover\.ps1" -and
+        $postCancellationScriptText -match "VerifyAllPodcastMedia" -and
+        $postCancellationScriptText -match "Post-cancellation verification passed" -and
+        $postCancellationScriptText -match "Keep Squarespace auto-renew enabled" -and
+        $packageJsonText -match '"verify:post-cancellation"') {
+        Add-Check "Post-cancellation gate" "OK" "Post-cancellation verifier reruns the full-media production receipt and preserves the registrar auto-renew warning"
+    } else {
+        Add-Check "Post-cancellation gate" "FAIL" "Post-cancellation verifier is missing the full-media production gate, success message, auto-renew warning, or npm alias"
+    }
+} else {
+    Add-Check "Post-cancellation gate" "FAIL" "scripts\verify-post-cancellation.ps1 or package.json is missing"
 }
 
 if ((Test-Path -LiteralPath $audioMigrationScriptPath) -and (Test-Path -LiteralPath $publicAudioScriptPath) -and (Test-Path -LiteralPath $cutoverScriptPath)) {

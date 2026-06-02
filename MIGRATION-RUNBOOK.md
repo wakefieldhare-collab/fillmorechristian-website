@@ -124,6 +124,14 @@ npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia
 
 This runs the Cloudflare cutover verifier, the domain-transfer safety gate, the recursive DNS cache-clear gate, and the TheChurchCo cancellation gate in order. It verifies both `https://www.fillmorechristian.org/` and `https://fillmorechristian.org/`, writes a timestamped non-secret Markdown and JSON report under `exports/cutover/`, stops on the first failed gate, and explicitly says not to cancel TheChurchCo or disable Squarespace auto-renew until the report passes.
 
+After TheChurchCo website/podcast hosting is canceled, or after the Cloudflare Registrar transfer is started, rerun the named post-cancellation gate:
+
+```powershell
+npm run verify:post-cancellation
+```
+
+This reruns the full-media production verifier and preserves the reminder to keep Squarespace auto-renew enabled until Cloudflare Registrar shows the transfer in progress or complete.
+
 The migration command refuses the work GitHub owner, requires `https://` audio URLs, verifies Cloudflare authentication, can create the R2 bucket, uploads and hash-verifies all 70 audio objects, rewrites all three RSS feeds to `https://www.fillmorechristian.org/media`, regenerates episode pages/sermon archive/homepage latest-sermon links, builds `dist`, and runs strict local readiness plus the Cloudflare Pages local preflight. Use `npm run complete:cloudflare-cutover` and `npm run verify:cancel-thechurchco` before cancellation for a full production media sweep.
 
 After rewriting enclosure URLs, re-run local verification and push the RSS changes before canceling TheChurchCo.
@@ -138,6 +146,7 @@ R2 preparation status on 2026-06-02:
 - `scripts/test-r2-public-audio.ps1` verifies the public `www.fillmorechristian.org/media/...` URLs from the manifest after DNS cutover.
 - The remaining registrar blocker is the Squarespace transfer authorization code. In Squarespace Domains, click `Request transfer code` if needed, check `church@fillmorechristian.org`, then enter the code in Cloudflare Dashboard > Domains > Transfers to start the Cloudflare Registrar transfer.
 - The cancellation blocker is cleared: `fillmorechristian.org-production-cutover-20260602-063733.md` passed with all podcast media verified, recursive DNS cache clear, and TheChurchCo cancellation readiness green.
+- After canceling TheChurchCo website/podcast hosting, run `npm run verify:post-cancellation` and keep the generated receipt with the cutover records.
 
 Current registrar checklist:
 

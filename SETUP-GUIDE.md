@@ -236,6 +236,14 @@ npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia
 
 It runs the Cloudflare cutover, Cloudflare Registrar safety, recursive DNS cache-clear, and TheChurchCo cancellation checks in sequence, verifies both the `www` and apex production URLs, then writes a non-secret report under `exports/cutover/`.
 
+After TheChurchCo website/podcast hosting is canceled, or after the Cloudflare Registrar transfer is started, run:
+
+```powershell
+npm run verify:post-cancellation
+```
+
+That command reruns the full-media production verifier and keeps the Squarespace auto-renew warning visible until Cloudflare Registrar shows the transfer in progress or complete.
+
 As of June 1, 2026, preserve at least the Mailgun MX records and these TXT/CNAME records:
 
 - `v=spf1 include:mailgun.org ~all`
@@ -246,7 +254,7 @@ As of June 1, 2026, preserve at least the Mailgun MX records and these TXT/CNAME
 - `4jb3ni34htue` CNAME -> `gv-xvljhthdwk5dxh.dv.googlehosted.com`
 - `334xc4sml6cf` CNAME -> `gv-ujhethalu73pqt.dv.googlehosted.com`
 
-Do not disable Squarespace auto-renew until the Cloudflare Registrar transfer is visibly underway or complete. TheChurchCo website/podcast hosting is cancellation-ready because `npm run verify:dns-cache-clear`, `npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia`, and `npm run verify:cancel-thechurchco -- -VerifyAllPodcastMedia` have passed; preserve the latest production receipt before canceling.
+Do not disable Squarespace auto-renew until the Cloudflare Registrar transfer is visibly underway or complete. TheChurchCo website/podcast hosting is cancellation-ready because `npm run verify:dns-cache-clear`, `npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia`, and `npm run verify:cancel-thechurchco -- -VerifyAllPodcastMedia` have passed; preserve the latest production receipt before canceling, then run `npm run verify:post-cancellation`.
 
 ### Step 7: Maintain Church Logo
 
