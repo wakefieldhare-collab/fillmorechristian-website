@@ -198,6 +198,8 @@ $podcastPage = Invoke-Http -Url (Join-Url $ProductionBaseUrl "/podcast.html")
 if ($podcastPage) {
     if ($podcastPage.StatusCode -eq 200 -and
         $podcastPage.Content -match 'id="podcast-feed-url"' -and
+        $podcastPage.Content -match 'id="podcast-latest-list"' -and
+        $podcastPage.Content -match 'js/podcast\.js\?v=' -and
         $podcastPage.Content -match 'class="podcast-subscription-grid"' -and
         $podcastPage.Content -match 'data-subscribe-option="apple"' -and
         $podcastPage.Content -match 'data-subscribe-option="spotify"' -and
@@ -205,9 +207,9 @@ if ($podcastPage) {
         $podcastPage.Content -match 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -and
         $podcastPage.Content -match '"@type": "PodcastSeries"' -and
         $podcastPage.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
-        Add-Check "Production podcast page" "OK" "Owned podcast subscription page is live with app choices"
+        Add-Check "Production podcast page" "OK" "Owned podcast subscription page is live with app choices and recent-message feed enhancement"
     } else {
-        Add-Check "Production podcast page" "FAIL" "Podcast page is missing app choices, feed copy controls, structured data, or still references TheChurchCo"
+        Add-Check "Production podcast page" "FAIL" "Podcast page is missing app choices, feed copy controls, recent-message feed enhancement, structured data, or still references TheChurchCo"
     }
 }
 

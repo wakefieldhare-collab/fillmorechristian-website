@@ -238,6 +238,7 @@ $requiredFiles = @(
     "site.webmanifest",
     "css\style.css",
     "js\main.js",
+    "js\podcast.js",
     "js\sermons.js",
     "podcast-category\fillmore-christian\feed\podcast",
     "podcast.xml",
@@ -377,6 +378,9 @@ foreach ($relativePath in $publicHtmlPages) {
     if ($relativePath -eq "podcast.html") {
         if ($html -notmatch '<a\s+href="podcast\.html"\s+class="active">Podcast</a>') {
             $metadataFailures.Add("podcast.html missing active podcast navigation link")
+        }
+        if ($html -notmatch 'id="podcast-latest-list"' -or $html -notmatch 'js/podcast\.js\?v=' -or $html -notmatch 'Latest messages') {
+            $metadataFailures.Add("podcast.html missing latest message feed enhancement")
         }
     } elseif ($html -notmatch '<a\s+href="podcast\.html">Podcast</a>') {
         $metadataFailures.Add("$relativePath missing podcast navigation link")
@@ -1350,6 +1354,22 @@ if ($feeds.ContainsKey($feedPaths[0])) {
     }
 }
 
+$podcastScriptPath = Join-Path $root "js\podcast.js"
+if (Test-Path -LiteralPath $podcastScriptPath) {
+    $podcastScript = Get-Content -Raw -LiteralPath $podcastScriptPath
+    if ($podcastScript -match "podcast-latest-list" -and
+        $podcastScript -match "PODCAST_FEED_PATH" -and
+        $podcastScript -match "episode/" -and
+        $podcastScript -match "toPageMediaUrl" -and
+        $podcastScript -notmatch "https?://[^'`"]*thechurchco|ssl\.thechurchco\.com") {
+        Add-Check "Podcast latest messages" "OK" "Podcast page renders recent messages from the owned feed with same-origin media URLs"
+    } else {
+        Add-Check "Podcast latest messages" "FAIL" "js\podcast.js is missing feed loading, episode links, same-origin media handling, or contains old platform references"
+    }
+} else {
+    Add-Check "Podcast latest messages" "FAIL" "js\podcast.js is missing"
+}
+
 $manifestPath = Join-Path $root "exports\thechurchco-podcast\manifest.csv"
 $audioDir = Join-Path $root "exports\thechurchco-podcast\audio"
 $inventoryPath = Join-Path $root "exports\thechurchco-podcast\audio-inventory.csv"
@@ -1701,6 +1721,9 @@ if (-not $SkipRemote) {
 
             if ($path -eq "podcast.html") {
                 if ($response.Content -match 'id="podcast-feed-url"' -and
+                    $response.Content -match 'id="podcast-latest-list"' -and
+                    $response.Content -match 'js/podcast\.js\?v=' -and
+                    $response.Content -match 'Latest messages' -and
                     $response.Content -match 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -and
                     $response.Content -match 'class="podcast-subscription-grid"' -and
                     $response.Content -match 'data-subscribe-option="apple"' -and
@@ -1710,9 +1733,9 @@ if (-not $SkipRemote) {
                     $response.Content -match 'href="contact\.html">Contact Us</a>' -and
                     $response.Content -match '"@type": "PodcastSeries"' -and
                     $response.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
-                    Add-Check "Staging podcast page" "OK" "Owned podcast landing page has app choices, feed copy controls, full footer, and structured data"
+                    Add-Check "Staging podcast page" "OK" "Owned podcast landing page has app choices, feed copy controls, recent-message feed enhancement, full footer, and structured data"
                 } else {
-                    Add-Check "Staging podcast page" "FAIL" "Podcast page is missing app choices, feed copy controls, full footer, structured data, or contains old platform references"
+                    Add-Check "Staging podcast page" "FAIL" "Podcast page is missing app choices, feed copy controls, recent-message feed enhancement, full footer, structured data, or contains old platform references"
                 }
             }
 
