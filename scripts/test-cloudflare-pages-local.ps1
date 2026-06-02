@@ -287,6 +287,7 @@ try {
         $podcastPageContent -notmatch 'data-subscribe-option="apple"' -or
         $podcastPageContent -notmatch 'data-subscribe-option="spotify"' -or
         $podcastPageContent -notmatch 'data-subscribe-option="rss"' -or
+        ([regex]::Matches($podcastPageContent, 'Audio \d+(?:\.\d+)? (?:KB|MB|GB|bytes)')).Count -ne 3 -or
         $podcastPageContent -notmatch '<a\s+href="podcast\.html"\s+class="active">Podcast</a>' -or
         $podcastPageContent -notmatch '<footer\s+class="footer">' -or
         $podcastPageContent -notmatch 'Quick Links' -or
@@ -294,9 +295,9 @@ try {
         $podcastPageContent -notmatch '"@type": "PodcastSeries"' -or
         $sermonsPageContent -match "being moved out of TheChurchCo|during the move|ChurchCo transition|preserved podcast RSS feed path" -or
         $podcastPageContent -match "being moved out of TheChurchCo|during the move|ChurchCo transition|preserved podcast RSS feed path") {
-        throw "Sermons or podcast page is missing the owned podcast subscribe path, app choices, copyable RSS feed URL, full footer, or stable public copy"
+        throw "Sermons or podcast page is missing the owned podcast subscribe path, app choices, latest-message audio sizes, copyable RSS feed URL, full footer, or stable public copy"
     }
-    $checks.Add([pscustomobject]@{ Check = "Podcast subscribe controls"; Status = "OK"; Details = "Published output includes an owned podcast landing page, app choices, full footer, and copyable canonical RSS feed URL" })
+    $checks.Add([pscustomobject]@{ Check = "Podcast subscribe controls"; Status = "OK"; Details = "Published output includes an owned podcast landing page, app choices, latest-message audio sizes, full footer, and copyable canonical RSS feed URL" })
 
     if ($sermonsPageContent -notmatch 'id="sermon-audio-only"' -or $sermonsPageContent -notmatch 'data-has-audio="true"' -or $sermonsPageContent -notmatch 'data-has-audio="false"') {
         throw "Sermons page is missing the audio-only filter or audio availability metadata"

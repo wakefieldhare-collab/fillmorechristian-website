@@ -41,6 +41,17 @@ function Format-Date {
     }
 }
 
+function Format-FileSize {
+    param([string]$BytesText)
+
+    $bytes = [long]0
+    if (-not [long]::TryParse($BytesText, [ref]$bytes) -or $bytes -le 0) { return "" }
+    if ($bytes -ge 1073741824) { return ("{0:N1} GB" -f ($bytes / 1073741824.0)) }
+    if ($bytes -ge 1048576) { return ("{0:N1} MB" -f ($bytes / 1048576.0)) }
+    if ($bytes -ge 1024) { return ("{0:N0} KB" -f ($bytes / 1024.0)) }
+    return "$bytes bytes"
+}
+
 function Get-AudioType {
     param([string]$Url)
     $lower = $Url.ToLowerInvariant()
@@ -97,6 +108,7 @@ function Build-LatestCard {
     $speaker = Clean-Speaker (Get-ElementTextByLocalName $Item "author")
     $audioUrl = if ($Item.enclosure) { [string]$Item.enclosure.url } else { "" }
     $pageAudioUrl = Get-PageAudioUrl $audioUrl
+    $audioSizeLabel = if ($Item.enclosure -and $Item.enclosure.length) { Format-FileSize ([string]$Item.enclosure.length) } else { "" }
     $episodePath = Get-RelativeEpisodePath ([string]$Item.link)
 
     $lines = @(
@@ -109,7 +121,11 @@ function Build-LatestCard {
         $lines += "            <h3>$(HtmlEncode $title)</h3>"
     }
 
-    $lines += "            <p class=`"sermon-meta`">$(HtmlEncode $date) &middot; $(HtmlEncode $speaker)</p>"
+    $metaParts = @("$(HtmlEncode $date)", "$(HtmlEncode $speaker)")
+    if ($audioSizeLabel) {
+        $metaParts += "Audio $(HtmlEncode $audioSizeLabel)"
+    }
+    $lines += "            <p class=`"sermon-meta`">$($metaParts -join ' &middot; ')</p>"
 
     if ($audioUrl) {
         $lines += "            <audio controls preload=`"none`"><source src=`"$(HtmlEncode $pageAudioUrl)`" type=`"$(Get-AudioType $audioUrl)`">Your browser does not support audio playback.</audio>"

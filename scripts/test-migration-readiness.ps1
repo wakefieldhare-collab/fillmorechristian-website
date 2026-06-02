@@ -1490,11 +1490,13 @@ if (Test-Path -LiteralPath $podcastScriptPath) {
         @()
     }
     $latestTitle = if ($latestAudioItem) { [string]$latestAudioItem.title } else { "" }
+    $podcastLatestAudioSizeLabels = ([regex]::Matches($podcastPageText, 'Audio \d+(?:\.\d+)? (?:KB|MB|GB|bytes)')).Count
 
     if ($podcastScript -match "podcast-latest-list" -and
         $podcastScript -match "PODCAST_FEED_PATH" -and
         $podcastScript -match "episode/" -and
         $podcastScript -match "toPageMediaUrl" -and
+        $podcastScript -match "formatPodcastFileSize" -and
         $podcastScript -match "hasStaticLatestCards" -and
         $podcastScript -notmatch "https?://[^'`"]*thechurchco|ssl\.thechurchco\.com" -and
         (Test-Path -LiteralPath $podcastLatestRendererPath) -and
@@ -1512,11 +1514,12 @@ if (Test-Path -LiteralPath $podcastScriptPath) {
         $podcastPageText -match "PODCAST_LATEST_START" -and
         $podcastPageText -match "PODCAST_LATEST_END" -and
         $staticLatestCount -eq 3 -and
+        $podcastLatestAudioSizeLabels -eq 3 -and
         $podcastPageText -match "/media/" -and
         (-not $latestTitle -or $podcastPageText -match [regex]::Escape($latestTitle))) {
-        Add-Check "Podcast latest messages" "OK" "Podcast page has three static latest-message cards plus a guarded one-command refresh path"
+        Add-Check "Podcast latest messages" "OK" "Podcast page has three static latest-message cards with audio-size metadata plus a guarded one-command refresh path"
     } else {
-        Add-Check "Podcast latest messages" "FAIL" "Podcast latest messages are missing static feed cards, renderer wiring, one-command refresh behavior, same-origin media handling, or contain old platform references"
+        Add-Check "Podcast latest messages" "FAIL" "Podcast latest messages are missing static feed cards, audio-size metadata, renderer wiring, one-command refresh behavior, same-origin media handling, or contain old platform references"
     }
 } else {
     Add-Check "Podcast latest messages" "FAIL" "js\podcast.js is missing"
@@ -1875,6 +1878,7 @@ if (-not $SkipRemote) {
                 if ($response.Content -match 'id="podcast-feed-url"' -and
                     $response.Content -match 'id="podcast-latest-list"' -and
                     ([regex]::Matches($response.Content, 'data-static-podcast-latest="true"')).Count -eq 3 -and
+                    ([regex]::Matches($response.Content, 'Audio \d+(?:\.\d+)? (?:KB|MB|GB|bytes)')).Count -eq 3 -and
                     $response.Content -match 'js/podcast\.js\?v=' -and
                     $response.Content -match 'Latest messages' -and
                     $response.Content -match 'Open Message' -and
@@ -1888,9 +1892,9 @@ if (-not $SkipRemote) {
                     $response.Content -match 'href="contact\.html">Contact Us</a>' -and
                     $response.Content -match '"@type": "PodcastSeries"' -and
                     $response.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
-                    Add-Check "Staging podcast page" "OK" "Owned podcast landing page has app choices, feed copy controls, recent-message feed enhancement, full footer, and structured data"
+                    Add-Check "Staging podcast page" "OK" "Owned podcast landing page has app choices, feed copy controls, recent-message feed enhancement with audio sizes, full footer, and structured data"
                 } else {
-                    Add-Check "Staging podcast page" "FAIL" "Podcast page is missing app choices, feed copy controls, recent-message feed enhancement, full footer, structured data, or contains old platform references"
+                    Add-Check "Staging podcast page" "FAIL" "Podcast page is missing app choices, feed copy controls, recent-message feed enhancement/audio sizes, full footer, structured data, or contains old platform references"
                 }
             }
 

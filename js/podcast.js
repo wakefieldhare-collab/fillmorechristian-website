@@ -39,6 +39,7 @@ function parsePodcastItem(item) {
   const rawDate = getPodcastElementText(item, 'pubDate');
   const audioUrl = enclosure ? enclosure.getAttribute('url') || '' : '';
   const pageAudioUrl = toPageMediaUrl(audioUrl);
+  const audioSizeLabel = enclosure ? formatPodcastFileSize(enclosure.getAttribute('length')) : '';
 
   return {
     title: cleanPodcastText(getPodcastElementText(item, 'title')),
@@ -46,13 +47,14 @@ function parsePodcastItem(item) {
     speaker: cleanPodcastSpeaker(getPodcastElementText(item, 'itunes\\:author') || getPodcastElementText(item, 'author')),
     episodeHref: getEpisodeHref(getPodcastElementText(item, 'link')),
     audioUrl: pageAudioUrl,
-    audioType: getPodcastAudioType(pageAudioUrl)
+    audioType: getPodcastAudioType(pageAudioUrl),
+    audioSizeLabel
   };
 }
 
 function renderPodcastItem(item) {
   const title = escapePodcastHtml(item.title || 'Untitled message');
-  const meta = [item.date, item.speaker].filter(Boolean).map(escapePodcastHtml).join(' &middot; ');
+  const meta = [item.date, item.speaker, item.audioSizeLabel ? 'Audio ' + item.audioSizeLabel : ''].filter(Boolean).map(escapePodcastHtml).join(' &middot; ');
   const titleMarkup = item.episodeHref
     ? '<h3><a href="' + escapePodcastHtml(item.episodeHref) + '">' + title + '</a></h3>'
     : '<h3>' + title + '</h3>';
@@ -134,6 +136,15 @@ function getPodcastAudioType(url) {
   if (lower.endsWith('.m4a')) return 'audio/mp4';
   if (lower.endsWith('.wav')) return 'audio/wav';
   return 'audio/mpeg';
+}
+
+function formatPodcastFileSize(bytesText) {
+  const bytes = Number(bytesText);
+  if (!Number.isFinite(bytes) || bytes <= 0) return '';
+  if (bytes >= 1073741824) return (bytes / 1073741824).toFixed(1) + ' GB';
+  if (bytes >= 1048576) return (bytes / 1048576).toFixed(1) + ' MB';
+  if (bytes >= 1024) return Math.round(bytes / 1024) + ' KB';
+  return String(bytes) + ' bytes';
 }
 
 function cleanPodcastText(str) {

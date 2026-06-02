@@ -228,10 +228,12 @@ if ($sermons) {
 $podcastPage = Invoke-Http -Url (Join-Url $ProductionBaseUrl "/podcast.html")
 if ($podcastPage) {
     $staticLatestCount = ([regex]::Matches($podcastPage.Content, 'data-static-podcast-latest="true"')).Count
+    $latestAudioSizeCount = ([regex]::Matches($podcastPage.Content, 'Audio \d+(?:\.\d+)? (?:KB|MB|GB|bytes)')).Count
     if ($podcastPage.StatusCode -eq 200 -and
         $podcastPage.Content -match 'id="podcast-feed-url"' -and
         $podcastPage.Content -match 'id="podcast-latest-list"' -and
         $staticLatestCount -eq 3 -and
+        $latestAudioSizeCount -eq 3 -and
         $podcastPage.Content -match '/media/' -and
         $podcastPage.Content -match 'Open Message' -and
         $podcastPage.Content -match 'js/podcast\.js\?v=' -and
@@ -242,9 +244,9 @@ if ($podcastPage) {
         $podcastPage.Content -match 'data-copy-value="https://www\.fillmorechristian\.org/podcast-category/fillmore-christian/feed/podcast"' -and
         $podcastPage.Content -match '"@type": "PodcastSeries"' -and
         $podcastPage.Content -notmatch "thechurchco|ssl\.thechurchco\.com") {
-        Add-Check "Production podcast page" "OK" "Owned podcast subscription page is live with app choices and recent-message feed enhancement"
+        Add-Check "Production podcast page" "OK" "Owned podcast subscription page is live with app choices and recent-message feed enhancement with audio sizes"
     } else {
-        Add-Check "Production podcast page" "FAIL" "Podcast page is missing app choices, feed copy controls, recent-message feed enhancement, structured data, or still references TheChurchCo"
+        Add-Check "Production podcast page" "FAIL" "Podcast page is missing app choices, feed copy controls, recent-message feed enhancement/audio sizes, structured data, or still references TheChurchCo"
     }
 }
 
