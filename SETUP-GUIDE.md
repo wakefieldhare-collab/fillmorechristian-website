@@ -182,7 +182,7 @@ Domain registrar: Squarespace Domains, formerly Google Domains.
 - Login: https://domains.squarespace.com
 - Domain: `fillmorechristian.org`
 - Renewal notice: auto-renews June 15, 2026 for $15.00; disable by June 14 only if transfer/cutover is safe.
-- Current blocker: Squarespace has sent the transfer authorization code to the owner contact. Enter that code in Cloudflare Dashboard > Domains > Transfers to start the Cloudflare Registrar transfer. Keep Squarespace auto-renew enabled until Cloudflare shows the transfer in progress or complete.
+- Current blocker: Squarespace sends the transfer authorization code to the registrant contact, `church@fillmorechristian.org`. In Squarespace Domains, click `Request transfer code` if needed, check that inbox, then enter the code in Cloudflare Dashboard > Domains > Transfers to start the Cloudflare Registrar transfer. Keep Squarespace auto-renew enabled until Cloudflare shows the transfer in progress or complete.
 
 DNS and registrar state:
 

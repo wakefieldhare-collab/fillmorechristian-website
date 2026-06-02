@@ -26,7 +26,7 @@ Last updated: 2026-06-02
 3. Add `fillmorechristian.org` to Cloudflare DNS and import/verify existing DNS records. Done.
 4. Point Squarespace nameservers to Cloudflare nameservers so Cloudflare DNS becomes active. Done.
 5. Verify `www`, apex, email MX, contact form, and the legacy podcast feed URL. Done.
-6. Transfer registrar from Squarespace to Cloudflare Registrar. Waiting for the Squarespace transfer authorization code that was sent to the owner contact.
+6. Transfer registrar from Squarespace to Cloudflare Registrar. Waiting for the Squarespace transfer authorization code sent to the registrant contact, `church@fillmorechristian.org`.
 7. TheChurchCo website/podcast hosting is cancellation-ready after the 2026-06-02 full-media production receipt. Keep the receipt with the migration records.
 
 ## Podcast Export
@@ -136,7 +136,7 @@ R2 preparation status on 2026-06-02:
 - `scripts/test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -VerifyHashes` downloaded and SHA-256 verified all 70 R2 objects after upload.
 - `npm run verify:r2-pages-audio` verifies the same objects through `https://fillmorechristian-website.pages.dev/media/...` before production DNS cutover.
 - `scripts/test-r2-public-audio.ps1` verifies the public `www.fillmorechristian.org/media/...` URLs from the manifest after DNS cutover.
-- The remaining registrar blocker is the Squarespace transfer authorization code. Enter it in Cloudflare Dashboard > Domains > Transfers to start the Cloudflare Registrar transfer.
+- The remaining registrar blocker is the Squarespace transfer authorization code. In Squarespace Domains, click `Request transfer code` if needed, check `church@fillmorechristian.org`, then enter the code in Cloudflare Dashboard > Domains > Transfers to start the Cloudflare Registrar transfer.
 - The cancellation blocker is cleared: `fillmorechristian.org-production-cutover-20260602-063733.md` passed with all podcast media verified, recursive DNS cache clear, and TheChurchCo cancellation readiness green.
 
 Current registrar checklist:
