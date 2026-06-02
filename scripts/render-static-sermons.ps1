@@ -73,6 +73,17 @@ function Format-SortTimestamp {
     }
 }
 
+function Format-FileSize {
+    param([string]$BytesText)
+
+    $bytes = [long]0
+    if (-not [long]::TryParse($BytesText, [ref]$bytes) -or $bytes -le 0) { return "" }
+    if ($bytes -ge 1073741824) { return ("{0:N1} GB" -f ($bytes / 1073741824.0)) }
+    if ($bytes -ge 1048576) { return ("{0:N1} MB" -f ($bytes / 1048576.0)) }
+    if ($bytes -ge 1024) { return ("{0:N0} KB" -f ($bytes / 1024.0)) }
+    return "$bytes bytes"
+}
+
 function Get-AudioType {
     param([string]$Url)
     $lower = $Url.ToLowerInvariant()
@@ -166,9 +177,10 @@ foreach ($item in $items) {
     $enclosure = $item.enclosure
     $audioUrl = if ($enclosure) { [string]$enclosure.url } else { "" }
     $pageAudioUrl = Get-PageAudioUrl $audioUrl
+    $audioSizeLabel = if ($enclosure -and $enclosure.length) { Format-FileSize ([string]$enclosure.length) } else { "" }
     $episodePath = Get-RelativeEpisodePath ([string]$item.link)
     $episodeCanonicalUrl = Get-CanonicalEpisodeUrl $episodePath
-    $search = "$title $date $speaker $description"
+    $search = "$title $date $speaker $description $audioSizeLabel"
 
     $cardClass = if ($audioUrl) { "sermon-item" } else { "sermon-item no-audio" }
     $hasAudio = if ($audioUrl) { "true" } else { "false" }
@@ -179,7 +191,11 @@ foreach ($item in $items) {
     } else {
         $html += "          <h3>$(HtmlEncode $title)</h3>"
     }
-    $html += "          <div class=`"sermon-meta`"><span>$(HtmlEncode $date)</span> &middot; <span>$(HtmlEncode $speaker)</span></div>"
+    $metaParts = @("<span>$(HtmlEncode $date)</span>", "<span>$(HtmlEncode $speaker)</span>")
+    if ($audioSizeLabel) {
+        $metaParts += "<span class=`"sermon-audio-size`">Audio $(HtmlEncode $audioSizeLabel)</span>"
+    }
+    $html += "          <div class=`"sermon-meta`">$($metaParts -join ' &middot; ')</div>"
     if ($description) {
         $html += "          <p class=`"sermon-description`">$(HtmlEncode $description)</p>"
     }

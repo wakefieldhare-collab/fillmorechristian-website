@@ -1147,6 +1147,13 @@ if (Test-Path -LiteralPath $sermonsPath) {
         Add-Check "Sermon audio downloads" "FAIL" "$downloadLinks downloadable audio link(s), expected $expectedDownloadLinks from the podcast feed"
     }
 
+    $audioSizeLabels = ([regex]::Matches($sermonsHtml, 'class="sermon-audio-size"')).Count
+    if ($expectedDownloadLinks -gt 0 -and $audioSizeLabels -eq $expectedDownloadLinks -and $sermonsScriptText -match "formatFileSize") {
+        Add-Check "Sermon audio size labels" "OK" "$audioSizeLabels archive sermon card(s) expose feed-derived audio download sizes"
+    } else {
+        Add-Check "Sermon audio size labels" "FAIL" "$audioSizeLabels audio size label(s), expected $expectedDownloadLinks from the podcast feed"
+    }
+
     $sermonCopyLinks = ([regex]::Matches($sermonsHtml, 'class="copy-button sermon-copy-link"')).Count
     $expectedSermonCopyLinks = 0
     if ($feeds.ContainsKey($feedPaths[0])) {
@@ -1252,7 +1259,12 @@ if ($feeds.ContainsKey($feedPaths[0])) {
     $missingEpisodeStructuredData = New-Object System.Collections.Generic.List[string]
     $missingEpisodeBrandAssets = New-Object System.Collections.Generic.List[string]
     $missingEpisodeCopyLinks = New-Object System.Collections.Generic.List[string]
-    foreach ($slug in $uniqueEpisodeSlugs) {
+    $missingEpisodeAudioSizes = New-Object System.Collections.Generic.List[string]
+    foreach ($item in $feedItems) {
+        $slug = Get-EpisodeSlug ([string]$item.link)
+        if (-not $slug) {
+            continue
+        }
         $episodePagePath = Join-Path $root "episode\$slug\index.html"
         if (-not (Test-Path -LiteralPath $episodePagePath)) {
             continue
@@ -1272,6 +1284,9 @@ if ($feeds.ContainsKey($feedPaths[0])) {
         if ($episodeHtml -notmatch 'id="episode-link-url"' -or $episodeHtml -notmatch [regex]::Escape('data-copy-value="' + $expectedEpisodeUrl + '"') -or $episodeHtml -notmatch 'id="episode-copy-status"') {
             $missingEpisodeCopyLinks.Add($slug)
         }
+        if ($item.enclosure -and [string]$item.enclosure.url -and $episodeHtml -notmatch 'class="sermon-audio-size"') {
+            $missingEpisodeAudioSizes.Add($slug)
+        }
     }
     if ($missingEpisodeNavigation.Count -gt 0) {
         $episodeIssues.Add("episode navigation missing from: $($missingEpisodeNavigation -join ', ')")
@@ -1284,6 +1299,9 @@ if ($feeds.ContainsKey($feedPaths[0])) {
     }
     if ($missingEpisodeCopyLinks.Count -gt 0) {
         $episodeIssues.Add("episode copyable canonical links missing from: $($missingEpisodeCopyLinks -join ', ')")
+    }
+    if ($missingEpisodeAudioSizes.Count -gt 0) {
+        $episodeIssues.Add("episode audio size labels missing from: $($missingEpisodeAudioSizes -join ', ')")
     }
 
     $redirectsPath = Join-Path $root "_redirects"

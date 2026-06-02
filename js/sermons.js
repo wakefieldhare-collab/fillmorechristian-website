@@ -215,6 +215,7 @@ async function loadFromRSS(container) {
       const title = cleanText(getElementText(item, 'title'));
       const description = cleanDescription(cleanText(stripHtml(getElementText(item, 'description') || getElementText(item, 'itunes\\:summary') || '')));
       const audioUrl = enclosure ? enclosure.getAttribute('url') || '' : '';
+      const audioSizeLabel = enclosure ? formatFileSize(enclosure.getAttribute('length')) : '';
       const speaker = cleanSpeaker(cleanText(getItunesAuthor(item)));
 
       return {
@@ -226,8 +227,9 @@ async function loadFromRSS(container) {
         linkUrl: getEpisodeHref(cleanText(getElementText(item, 'link'))),
         audioUrl,
         audioType: getAudioType(audioUrl),
+        audioSizeLabel,
         description,
-        searchText: [title, description, rawDate, speaker].join(' ').toLowerCase()
+        searchText: [title, description, rawDate, speaker, audioSizeLabel].join(' ').toLowerCase()
       };
     });
 
@@ -278,6 +280,9 @@ function renderSermons(container, sermons, sortMode) {
     html += '<span>' + escapeHtml(sermon.date || sermon.rawDate || '') + '</span>';
     if (sermon.speaker) {
       html += ' &middot; <span>' + escapeHtml(sermon.speaker) + '</span>';
+    }
+    if (sermon.audioSizeLabel) {
+      html += ' &middot; <span class="sermon-audio-size">Audio ' + escapeHtml(sermon.audioSizeLabel) + '</span>';
     }
     html += '</div>';
 
@@ -476,6 +481,15 @@ function getAudioType(url) {
   if (lower.endsWith('.m4a')) return 'audio/mp4';
   if (lower.endsWith('.wav')) return 'audio/wav';
   return 'audio/mpeg';
+}
+
+function formatFileSize(bytesText) {
+  const bytes = Number(bytesText);
+  if (!Number.isFinite(bytes) || bytes <= 0) return '';
+  if (bytes >= 1073741824) return (bytes / 1073741824).toFixed(1) + ' GB';
+  if (bytes >= 1048576) return (bytes / 1048576).toFixed(1) + ' MB';
+  if (bytes >= 1024) return Math.round(bytes / 1024) + ' KB';
+  return String(bytes) + ' bytes';
 }
 
 function cleanText(str) {

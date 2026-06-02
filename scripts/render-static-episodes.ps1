@@ -62,6 +62,17 @@ function Format-Date {
     }
 }
 
+function Format-FileSize {
+    param([string]$BytesText)
+
+    $bytes = [long]0
+    if (-not [long]::TryParse($BytesText, [ref]$bytes) -or $bytes -le 0) { return "" }
+    if ($bytes -ge 1073741824) { return ("{0:N1} GB" -f ($bytes / 1073741824.0)) }
+    if ($bytes -ge 1048576) { return ("{0:N1} MB" -f ($bytes / 1048576.0)) }
+    if ($bytes -ge 1024) { return ("{0:N0} KB" -f ($bytes / 1024.0)) }
+    return "$bytes bytes"
+}
+
 function Get-AudioType {
     param([string]$Url)
     $lower = $Url.ToLowerInvariant()
@@ -406,6 +417,7 @@ for ($episodeIndex = 0; $episodeIndex -lt $items.Count; $episodeIndex++) {
     $audioUrl = if ($enclosure) { [string]$enclosure.url } else { "" }
     $pageAudioUrl = Get-PageAudioUrl $audioUrl
     $audioLength = if ($enclosure -and $enclosure.length) { [string]$enclosure.length } else { "" }
+    $audioSizeLabel = if ($audioLength) { Format-FileSize $audioLength } else { "" }
     $audioType = if ($audioUrl) { Get-AudioType $audioUrl } else { "" }
     $canonicalUrl = "https://www.fillmorechristian.org/episode/$slug/"
     $canonicalPath = "/episode/$slug/"
@@ -440,6 +452,11 @@ for ($episodeIndex = 0; $episodeIndex -lt $items.Count; $episodeIndex++) {
     } else {
         ""
     }
+    $episodeMetaParts = @("<span>$(HtmlEncode $date)</span>", "<span>$(HtmlEncode $speaker)</span>")
+    if ($audioSizeLabel) {
+        $episodeMetaParts += "<span class=""sermon-audio-size"">Audio $(HtmlEncode $audioSizeLabel)</span>"
+    }
+    $episodeMetaMarkup = '<div class="sermon-meta">' + ($episodeMetaParts -join ' &middot; ') + '</div>'
 
     $newerEpisode = if ($episodeIndex -gt 0) { $episodeSummaries[$episodeIndex - 1] } else { $null }
     $olderEpisode = if ($episodeIndex -lt ($episodeSummaries.Count - 1)) { $episodeSummaries[$episodeIndex + 1] } else { $null }
@@ -565,7 +582,7 @@ $olderNavMarkup
           <div class="episode-content">
             <p class="eyebrow">Listen</p>
             <h2>$(HtmlEncode $title)</h2>
-            <div class="sermon-meta"><span>$(HtmlEncode $date)</span> &middot; <span>$(HtmlEncode $speaker)</span></div>
+$episodeMetaMarkup
 $descriptionMarkup
 $audioMarkup
             <div class="episode-actions">
