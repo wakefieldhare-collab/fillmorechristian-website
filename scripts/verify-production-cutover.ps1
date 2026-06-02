@@ -109,14 +109,39 @@ function Invoke-VerificationStep {
     )
 
     $startedAt = Get-Date
-    $previousErrorActionPreference = $ErrorActionPreference
+    $stdoutPath = [System.IO.Path]::GetTempFileName()
+    $stderrPath = [System.IO.Path]::GetTempFileName()
     try {
-        $ErrorActionPreference = "Continue"
-        $encodedCommand = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($CommandText))
-        $output = @(& powershell -NoProfile -ExecutionPolicy Bypass -EncodedCommand $encodedCommand *>&1 | ForEach-Object { [string]$_ })
-        $exitCode = $LASTEXITCODE
+        $wrappedCommand = @"
+`$ProgressPreference = 'SilentlyContinue'
+try {
+    & { $CommandText } *>&1
+    if (`$LASTEXITCODE -is [int] -and `$LASTEXITCODE -ne 0) {
+        exit `$LASTEXITCODE
+    }
+    exit 0
+} catch {
+    `$_ | Out-String
+    exit 1
+}
+"@
+        $encodedCommand = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($wrappedCommand))
+        $process = Start-Process -FilePath "powershell" -ArgumentList @("-NoProfile", "-NonInteractive", "-OutputFormat", "Text", "-ExecutionPolicy", "Bypass", "-EncodedCommand", $encodedCommand) -NoNewWindow -Wait -PassThru -RedirectStandardOutput $stdoutPath -RedirectStandardError $stderrPath
+        $output = @()
+        if (Test-Path -LiteralPath $stdoutPath) {
+            $output += @(Get-Content -LiteralPath $stdoutPath -ErrorAction SilentlyContinue)
+        }
+        if (Test-Path -LiteralPath $stderrPath) {
+            $stderrOutput = @(Get-Content -LiteralPath $stderrPath -ErrorAction SilentlyContinue)
+            if ($stderrOutput.Count -gt 0) {
+                $output += @("--- STDERR ---")
+                $output += $stderrOutput
+            }
+        }
+        $exitCode = $process.ExitCode
     } finally {
-        $ErrorActionPreference = $previousErrorActionPreference
+        Remove-Item -LiteralPath $stdoutPath -Force -ErrorAction SilentlyContinue
+        Remove-Item -LiteralPath $stderrPath -Force -ErrorAction SilentlyContinue
     }
     $finishedAt = Get-Date
 
