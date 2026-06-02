@@ -113,7 +113,7 @@ function Invoke-VerificationStep {
     try {
         $ErrorActionPreference = "Continue"
         $encodedCommand = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($CommandText))
-        $output = @(& powershell -NoProfile -ExecutionPolicy Bypass -EncodedCommand $encodedCommand 2>&1 | ForEach-Object { [string]$_ })
+        $output = @(& powershell -NoProfile -ExecutionPolicy Bypass -EncodedCommand $encodedCommand *>&1 | ForEach-Object { [string]$_ })
         $exitCode = $LASTEXITCODE
     } finally {
         $ErrorActionPreference = $previousErrorActionPreference
