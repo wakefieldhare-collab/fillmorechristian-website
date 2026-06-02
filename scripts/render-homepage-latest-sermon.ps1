@@ -53,6 +53,17 @@ function Format-Date {
     }
 }
 
+function Format-FileSize {
+    param([string]$BytesText)
+
+    $bytes = [long]0
+    if (-not [long]::TryParse($BytesText, [ref]$bytes) -or $bytes -le 0) { return "" }
+    if ($bytes -ge 1073741824) { return ("{0:N1} GB" -f ($bytes / 1073741824.0)) }
+    if ($bytes -ge 1048576) { return ("{0:N1} MB" -f ($bytes / 1048576.0)) }
+    if ($bytes -ge 1024) { return ("{0:N0} KB" -f ($bytes / 1024.0)) }
+    return "$bytes bytes"
+}
+
 function Get-AudioType {
     param([string]$Url)
     $lower = $Url.ToLowerInvariant()
@@ -118,6 +129,7 @@ if ($description.Length -gt 170) {
 
 $audioUrl = [string]$latest.enclosure.url
 $pageAudioUrl = Get-PageAudioUrl $audioUrl
+$audioSizeLabel = if ($latest.enclosure.length) { Format-FileSize ([string]$latest.enclosure.length) } else { "" }
 $episodePath = Get-RelativeEpisodePath ([string]$latest.link)
 if (-not $episodePath) {
     $episodePath = "sermons.html"
@@ -129,11 +141,16 @@ $descriptionMarkup = if ($description) {
     ""
 }
 
+$metaParts = @("$(HtmlEncode $date)", "$(HtmlEncode $speaker)")
+if ($audioSizeLabel) {
+    $metaParts += "Audio $(HtmlEncode $audioSizeLabel)"
+}
+
 $replacementLines = @(
     "          <!-- LATEST_SERMON_START -->",
     "          <p class=`"latest-sermon-kicker`">Latest message</p>",
     "          <h3>$(HtmlEncode $title)</h3>",
-    "          <p class=`"latest-sermon-meta`">$(HtmlEncode $date) &middot; $(HtmlEncode $speaker)</p>"
+    "          <p class=`"latest-sermon-meta`">$($metaParts -join ' &middot; ')</p>"
 )
 
 if ($descriptionMarkup) {

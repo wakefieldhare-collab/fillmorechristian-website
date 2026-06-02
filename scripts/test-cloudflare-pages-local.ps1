@@ -249,6 +249,14 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Homepage visitor guide"; Status = "OK"; Details = "Published output includes first-visit guidance and visitor actions" })
 
+    if ($homeResponse.Content -notmatch 'id="latest-sermon"' -or
+        $homeResponse.Content -notmatch 'class="latest-sermon-meta"[^>]*>[^<]*Audio \d+(?:\.\d+)? (?:KB|MB|GB|bytes)' -or
+        $homeResponse.Content -notmatch "Download Audio" -or
+        $homeResponse.Content -notmatch '<a\s+href="podcast\.html"\s+class="btn btn-outline">Subscribe to Podcast</a>') {
+        throw "Home page is missing the latest sermon block, audio-size metadata, download link, or podcast subscription CTA"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Homepage latest sermon"; Status = "OK"; Details = "Published output includes latest sermon audio with download size and podcast subscription CTA" })
+
     $legacyQuery = Invoke-NoRedirect -Url "$baseUrl/?post_type=podcasts&p=603"
     Assert-Status -Response $legacyQuery -Expected @(301) -Name "Legacy podcast query redirect"
     if (-not $legacyQuery.Location -or $legacyQuery.Location.ToString() -ne "$baseUrl/episode/be-ready-luke-12/") {
