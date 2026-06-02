@@ -100,9 +100,10 @@ The real upload and R2 hash verification were completed on June 1, 2026:
 .\scripts\test-r2-audio-upload.ps1 -Bucket fillmore-christian-sermons -All -VerifyHashes
 ```
 
-The Cloudflare Pages project binds the R2 bucket as `SERMON_AUDIO` and serves audio at `/media/<object-key>`. After DNS cutover makes `www.fillmorechristian.org` point to Cloudflare Pages, run the public checks:
+The Cloudflare Pages project binds the R2 bucket as `SERMON_AUDIO` and serves audio at `/media/<object-key>`. After DNS cutover makes `www.fillmorechristian.org` point to Cloudflare Pages, run the public checks. These checks are now the cancellation gates and must stay green before canceling TheChurchCo:
 
 ```powershell
+npm run verify:dns-cache-clear
 npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia
 .\scripts\test-r2-public-audio.ps1 -All
 .\scripts\test-podcast-media.ps1 -All
@@ -117,7 +118,7 @@ npm run migrate:cloudflare-audio -- -SkipUpload -VerifyAllPublicMedia
 
 It keeps the same personal GitHub owner guard as the deploy script, uploads and verifies the R2 audio backup, rewrites the RSS feeds to the owned Pages media route, regenerates sermon pages, builds `dist`, and runs strict local checks.
 
-The manifest, upload dry run, and R2 verifier dry run are safe before registrar cutover. The real R2 upload is complete; the Cloudflare Pages deployment now carries the R2 binding and feed rewrite, but production cancellation still waits for DNS cutover and `scripts\test-r2-public-audio.ps1 -All`.
+The manifest, upload dry run, and R2 verifier dry run are safe before registrar cutover. The real R2 upload is complete; the Cloudflare Pages deployment now carries the R2 binding and feed rewrite, and production audio has been verified through `www.fillmorechristian.org`. Production cancellation still waits for recursive DNS cache drainage plus the strict production/cancellation gates.
 
 ### Step 3: Deploy Website To Cloudflare Pages
 
@@ -190,7 +191,7 @@ DNS and registrar state:
 3. Squarespace nameservers have been updated to `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`.
 4. Cloudflare Pages custom domains for `www` and apex are active.
 5. Squarespace registrar lock has been turned off and an authorization code has been requested.
-6. Some recursive DNS caches may still show old Squarespace/TheChurchCo answers; run `npm run status:dns-cache` before cancellation decisions.
+6. Some recursive DNS caches may still show old Squarespace/TheChurchCo answers; run `npm run verify:dns-cache-clear` before cancellation decisions.
 7. After Cloudflare Registrar transfer is started, verify production website/feed/media again and only then make cancellation decisions.
 
 Current public DNS can be snapshotted with:
@@ -233,7 +234,7 @@ The preferred final verifier is:
 npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia
 ```
 
-It runs the Cloudflare cutover, Cloudflare Registrar safety, and TheChurchCo cancellation checks in sequence, verifies both the `www` and apex production URLs, then writes a non-secret report under `exports/cutover/`.
+It runs the Cloudflare cutover, Cloudflare Registrar safety, recursive DNS cache-clear, and TheChurchCo cancellation checks in sequence, verifies both the `www` and apex production URLs, then writes a non-secret report under `exports/cutover/`.
 
 As of June 1, 2026, preserve at least the Mailgun MX records and these TXT/CNAME records:
 
@@ -245,7 +246,7 @@ As of June 1, 2026, preserve at least the Mailgun MX records and these TXT/CNAME
 - `4jb3ni34htue` CNAME -> `gv-xvljhthdwk5dxh.dv.googlehosted.com`
 - `334xc4sml6cf` CNAME -> `gv-ujhethalu73pqt.dv.googlehosted.com`
 
-Do not disable Squarespace auto-renew until the Cloudflare Registrar transfer is visibly underway or complete. Do not cancel TheChurchCo until the production website/feed/audio cancellation checks pass.
+Do not disable Squarespace auto-renew until the Cloudflare Registrar transfer is visibly underway or complete. Do not cancel TheChurchCo until `npm run verify:dns-cache-clear`, `npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia`, and `npm run verify:cancel-thechurchco -- -VerifyAllPodcastMedia` pass.
 
 ### Step 7: Maintain Church Logo
 

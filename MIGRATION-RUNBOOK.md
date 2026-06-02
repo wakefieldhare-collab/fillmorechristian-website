@@ -27,7 +27,7 @@ Last updated: 2026-06-02
 4. Point Squarespace nameservers to Cloudflare nameservers so Cloudflare DNS becomes active. Done.
 5. Verify `www`, apex, email MX, contact form, and the legacy podcast feed URL. Done, but keep monitoring recursive DNS cache until stale old answers disappear.
 6. Transfer registrar from Squarespace to Cloudflare Registrar. Waiting for the Squarespace transfer authorization code that was sent to the owner contact.
-7. Only cancel TheChurchCo after the website and podcast feed are verified from the new host.
+7. Only cancel TheChurchCo after the website, podcast feed, production `/media` audio route, recursive DNS cache drainage, and the final cancellation gates are verified from the new host.
 
 ## Podcast Export
 
@@ -58,7 +58,7 @@ Export status on 2026-06-01:
 
 ## Podcast Independence Plan
 
-Current state is safe for cutover but not safe for canceling TheChurchCo:
+Current state is safe for production traffic but not safe for canceling TheChurchCo:
 
 - The RSS feed is preserved locally and will continue to publish from `www.fillmorechristian.org`.
 - The historical MP3 files are backed up locally and hash-inventoried.
@@ -122,7 +122,7 @@ For the final production receipt before canceling anything, use the combined ver
 npm run verify:production-cutover -- -WaitForDns -VerifyAllPodcastMedia
 ```
 
-This runs the Cloudflare cutover verifier, the domain-transfer safety gate, and the TheChurchCo cancellation gate in order. It verifies both `https://www.fillmorechristian.org/` and `https://fillmorechristian.org/`, writes a timestamped non-secret Markdown and JSON report under `exports/cutover/`, stops on the first failed gate, and explicitly says not to cancel TheChurchCo or disable Squarespace auto-renew until the report passes.
+This runs the Cloudflare cutover verifier, the domain-transfer safety gate, the recursive DNS cache-clear gate, and the TheChurchCo cancellation gate in order. It verifies both `https://www.fillmorechristian.org/` and `https://fillmorechristian.org/`, writes a timestamped non-secret Markdown and JSON report under `exports/cutover/`, stops on the first failed gate, and explicitly says not to cancel TheChurchCo or disable Squarespace auto-renew until the report passes.
 
 The migration command refuses the work GitHub owner, requires `https://` audio URLs, verifies Cloudflare authentication, can create the R2 bucket, uploads and hash-verifies all 70 audio objects, rewrites all three RSS feeds to `https://www.fillmorechristian.org/media`, regenerates episode pages/sermon archive/homepage latest-sermon links, builds `dist`, and runs strict local readiness plus the Cloudflare Pages local preflight. Use `npm run complete:cloudflare-cutover` and `npm run verify:cancel-thechurchco` before cancellation for a full production media sweep.
 
@@ -137,7 +137,7 @@ R2 preparation status on 2026-06-02:
 - `npm run verify:r2-pages-audio` verifies the same objects through `https://fillmorechristian-website.pages.dev/media/...` before production DNS cutover.
 - `scripts/test-r2-public-audio.ps1` verifies the public `www.fillmorechristian.org/media/...` URLs from the manifest after DNS cutover.
 - The remaining registrar blocker is the Squarespace transfer authorization code. Enter it in Cloudflare Dashboard > Domains > Transfers to start the Cloudflare Registrar transfer.
-- The remaining cancellation blocker is recursive DNS cache: run `npm run status:dns-cache` and wait for stale old Squarespace/TheChurchCo answers to disappear before canceling TheChurchCo.
+- The remaining cancellation blocker is recursive DNS cache: run `npm run verify:dns-cache-clear` and wait for stale old Squarespace/TheChurchCo answers to disappear before canceling TheChurchCo.
 
 Current registrar checklist:
 
@@ -231,7 +231,7 @@ Before canceling TheChurchCo, run the stricter cancellation gate against product
 npm run verify:cancel-thechurchco -- -VerifyAllPodcastMedia
 ```
 
-This gate is expected to fail until Cloudflare nameservers are active, the static site is live at `https://www.fillmorechristian.org`, mail DNS is preserved, and the production podcast feed has been rewritten so all audio enclosures use `https://www.fillmorechristian.org/media/...` instead of TheChurchCo.
+This gate is expected to fail until Cloudflare nameservers are active, recursive DNS caches no longer return old Squarespace/TheChurchCo answers, the static site is live at `https://www.fillmorechristian.org`, mail DNS is preserved, and the production podcast feed has been rewritten so all audio enclosures use `https://www.fillmorechristian.org/media/...` instead of TheChurchCo.
 
 The preferred final command is the combined report-writing wrapper:
 
@@ -249,7 +249,7 @@ Cloudflare Pages project status on 2026-06-01:
 - Production preview URL: `https://fillmorechristian-website.pages.dev/`
 - First deployed commit: `4431150 Add copyable calendar feed link`
 - Latest deployed commit: run `npm run status:migration` or `git log -1 --oneline` after deployment.
-- Custom domains `fillmorechristian.org` and `www.fillmorechristian.org` are attached to the Pages project and pending Cloudflare DNS activation.
+- Custom domains `fillmorechristian.org` and `www.fillmorechristian.org` are attached to the Pages project and active. Public traffic is on Cloudflare DNS; only recursive resolver cache drainage can temporarily show older answers.
 - Current deployment source is the local guarded `npm run deploy:cloudflare` command, not a Cloudflare-connected GitHub integration.
 - The deployment publishes `_headers`, `_redirects`, `_routes.json`, and the generated Pages Function bundle.
 
@@ -352,13 +352,13 @@ After Cloudflare assigns nameservers and Squarespace is updated, run the after-c
 .\scripts\test-dns-cutover.ps1 -Mode After -ExpectedCloudflareNameservers "name1.ns.cloudflare.com","name2.ns.cloudflare.com"
 ```
 
-Latest public snapshot on 2026-06-01 found:
+Latest public snapshot before cutover on 2026-06-01 found:
 
-- Cloudflare zone: `fillmorechristian.org` exists with status `pending`.
+- Cloudflare zone: `fillmorechristian.org` exists and is now active.
 - Cloudflare-assigned nameservers: `eric.ns.cloudflare.com` and `sky.ns.cloudflare.com`.
-- Pages custom domains: `fillmorechristian.org` and `www.fillmorechristian.org` are attached and pending.
-- Cloudflare DNS records: prepared and API-verified; public DNS still waits on the Squarespace nameserver switch.
-- R2 audio: the Pages `/media/` route is deployed with an R2 binding and has been fully verified on the `pages.dev` preview; final public verification still waits for the Cloudflare nameserver cutover so `www.fillmorechristian.org/media/...` reaches Pages.
+- Pages custom domains: `fillmorechristian.org` and `www.fillmorechristian.org` are attached and active.
+- Cloudflare DNS records: prepared, API-verified, and authoritative through Cloudflare nameservers; stale recursive caches may still temporarily show the old values listed below.
+- R2 audio: the Pages `/media/` route is deployed with an R2 binding and has been fully verified through production `www.fillmorechristian.org/media/...`.
 - NS: `ns-cloud-d1.googledomains.com` through `ns-cloud-d4.googledomains.com`
 - A: `fillmorechristian.org` -> `77.83.141.16`
 - CNAME: `www.fillmorechristian.org` -> `ssl.thechurchco.com`
