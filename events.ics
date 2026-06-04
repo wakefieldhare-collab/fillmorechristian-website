@@ -4,7 +4,7 @@ PRODID:-//Fillmore Christian Church//Sunday Schedule//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 X-WR-CALNAME:Fillmore Christian Church
-X-WR-CALDESC:Recurring Sunday School and worship schedule for Fillmore Christian Church.
+X-WR-CALDESC:Recurring Sunday School and worship schedule for Fillmore Christian Church\, including dated exceptions and special services.
 X-WR-TIMEZONE:America/Chicago
 BEGIN:VEVENT
 UID:sunday-school@fillmorechristian.org
@@ -12,9 +12,21 @@ DTSTAMP:20260601T000000Z
 DTSTART;TZID=America/Chicago:20260607T090000
 DTEND;TZID=America/Chicago:20260607T100000
 RRULE:FREQ=WEEKLY;BYDAY=SU
+EXDATE;TZID=America/Chicago:20260621T090000
 SUMMARY:Sunday School
 LOCATION:Fillmore Christian Church\, 310 N. Florence Street\, Fillmore\, MO 64449
 DESCRIPTION:Classes for learning Scripture together before worship.
+URL:https://www.fillmorechristian.org/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:first-sunday-fellowship-breakfast@fillmorechristian.org
+DTSTAMP:20260604T000000Z
+DTSTART;TZID=America/Chicago:20260607T094500
+DTEND;TZID=America/Chicago:20260607T101000
+RRULE:FREQ=MONTHLY;BYDAY=1SU
+SUMMARY:Fellowship Breakfast
+LOCATION:Fillmore Christian Church\, 310 N. Florence Street\, Fillmore\, MO 64449
+DESCRIPTION:First-Sunday fellowship breakfast before worship.
 URL:https://www.fillmorechristian.org/events.html
 END:VEVENT
 BEGIN:VEVENT
@@ -23,9 +35,20 @@ DTSTAMP:20260601T000000Z
 DTSTART;TZID=America/Chicago:20260607T100000
 DTEND;TZID=America/Chicago:20260607T111500
 RRULE:FREQ=WEEKLY;BYDAY=SU
+EXDATE;TZID=America/Chicago:20260621T100000
 SUMMARY:Sunday Worship
 LOCATION:Fillmore Christian Church\, 310 N. Florence Street\, Fillmore\, MO 64449
 DESCRIPTION:Gather for prayer\, singing\, communion\, and preaching from Scripture.
+URL:https://www.fillmorechristian.org/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:community-worship-duncan-park-20260621@fillmorechristian.org
+DTSTAMP:20260604T000000Z
+DTSTART;TZID=America/Chicago:20260621T100000
+DTEND;TZID=America/Chicago:20260621T111500
+SUMMARY:Community Worship Service at Duncan Park
+LOCATION:Duncan Park\, Savannah\, MO 64485
+DESCRIPTION:On Sunday\, June 21\, Fillmore Christian Church will not have regular Sunday School or Sunday worship in Fillmore. Instead\, join the 10:00 AM community worship service at Duncan Park in Savannah\, Missouri.
 URL:https://www.fillmorechristian.org/events.html
 END:VEVENT
 END:VCALENDAR

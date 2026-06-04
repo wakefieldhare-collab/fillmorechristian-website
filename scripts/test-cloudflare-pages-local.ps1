@@ -352,10 +352,14 @@ try {
     if ($calendarContentType -notmatch "text/calendar") {
         throw "Event calendar returned unexpected content type '$calendarContentType'"
     }
-    if ($calendar.Content -notmatch "BEGIN:VCALENDAR" -or $calendar.Content -notmatch "SUMMARY:Sunday Worship" -or $calendar.Content -notmatch "RRULE:FREQ=WEEKLY;BYDAY=SU") {
-        throw "Event calendar did not include the recurring Sunday schedule"
+    if ($calendar.Content -notmatch "BEGIN:VCALENDAR" -or
+        $calendar.Content -notmatch "SUMMARY:Sunday Worship" -or
+        $calendar.Content -notmatch "SUMMARY:Fellowship Breakfast" -or
+        $calendar.Content -notmatch "RRULE:FREQ=WEEKLY;BYDAY=SU" -or
+        $calendar.Content -notmatch "RRULE:FREQ=MONTHLY;BYDAY=1SU") {
+        throw "Event calendar did not include the recurring Sunday schedule and first-Sunday breakfast"
     }
-    $checks.Add([pscustomobject]@{ Check = "Event calendar"; Status = "OK"; Details = "text/calendar recurring Sunday schedule" })
+    $checks.Add([pscustomobject]@{ Check = "Event calendar"; Status = "OK"; Details = "text/calendar recurring Sunday schedule and first-Sunday breakfast" })
 
     $eventsPageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "events.html")
     if ($eventsPageContent -notmatch 'id="calendar-feed-url"' -or
@@ -364,6 +368,7 @@ try {
         throw "Events page is missing the copyable calendar feed URL"
     }
     if ($eventsPageContent -notmatch 'data-recurring-event="sunday-school"' -or
+        $eventsPageContent -notmatch 'data-recurring-event="first-sunday-fellowship-breakfast"' -or
         $eventsPageContent -notmatch 'data-recurring-event="sunday-worship"' -or
         $eventsPageContent -notmatch 'event-date-box-recurring') {
         throw "Events page is missing the clear recurring Sunday fallback schedule"
@@ -372,6 +377,7 @@ try {
 
     $homePageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "index.html")
     if ($homePageContent -notmatch 'data-recurring-event="sunday-school"' -or
+        $homePageContent -notmatch 'data-recurring-event="first-sunday-fellowship-breakfast"' -or
         $homePageContent -notmatch 'data-recurring-event="sunday-worship"' -or
         $homePageContent -notmatch 'event-date-box-recurring') {
         throw "Home page is missing the clear recurring Sunday fallback schedule"
@@ -407,10 +413,14 @@ try {
     if ($eventsScript.Content -notmatch "events\.ics" -or $eventsScript.Content -match "googleapis|GOOGLE_CALENDAR_ID|GOOGLE_API_KEY") {
         throw "Events script does not use the self-hosted iCal feed cleanly"
     }
-    if ($eventsScript.Content -notmatch 'data-recurring-event="sunday-school"' -or $eventsScript.Content -notmatch 'event-date-box-recurring') {
+    if ($eventsScript.Content -notmatch 'data-recurring-event="sunday-school"' -or
+        $eventsScript.Content -notmatch 'data-recurring-event="first-sunday-fellowship-breakfast"' -or
+        $eventsScript.Content -notmatch 'event-date-box-recurring') {
         throw "Events script fallback does not preserve the clear recurring Sunday schedule"
     }
-    if ($eventsScript.Content -notmatch "generateUpcomingOccurrences" -or $eventsScript.Content -notmatch "loadUpcomingEvents\(upcomingContainer, 4\)") {
+    if ($eventsScript.Content -notmatch "generateUpcomingOccurrences" -or
+        $eventsScript.Content -notmatch "generateMonthlyOccurrences" -or
+        $eventsScript.Content -notmatch "loadUpcomingEvents\(upcomingContainer, 5\)") {
         throw "Events script does not expand recurring events into dated upcoming occurrences"
     }
     $checks.Add([pscustomobject]@{ Check = "Events script"; Status = "OK"; Details = "Loads self-hosted events.ics and expands recurring Sunday events" })

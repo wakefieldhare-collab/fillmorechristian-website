@@ -3,11 +3,12 @@
    ============================================ */
 
 const CHURCH_CALENDAR_URL = 'events.ics';
+const CHURCH_CALENDAR_VERSION = '20260604-03';
 
 document.addEventListener('DOMContentLoaded', function() {
   const upcomingContainer = document.getElementById('upcoming-events');
   if (upcomingContainer) {
-    loadUpcomingEvents(upcomingContainer, 4);
+    loadUpcomingEvents(upcomingContainer, 5);
   }
 
   const eventsPageContainer = document.getElementById('events-full-list');
@@ -18,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function loadUpcomingEvents(container, maxResults) {
   try {
-    const text = await getText(resolveSiteUrl(CHURCH_CALENDAR_URL));
+    const text = await getText(resolveSiteUrl(CHURCH_CALENDAR_URL + '?v=' + CHURCH_CALENDAR_VERSION));
     const events = getUpcomingEvents(parseIcsEvents(text), maxResults);
 
     if (events.length > 0) {
@@ -76,6 +77,13 @@ function parseIcsEvents(text) {
     if (name === 'RRULE') current.rrule = value;
     if (name === 'DTSTART') current.start = parseIcsDate(value);
     if (name === 'DTEND') current.end = parseIcsDate(value);
+    if (name === 'EXDATE') {
+      current.exdates = current.exdates || [];
+      String(value || '').split(',').forEach(function(exdate) {
+        const parsed = parseIcsDate(exdate);
+        if (parsed) current.exdates.push(parsed);
+      });
+    }
   });
 
   return events;
@@ -114,6 +122,10 @@ function generateUpcomingOccurrences(event, now, limit) {
     : new Date(start.getTime() + 60 * 60 * 1000);
   const duration = end.getTime() - start.getTime();
 
+  if (/FREQ=MONTHLY/.test(event.rrule || '')) {
+    return generateMonthlyOccurrences(event, start, duration, now, limit);
+  }
+
   if (!/FREQ=WEEKLY/.test(event.rrule || '')) {
     if (end.getTime() <= now.getTime()) {
       return [];
@@ -128,10 +140,13 @@ function generateUpcomingOccurrences(event, now, limit) {
 
   const occurrences = [];
   for (let i = 0; i < limit; i += 1) {
-    occurrences.push({
-      start: new Date(start.getTime()),
-      end: new Date(end.getTime())
-    });
+    const occurrenceStart = new Date(start.getTime());
+    if (!isExcludedOccurrence(event, occurrenceStart)) {
+      occurrences.push({
+        start: occurrenceStart,
+        end: new Date(end.getTime())
+      });
+    }
 
     start.setDate(start.getDate() + 7);
     end.setDate(end.getDate() + 7);
@@ -143,6 +158,75 @@ function generateUpcomingOccurrences(event, now, limit) {
       end: new Date(occurrence.start.getTime() + duration)
     };
   });
+}
+
+function generateMonthlyOccurrences(event, firstStart, duration, now, limit) {
+  const monthlyRule = parseMonthlyByDayRule(event.rrule);
+  if (!monthlyRule) {
+    return [];
+  }
+
+  const occurrences = [];
+  let cursor = new Date(firstStart.getFullYear(), firstStart.getMonth(), 1);
+  let attempts = 0;
+
+  while (occurrences.length < limit && attempts < limit + 36) {
+    const candidate = getNthWeekdayOfMonth(
+      cursor.getFullYear(),
+      cursor.getMonth(),
+      monthlyRule.weekday,
+      monthlyRule.ordinal,
+      firstStart.getHours(),
+      firstStart.getMinutes(),
+      firstStart.getSeconds()
+    );
+
+    if (candidate && candidate.getTime() >= firstStart.getTime()) {
+      const candidateEnd = new Date(candidate.getTime() + duration);
+      if (candidateEnd.getTime() > now.getTime() && !isExcludedOccurrence(event, candidate)) {
+        occurrences.push({
+          start: candidate,
+          end: candidateEnd
+        });
+      }
+    }
+
+    cursor.setMonth(cursor.getMonth() + 1);
+    attempts += 1;
+  }
+
+  return occurrences;
+}
+
+function parseMonthlyByDayRule(rrule) {
+  const match = String(rrule || '').match(/BYDAY=([1-5])([A-Z]{2})/);
+  if (!match) return null;
+
+  const weekdays = {
+    SU: 0,
+    MO: 1,
+    TU: 2,
+    WE: 3,
+    TH: 4,
+    FR: 5,
+    SA: 6
+  };
+
+  if (typeof weekdays[match[2]] !== 'number') return null;
+
+  return {
+    ordinal: Number(match[1]),
+    weekday: weekdays[match[2]]
+  };
+}
+
+function getNthWeekdayOfMonth(year, month, weekday, ordinal, hours, minutes, seconds) {
+  const candidate = new Date(year, month, 1, hours, minutes, seconds || 0);
+  const delta = (weekday - candidate.getDay() + 7) % 7;
+  candidate.setDate(1 + delta + ((ordinal - 1) * 7));
+
+  if (candidate.getMonth() !== month) return null;
+  return candidate;
 }
 
 function renderEvents(container, events) {
@@ -161,6 +245,7 @@ function renderEvents(container, events) {
         '<h4>' + escapeHtml(event.summary || 'Church event') + '</h4>' +
         '<span class="event-time">' + escapeHtml(formatEventTime(event.start, event.end)) + '</span>' +
         (event.description ? '<p>' + escapeHtml(event.description) + '</p>' : '') +
+        (event.location ? '<p class="event-location">' + escapeHtml(event.location) + '</p>' : '') +
       '</div>';
 
     container.appendChild(item);
@@ -177,6 +262,14 @@ function getStaticEventsHtml() {
         '<p>Classes for learning Scripture together before worship.</p>' +
       '</div>' +
     '</div>' +
+    '<div class="event-item" data-static-event="true" data-recurring-event="first-sunday-fellowship-breakfast">' +
+      '<div class="event-date-box event-date-box-recurring"><span class="month">First</span><span class="day">Sun</span></div>' +
+      '<div class="event-details">' +
+        '<h4>Fellowship Breakfast</h4>' +
+        '<span class="event-time">First Sunday of the month at 9:45 AM - 10:10 AM</span>' +
+        '<p>Join us for fellowship breakfast before worship on the first Sunday of each month.</p>' +
+      '</div>' +
+    '</div>' +
     '<div class="event-item" data-static-event="true" data-recurring-event="sunday-worship">' +
       '<div class="event-date-box event-date-box-recurring"><span class="month">Every</span><span class="day">Sun</span></div>' +
       '<div class="event-details">' +
@@ -184,7 +277,29 @@ function getStaticEventsHtml() {
         '<span class="event-time">Every Sunday at 10:00 AM</span>' +
         '<p>Gather with us for prayer, singing, communion, and preaching from Scripture.</p>' +
       '</div>' +
+    '</div>' +
+    '<div class="event-item" data-static-event="true" data-special-event="community-worship-duncan-park">' +
+      '<div class="event-date-box"><span class="month">Jun</span><span class="day">21</span></div>' +
+      '<div class="event-details">' +
+        '<h4>Community Worship Service at Duncan Park</h4>' +
+        '<span class="event-time">Sunday, June 21 at 10:00 AM</span>' +
+        '<p>No regular Sunday School or Sunday worship at Fillmore Christian Church that morning. Join the community worship service at Duncan Park in Savannah, Missouri.</p>' +
+      '</div>' +
     '</div>';
+}
+
+function isExcludedOccurrence(event, occurrenceStart) {
+  return (event.exdates || []).some(function(exdate) {
+    return sameLocalMinute(exdate, occurrenceStart);
+  });
+}
+
+function sameLocalMinute(a, b) {
+  return a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate() &&
+    a.getHours() === b.getHours() &&
+    a.getMinutes() === b.getMinutes();
 }
 
 function resolveSiteUrl(path) {

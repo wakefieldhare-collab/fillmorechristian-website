@@ -641,8 +641,10 @@ if (Test-Path -LiteralPath $calendarPath) {
     $eventsScriptPath = Join-Path $root "js\events.js"
     if ($calendarText -notmatch "(?m)^BEGIN:VCALENDAR") { $calendarIssues.Add("missing VCALENDAR start") }
     if ($calendarText -notmatch "(?m)^SUMMARY:Sunday School") { $calendarIssues.Add("missing Sunday School event") }
+    if ($calendarText -notmatch "(?m)^SUMMARY:Fellowship Breakfast") { $calendarIssues.Add("missing Fellowship Breakfast event") }
     if ($calendarText -notmatch "(?m)^SUMMARY:Sunday Worship") { $calendarIssues.Add("missing Sunday Worship event") }
     if ($calendarText -notmatch "(?m)^RRULE:FREQ=WEEKLY;BYDAY=SU") { $calendarIssues.Add("missing weekly Sunday recurrence") }
+    if ($calendarText -notmatch "(?m)^RRULE:FREQ=MONTHLY;BYDAY=1SU") { $calendarIssues.Add("missing first-Sunday monthly recurrence") }
     if ($calendarText -notmatch "TZID=America/Chicago") { $calendarIssues.Add("missing America/Chicago timezone reference") }
 
     $indexHtml = Get-Content -Raw -LiteralPath (Join-Path $root "index.html")
@@ -651,8 +653,10 @@ if (Test-Path -LiteralPath $calendarPath) {
         $calendarIssues.Add("index or events page does not link events.ics")
     }
     if ($indexHtml -notmatch 'data-recurring-event="sunday-school"' -or
+        $indexHtml -notmatch 'data-recurring-event="first-sunday-fellowship-breakfast"' -or
         $indexHtml -notmatch 'data-recurring-event="sunday-worship"' -or
         $eventsHtml -notmatch 'data-recurring-event="sunday-school"' -or
+        $eventsHtml -notmatch 'data-recurring-event="first-sunday-fellowship-breakfast"' -or
         $eventsHtml -notmatch 'data-recurring-event="sunday-worship"' -or
         $eventsHtml -notmatch 'event-date-box-recurring') {
         $calendarIssues.Add("home or events page is missing the clear recurring Sunday fallback schedule")
@@ -663,17 +667,19 @@ if (Test-Path -LiteralPath $calendarPath) {
     if ($eventsHtml -notmatch '<script type="application/ld\+json">' -or
         $eventsHtml -notmatch '"@type": "ItemList"' -or
         $eventsHtml -notmatch '"name": "Sunday School"' -or
+        $eventsHtml -notmatch '"name": "Fellowship Breakfast"' -or
         $eventsHtml -notmatch '"name": "Sunday Worship"' -or
+        $eventsHtml -notmatch '"name": "Community Worship Service at Duncan Park"' -or
         $eventsHtml -notmatch '"scheduleTimezone": "America/Chicago"') {
-        $calendarIssues.Add("events page is missing structured recurring event metadata")
+        $calendarIssues.Add("events page is missing structured recurring or special event metadata")
     }
     $eventJsonMatch = [regex]::Match($eventsHtml, '(?s)<script type="application/ld\+json">\s*(.*?)\s*</script>')
     if ($eventJsonMatch.Success) {
         try {
             $eventJson = $eventJsonMatch.Groups[1].Value | ConvertFrom-Json
             $eventItems = @($eventJson.itemListElement)
-            if ($eventJson.'@type' -ne "ItemList" -or $eventItems.Count -ne 2) {
-                $calendarIssues.Add("events structured data does not contain the expected two-item schedule")
+            if ($eventJson.'@type' -ne "ItemList" -or $eventItems.Count -ne 4) {
+                $calendarIssues.Add("events structured data does not contain the expected recurring schedule plus special event")
             }
         } catch {
             $calendarIssues.Add("events structured data is not valid JSON")
@@ -688,11 +694,15 @@ if (Test-Path -LiteralPath $calendarPath) {
         $eventsScript = Get-Content -Raw -LiteralPath $eventsScriptPath
         if ($eventsScript -notmatch "events\.ics") { $calendarIssues.Add("events script does not load the self-hosted iCal feed") }
         if ($eventsScript -match "googleapis|GOOGLE_CALENDAR_ID|GOOGLE_API_KEY") { $calendarIssues.Add("events script still references Google Calendar API") }
-        if ($eventsScript -notmatch 'data-recurring-event="sunday-school"' -or $eventsScript -notmatch 'event-date-box-recurring') {
+        if ($eventsScript -notmatch 'data-recurring-event="sunday-school"' -or
+            $eventsScript -notmatch 'data-recurring-event="first-sunday-fellowship-breakfast"' -or
+            $eventsScript -notmatch 'event-date-box-recurring') {
             $calendarIssues.Add("events script fallback does not preserve the clear recurring Sunday schedule")
         }
-        if ($eventsScript -notmatch "generateUpcomingOccurrences" -or $eventsScript -notmatch "loadUpcomingEvents\(upcomingContainer, 4\)") {
-            $calendarIssues.Add("events script does not expand weekly recurring events into upcoming dated occurrences")
+        if ($eventsScript -notmatch "generateUpcomingOccurrences" -or
+            $eventsScript -notmatch "generateMonthlyOccurrences" -or
+            $eventsScript -notmatch "loadUpcomingEvents\(upcomingContainer, 5\)") {
+            $calendarIssues.Add("events script does not expand weekly and monthly recurring events into upcoming dated occurrences")
         }
     } else {
         $calendarIssues.Add("js/events.js is missing")

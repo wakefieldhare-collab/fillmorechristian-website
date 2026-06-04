@@ -171,7 +171,7 @@ Later, the form can be upgraded to Cloudflare Pages Functions, Formspree, or ano
 
 ### Step 5: Maintain Events
 
-The site publishes a self-hosted recurring Sunday calendar at `events.ics` for Sunday School and Sunday Worship. The Events page links it directly, the homepage and Events page include a clear static recurring-Sunday fallback, and `js/events.js` expands the iCal feed into upcoming dated occurrences in the browser.
+The site publishes a self-hosted recurring Sunday calendar at `events.ics` for Sunday School, first-Sunday fellowship breakfast, and Sunday Worship. The Events page links it directly, the homepage and Events page include a clear static recurring-Sunday fallback, and `js/events.js` expands the iCal feed into upcoming dated occurrences in the browser. Dated exceptions use `EXDATE` on the recurring events, plus a one-time `VEVENT` when FCC meets elsewhere.
 
 For ordinary schedule changes, edit `events.ics`, then keep the static fallback copy in `index.html`, `events.html`, and `js/events.js` aligned with the feed. The build/readiness checks verify that the self-hosted feed ships with the public site and that no Google Calendar API key is required.
 
@@ -288,6 +288,8 @@ The official FCC navigation logo is published at `images/fcc-logo.png` and is ch
 ### Adding Or Editing Events
 
 - Edit `events.ics` for recurring or dated events.
+- Use `RRULE:FREQ=MONTHLY;BYDAY=1SU` for first-Sunday monthly events.
+- For a one-Sunday schedule exception, add `EXDATE` to the affected recurring event(s), then add a dated `VEVENT` for the replacement gathering if there is one.
 - Keep the visible static fallback schedule in `index.html`, `events.html`, and `js/events.js` aligned with the iCal feed.
 - Run `npm run build`, `scripts\test-migration-readiness.ps1 -RequireIndependentAudio`, and `scripts\test-cloudflare-pages-local.ps1` before deploying.
 
