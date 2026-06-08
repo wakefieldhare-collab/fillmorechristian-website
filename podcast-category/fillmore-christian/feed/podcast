@@ -5,7 +5,7 @@
     <atom:link href="https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast" rel="self" type="application/rss+xml" />
     <link>https://www.fillmorechristian.org</link>
     <description>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</description>
-    <lastBuildDate>Sun, 24 May 2026 16:35:20 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 07 Jun 2026 16:50:49 +0000</lastBuildDate>
     <language>en-US</language>
     <copyright>2026</copyright>
     <itunes:subtitle>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</itunes:subtitle>
@@ -31,6 +31,25 @@
       <itunes:category text="Christianity" />
     </itunes:category>
     <generator>Fillmore Christian Church static podcast feed</generator>
+    <item>
+      <title>Zeal for the True Temple</title>
+      <link>https://www.fillmorechristian.org/episode/zeal-for-the-true-temple/</link>
+      <pubDate>Sun, 07 Jun 2026 16:50:49 +0000</pubDate>
+      <dc:creator>Fillmore Christian</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/zeal-for-the-true-temple/</guid>
+      <description><![CDATA[John 2:13-22]]></description>
+      <itunes:subtitle><![CDATA[John 2:13-22]]></itunes:subtitle>
+      <content:encoded><![CDATA[John 2:13-22]]></content:encoded>
+      <itunes:summary><![CDATA[John 2:13-22]]></itunes:summary>
+      <googleplay:description><![CDATA[John 2:13-22]]></googleplay:description>
+      <enclosure url="https://www.fillmorechristian.org/media/June-7-2026-John-2-13-22-Wake-Sermon.mp3" length="29088420" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:author>Fillmore Christian</itunes:author>
+      <itunes:duration>00:36:19</itunes:duration>
+    </item>
     <item>
       <title>Calling of the Disciples Charles Spurgeon</title>
       <link>https://www.fillmorechristian.org/episode/calling-of-the-disciples-charles-spurgeon/</link>
