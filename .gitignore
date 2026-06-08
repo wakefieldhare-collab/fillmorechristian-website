@@ -4,5 +4,6 @@ exports/thechurchco-podcast/*.tmp
 exports/cutover/
 exports/*.png
 dist/
+logs/
 images/church-exterior.jpg
 images/sanctuary-service.png
