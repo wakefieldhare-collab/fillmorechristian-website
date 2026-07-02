@@ -5,7 +5,7 @@
     <atom:link href="https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast" rel="self" type="application/rss+xml" />
     <link>https://www.fillmorechristian.org</link>
     <description>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</description>
-    <lastBuildDate>Sun, 07 Jun 2026 16:50:49 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 21 Jun 2026 15:00:00 +0000</lastBuildDate>
     <language>en-US</language>
     <copyright>2026</copyright>
     <itunes:subtitle>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</itunes:subtitle>
@@ -31,6 +31,25 @@
       <itunes:category text="Christianity" />
     </itunes:category>
     <generator>Fillmore Christian Church static podcast feed</generator>
+    <item>
+      <title>The Father's Offensive Grace</title>
+      <link>https://www.fillmorechristian.org/episode/the-fathers-offensive-grace/</link>
+      <pubDate>Sun, 21 Jun 2026 15:00:00 +0000</pubDate>
+      <dc:creator>Wakefield Hare</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/the-fathers-offensive-grace/</guid>
+      <description><![CDATA[Community worship sermon from Luke 15:1-2, 11-32, with 1 Corinthians 1:18-25 and Ephesians 2:1-10.]]></description>
+      <itunes:subtitle><![CDATA[Community worship sermon from Luke 15:1-2, 11-32, with 1 Corinthians 1:18-25 and Ephesians 2:1-10.]]></itunes:subtitle>
+      <content:encoded><![CDATA[Community worship sermon from Luke 15:1-2, 11-32, with 1 Corinthians 1:18-25 and Ephesians 2:1-10.]]></content:encoded>
+      <itunes:summary><![CDATA[Community worship sermon from Luke 15:1-2, 11-32, with 1 Corinthians 1:18-25 and Ephesians 2:1-10.]]></itunes:summary>
+      <googleplay:description><![CDATA[Community worship sermon from Luke 15:1-2, 11-32, with 1 Corinthians 1:18-25 and Ephesians 2:1-10.]]></googleplay:description>
+      <enclosure url="https://www.fillmorechristian.org/media/2026-06-21-the-fathers-offensive-grace.mp3" length="31104913" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:author>Wakefield Hare</itunes:author>
+      <itunes:duration>00:32:24</itunes:duration>
+    </item>
     <item>
       <title>Zeal for the True Temple</title>
       <link>https://www.fillmorechristian.org/episode/zeal-for-the-true-temple/</link>

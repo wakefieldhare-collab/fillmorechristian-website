@@ -1327,13 +1327,18 @@ if ($feeds.ContainsKey($feedPaths[0]) -and (Test-Path -LiteralPath $homePath)) {
     $homeHtml = Get-Content -Raw -LiteralPath $homePath
     $latestAudioItem = @($feeds[$feedPaths[0]].rss.channel.item | Where-Object { $_.enclosure -and $_.enclosure.url } | Select-Object -First 1)
     $latestTitle = if ($latestAudioItem) { [string]$latestAudioItem.title } else { "" }
+    $latestTitlePattern = if ($latestTitle) {
+        "(?:$([regex]::Escape($latestTitle))|$([regex]::Escape([System.Net.WebUtility]::HtmlEncode($latestTitle))))"
+    } else {
+        ""
+    }
     $latestAudioUrl = if ($latestAudioItem) { [string]$latestAudioItem.enclosure.url } else { "" }
     $latestPageAudioUrl = ConvertTo-PageAudioUrl $latestAudioUrl
     $latestAudioSizePresent = $homeHtml -match 'class="latest-sermon-meta"[^>]*>[^<]*Audio \d+(?:\.\d+)? (?:KB|MB|GB|bytes)'
 
     if ($latestTitle -and
         $homeHtml -match 'id="latest-sermon"' -and
-        $homeHtml -match [regex]::Escape($latestTitle) -and
+        $homeHtml -match $latestTitlePattern -and
         $homeHtml -match [regex]::Escape($latestPageAudioUrl) -and
         $latestAudioSizePresent -and
         $homeHtml -match '<a\s+href="podcast\.html"\s+class="btn btn-outline">Subscribe to Podcast</a>' -and
@@ -1609,6 +1614,11 @@ if (Test-Path -LiteralPath $podcastScriptPath) {
         @()
     }
     $latestTitle = if ($latestAudioItem) { [string]$latestAudioItem.title } else { "" }
+    $latestTitlePattern = if ($latestTitle) {
+        "(?:$([regex]::Escape($latestTitle))|$([regex]::Escape([System.Net.WebUtility]::HtmlEncode($latestTitle))))"
+    } else {
+        ""
+    }
     $podcastLatestAudioSizeLabels = ([regex]::Matches($podcastPageText, 'Audio \d+(?:\.\d+)? (?:KB|MB|GB|bytes)')).Count
     $podcastLatestDurationLabels = ([regex]::Matches($podcastPageText, 'Duration \d+ (?:hr \d+ min|min \d+ sec)')).Count
 
@@ -1641,7 +1651,7 @@ if (Test-Path -LiteralPath $podcastScriptPath) {
         $podcastLatestAudioSizeLabels -eq 3 -and
         $podcastLatestDurationLabels -eq 3 -and
         $podcastPageText -match "/media/" -and
-        (-not $latestTitle -or $podcastPageText -match [regex]::Escape($latestTitle))) {
+        (-not $latestTitle -or $podcastPageText -match $latestTitlePattern)) {
         Add-Check "Podcast latest messages" "OK" "Podcast page has three static latest-message cards with audio-size and duration metadata plus a guarded one-command refresh path"
     } else {
         Add-Check "Podcast latest messages" "FAIL" "Podcast latest messages are missing static feed cards, audio-size/duration metadata, renderer wiring, one-command refresh behavior, same-origin media handling, or contain old platform references"
@@ -2004,7 +2014,12 @@ if (-not $SkipRemote) {
                         @()
                     }
                     $latestTitle = if ($latestAudioItem) { [string]$latestAudioItem.title } else { "" }
-                    if ($latestTitle -and $response.Content -match 'id="latest-sermon"' -and $response.Content -match [regex]::Escape($latestTitle) -and $response.Content -match 'class="latest-sermon-meta"[^>]*>[^<]*Audio \d+(?:\.\d+)? (?:KB|MB|GB|bytes)' -and $response.Content -match "Download Audio" -and $response.Content -match '<a\s+href="podcast\.html"\s+class="btn btn-outline">Subscribe to Podcast</a>') {
+                    $latestTitlePattern = if ($latestTitle) {
+                        "(?:$([regex]::Escape($latestTitle))|$([regex]::Escape([System.Net.WebUtility]::HtmlEncode($latestTitle))))"
+                    } else {
+                        ""
+                    }
+                    if ($latestTitle -and $response.Content -match 'id="latest-sermon"' -and $response.Content -match $latestTitlePattern -and $response.Content -match 'class="latest-sermon-meta"[^>]*>[^<]*Audio \d+(?:\.\d+)? (?:KB|MB|GB|bytes)' -and $response.Content -match "Download Audio" -and $response.Content -match '<a\s+href="podcast\.html"\s+class="btn btn-outline">Subscribe to Podcast</a>') {
                         Add-Check "Staging homepage latest sermon" "OK" "Latest audio item, download size, and podcast subscription CTA are featured on staging"
                     } elseif ($latestTitle) {
                         Add-Check "Staging homepage latest sermon" "FAIL" "Latest sermon block is missing, stale, missing audio-size metadata, or missing the podcast subscription CTA on staging"
