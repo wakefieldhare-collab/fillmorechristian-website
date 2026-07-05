@@ -5,7 +5,7 @@
     <atom:link href="https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast" rel="self" type="application/rss+xml" />
     <link>https://www.fillmorechristian.org</link>
     <description>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</description>
-    <lastBuildDate>Sun, 21 Jun 2026 15:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 05 Jul 2026 18:51:49 +0000</lastBuildDate>
     <language>en-US</language>
     <copyright>2026</copyright>
     <itunes:subtitle>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</itunes:subtitle>
@@ -31,6 +31,25 @@
       <itunes:category text="Christianity" />
     </itunes:category>
     <generator>Fillmore Christian Church static podcast feed</generator>
+    <item>
+      <title>Water to Living Water</title>
+      <link>https://www.fillmorechristian.org/episode/water-to-living-water/</link>
+      <pubDate>Sun, 05 Jul 2026 18:51:49 +0000</pubDate>
+      <dc:creator>Wakefield Hare</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/water-to-living-water/</guid>
+      <description><![CDATA[John 4:1-42]]></description>
+      <itunes:subtitle><![CDATA[John 4:1-42]]></itunes:subtitle>
+      <content:encoded><![CDATA[John 4:1-42]]></content:encoded>
+      <itunes:summary><![CDATA[John 4:1-42]]></itunes:summary>
+      <googleplay:description><![CDATA[John 4:1-42]]></googleplay:description>
+      <enclosure url="https://www.fillmorechristian.org/media/2026-07-05-water-to-living-water.mp3" length="30954901" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:author>Wakefield Hare</itunes:author>
+      <itunes:duration>00:38:44</itunes:duration>
+    </item>
     <item>
       <title>The Father's Offensive Grace</title>
       <link>https://www.fillmorechristian.org/episode/the-fathers-offensive-grace/</link>
