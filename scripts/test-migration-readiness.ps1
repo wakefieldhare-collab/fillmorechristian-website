@@ -224,6 +224,8 @@ if ($gitHubIssues.Count -gt 0) {
 $requiredFiles = @(
     "index.html",
     "about.html",
+    "announcements.html",
+    "announcements.json",
     "visit.html",
     "beliefs.html",
     "events.ics",
@@ -239,6 +241,7 @@ $requiredFiles = @(
     "site.webmanifest",
     "css\style.css",
     "js\main.js",
+    "js\announcements.js",
     "js\podcast.js",
     "js\sermons.js",
     "podcast-category\fillmore-christian\feed\podcast",
@@ -342,6 +345,7 @@ $publicHtmlPages = @(
     "visit.html",
     "beliefs.html",
     "events.html",
+    "announcements.html",
     "sermons.html",
     "podcast.html",
     "contact.html",
@@ -420,6 +424,32 @@ if ($metadataFailures.Count -eq 0) {
     Add-Check "Public page metadata" "OK" "$($publicHtmlPages.Count) public pages have canonical, podcast RSS, FCC brand assets, brand icon, web app manifest, Open Graph, and Twitter metadata"
 } else {
     Add-Check "Public page metadata" "FAIL" ($metadataFailures -join "; ")
+}
+
+$announcementsPath = Join-Path $root "announcements.json"
+$announcementsPagePath = Join-Path $root "announcements.html"
+$announcementsScriptPath = Join-Path $root "js\announcements.js"
+if ((Test-Path -LiteralPath $announcementsPath) -and
+    (Test-Path -LiteralPath $announcementsPagePath) -and
+    (Test-Path -LiteralPath $announcementsScriptPath)) {
+    try {
+        $announcementsData = Get-Content -Raw -LiteralPath $announcementsPath | ConvertFrom-Json
+        $announcementsPage = Get-Content -Raw -LiteralPath $announcementsPagePath
+        $announcementsScript = Get-Content -Raw -LiteralPath $announcementsScriptPath
+        if ($announcementsData.schema_version -eq 1 -and
+            $announcementsData.service_date -match '^\d{4}-\d{2}-\d{2}$' -and
+            @($announcementsData.announcements).Count -gt 0 -and
+            $announcementsPage -match 'data-announcements-list' -and
+            $announcementsScript -match 'fetch\("announcements\.json"') {
+            Add-Check "Weekly announcements" "OK" "$(@($announcementsData.announcements).Count) public announcement(s) for $($announcementsData.service_date)"
+        } else {
+            Add-Check "Weekly announcements" "FAIL" "announcement data or page wiring is incomplete"
+        }
+    } catch {
+        Add-Check "Weekly announcements" "FAIL" "announcements.json is invalid: $($_.Exception.Message)"
+    }
+} else {
+    Add-Check "Weekly announcements" "FAIL" "announcement page, data, or client script is missing"
 }
 
 $publicCopyIssues = New-Object System.Collections.Generic.List[string]
@@ -669,17 +699,16 @@ if (Test-Path -LiteralPath $calendarPath) {
         $eventsHtml -notmatch '"name": "Sunday School"' -or
         $eventsHtml -notmatch '"name": "Fellowship Breakfast"' -or
         $eventsHtml -notmatch '"name": "Sunday Worship"' -or
-        $eventsHtml -notmatch '"name": "Community Worship Service at Duncan Park"' -or
         $eventsHtml -notmatch '"scheduleTimezone": "America/Chicago"') {
-        $calendarIssues.Add("events page is missing structured recurring or special event metadata")
+        $calendarIssues.Add("events page is missing structured recurring event metadata")
     }
     $eventJsonMatch = [regex]::Match($eventsHtml, '(?s)<script type="application/ld\+json">\s*(.*?)\s*</script>')
     if ($eventJsonMatch.Success) {
         try {
             $eventJson = $eventJsonMatch.Groups[1].Value | ConvertFrom-Json
             $eventItems = @($eventJson.itemListElement)
-            if ($eventJson.'@type' -ne "ItemList" -or $eventItems.Count -ne 4) {
-                $calendarIssues.Add("events structured data does not contain the expected recurring schedule plus special event")
+            if ($eventJson.'@type' -ne "ItemList" -or $eventItems.Count -ne 3) {
+                $calendarIssues.Add("events structured data does not contain the three expected recurring gatherings")
             }
         } catch {
             $calendarIssues.Add("events structured data is not valid JSON")
