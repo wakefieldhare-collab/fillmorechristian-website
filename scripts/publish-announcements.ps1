@@ -61,9 +61,19 @@ try {
         throw "Could not commit the weekly announcement update."
     }
 
-    & git push origin main
-    if ($LASTEXITCODE -ne 0) {
-        throw "Could not push the weekly announcement update."
+    $personalGitHubToken = (& gh auth token --hostname github.com --user wakefieldhare-collab 2>$null).Trim()
+    if (-not $personalGitHubToken) {
+        throw "The wakefieldhare-collab GitHub account is not authenticated."
+    }
+    $basicBytes = [Text.Encoding]::ASCII.GetBytes("x-access-token:$personalGitHubToken")
+    $basicAuth = [Convert]::ToBase64String($basicBytes)
+    try {
+        & git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $basicAuth" push origin main
+        if ($LASTEXITCODE -ne 0) {
+            throw "Could not push the weekly announcement update."
+        }
+    } finally {
+        Remove-Variable personalGitHubToken, basicBytes, basicAuth -ErrorAction SilentlyContinue
     }
 
     & (Join-Path $PSScriptRoot "deploy-cloudflare-pages.ps1") -AllowDirty
