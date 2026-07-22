@@ -705,7 +705,31 @@ h4 { font-size: 1.25rem; }
 }
 
 .location-panel-compact .location-map {
-  min-height: 180px;
+  min-height: 260px;
+}
+
+.location-map-regional {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-alt);
+}
+
+.location-map-regional iframe {
+  width: 100%;
+  min-height: 230px;
+  flex: 1;
+  border: 0;
+}
+
+.map-attribution {
+  margin: 0;
+  padding: 0.45rem 0.75rem;
+  background: var(--color-white);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-light);
+  font-size: 0.72rem;
+  line-height: 1.4;
+  text-align: left;
 }
 
 .map-road {
@@ -1069,15 +1093,38 @@ h4 { font-size: 1.25rem; }
   margin: 1.5rem 0;
 }
 
-.contact-email-copy {
-  margin: 1.2rem 0 1.5rem;
+.contact-email-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1.2rem 0 0;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-white);
 }
 
-.contact-email-copy label {
+.contact-email-card .eyebrow {
   display: block;
+  margin-bottom: 0.15rem;
+}
+
+.contact-email-address {
+  display: inline-block;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: var(--color-primary);
-  margin-bottom: 0.4rem;
+  overflow-wrap: anywhere;
+}
+
+.contact-email-copy-button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.contact-info .contact-email-help {
+  margin: 0.45rem 0 1.5rem;
+  font-size: 0.92rem;
 }
 
 .contact-form label {
@@ -2061,6 +2108,11 @@ h4 { font-size: 1.25rem; }
 }
 
 @media (max-width: 480px) {
+  .contact-email-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
   .hero {
     padding: 2.5em 0;
   }

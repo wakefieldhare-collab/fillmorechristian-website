@@ -415,8 +415,8 @@ foreach ($relativePath in $publicHtmlPages) {
     if ($html -match "fonts\.googleapis\.com|fonts\.gstatic\.com") {
         $metadataFailures.Add("$relativePath still references Google-hosted fonts")
     }
-    if ($html -match "google\.com/maps/embed|<iframe") {
-        $metadataFailures.Add("$relativePath still embeds third-party iframe content")
+    if ($html -match "google\.com/maps/embed") {
+        $metadataFailures.Add("$relativePath still embeds Google Maps")
     }
 }
 
@@ -602,18 +602,22 @@ foreach ($relativePath in @("index.html", "about.html", "contact.html")) {
     }
 
     $html = Get-Content -Raw -LiteralPath $htmlPath
-    if ($html -match "google\.com/maps/embed|<iframe") {
-        $locationPanelIssues.Add("$relativePath still embeds third-party map content")
+    if ($html -match "google\.com/maps/embed") {
+        $locationPanelIssues.Add("$relativePath still embeds Google Maps")
     }
-    if ($html -notmatch "location-panel" -or $html -notmatch "Get Directions" -or $html -notmatch "310 N\. Florence Street") {
-        $locationPanelIssues.Add("$relativePath is missing the self-hosted location panel")
+    if ($html -notmatch "location-panel" -or
+        $html -notmatch "Get Directions" -or
+        $html -notmatch "310 N\. Florence Street" -or
+        $html -notmatch "openstreetmap\.org/export/embed\.html" -or
+        $html -notmatch "Regional map showing Fillmore Christian Church") {
+        $locationPanelIssues.Add("$relativePath is missing the accessible regional location map")
     }
 }
 
 if ($locationPanelIssues.Count -eq 0) {
-    Add-Check "Self-hosted location panels" "OK" "Home, about, and contact pages use local location panels instead of embedded maps"
+    Add-Check "Regional location maps" "OK" "Home, about, and contact pages show an accessible broader OpenStreetMap view"
 } else {
-    Add-Check "Self-hosted location panels" "FAIL" ($locationPanelIssues -join "; ")
+    Add-Check "Regional location maps" "FAIL" ($locationPanelIssues -join "; ")
 }
 
 $contactCardPath = Join-Path $root "contact.vcf"
@@ -635,7 +639,9 @@ if (Test-Path -LiteralPath $contactCardPath) {
         $contactHtml -notmatch 'id="contact-message-draft"' -or
         $contactHtml -notmatch 'data-copy-source="contact-message-draft"' -or
         $contactHtml -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or
-        $contactHtml -notmatch 'id="contact-email-copy-status"') {
+        $contactHtml -notmatch 'id="contact-email-copy-status"' -or
+        $contactHtml -notmatch 'class="contact-email-card"' -or
+        $contactHtml -match 'id="contact-email-copy"') {
         $contactCardIssues.Add("contact page is missing the static mailto form status, copyable draft, or copyable email fallback")
     }
     $homeHtml = Get-Content -Raw -LiteralPath (Join-Path $root "index.html")
@@ -646,7 +652,9 @@ if (Test-Path -LiteralPath $contactCardPath) {
         $homeHtml -notmatch 'id="home-message-draft"' -or
         $homeHtml -notmatch 'data-copy-source="home-message-draft"' -or
         $homeHtml -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or
-        $homeHtml -notmatch 'id="home-email-copy-status"') {
+        $homeHtml -notmatch 'id="home-email-copy-status"' -or
+        $homeHtml -notmatch 'class="contact-email-card"' -or
+        $homeHtml -match 'id="home-contact-email"') {
         $contactCardIssues.Add("home page is missing the static contact form status, copyable draft, or copyable email fallback")
     }
 
@@ -2018,7 +2026,7 @@ if (-not $SkipRemote) {
                 $hasOpenGraph = $response.Content -match "<meta\s+property=`"og:title`"" -and $response.Content -match "<meta\s+property=`"og:image`""
                 $hasTwitter = $response.Content -match "<meta\s+name=`"twitter:card`""
                 $hasNoGoogleFonts = $response.Content -notmatch "fonts\.googleapis\.com|fonts\.gstatic\.com"
-                $hasNoMapEmbeds = $response.Content -notmatch "google\.com/maps/embed|<iframe"
+                $hasNoMapEmbeds = $response.Content -notmatch "google\.com/maps/embed"
                 $faviconHref = if ($path -eq $sampleEpisodePath) { "../../favicon\.svg" } else { "favicon\.svg" }
                 $manifestHref = if ($path -eq $sampleEpisodePath) { "../../site\.webmanifest" } else { "site\.webmanifest" }
                 $hasBrandAssets = $response.Content -match "<link\s+rel=`"icon`"\s+href=`"$faviconHref`"\s+type=`"image/svg\+xml`"" -and

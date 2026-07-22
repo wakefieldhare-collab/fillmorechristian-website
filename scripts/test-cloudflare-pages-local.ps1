@@ -215,15 +215,20 @@ try {
         $homeResponse.Content -notmatch 'id="home-message-draft"' -or
         $homeResponse.Content -notmatch 'data-copy-source="home-message-draft"' -or
         $homeResponse.Content -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or
-        $homeResponse.Content -notmatch 'id="home-email-copy-status"') {
+        $homeResponse.Content -notmatch 'id="home-email-copy-status"' -or
+        $homeResponse.Content -notmatch 'class="contact-email-card"' -or
+        $homeResponse.Content -match 'id="home-contact-email"') {
         throw "Home page is missing the static contact form status, copyable draft, or copyable email fallback"
     }
     $checks.Add([pscustomobject]@{ Check = "Home page"; Status = "OK"; Details = "HTTP 200" })
 
-    if ($homeResponse.Content -match "google\.com/maps/embed|<iframe" -or $homeResponse.Content -notmatch "location-panel") {
-        throw "Home page does not use the self-hosted location panel cleanly"
+    if ($homeResponse.Content -match "google\.com/maps/embed" -or
+        $homeResponse.Content -notmatch "location-panel" -or
+        $homeResponse.Content -notmatch "openstreetmap\.org/export/embed\.html" -or
+        $homeResponse.Content -notmatch "Regional map showing Fillmore Christian Church") {
+        throw "Home page does not include the expected regional location map"
     }
-    $checks.Add([pscustomobject]@{ Check = "Home location panel"; Status = "OK"; Details = "Self-hosted location panel without embedded maps" })
+    $checks.Add([pscustomobject]@{ Check = "Home location panel"; Status = "OK"; Details = "Accessible regional OpenStreetMap view" })
 
     $expectedSecurityHeaders = @{
         "X-Content-Type-Options" = "nosniff"
@@ -468,10 +473,10 @@ try {
     $checks.Add([pscustomobject]@{ Check = "Events script"; Status = "OK"; Details = "Loads self-hosted events.ics and expands recurring Sunday events" })
 
     $aboutPageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "about.html")
-    if ($aboutPageContent -match "google\.com/maps/embed|<iframe" -or $aboutPageContent -notmatch "location-panel") {
-        throw "Built about page does not use the self-hosted location panel cleanly"
+    if ($aboutPageContent -match "google\.com/maps/embed" -or $aboutPageContent -notmatch "openstreetmap\.org/export/embed\.html") {
+        throw "Built about page does not include the regional location map"
     }
-    $checks.Add([pscustomobject]@{ Check = "About location panel"; Status = "OK"; Details = "No embedded map iframe" })
+    $checks.Add([pscustomobject]@{ Check = "About location panel"; Status = "OK"; Details = "Regional OpenStreetMap view" })
 
     $font = Invoke-NoRedirect -Url "$baseUrl/fonts/source-sans-3-latin-400-700.woff2"
     Assert-Status -Response $font -Expected @(200) -Name "Self-hosted font"
@@ -497,10 +502,10 @@ try {
     $checks.Add([pscustomobject]@{ Check = "Contact card"; Status = "OK"; Details = "text/vcard church email and address" })
 
     $contactPageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "contact.html")
-    if ($contactPageContent -match "google\.com/maps/embed|<iframe" -or $contactPageContent -notmatch "location-panel") {
-        throw "Built contact page does not use the self-hosted location panel cleanly"
+    if ($contactPageContent -match "google\.com/maps/embed" -or $contactPageContent -notmatch "openstreetmap\.org/export/embed\.html") {
+        throw "Built contact page does not include the regional location map"
     }
-    $checks.Add([pscustomobject]@{ Check = "Contact location panel"; Status = "OK"; Details = "No embedded map iframe" })
+    $checks.Add([pscustomobject]@{ Check = "Contact location panel"; Status = "OK"; Details = "Regional OpenStreetMap view" })
 
     if ($contactPageContent -notmatch 'data-mailto="church@fillmorechristian\.org"' -or
         $contactPageContent -notmatch 'data-status-target="contact-form-status"' -or
@@ -509,7 +514,9 @@ try {
         $contactPageContent -notmatch 'id="contact-message-draft"' -or
         $contactPageContent -notmatch 'data-copy-source="contact-message-draft"' -or
         $contactPageContent -notmatch 'data-copy-value="church@fillmorechristian\.org"' -or
-        $contactPageContent -notmatch 'id="contact-email-copy-status"') {
+        $contactPageContent -notmatch 'id="contact-email-copy-status"' -or
+        $contactPageContent -notmatch 'class="contact-email-card"' -or
+        $contactPageContent -match 'id="contact-email-copy"') {
         throw "Built contact page is missing the static mailto form status, copyable draft, or copyable email fallback"
     }
     $mainScript = Invoke-NoRedirect -Url "$baseUrl/js/main.js"

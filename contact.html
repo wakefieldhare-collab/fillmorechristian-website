@@ -69,21 +69,14 @@
         <div class="contact-info">
           <p style="margin-bottom:1.5em;">Whether you have a question, need prayer, or want to plan a visit, we're here for you. Don't hesitate to reach out -- we'd love to connect.</p>
 
-          <div class="contact-item">
-            <span class="icon">Email</span>
+          <div class="contact-email-card">
             <div>
-              <strong>Email</strong><br>
-              <a href="mailto:church@fillmorechristian.org">church@fillmorechristian.org</a>
+              <span class="eyebrow">Email us</span>
+              <a class="contact-email-address" href="mailto:church@fillmorechristian.org">church@fillmorechristian.org</a>
             </div>
+            <button class="copy-button contact-email-copy-button" type="button" data-copy-value="church@fillmorechristian.org" data-copy-status-target="contact-email-copy-status" data-copy-label="Copy email" data-copy-success="Church email copied." data-copy-fail="Copy failed. Select the email address and copy it manually.">Copy email</button>
           </div>
-          <div class="contact-email-copy">
-            <label for="contact-email-copy">Church email</label>
-            <div class="copy-field">
-              <input id="contact-email-copy" type="text" value="church@fillmorechristian.org" readonly>
-              <button class="copy-button" type="button" data-copy-value="church@fillmorechristian.org" data-copy-status-target="contact-email-copy-status" data-copy-label="Copy" data-copy-success="Church email copied." data-copy-fallback="Church email selected. Press Ctrl+C to copy it." data-copy-fail="Copy failed. Select the email address and copy it manually.">Copy</button>
-            </div>
-            <p id="contact-email-copy-status" class="copy-status" aria-live="polite">Copy the address if your email app does not open automatically.</p>
-          </div>
+          <p id="contact-email-copy-status" class="copy-status contact-email-help" aria-live="polite">Choose the address to open your email app, or copy it.</p>
 
           <div class="contact-item">
             <span class="icon">Map</span>
@@ -111,14 +104,9 @@
           </div>
 
           <div class="location-panel location-panel-compact">
-            <div class="location-map" aria-hidden="true">
-              <div class="map-road map-road-horizontal"></div>
-              <div class="map-road map-road-vertical"></div>
-              <div class="map-marker">
-                <span>FCC</span>
-              </div>
-              <span class="map-label map-label-north">N. Florence St.</span>
-              <span class="map-label map-label-town">Fillmore, Missouri</span>
+            <div class="location-map location-map-regional">
+              <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=-95.20%2C39.70%2C-94.60%2C40.42&amp;layer=mapnik&amp;marker=40.025272%2C-94.973584" title="Regional map showing Fillmore Christian Church between Maryville and St. Joseph, Missouri" loading="lazy"></iframe>
+              <p class="map-attribution"><a href="https://www.openstreetmap.org/?mlat=40.025272&amp;mlon=-94.973584#map=10/40.0253/-94.9736" target="_blank" rel="noopener">View larger regional map</a> &middot; Map data &copy; OpenStreetMap contributors</p>
             </div>
             <div class="location-details">
               <p class="eyebrow">Visit us</p>
