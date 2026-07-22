@@ -474,6 +474,7 @@ if (Test-Path -LiteralPath $homeHtmlPath) {
     if ($homeHtml -match 'id="first-visit-guide"' -and
         $homeHtml -match "First time at Fillmore\?" -and
         $homeHtml -match "Sunday School starts at 9:00 AM" -and
+        $homeHtml -match "preschool and elementary children, middle and high school students, and adults" -and
         $homeHtml -match "Children are welcome in worship" -and
         $homeHtml -match "Get Directions" -and
         $homeHtml -match "Ask a Question") {
@@ -490,6 +491,7 @@ if (Test-Path -LiteralPath $visitHtmlPath) {
     $visitHtml = Get-Content -Raw -LiteralPath $visitHtmlPath
     if ($visitHtml -match 'id="visit-service-times"' -and
         $visitHtml -match "Sunday School starts at 9:00 AM" -and
+        $visitHtml -match "preschool and elementary children, middle and high school students, or adults" -and
         $visitHtml -match "Worship begins at 10:00 AM" -and
         $visitHtml -match "Children are welcome in worship" -and
         $visitHtml -match "Get Directions" -and

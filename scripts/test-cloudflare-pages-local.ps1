@@ -247,6 +247,7 @@ try {
     if ($homeResponse.Content -notmatch 'id="first-visit-guide"' -or
         $homeResponse.Content -notmatch "First time at Fillmore\?" -or
         $homeResponse.Content -notmatch "Sunday School starts at 9:00 AM" -or
+        $homeResponse.Content -notmatch "preschool and elementary children, middle and high school students, and adults" -or
         $homeResponse.Content -notmatch "Children are welcome in worship" -or
         $homeResponse.Content -notmatch "Get Directions" -or
         $homeResponse.Content -notmatch "Ask a Question") {
