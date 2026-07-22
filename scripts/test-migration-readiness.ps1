@@ -381,15 +381,13 @@ foreach ($relativePath in $publicHtmlPages) {
     if ($relativePath -eq "index.html" -and $html -notmatch '<img\s+src="images/fcc-logo\.png"\s+alt="Fillmore Christian Church"\s+class="hero-logo"\s+width="2048"\s+height="2048"\s+decoding="async">') {
         $metadataFailures.Add("index.html missing official full FCC hero logo")
     }
+    if ($html -notmatch '<a\s+href="sermons\.html"(?:\s+class="active")?>Sermons &amp; Podcast</a>') {
+        $metadataFailures.Add("$relativePath missing combined sermons and podcast navigation link")
+    }
     if ($relativePath -eq "podcast.html") {
-        if ($html -notmatch '<a\s+href="podcast\.html"\s+class="active">Podcast</a>') {
-            $metadataFailures.Add("podcast.html missing active podcast navigation link")
-        }
         if ($html -notmatch 'id="podcast-latest-list"' -or $html -notmatch 'js/podcast\.js\?v=' -or $html -notmatch 'Latest messages') {
             $metadataFailures.Add("podcast.html missing latest message feed enhancement")
         }
-    } elseif ($html -notmatch '<a\s+href="podcast\.html">Podcast</a>') {
-        $metadataFailures.Add("$relativePath missing podcast navigation link")
     }
     if ($html -notmatch "<link\s+rel=`"manifest`"\s+href=`"site\.webmanifest`"") {
         $metadataFailures.Add("$relativePath missing web app manifest")
@@ -1444,7 +1442,7 @@ if ($feeds.ContainsKey($feedPaths[0])) {
             ($item.enclosure -and [string]$item.enclosure.url -and ($episodeHtml -notmatch '"duration":"PT[0-9HMS]+' -or $episodeHtml -notmatch '"associatedMedia":\{"@type":"AudioObject","name":' -or $episodeHtml -notmatch '"encodingFormat":"audio/(?:mpeg|mp4|wav)"'))) {
             $missingEpisodeStructuredData.Add($slug)
         }
-        if ($episodeHtml -notmatch '<link\s+rel="icon"\s+href="../../favicon\.svg"\s+type="image/svg\+xml">' -or $episodeHtml -notmatch '<img\s+src="../../images/fcc-logo-mark\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or $episodeHtml -notmatch '<a\s+href="../../podcast\.html">Podcast</a>' -or $episodeHtml -notmatch '<link\s+rel="manifest"\s+href="../../site\.webmanifest">' -or $episodeHtml -notmatch '<meta\s+name="theme-color"\s+content="#173247">') {
+        if ($episodeHtml -notmatch '<link\s+rel="icon"\s+href="../../favicon\.svg"\s+type="image/svg\+xml">' -or $episodeHtml -notmatch '<img\s+src="../../images/fcc-logo-mark\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or $episodeHtml -notmatch '<a\s+href="../../sermons\.html"\s+class="active">Sermons &amp; Podcast</a>' -or $episodeHtml -notmatch '<link\s+rel="manifest"\s+href="../../site\.webmanifest">' -or $episodeHtml -notmatch '<meta\s+name="theme-color"\s+content="#173247">') {
             $missingEpisodeBrandAssets.Add($slug)
         }
         $expectedEpisodeUrl = "https://www.fillmorechristian.org/episode/$slug/"
@@ -2050,9 +2048,9 @@ if (-not $SkipRemote) {
                 if ($path -eq $sampleEpisodePath) {
                     $sampleEpisodeCanonical = "https://www.fillmorechristian.org/$sampleEpisodePath"
                     if ($response.Content -match "<audio\s+controls" -and $response.Content -match "Download Audio" -and $response.Content -match "All Sermons" -and $response.Content -match 'href="../../podcast\.html"' -and $response.Content -match 'class="episode-nav"' -and $response.Content -match '<footer\s+class="footer">' -and $response.Content -match 'href="../../contact\.html">Contact Us</a>' -and $response.Content -match "Older Message" -and $response.Content -match '"@type":"PodcastEpisode"' -and $response.Content -match '"associatedMedia":\{"@type":"AudioObject"' -and $response.Content -match 'id="episode-link-url"' -and $response.Content -match [regex]::Escape('data-copy-value="' + $sampleEpisodeCanonical + '"') -and $response.Content -match 'id="episode-copy-status"') {
-                        Add-Check "Staging episode page" "OK" "Sample episode page has audio, download, archive navigation, podcast navigation, full footer, episode navigation, structured data, and copyable sermon link"
+                        Add-Check "Staging episode page" "OK" "Sample episode page has audio, download, archive navigation, combined media navigation, full footer, episode navigation, structured data, and copyable sermon link"
                     } else {
-                        Add-Check "Staging episode page" "FAIL" "Sample episode page is missing audio, download, archive navigation, podcast navigation, full footer, episode navigation, structured data, or copyable sermon link"
+                        Add-Check "Staging episode page" "FAIL" "Sample episode page is missing audio, download, archive navigation, combined media navigation, full footer, episode navigation, structured data, or copyable sermon link"
                     }
                 }
 

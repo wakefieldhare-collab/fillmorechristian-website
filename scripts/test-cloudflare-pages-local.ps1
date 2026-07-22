@@ -316,7 +316,7 @@ try {
         $podcastPageContent -notmatch 'data-subscribe-option="rss"' -or
         ([regex]::Matches($podcastPageContent, 'Audio \d+(?:\.\d+)? (?:KB|MB|GB|bytes)')).Count -ne 3 -or
         ([regex]::Matches($podcastPageContent, 'Duration \d+ (?:hr \d+ min|min \d+ sec)')).Count -ne 3 -or
-        $podcastPageContent -notmatch '<a\s+href="podcast\.html"\s+class="active">Podcast</a>' -or
+        $podcastPageContent -notmatch '<a\s+href="sermons\.html"\s+class="active">Sermons &amp; Podcast</a>' -or
         $podcastPageContent -notmatch '<footer\s+class="footer">' -or
         $podcastPageContent -notmatch 'Quick Links' -or
         $podcastPageContent -notmatch 'href="contact\.html">Contact Us</a>' -or
@@ -431,7 +431,7 @@ try {
     }
     if ($homePageContent -notmatch '<img\s+src="images/fcc-logo-mark\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or
         $homePageContent -notmatch '<img\s+src="images/fcc-logo\.png"\s+alt="Fillmore Christian Church"\s+class="hero-logo"\s+width="2048"\s+height="2048"\s+decoding="async">' -or
-        $homePageContent -notmatch '<a\s+href="podcast\.html">Podcast</a>' -or
+        $homePageContent -notmatch '<a\s+href="sermons\.html">Sermons &amp; Podcast</a>' -or
         $homePageContent -notmatch '<a\s+href="podcast\.html"\s+class="btn btn-outline">Subscribe to Podcast</a>' -or
         $homePageContent -notmatch 'nav-brand-name">Fillmore Christian Church') {
         throw "Built home page is missing the official FCC hero logo, compact navigation mark, podcast links, or text"
@@ -560,9 +560,9 @@ try {
         throw "Static episode page still references Google-hosted fonts"
     }
     if ($episode.Content -notmatch "<audio\s+controls" -or $episode.Content -notmatch "Download Audio" -or $episode.Content -notmatch 'class="sermon-duration"' -or $episode.Content -notmatch "All Sermons" -or $episode.Content -notmatch 'href="../../podcast\.html"' -or $episode.Content -notmatch 'class="episode-nav"' -or $episode.Content -notmatch "Newer Message" -or $episode.Content -notmatch "Older Message" -or $episode.Content -notmatch 'href="../../favicon\.svg"' -or $episode.Content -notmatch 'href="../../site\.webmanifest"' -or $episode.Content -notmatch 'id="episode-link-url"' -or $episode.Content -notmatch 'data-copy-value="https://www\.fillmorechristian\.org/episode/be-ready-luke-12/"' -or $episode.Content -notmatch 'id="episode-copy-status"' -or $episode.Content -notmatch '"@type":"PodcastEpisode"' -or $episode.Content -notmatch '"duration":"PT[0-9HMS]+' -or $episode.Content -notmatch '"associatedMedia":\{"@type":"AudioObject","name":') {
-        throw "Static episode page is missing audio, structured duration metadata, download, archive navigation, podcast navigation, episode navigation, brand asset links, or copyable canonical sermon link"
+        throw "Static episode page is missing audio, structured duration metadata, download, archive navigation, combined media navigation, episode navigation, brand asset links, or copyable canonical sermon link"
     }
-    $checks.Add([pscustomobject]@{ Check = "Static episode page"; Status = "OK"; Details = "Audio player, structured duration metadata, download, archive navigation, podcast navigation, episode navigation, brand asset links, and copyable sermon link" })
+    $checks.Add([pscustomobject]@{ Check = "Static episode page"; Status = "OK"; Details = "Audio player, structured duration metadata, download, archive navigation, combined media navigation, episode navigation, brand asset links, and copyable sermon link" })
 
     $checks | Format-Table -AutoSize
 } finally {

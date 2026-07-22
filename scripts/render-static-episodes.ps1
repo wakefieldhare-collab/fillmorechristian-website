@@ -183,6 +183,7 @@ function Write-Sitemap {
         @{ Loc = "https://www.fillmorechristian.org/beliefs.html"; Priority = "0.8" },
         @{ Loc = "https://www.fillmorechristian.org/team.html"; Priority = "0.7" },
         @{ Loc = "https://www.fillmorechristian.org/events.html"; Priority = "0.7" },
+        @{ Loc = "https://www.fillmorechristian.org/announcements.html"; Priority = "0.9" },
         @{ Loc = "https://www.fillmorechristian.org/sermons.html"; Priority = "0.9" },
         @{ Loc = "https://www.fillmorechristian.org/podcast.html"; Priority = "0.8" },
         @{ Loc = "https://www.fillmorechristian.org/contact.html"; Priority = "0.8" }
@@ -631,8 +632,7 @@ $olderNavMarkup
           </ul>
         </li>
         <li><a href="../../events.html">Events</a></li>
-        <li><a href="../../sermons.html" class="active">Past Sermons</a></li>
-        <li><a href="../../podcast.html">Podcast</a></li>
+        <li><a href="../../sermons.html" class="active">Sermons &amp; Podcast</a></li>
         <li><a href="../../contact.html">Contact Us</a></li>
       </ul>
     </div>
@@ -683,8 +683,7 @@ $episodeNavMarkup
           <ul class="footer-links">
             <li><a href="../../about.html">About</a></li>
             <li><a href="../../beliefs.html">Our Beliefs</a></li>
-            <li><a href="../../sermons.html">Past Sermons</a></li>
-            <li><a href="../../podcast.html">Podcast</a></li>
+            <li><a href="../../sermons.html">Sermons &amp; Podcast</a></li>
             <li><a href="../../events.html">Events</a></li>
             <li><a href="../../contact.html">Contact Us</a></li>
           </ul>
