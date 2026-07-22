@@ -3,27 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Our Team | Fillmore Christian Church</title>
-  <meta name="description" content="Meet the leadership team at Fillmore Christian Church in Fillmore, MO.">
-  <link rel="canonical" href="https://www.fillmorechristian.org/team.html">
+  <title>Weekly Announcements | Fillmore Christian Church</title>
+  <meta name="description" content="Current weekly announcements, reminders, and ways to participate at Fillmore Christian Church in Fillmore, Missouri.">
+  <link rel="canonical" href="https://www.fillmorechristian.org/announcements.html">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="site.webmanifest">
-  <link rel="alternate" type="application/rss+xml" title="Fillmore Christian Podcast" href="https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast">
   <meta name="theme-color" content="#173247">
-  <meta property="og:title" content="Our Team | Fillmore Christian Church">
-  <meta property="og:description" content="Meet the pastors, elders, and deacons serving Fillmore Christian Church in Fillmore, Missouri.">
+  <meta property="og:title" content="Weekly Announcements | Fillmore Christian Church">
+  <meta property="og:description" content="Current reminders and ways to participate in the life of Fillmore Christian Church.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.fillmorechristian.org/team.html">
+  <meta property="og:url" content="https://www.fillmorechristian.org/announcements.html">
   <meta property="og:image" content="https://www.fillmorechristian.org/images/church-exterior-1200.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Our Team | Fillmore Christian Church">
-  <meta name="twitter:description" content="Meet the leadership team serving Fillmore Christian Church.">
-  <meta name="twitter:image" content="https://www.fillmorechristian.org/images/church-exterior-1200.jpg">
-  <link rel="stylesheet" href="css/style.css?v=20260602-02">
+  <link rel="stylesheet" href="css/style.css?v=20260721-01">
 </head>
 <body>
 
-  <!-- Navigation -->
   <nav class="navbar">
     <div class="container">
       <a href="index.html" class="nav-brand">
@@ -38,14 +33,14 @@
         <li><a href="index.html">Home</a></li>
         <li><a href="visit.html">Visit</a></li>
         <li class="nav-dropdown">
-          <a href="about.html" class="active">About</a>
+          <a href="about.html">About</a>
           <ul class="nav-dropdown-menu">
             <li><a href="beliefs.html">Our Beliefs</a></li>
-            <li><a href="team.html" class="active">Our Team</a></li>
+            <li><a href="team.html">Our Team</a></li>
           </ul>
         </li>
         <li><a href="events.html">Events</a></li>
-        <li><a href="announcements.html">Announcements</a></li>
+        <li><a href="announcements.html" class="active">Announcements</a></li>
         <li><a href="sermons.html">Past Sermons</a></li>
         <li><a href="podcast.html">Podcast</a></li>
         <li><a href="contact.html">Contact Us</a></li>
@@ -53,43 +48,37 @@
     </div>
   </nav>
 
-  <!-- Page Header -->
   <section class="page-header">
     <div class="container">
-      <h1>Our Team</h1>
-      <p>The leadership of Fillmore Christian Church</p>
+      <p class="eyebrow">The week at Fillmore</p>
+      <h1>Weekly Announcements</h1>
+      <p>Current reminders and ways to participate in the life of our church.</p>
     </div>
   </section>
 
-  <!-- Team -->
-  <section class="section">
-    <div class="container">
-      <div class="team-grid">
-
-        <div class="team-card">
-          <img src="images/wakefield-hare.jpg" alt="Wakefield Hare and family" class="photo" width="800" height="800" loading="lazy" decoding="async">
-          <div class="info">
-            <h3>Wakefield Hare</h3>
-            <p class="role">Elder, Teaching Pastor</p>
-          </div>
+  <main class="section">
+    <div class="container announcements-page">
+      <div class="announcements-intro">
+        <div>
+          <span class="feature-kicker">Shared for worship</span>
+          <h2><span data-announcements-service-date>this Sunday</span></h2>
         </div>
-
-        <div class="team-card">
-          <img src="images/andy-barnes.jpg" alt="Andy Barnes and family" class="photo" width="800" height="800" loading="lazy" decoding="async">
-          <div class="info">
-            <h3>Andy Barnes</h3>
-            <p class="role">Elder, Youth Pastor</p>
-          </div>
-        </div>
-
+        <p class="announcements-updated" data-announcements-updated>Updated weekly</p>
       </div>
-      <p style="text-align:center; margin-top:2em; color:var(--color-text-light); font-size:0.9rem;">
-        <!-- To add photos: place image files in an "images" folder and update the team cards above -->
-      </p>
+      <div class="announcements-list" data-announcements-list>
+        <p class="announcements-loading">Loading current announcements…</p>
+        <p class="announcements-empty" data-announcements-fallback hidden>Current announcements are temporarily unavailable. Email <a href="mailto:church@fillmorechristian.org">church@fillmorechristian.org</a> for details.</p>
+      </div>
+      <noscript>
+        <p class="announcements-empty">Please enable JavaScript to view current announcements, or email <a href="mailto:church@fillmorechristian.org">church@fillmorechristian.org</a>.</p>
+      </noscript>
+      <div class="section-action announcements-actions">
+        <a href="events.html" class="btn btn-primary">View Church Events</a>
+        <a href="contact.html" class="btn btn-outline">Ask a Question</a>
+      </div>
     </div>
-  </section>
+  </main>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
@@ -125,6 +114,7 @@
     </div>
   </footer>
 
-  <script src="js/main.js?v=20260602-03"></script>
+  <script src="js/main.js"></script>
+  <script src="js/announcements.js"></script>
 </body>
 </html>

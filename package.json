@@ -1,6 +1,9 @@
 {
   "scripts": {
     "build": "node scripts/build-site.mjs",
+    "announcements:update": "node scripts/update-announcements.mjs",
+    "announcements:check": "node scripts/update-announcements.mjs --check",
+    "announcements:publish": "powershell -ExecutionPolicy Bypass -File scripts/publish-announcements.ps1",
     "deploy:cloudflare": "powershell -ExecutionPolicy Bypass -File scripts/deploy-cloudflare-pages.ps1",
     "verify:cloudflare-pages-auth": "powershell -ExecutionPolicy Bypass -File scripts/test-cloudflare-pages-deploy-auth.ps1",
     "apply:cloudflare-dns": "powershell -ExecutionPolicy Bypass -File scripts/apply-cloudflare-dns-cutover-records.ps1",

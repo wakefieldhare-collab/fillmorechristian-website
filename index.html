@@ -96,6 +96,7 @@
           </ul>
         </li>
         <li><a href="events.html">Events</a></li>
+        <li><a href="announcements.html">Announcements</a></li>
         <li><a href="sermons.html">Past Sermons</a></li>
         <li><a href="podcast.html">Podcast</a></li>
         <li><a href="contact.html">Contact Us</a></li>
@@ -205,13 +206,24 @@
     </div>
   </section>
 
-  <section class="section">
+  <section class="section announcements-preview">
+    <div class="container">
+      <span class="feature-kicker">Stay connected</span>
+      <h2>This Week at FCC</h2>
+      <p class="announcements-preview-copy">These are the same reminders shared during Sunday worship, kept here so you can find the details throughout the week.</p>
+      <div class="announcements-list" data-announcements-list data-announcements-limit="3">
+        <p class="announcements-loading">Loading current announcements…</p>
+        <p class="announcements-empty" data-announcements-fallback hidden>Current announcements are temporarily unavailable. Visit the announcements page or email the church office for details.</p>
+      </div>
+      <div class="section-action announcements-actions">
+        <a href="announcements.html" class="btn btn-primary">View All Announcements</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
     <div class="container">
       <h2>Upcoming Events</h2>
-      <div class="event-notice">
-        <h3>June 21 Schedule Change</h3>
-        <p>No Sunday School or regular Sunday worship at Fillmore Christian Church on June 21. Join the 10:00 AM community worship service at Duncan Park in Savannah, Missouri.</p>
-      </div>
       <div class="events-list" id="upcoming-events">
         <div class="event-item" data-static-event="true" data-recurring-event="sunday-school">
           <div class="event-date-box event-date-box-recurring">
@@ -244,17 +256,6 @@
             <h4>Sunday Worship</h4>
             <span class="event-time">Every Sunday at 10:00 AM</span>
             <p>Gather with us for prayer, singing, communion, and preaching from Scripture.</p>
-          </div>
-        </div>
-        <div class="event-item" data-static-event="true" data-special-event="community-worship-duncan-park">
-          <div class="event-date-box">
-            <span class="month">Jun</span>
-            <span class="day">21</span>
-          </div>
-          <div class="event-details">
-            <h4>Community Worship Service at Duncan Park</h4>
-            <span class="event-time">Sunday, June 21 at 10:00 AM</span>
-            <p>No regular Sunday School or Sunday worship at Fillmore Christian Church that morning. Join the community worship service at Duncan Park in Savannah, Missouri.</p>
           </div>
         </div>
       </div>
@@ -380,6 +381,7 @@
             <li><a href="about.html">About</a></li>
             <li><a href="visit.html">Plan a Visit</a></li>
             <li><a href="beliefs.html">Our Beliefs</a></li>
+            <li><a href="announcements.html">Announcements</a></li>
             <li><a href="sermons.html">Past Sermons</a></li>
             <li><a href="podcast.html">Podcast</a></li>
             <li><a href="events.html">Events</a></li>
@@ -402,6 +404,7 @@
   </footer>
 
   <script src="js/main.js?v=20260602-03"></script>
+  <script src="js/announcements.js?v=20260721-01"></script>
   <script src="js/events.js?v=20260604-03"></script>
 </body>
 </html>

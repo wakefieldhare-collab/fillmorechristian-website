@@ -278,6 +278,22 @@ The official FCC navigation logo is published at `images/fcc-logo.png` and is ch
 
 ## Updating Content
 
+### Publishing Weekly Announcements
+
+The dated worship `service-config.json` is the shared source for the sanctuary announcement set and the website. Validate the confirmed announcement objects first:
+
+```powershell
+.\scripts\publish-announcements.ps1 -ServiceConfigPath 'J:\My Drive\FCC Worship Prep\YYYY-MM-DD\service-config.json'
+```
+
+Then publish, deploy, and verify the live page:
+
+```powershell
+.\scripts\publish-announcements.ps1 -ServiceConfigPath 'J:\My Drive\FCC Worship Prep\YYYY-MM-DD\service-config.json' -Publish
+```
+
+Only announcements with `status` set to `confirmed` are accepted. The public home is `https://www.fillmorechristian.org/announcements.html`.
+
 ### Adding A New Sermon
 
 - Add the audio file to durable hosting.

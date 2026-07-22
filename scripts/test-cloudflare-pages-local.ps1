@@ -11,7 +11,12 @@ Add-Type -AssemblyName System.Net.Http
 $root = Resolve-Path (Join-Path $PSScriptRoot "..")
 $buildOutputPath = Join-Path $root $BuildOutputDir
 $wranglerConfigPath = Join-Path $root "wrangler.toml"
-$wrangler = Get-Command wrangler -ErrorAction Stop
+$wrangler = Get-Command wrangler -ErrorAction SilentlyContinue
+$wranglerPrefixArgs = @()
+if (-not $wrangler) {
+    $wrangler = Get-Command npx.cmd -ErrorAction Stop
+    $wranglerPrefixArgs = @("wrangler")
+}
 $logDir = Join-Path $env:TEMP "fillmore-cloudflare-pages-test"
 $stdoutPath = Join-Path $logDir "wrangler-pages-dev.out.log"
 $stderrPath = Join-Path $logDir "wrangler-pages-dev.err.log"
@@ -140,7 +145,7 @@ $arguments = @(
 )
 
 $launcher = $wrangler.Source
-$launcherArguments = $arguments
+$launcherArguments = $wranglerPrefixArgs + $arguments
 if ([System.IO.Path]::GetExtension($launcher) -eq ".ps1") {
     $launcherArguments = @(
         "-NoProfile",
@@ -148,7 +153,7 @@ if ([System.IO.Path]::GetExtension($launcher) -eq ".ps1") {
         "Bypass",
         "-File",
         $launcher
-    ) + $arguments
+    ) + $wranglerPrefixArgs + $arguments
     $launcher = (Get-Command powershell.exe -ErrorAction Stop).Source
 }
 
@@ -279,6 +284,13 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Pretty podcast redirect"; Status = "OK"; Details = "/podcast/ -> /podcast.html" })
 
+    $prettyAnnouncements = Invoke-NoRedirect -Url "$baseUrl/announcements/"
+    Assert-Status -Response $prettyAnnouncements -Expected @(301, 302, 308) -Name "Pretty announcements redirect"
+    if (-not $prettyAnnouncements.Location -or $prettyAnnouncements.Location.ToString() -notmatch "/announcements\.html$") {
+        throw "Pretty announcements redirect pointed to '$($prettyAnnouncements.Location)'"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Pretty announcements redirect"; Status = "OK"; Details = "/announcements/ -> /announcements.html" })
+
     $podcastFeedSlash = Invoke-NoRedirect -Url "$baseUrl/podcast-category/fillmore-christian/feed/podcast/"
     Assert-Status -Response $podcastFeedSlash -Expected @(301, 302, 308) -Name "Trailing podcast feed redirect"
     $podcastFeedSlashLocation = if ($podcastFeedSlash.Location) { $podcastFeedSlash.Location.ToString() } else { "" }
@@ -375,7 +387,27 @@ try {
     }
     $checks.Add([pscustomobject]@{ Check = "Calendar subscribe controls"; Status = "OK"; Details = "Published output includes copyable canonical iCal feed URL" })
 
+    $announcementsPageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "announcements.html")
+    $announcementsData = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "announcements.json") | ConvertFrom-Json
+    $announcementsScriptContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "js\announcements.js")
+    if ($announcementsPageContent -notmatch "Weekly Announcements" -or
+        $announcementsPageContent -notmatch "data-announcements-list" -or
+        $announcementsPageContent -notmatch 'href="announcements\.html" class="active"' -or
+        $announcementsPageContent -notmatch "js/announcements\.js" -or
+        $announcementsScriptContent -notmatch 'fetch\("announcements\.json"' -or
+        $announcementsData.schema_version -ne 1 -or
+        $announcementsData.service_date -notmatch '^\d{4}-\d{2}-\d{2}$' -or
+        @($announcementsData.announcements).Count -lt 1) {
+        throw "Weekly announcements page, data, or client renderer is incomplete"
+    }
+    $checks.Add([pscustomobject]@{ Check = "Weekly announcements"; Status = "OK"; Details = "$(@($announcementsData.announcements).Count) current announcements for $($announcementsData.service_date)" })
+
     $homePageContent = Get-Content -Raw -LiteralPath (Join-Path $buildOutputPath "index.html")
+    if ($homePageContent -notmatch "data-announcements-list" -or
+        $homePageContent -notmatch 'href="announcements\.html"' -or
+        $homePageContent -notmatch "js/announcements\.js") {
+        throw "Home page is missing the weekly announcements preview or link"
+    }
     if ($homePageContent -notmatch 'data-recurring-event="sunday-school"' -or
         $homePageContent -notmatch 'data-recurring-event="first-sunday-fellowship-breakfast"' -or
         $homePageContent -notmatch 'data-recurring-event="sunday-worship"' -or

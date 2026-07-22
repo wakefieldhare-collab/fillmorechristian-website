@@ -9,6 +9,8 @@ const outDir = path.join(root, "dist");
 const publishPaths = [
   "404.html",
   "about.html",
+  "announcements.html",
+  "announcements.json",
   "beliefs.html",
   "contact.html",
   "contact.vcf",
