@@ -439,8 +439,10 @@ if ((Test-Path -LiteralPath $announcementsPath) -and
         if ($announcementsData.schema_version -eq 1 -and
             $announcementsData.service_date -match '^\d{4}-\d{2}-\d{2}$' -and
             @($announcementsData.announcements).Count -gt 0 -and
+            @($announcementsData.announcements | Where-Object { $_.url -eq 'https://www.flamingspirit.com/' }).Count -gt 0 -and
             $announcementsPage -match 'data-announcements-list' -and
-            $announcementsScript -match 'fetch\("announcements\.json"') {
+            $announcementsScript -match 'fetch\("announcements\.json"' -and
+            $announcementsScript -match 'announcement-link') {
             Add-Check "Weekly announcements" "OK" "$(@($announcementsData.announcements).Count) public announcement(s) for $($announcementsData.service_date)"
         } else {
             Add-Check "Weekly announcements" "FAIL" "announcement data or page wiring is incomplete"
@@ -677,6 +679,7 @@ if (Test-Path -LiteralPath $calendarPath) {
     if ($calendarText -notmatch "(?m)^SUMMARY:Sunday Worship") { $calendarIssues.Add("missing Sunday Worship event") }
     if ($calendarText -notmatch "(?m)^RRULE:FREQ=WEEKLY;BYDAY=SU") { $calendarIssues.Add("missing weekly Sunday recurrence") }
     if ($calendarText -notmatch "(?m)^RRULE:FREQ=MONTHLY;BYDAY=1SU") { $calendarIssues.Add("missing first-Sunday monthly recurrence") }
+    if ($calendarText -notmatch "(?m)^EXDATE[^\r\n]*20260802T090000") { $calendarIssues.Add("missing August 2 Sunday School exception") }
     if ($calendarText -notmatch "TZID=America/Chicago") { $calendarIssues.Add("missing America/Chicago timezone reference") }
 
     $indexHtml = Get-Content -Raw -LiteralPath (Join-Path $root "index.html")
@@ -693,6 +696,12 @@ if (Test-Path -LiteralPath $calendarPath) {
         $eventsHtml -notmatch 'event-date-box-recurring') {
         $calendarIssues.Add("home or events page is missing the clear recurring Sunday fallback schedule")
     }
+    if ($indexHtml -notmatch 'data-schedule-exception="2026-08-02"' -or
+        $eventsHtml -notmatch 'data-schedule-exception="2026-08-02"' -or
+        $indexHtml -notmatch 'no Sunday School on August 2' -or
+        $eventsHtml -notmatch 'no Sunday School on August 2') {
+        $calendarIssues.Add("home or events page is missing the August 2 Sunday School notice")
+    }
     if ($eventsHtml -notmatch '<link\s+rel="alternate"\s+type="text/calendar"') {
         $calendarIssues.Add("events page missing calendar autodiscovery")
     }
@@ -701,6 +710,7 @@ if (Test-Path -LiteralPath $calendarPath) {
         $eventsHtml -notmatch '"name": "Sunday School"' -or
         $eventsHtml -notmatch '"name": "Fellowship Breakfast"' -or
         $eventsHtml -notmatch '"name": "Sunday Worship"' -or
+        $eventsHtml -notmatch '"exceptDate": "2026-08-02"' -or
         $eventsHtml -notmatch '"scheduleTimezone": "America/Chicago"') {
         $calendarIssues.Add("events page is missing structured recurring event metadata")
     }

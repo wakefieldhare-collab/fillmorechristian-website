@@ -48,6 +48,24 @@ const announcements = config.announcements.map((announcement, index) => {
     normalized.location = location;
   }
 
+  const url = String(announcement.url || "").trim();
+  const linkLabel = String(announcement.link_label || "").trim();
+  if (url) {
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(url);
+    } catch {
+      throw new Error(`Announcement ${index + 1} has an invalid website URL.`);
+    }
+    if (parsedUrl.protocol !== "https:") {
+      throw new Error(`Announcement ${index + 1} website URL must use HTTPS.`);
+    }
+    normalized.url = parsedUrl.href;
+    normalized.link_label = linkLabel || "Learn more";
+  } else if (linkLabel) {
+    throw new Error(`Announcement ${index + 1} has link_label without a website URL.`);
+  }
+
   return normalized;
 });
 

@@ -369,8 +369,9 @@ try {
         $calendar.Content -notmatch "SUMMARY:Sunday Worship" -or
         $calendar.Content -notmatch "SUMMARY:Fellowship Breakfast" -or
         $calendar.Content -notmatch "RRULE:FREQ=WEEKLY;BYDAY=SU" -or
-        $calendar.Content -notmatch "RRULE:FREQ=MONTHLY;BYDAY=1SU") {
-        throw "Event calendar did not include the recurring Sunday schedule and first-Sunday breakfast"
+        $calendar.Content -notmatch "RRULE:FREQ=MONTHLY;BYDAY=1SU" -or
+        $calendar.Content -notmatch "EXDATE[^\r\n]*20260802T090000") {
+        throw "Event calendar did not include the recurring Sunday schedule, first-Sunday breakfast, and August 2 Sunday School exception"
     }
     $checks.Add([pscustomobject]@{ Check = "Event calendar"; Status = "OK"; Details = "text/calendar recurring Sunday schedule and first-Sunday breakfast" })
 
@@ -383,8 +384,11 @@ try {
     if ($eventsPageContent -notmatch 'data-recurring-event="sunday-school"' -or
         $eventsPageContent -notmatch 'data-recurring-event="first-sunday-fellowship-breakfast"' -or
         $eventsPageContent -notmatch 'data-recurring-event="sunday-worship"' -or
-        $eventsPageContent -notmatch 'event-date-box-recurring') {
-        throw "Events page is missing the clear recurring Sunday fallback schedule"
+        $eventsPageContent -notmatch 'event-date-box-recurring' -or
+        $eventsPageContent -notmatch 'data-schedule-exception="2026-08-02"' -or
+        $eventsPageContent -notmatch 'no Sunday School on August 2' -or
+        $eventsPageContent -notmatch '"exceptDate": "2026-08-02"') {
+        throw "Events page is missing the recurring Sunday schedule or August 2 exception notice"
     }
     $checks.Add([pscustomobject]@{ Check = "Calendar subscribe controls"; Status = "OK"; Details = "Published output includes copyable canonical iCal feed URL" })
 
@@ -396,9 +400,11 @@ try {
         $announcementsPageContent -notmatch 'href="announcements\.html" class="active"' -or
         $announcementsPageContent -notmatch "js/announcements\.js" -or
         $announcementsScriptContent -notmatch 'fetch\("announcements\.json"' -or
+        $announcementsScriptContent -notmatch 'announcement-link' -or
         $announcementsData.schema_version -ne 1 -or
         $announcementsData.service_date -notmatch '^\d{4}-\d{2}-\d{2}$' -or
-        @($announcementsData.announcements).Count -lt 1) {
+        @($announcementsData.announcements).Count -lt 1 -or
+        @($announcementsData.announcements | Where-Object { $_.url -eq 'https://www.flamingspirit.com/' }).Count -eq 0) {
         throw "Weekly announcements page, data, or client renderer is incomplete"
     }
     $checks.Add([pscustomobject]@{ Check = "Weekly announcements"; Status = "OK"; Details = "$(@($announcementsData.announcements).Count) current announcements for $($announcementsData.service_date)" })
@@ -412,8 +418,11 @@ try {
     if ($homePageContent -notmatch 'data-recurring-event="sunday-school"' -or
         $homePageContent -notmatch 'data-recurring-event="first-sunday-fellowship-breakfast"' -or
         $homePageContent -notmatch 'data-recurring-event="sunday-worship"' -or
-        $homePageContent -notmatch 'event-date-box-recurring') {
-        throw "Home page is missing the clear recurring Sunday fallback schedule"
+        $homePageContent -notmatch 'event-date-box-recurring' -or
+        $homePageContent -notmatch 'data-schedule-exception="2026-08-02"' -or
+        $homePageContent -notmatch 'no Sunday School on August 2' -or
+        $homePageContent -notmatch '"exceptDate": "2026-08-02"') {
+        throw "Home page is missing the recurring Sunday schedule or August 2 exception notice"
     }
     if ($homePageContent -notmatch '<img\s+src="images/fcc-logo-mark\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or
         $homePageContent -notmatch '<img\s+src="images/fcc-logo\.png"\s+alt="Fillmore Christian Church"\s+class="hero-logo"\s+width="2048"\s+height="2048"\s+decoding="async">' -or

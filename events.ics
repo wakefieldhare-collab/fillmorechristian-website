@@ -12,10 +12,10 @@ DTSTAMP:20260601T000000Z
 DTSTART;TZID=America/Chicago:20260607T090000
 DTEND;TZID=America/Chicago:20260607T100000
 RRULE:FREQ=WEEKLY;BYDAY=SU
-EXDATE;TZID=America/Chicago:20260621T090000
+EXDATE;TZID=America/Chicago:20260621T090000,20260802T090000
 SUMMARY:Sunday School
 LOCATION:Fillmore Christian Church\, 310 N. Florence Street\, Fillmore\, MO 64449
-DESCRIPTION:Classes for learning Scripture together before worship.
+DESCRIPTION:Classes for preschool and elementary children, middle and high school students, and adults.
 URL:https://www.fillmorechristian.org/events.html
 END:VEVENT
 BEGIN:VEVENT

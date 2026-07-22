@@ -6,7 +6,7 @@
     {
       "title": "First Sunday Breakfast",
       "when": "Sunday, August 2",
-      "details": "Join us for First Sunday Breakfast before worship.",
+      "details": "Join us for First Sunday Breakfast before worship. There will be no Sunday School on August 2.",
       "location": "Fillmore Christian Church"
     },
     {
@@ -18,7 +18,9 @@
       "title": "Flaming Spirit Camp Mowing Day",
       "when": "Saturday, August 15",
       "details": "Save the date to help with mowing at Flaming Spirit Camp.",
-      "location": "Flaming Spirit Camp"
+      "location": "Flaming Spirit Camp",
+      "url": "https://www.flamingspirit.com/",
+      "link_label": "Visit Flaming Spirit Camp"
     },
     {
       "title": "Andrew County Food Pantry",

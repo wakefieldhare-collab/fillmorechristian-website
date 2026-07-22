@@ -50,6 +50,16 @@
       article.appendChild(location);
     }
 
+    if (announcement.url) {
+      const link = document.createElement("a");
+      link.className = "announcement-link";
+      link.href = announcement.url;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.textContent = announcement.link_label || "Learn more";
+      article.appendChild(link);
+    }
+
     return article;
   }
 

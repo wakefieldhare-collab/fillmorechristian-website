@@ -292,7 +292,7 @@ Then publish, deploy, and verify the live page:
 .\scripts\publish-announcements.ps1 -ServiceConfigPath 'J:\My Drive\FCC Worship Prep\YYYY-MM-DD\service-config.json' -Publish
 ```
 
-Only announcements with `status` set to `confirmed` are accepted. The public home is `https://www.fillmorechristian.org/announcements.html`.
+Only announcements with `status` set to `confirmed` are accepted. To add a public link, include an HTTPS `url` and optional `link_label` in that announcement object. The public home is `https://www.fillmorechristian.org/announcements.html`.
 
 ### Adding A New Sermon
 

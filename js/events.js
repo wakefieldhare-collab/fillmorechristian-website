@@ -3,7 +3,7 @@
    ============================================ */
 
 const CHURCH_CALENDAR_URL = 'events.ics';
-const CHURCH_CALENDAR_VERSION = '20260604-03';
+const CHURCH_CALENDAR_VERSION = '20260721-01';
 
 document.addEventListener('DOMContentLoaded', function() {
   const upcomingContainer = document.getElementById('upcoming-events');
@@ -254,12 +254,16 @@ function renderEvents(container, events) {
 
 function getStaticEventsHtml() {
   return '' +
+    '<div class="event-notice" data-schedule-exception="2026-08-02">' +
+      '<h3>August 2 Schedule</h3>' +
+      '<p>There will be no Sunday School on August 2. First Sunday Breakfast and the 10:00 AM worship service will still take place.</p>' +
+    '</div>' +
     '<div class="event-item" data-static-event="true" data-recurring-event="sunday-school">' +
       '<div class="event-date-box event-date-box-recurring"><span class="month">Every</span><span class="day">Sun</span></div>' +
       '<div class="event-details">' +
         '<h4>Sunday School</h4>' +
         '<span class="event-time">Every Sunday at 9:00 AM</span>' +
-        '<p>Classes for learning Scripture together before worship.</p>' +
+        '<p>Classes for preschool and elementary children, middle and high school students, and adults.</p>' +
       '</div>' +
     '</div>' +
     '<div class="event-item" data-static-event="true" data-recurring-event="first-sunday-fellowship-breakfast">' +
@@ -276,14 +280,6 @@ function getStaticEventsHtml() {
         '<h4>Sunday Worship</h4>' +
         '<span class="event-time">Every Sunday at 10:00 AM</span>' +
         '<p>Gather with us for prayer, singing, communion, and preaching from Scripture.</p>' +
-      '</div>' +
-    '</div>' +
-    '<div class="event-item" data-static-event="true" data-special-event="community-worship-duncan-park">' +
-      '<div class="event-date-box"><span class="month">Jun</span><span class="day">21</span></div>' +
-      '<div class="event-details">' +
-        '<h4>Community Worship Service at Duncan Park</h4>' +
-        '<span class="event-time">Sunday, June 21 at 10:00 AM</span>' +
-        '<p>No regular Sunday School or Sunday worship at Fillmore Christian Church that morning. Join the community worship service at Duncan Park in Savannah, Missouri.</p>' +
       '</div>' +
     '</div>';
 }
