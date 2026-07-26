@@ -1,26 +1,26 @@
 {
   "schema_version": 1,
-  "service_date": "2026-07-26",
-  "updated_at": "2026-07-21",
+  "service_date": "2026-08-02",
+  "updated_at": "2026-07-26",
   "announcements": [
     {
       "title": "First Sunday Breakfast",
-      "when": "Sunday, August 2",
+      "when": "Sunday, August 2, before worship",
       "details": "Join us for First Sunday Breakfast before worship. There will be no Sunday School on August 2.",
       "location": "Fillmore Christian Church"
     },
     {
       "title": "Leadership Team Meeting",
-      "when": "Second week of August; date and time to be announced",
-      "details": "Leadership Team members, please watch for the confirmed meeting details."
+      "when": "Second week of August; exact date and time to be determined",
+      "details": "Leadership Team members, please watch for the final meeting date and time."
     },
     {
       "title": "Flaming Spirit Camp Mowing Day",
       "when": "Saturday, August 15",
-      "details": "Save the date to help with mowing at Flaming Spirit Camp.",
-      "location": "Flaming Spirit Camp",
+      "details": "Save the date and help care for the camp grounds.",
+      "location": "Flaming Spirit Christian Service Camp",
       "url": "https://www.flamingspirit.com/",
-      "link_label": "Visit Flaming Spirit Camp"
+      "link_label": "Flaming Spirit Camp"
     },
     {
       "title": "Andrew County Food Pantry",
