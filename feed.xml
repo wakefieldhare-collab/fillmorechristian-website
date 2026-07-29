@@ -5,7 +5,7 @@
     <atom:link href="https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast" rel="self" type="application/rss+xml" />
     <link>https://www.fillmorechristian.org</link>
     <description>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</description>
-    <lastBuildDate>Sun, 05 Jul 2026 18:51:49 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 26 Jul 2026 15:27:00 +0000</lastBuildDate>
     <language>en-US</language>
     <copyright>2026</copyright>
     <itunes:subtitle>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</itunes:subtitle>
@@ -31,6 +31,25 @@
       <itunes:category text="Christianity" />
     </itunes:category>
     <generator>Fillmore Christian Church static podcast feed</generator>
+    <item>
+      <title>Do You Realize What This Means?</title>
+      <link>https://www.fillmorechristian.org/episode/do-you-realize-what-this-means/</link>
+      <pubDate>Sun, 26 Jul 2026 15:27:00 +0000</pubDate>
+      <dc:creator>Wakefield Hare</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/do-you-realize-what-this-means/</guid>
+      <description><![CDATA[Mark 1:21-45. Jesus' authority over teaching, evil spirits, sickness, and uncleanness reveals His greater authority to forgive sins and save sinners.]]></description>
+      <itunes:subtitle><![CDATA[Mark 1:21-45. Jesus' authority over teaching, evil spirits, sickness, and uncleanness reveals His greater authority to forgive sins and save sinners.]]></itunes:subtitle>
+      <content:encoded><![CDATA[Mark 1:21-45. Jesus' authority over teaching, evil spirits, sickness, and uncleanness reveals His greater authority to forgive sins and save sinners.]]></content:encoded>
+      <itunes:summary><![CDATA[Mark 1:21-45. Jesus' authority over teaching, evil spirits, sickness, and uncleanness reveals His greater authority to forgive sins and save sinners.]]></itunes:summary>
+      <googleplay:description><![CDATA[Mark 1:21-45. Jesus' authority over teaching, evil spirits, sickness, and uncleanness reveals His greater authority to forgive sins and save sinners.]]></googleplay:description>
+      <enclosure url="https://www.fillmorechristian.org/media/2026-07-26-do-you-realize-what-this-means.mp3" length="26618481" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:author>Wakefield Hare</itunes:author>
+      <itunes:duration>00:36:58</itunes:duration>
+    </item>
     <item>
       <title>Water to Living Water</title>
       <link>https://www.fillmorechristian.org/episode/water-to-living-water/</link>
