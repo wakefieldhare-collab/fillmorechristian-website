@@ -44,7 +44,7 @@
             "byDay": "https://schema.org/Sunday",
             "startTime": "09:00",
             "endTime": "10:00",
-            "exceptDate": "2026-08-02",
+            "exceptDate": ["2026-08-02", "2026-10-04"],
             "scheduleTimezone": "America/Chicago"
           },
           "location": {
@@ -119,6 +119,7 @@
             "byDay": "https://schema.org/Sunday",
             "startTime": "10:00",
             "endTime": "11:15",
+            "exceptDate": "2026-10-04",
             "scheduleTimezone": "America/Chicago"
           },
           "location": {
@@ -130,6 +131,35 @@
               "addressLocality": "Fillmore",
               "addressRegion": "MO",
               "postalCode": "64449",
+              "addressCountry": "US"
+            }
+          },
+          "organizer": {
+            "@type": "Church",
+            "name": "Fillmore Christian Church",
+            "url": "https://www.fillmorechristian.org/"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "item": {
+          "@type": "Event",
+          "name": "Community Church Service at Fillmore Ballpark",
+          "description": "Join the 10:00 AM community church service during the 2026 Fillmore Fall Festival. Fillmore Christian Church will not hold regular Sunday School or worship at the church on October 4.",
+          "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+          "eventStatus": "https://schema.org/EventScheduled",
+          "isAccessibleForFree": true,
+          "startDate": "2026-10-04T10:00:00-05:00",
+          "endDate": "2026-10-04T11:15:00-05:00",
+          "location": {
+            "@type": "Place",
+            "name": "Fillmore Ballpark",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Fillmore",
+              "addressRegion": "MO",
               "addressCountry": "US"
             }
           },
@@ -190,6 +220,10 @@
       <div class="event-notice" data-schedule-exception="2026-08-02">
         <h3>August 2 Schedule</h3>
         <p>There will be no Sunday School on August 2. First Sunday Breakfast and the 10:00 AM worship service will still take place.</p>
+      </div>
+      <div class="event-notice" data-schedule-exception="2026-10-04">
+        <h3>October 4 Community Church Service</h3>
+        <p>There will be no regular Sunday School or worship at Fillmore Christian Church on October 4. Join the 10:00 AM Community Church Service at Fillmore Ballpark.</p>
       </div>
       <div class="events-list" id="events-full-list">
         <div class="event-item" data-static-event="true" data-recurring-event="sunday-school">

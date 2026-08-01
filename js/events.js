@@ -3,7 +3,7 @@
    ============================================ */
 
 const CHURCH_CALENDAR_URL = 'events.ics';
-const CHURCH_CALENDAR_VERSION = '20260721-01';
+const CHURCH_CALENDAR_VERSION = '20260801-01';
 
 document.addEventListener('DOMContentLoaded', function() {
   const upcomingContainer = document.getElementById('upcoming-events');
@@ -257,6 +257,10 @@ function getStaticEventsHtml() {
     '<div class="event-notice" data-schedule-exception="2026-08-02">' +
       '<h3>August 2 Schedule</h3>' +
       '<p>There will be no Sunday School on August 2. First Sunday Breakfast and the 10:00 AM worship service will still take place.</p>' +
+    '</div>' +
+    '<div class="event-notice" data-schedule-exception="2026-10-04">' +
+      '<h3>October 4 Community Church Service</h3>' +
+      '<p>There will be no regular Sunday School or worship at Fillmore Christian Church on October 4. Join the 10:00 AM Community Church Service at Fillmore Ballpark.</p>' +
     '</div>' +
     '<div class="event-item" data-static-event="true" data-recurring-event="sunday-school">' +
       '<div class="event-date-box event-date-box-recurring"><span class="month">Every</span><span class="day">Sun</span></div>' +

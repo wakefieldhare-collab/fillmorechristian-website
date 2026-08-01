@@ -12,7 +12,7 @@ DTSTAMP:20260601T000000Z
 DTSTART;TZID=America/Chicago:20260607T090000
 DTEND;TZID=America/Chicago:20260607T100000
 RRULE:FREQ=WEEKLY;BYDAY=SU
-EXDATE;TZID=America/Chicago:20260621T090000,20260802T090000
+EXDATE;TZID=America/Chicago:20260621T090000,20260802T090000,20261004T090000
 SUMMARY:Sunday School
 LOCATION:Fillmore Christian Church\, 310 N. Florence Street\, Fillmore\, MO 64449
 DESCRIPTION:Classes for preschool and elementary children, middle and high school students, and adults.
@@ -35,7 +35,7 @@ DTSTAMP:20260601T000000Z
 DTSTART;TZID=America/Chicago:20260607T100000
 DTEND;TZID=America/Chicago:20260607T111500
 RRULE:FREQ=WEEKLY;BYDAY=SU
-EXDATE;TZID=America/Chicago:20260621T100000
+EXDATE;TZID=America/Chicago:20260621T100000,20261004T100000
 SUMMARY:Sunday Worship
 LOCATION:Fillmore Christian Church\, 310 N. Florence Street\, Fillmore\, MO 64449
 DESCRIPTION:Gather for prayer\, singing\, communion\, and preaching from Scripture.
@@ -49,6 +49,16 @@ DTEND;TZID=America/Chicago:20260621T111500
 SUMMARY:Community Worship Service at Duncan Park
 LOCATION:Duncan Park\, Savannah\, MO 64485
 DESCRIPTION:On Sunday\, June 21\, Fillmore Christian Church will not have regular Sunday School or Sunday worship in Fillmore. Instead\, join the 10:00 AM community worship service at Duncan Park in Savannah\, Missouri.
+URL:https://www.fillmorechristian.org/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:community-church-service-fillmore-ballpark-20261004@fillmorechristian.org
+DTSTAMP:20260801T113600Z
+DTSTART;TZID=America/Chicago:20261004T100000
+DTEND;TZID=America/Chicago:20261004T111500
+SUMMARY:Community Church Service at Fillmore Ballpark
+LOCATION:Fillmore Ballpark\, Fillmore\, MO
+DESCRIPTION:Join the 10:00 AM community church service during the 2026 Fillmore Fall Festival. Fillmore Christian Church will not hold regular Sunday School or worship at the church on October 4.
 URL:https://www.fillmorechristian.org/events.html
 END:VEVENT
 END:VCALENDAR

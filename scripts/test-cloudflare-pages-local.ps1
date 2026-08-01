@@ -373,10 +373,13 @@ try {
     if ($calendar.Content -notmatch "BEGIN:VCALENDAR" -or
         $calendar.Content -notmatch "SUMMARY:Sunday Worship" -or
         $calendar.Content -notmatch "SUMMARY:Fellowship Breakfast" -or
+        $calendar.Content -notmatch "SUMMARY:Community Church Service at Fillmore Ballpark" -or
         $calendar.Content -notmatch "RRULE:FREQ=WEEKLY;BYDAY=SU" -or
         $calendar.Content -notmatch "RRULE:FREQ=MONTHLY;BYDAY=1SU" -or
-        $calendar.Content -notmatch "EXDATE[^\r\n]*20260802T090000") {
-        throw "Event calendar did not include the recurring Sunday schedule, first-Sunday breakfast, and August 2 Sunday School exception"
+        $calendar.Content -notmatch "EXDATE[^\r\n]*20260802T090000" -or
+        $calendar.Content -notmatch "EXDATE[^\r\n]*20261004T090000" -or
+        $calendar.Content -notmatch "EXDATE[^\r\n]*20261004T100000") {
+        throw "Event calendar did not include the recurring Sunday schedule, dated exceptions, first-Sunday breakfast, and October 4 community service"
     }
     $checks.Add([pscustomobject]@{ Check = "Event calendar"; Status = "OK"; Details = "text/calendar recurring Sunday schedule and first-Sunday breakfast" })
 
@@ -391,9 +394,11 @@ try {
         $eventsPageContent -notmatch 'data-recurring-event="sunday-worship"' -or
         $eventsPageContent -notmatch 'event-date-box-recurring' -or
         $eventsPageContent -notmatch 'data-schedule-exception="2026-08-02"' -or
+        $eventsPageContent -notmatch 'data-schedule-exception="2026-10-04"' -or
         $eventsPageContent -notmatch 'no Sunday School on August 2' -or
-        $eventsPageContent -notmatch '"exceptDate": "2026-08-02"') {
-        throw "Events page is missing the recurring Sunday schedule or August 2 exception notice"
+        $eventsPageContent -notmatch 'Community Church Service at Fillmore Ballpark' -or
+        $eventsPageContent -notmatch '"2026-10-04"') {
+        throw "Events page is missing the recurring Sunday schedule or a dated exception notice"
     }
     $checks.Add([pscustomobject]@{ Check = "Calendar subscribe controls"; Status = "OK"; Details = "Published output includes copyable canonical iCal feed URL" })
 
@@ -425,9 +430,11 @@ try {
         $homePageContent -notmatch 'data-recurring-event="sunday-worship"' -or
         $homePageContent -notmatch 'event-date-box-recurring' -or
         $homePageContent -notmatch 'data-schedule-exception="2026-08-02"' -or
+        $homePageContent -notmatch 'data-schedule-exception="2026-10-04"' -or
         $homePageContent -notmatch 'no Sunday School on August 2' -or
-        $homePageContent -notmatch '"exceptDate": "2026-08-02"') {
-        throw "Home page is missing the recurring Sunday schedule or August 2 exception notice"
+        $homePageContent -notmatch 'Community Church Service at Fillmore Ballpark' -or
+        $homePageContent -notmatch '"2026-10-04"') {
+        throw "Home page is missing the recurring Sunday schedule or a dated exception notice"
     }
     if ($homePageContent -notmatch '<img\s+src="images/fcc-logo-mark\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or
         $homePageContent -notmatch '<img\s+src="images/fcc-logo\.png"\s+alt="Fillmore Christian Church"\s+class="hero-logo"\s+width="2048"\s+height="2048"\s+decoding="async">' -or

@@ -686,6 +686,9 @@ if (Test-Path -LiteralPath $calendarPath) {
     if ($calendarText -notmatch "(?m)^RRULE:FREQ=WEEKLY;BYDAY=SU") { $calendarIssues.Add("missing weekly Sunday recurrence") }
     if ($calendarText -notmatch "(?m)^RRULE:FREQ=MONTHLY;BYDAY=1SU") { $calendarIssues.Add("missing first-Sunday monthly recurrence") }
     if ($calendarText -notmatch "(?m)^EXDATE[^\r\n]*20260802T090000") { $calendarIssues.Add("missing August 2 Sunday School exception") }
+    if ($calendarText -notmatch "(?m)^EXDATE[^\r\n]*20261004T090000") { $calendarIssues.Add("missing October 4 Sunday School exception") }
+    if ($calendarText -notmatch "(?m)^EXDATE[^\r\n]*20261004T100000") { $calendarIssues.Add("missing October 4 Sunday worship exception") }
+    if ($calendarText -notmatch "(?m)^SUMMARY:Community Church Service at Fillmore Ballpark") { $calendarIssues.Add("missing October 4 community church service") }
     if ($calendarText -notmatch "TZID=America/Chicago") { $calendarIssues.Add("missing America/Chicago timezone reference") }
 
     $indexHtml = Get-Content -Raw -LiteralPath (Join-Path $root "index.html")
@@ -708,6 +711,12 @@ if (Test-Path -LiteralPath $calendarPath) {
         $eventsHtml -notmatch 'no Sunday School on August 2') {
         $calendarIssues.Add("home or events page is missing the August 2 Sunday School notice")
     }
+    if ($indexHtml -notmatch 'data-schedule-exception="2026-10-04"' -or
+        $eventsHtml -notmatch 'data-schedule-exception="2026-10-04"' -or
+        $indexHtml -notmatch 'Community Church Service at Fillmore Ballpark' -or
+        $eventsHtml -notmatch 'Community Church Service at Fillmore Ballpark') {
+        $calendarIssues.Add("home or events page is missing the October 4 community service notice")
+    }
     if ($eventsHtml -notmatch '<link\s+rel="alternate"\s+type="text/calendar"') {
         $calendarIssues.Add("events page missing calendar autodiscovery")
     }
@@ -716,7 +725,9 @@ if (Test-Path -LiteralPath $calendarPath) {
         $eventsHtml -notmatch '"name": "Sunday School"' -or
         $eventsHtml -notmatch '"name": "Fellowship Breakfast"' -or
         $eventsHtml -notmatch '"name": "Sunday Worship"' -or
-        $eventsHtml -notmatch '"exceptDate": "2026-08-02"' -or
+        $eventsHtml -notmatch '"name": "Community Church Service at Fillmore Ballpark"' -or
+        $eventsHtml -notmatch '"2026-08-02"' -or
+        $eventsHtml -notmatch '"2026-10-04"' -or
         $eventsHtml -notmatch '"scheduleTimezone": "America/Chicago"') {
         $calendarIssues.Add("events page is missing structured recurring event metadata")
     }
@@ -725,8 +736,8 @@ if (Test-Path -LiteralPath $calendarPath) {
         try {
             $eventJson = $eventJsonMatch.Groups[1].Value | ConvertFrom-Json
             $eventItems = @($eventJson.itemListElement)
-            if ($eventJson.'@type' -ne "ItemList" -or $eventItems.Count -ne 3) {
-                $calendarIssues.Add("events structured data does not contain the three expected recurring gatherings")
+            if ($eventJson.'@type' -ne "ItemList" -or $eventItems.Count -ne 4) {
+                $calendarIssues.Add("events structured data does not contain the three recurring gatherings and October 4 community service")
             }
         } catch {
             $calendarIssues.Add("events structured data is not valid JSON")
