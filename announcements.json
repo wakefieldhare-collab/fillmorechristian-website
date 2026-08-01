@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "service_date": "2026-08-02",
-  "updated_at": "2026-07-26",
+  "updated_at": "2026-08-01",
   "announcements": [
     {
       "title": "First Sunday Breakfast",
@@ -11,8 +11,9 @@
     },
     {
       "title": "Leadership Team Meeting",
-      "when": "Second week of August; exact date and time to be determined",
-      "details": "Leadership Team members, please watch for the final meeting date and time."
+      "when": "Wednesday, August 12, at 6:30 p.m.",
+      "details": "Leadership Team members will meet to pray, plan, and serve.",
+      "location": "Fillmore Christian Church"
     },
     {
       "title": "Flaming Spirit Camp Mowing Day",
@@ -26,6 +27,12 @@
       "title": "Andrew County Food Pantry",
       "when": "August donation focus",
       "details": "Please bring peanut butter or boxed meals such as Hamburger Helper, Chicken Helper, or Tuna Helper."
+    },
+    {
+      "title": "2026 Fillmore Fall Festival",
+      "when": "Saturday, October 3, 10:00 a.m. to 10:00 p.m.; Sunday, October 4, 10:00 a.m. church service",
+      "details": "Join the Fillmore Fall Festival at Fillmore Ballpark. FCC volunteers are needed for setup on Friday, October 2, and cleanup after church on Sunday, October 4.",
+      "location": "Fillmore Ballpark"
     }
   ]
 }
