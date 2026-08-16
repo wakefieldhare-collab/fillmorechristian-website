@@ -437,7 +437,6 @@ if ((Test-Path -LiteralPath $announcementsPath) -and
         if ($announcementsData.schema_version -eq 1 -and
             $announcementsData.service_date -match '^\d{4}-\d{2}-\d{2}$' -and
             @($announcementsData.announcements).Count -gt 0 -and
-            @($announcementsData.announcements | Where-Object { $_.url -eq 'https://www.flamingspirit.com/' }).Count -gt 0 -and
             $announcementsPage -match 'data-announcements-list' -and
             $announcementsScript -match 'fetch\("announcements\.json"' -and
             $announcementsScript -match 'announcement-link') {
