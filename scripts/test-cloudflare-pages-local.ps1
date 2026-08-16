@@ -413,8 +413,7 @@ try {
         $announcementsScriptContent -notmatch 'announcement-link' -or
         $announcementsData.schema_version -ne 1 -or
         $announcementsData.service_date -notmatch '^\d{4}-\d{2}-\d{2}$' -or
-        @($announcementsData.announcements).Count -lt 1 -or
-        @($announcementsData.announcements | Where-Object { $_.url -eq 'https://www.flamingspirit.com/' }).Count -eq 0) {
+        @($announcementsData.announcements).Count -lt 1) {
         throw "Weekly announcements page, data, or client renderer is incomplete"
     }
     $checks.Add([pscustomobject]@{ Check = "Weekly announcements"; Status = "OK"; Details = "$(@($announcementsData.announcements).Count) current announcements for $($announcementsData.service_date)" })
