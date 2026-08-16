@@ -1,21 +1,24 @@
 {
   "schema_version": 1,
-  "service_date": "2026-08-09",
-  "updated_at": "2026-08-07",
+  "service_date": "2026-08-16",
+  "updated_at": "2026-08-15",
   "announcements": [
     {
-      "title": "Leadership Team Meeting",
-      "when": "Wednesday, August 12, at 6:30 p.m.",
-      "details": "Leadership Team members will meet to pray, plan, and serve.",
-      "location": "Fillmore Christian Church"
+      "title": "Momentum Back-to-School Hangout",
+      "when": "Wednesday, August 19; time to be announced",
+      "details": "High school and middle school students are invited to kick off the new Momentum season.",
+      "location": "Rosendale Christian Church"
     },
     {
-      "title": "Flaming Spirit Camp Mowing Day",
-      "when": "Saturday, August 15",
-      "details": "Help care for the camp grounds. Start time and work instructions are still pending.",
-      "location": "Flaming Spirit Christian Service Camp",
-      "url": "https://www.flamingspirit.com/",
-      "link_label": "Flaming Spirit Camp"
+      "title": "Family Sunday",
+      "when": "Sunday, August 30",
+      "details": "Join us for a special all-ages worship service built for the whole church family."
+    },
+    {
+      "title": "Leadership Team Meeting",
+      "when": "Wednesday, September 2, at 6:30 p.m.",
+      "details": "Leadership Team members will meet to pray, plan, and serve.",
+      "location": "Fillmore Christian Church"
     },
     {
       "title": "Andrew County Food Pantry",
