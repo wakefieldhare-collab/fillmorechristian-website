@@ -35,10 +35,20 @@ DTSTAMP:20260601T000000Z
 DTSTART;TZID=America/Chicago:20260607T100000
 DTEND;TZID=America/Chicago:20260607T111500
 RRULE:FREQ=WEEKLY;BYDAY=SU
-EXDATE;TZID=America/Chicago:20260621T100000,20261004T100000
+EXDATE;TZID=America/Chicago:20260621T100000,20260830T100000,20261004T100000
 SUMMARY:Sunday Worship
 LOCATION:Fillmore Christian Church\, 310 N. Florence Street\, Fillmore\, MO 64449
 DESCRIPTION:Gather for prayer\, singing\, communion\, and preaching from Scripture.
+URL:https://www.fillmorechristian.org/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:family-sunday-20260830@fillmorechristian.org
+DTSTAMP:20260816T034500Z
+DTSTART;TZID=America/Chicago:20260830T100000
+DTEND;TZID=America/Chicago:20260830T111500
+SUMMARY:Family Sunday
+LOCATION:Fillmore Christian Church\, 310 N. Florence Street\, Fillmore\, MO 64449
+DESCRIPTION:Join us for a special all-ages worship service built for the whole church family.
 URL:https://www.fillmorechristian.org/events.html
 END:VEVENT
 BEGIN:VEVENT

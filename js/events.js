@@ -254,10 +254,6 @@ function renderEvents(container, events) {
 
 function getStaticEventsHtml() {
   return '' +
-    '<div class="event-notice" data-schedule-exception="2026-08-02">' +
-      '<h3>August 2 Schedule</h3>' +
-      '<p>There will be no Sunday School on August 2. First Sunday Breakfast and the 10:00 AM worship service will still take place.</p>' +
-    '</div>' +
     '<div class="event-notice" data-schedule-exception="2026-10-04">' +
       '<h3>October 4 Community Church Service</h3>' +
       '<p>There will be no regular Sunday School or worship at Fillmore Christian Church on October 4. Join the 10:00 AM Community Church Service at Fillmore Ballpark.</p>' +

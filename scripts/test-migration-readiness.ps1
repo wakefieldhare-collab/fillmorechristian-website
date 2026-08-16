@@ -682,9 +682,11 @@ if (Test-Path -LiteralPath $calendarPath) {
     if ($calendarText -notmatch "(?m)^SUMMARY:Sunday School") { $calendarIssues.Add("missing Sunday School event") }
     if ($calendarText -notmatch "(?m)^SUMMARY:Fellowship Breakfast") { $calendarIssues.Add("missing Fellowship Breakfast event") }
     if ($calendarText -notmatch "(?m)^SUMMARY:Sunday Worship") { $calendarIssues.Add("missing Sunday Worship event") }
+    if ($calendarText -notmatch "(?m)^SUMMARY:Family Sunday") { $calendarIssues.Add("missing August 30 Family Sunday event") }
     if ($calendarText -notmatch "(?m)^RRULE:FREQ=WEEKLY;BYDAY=SU") { $calendarIssues.Add("missing weekly Sunday recurrence") }
     if ($calendarText -notmatch "(?m)^RRULE:FREQ=MONTHLY;BYDAY=1SU") { $calendarIssues.Add("missing first-Sunday monthly recurrence") }
     if ($calendarText -notmatch "(?m)^EXDATE[^\r\n]*20260802T090000") { $calendarIssues.Add("missing August 2 Sunday School exception") }
+    if ($calendarText -notmatch "(?m)^EXDATE[^\r\n]*20260830T100000") { $calendarIssues.Add("missing August 30 Sunday worship exception") }
     if ($calendarText -notmatch "(?m)^EXDATE[^\r\n]*20261004T090000") { $calendarIssues.Add("missing October 4 Sunday School exception") }
     if ($calendarText -notmatch "(?m)^EXDATE[^\r\n]*20261004T100000") { $calendarIssues.Add("missing October 4 Sunday worship exception") }
     if ($calendarText -notmatch "(?m)^SUMMARY:Community Church Service at Fillmore Ballpark") { $calendarIssues.Add("missing October 4 community church service") }
@@ -704,12 +706,6 @@ if (Test-Path -LiteralPath $calendarPath) {
         $eventsHtml -notmatch 'event-date-box-recurring') {
         $calendarIssues.Add("home or events page is missing the clear recurring Sunday fallback schedule")
     }
-    if ($indexHtml -notmatch 'data-schedule-exception="2026-08-02"' -or
-        $eventsHtml -notmatch 'data-schedule-exception="2026-08-02"' -or
-        $indexHtml -notmatch 'no Sunday School on August 2' -or
-        $eventsHtml -notmatch 'no Sunday School on August 2') {
-        $calendarIssues.Add("home or events page is missing the August 2 Sunday School notice")
-    }
     if ($indexHtml -notmatch 'data-schedule-exception="2026-10-04"' -or
         $eventsHtml -notmatch 'data-schedule-exception="2026-10-04"' -or
         $indexHtml -notmatch 'Community Church Service at Fillmore Ballpark' -or
@@ -724,8 +720,10 @@ if (Test-Path -LiteralPath $calendarPath) {
         $eventsHtml -notmatch '"name": "Sunday School"' -or
         $eventsHtml -notmatch '"name": "Fellowship Breakfast"' -or
         $eventsHtml -notmatch '"name": "Sunday Worship"' -or
+        $eventsHtml -notmatch '"name": "Family Sunday"' -or
         $eventsHtml -notmatch '"name": "Community Church Service at Fillmore Ballpark"' -or
         $eventsHtml -notmatch '"2026-08-02"' -or
+        $eventsHtml -notmatch '"2026-08-30"' -or
         $eventsHtml -notmatch '"2026-10-04"' -or
         $eventsHtml -notmatch '"scheduleTimezone": "America/Chicago"') {
         $calendarIssues.Add("events page is missing structured recurring event metadata")
@@ -735,8 +733,22 @@ if (Test-Path -LiteralPath $calendarPath) {
         try {
             $eventJson = $eventJsonMatch.Groups[1].Value | ConvertFrom-Json
             $eventItems = @($eventJson.itemListElement)
-            if ($eventJson.'@type' -ne "ItemList" -or $eventItems.Count -ne 4) {
-                $calendarIssues.Add("events structured data does not contain the three recurring gatherings and October 4 community service")
+            $eventNames = @($eventItems | ForEach-Object { $_.item.name })
+            $requiredEventNames = @(
+                "Sunday School",
+                "Fellowship Breakfast",
+                "Sunday Worship",
+                "Family Sunday",
+                "Community Church Service at Fillmore Ballpark"
+            )
+            $missingEventNames = @($requiredEventNames | Where-Object { $_ -notin $eventNames })
+            $sundayWorshipItem = $eventItems | Where-Object { $_.item.name -eq "Sunday Worship" } | Select-Object -First 1
+            $sundayWorshipExceptions = @($sundayWorshipItem.item.eventSchedule.exceptDate)
+            if ($eventJson.'@type' -ne "ItemList" -or
+                $missingEventNames.Count -gt 0 -or
+                "2026-08-30" -notin $sundayWorshipExceptions -or
+                "2026-10-04" -notin $sundayWorshipExceptions) {
+                $calendarIssues.Add("events structured data does not contain the three recurring gatherings and dated exceptions")
             }
         } catch {
             $calendarIssues.Add("events structured data is not valid JSON")

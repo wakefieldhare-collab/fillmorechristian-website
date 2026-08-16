@@ -373,10 +373,12 @@ try {
     if ($calendar.Content -notmatch "BEGIN:VCALENDAR" -or
         $calendar.Content -notmatch "SUMMARY:Sunday Worship" -or
         $calendar.Content -notmatch "SUMMARY:Fellowship Breakfast" -or
+        $calendar.Content -notmatch "SUMMARY:Family Sunday" -or
         $calendar.Content -notmatch "SUMMARY:Community Church Service at Fillmore Ballpark" -or
         $calendar.Content -notmatch "RRULE:FREQ=WEEKLY;BYDAY=SU" -or
         $calendar.Content -notmatch "RRULE:FREQ=MONTHLY;BYDAY=1SU" -or
         $calendar.Content -notmatch "EXDATE[^\r\n]*20260802T090000" -or
+        $calendar.Content -notmatch "EXDATE[^\r\n]*20260830T100000" -or
         $calendar.Content -notmatch "EXDATE[^\r\n]*20261004T090000" -or
         $calendar.Content -notmatch "EXDATE[^\r\n]*20261004T100000") {
         throw "Event calendar did not include the recurring Sunday schedule, dated exceptions, first-Sunday breakfast, and October 4 community service"
@@ -393,9 +395,9 @@ try {
         $eventsPageContent -notmatch 'data-recurring-event="first-sunday-fellowship-breakfast"' -or
         $eventsPageContent -notmatch 'data-recurring-event="sunday-worship"' -or
         $eventsPageContent -notmatch 'event-date-box-recurring' -or
-        $eventsPageContent -notmatch 'data-schedule-exception="2026-08-02"' -or
         $eventsPageContent -notmatch 'data-schedule-exception="2026-10-04"' -or
-        $eventsPageContent -notmatch 'no Sunday School on August 2' -or
+        $eventsPageContent -notmatch '"name": "Family Sunday"' -or
+        $eventsPageContent -notmatch '"2026-08-30"' -or
         $eventsPageContent -notmatch 'Community Church Service at Fillmore Ballpark' -or
         $eventsPageContent -notmatch '"2026-10-04"') {
         throw "Events page is missing the recurring Sunday schedule or a dated exception notice"
@@ -428,9 +430,7 @@ try {
         $homePageContent -notmatch 'data-recurring-event="first-sunday-fellowship-breakfast"' -or
         $homePageContent -notmatch 'data-recurring-event="sunday-worship"' -or
         $homePageContent -notmatch 'event-date-box-recurring' -or
-        $homePageContent -notmatch 'data-schedule-exception="2026-08-02"' -or
         $homePageContent -notmatch 'data-schedule-exception="2026-10-04"' -or
-        $homePageContent -notmatch 'no Sunday School on August 2' -or
         $homePageContent -notmatch 'Community Church Service at Fillmore Ballpark' -or
         $homePageContent -notmatch '"2026-10-04"') {
         throw "Home page is missing the recurring Sunday schedule or a dated exception notice"
