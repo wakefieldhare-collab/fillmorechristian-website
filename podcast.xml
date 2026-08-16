@@ -5,7 +5,7 @@
     <atom:link href="https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast" rel="self" type="application/rss+xml" />
     <link>https://www.fillmorechristian.org</link>
     <description>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</description>
-    <lastBuildDate>Sun, 26 Jul 2026 15:27:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 16 Aug 2026 15:25:00 +0000</lastBuildDate>
     <language>en-US</language>
     <copyright>2026</copyright>
     <itunes:subtitle>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</itunes:subtitle>
@@ -31,6 +31,25 @@
       <itunes:category text="Christianity" />
     </itunes:category>
     <generator>Fillmore Christian Church static podcast feed</generator>
+    <item>
+      <title>The Lord of the Sabbath</title>
+      <link>https://www.fillmorechristian.org/episode/the-lord-of-the-sabbath/</link>
+      <pubDate>Sun, 16 Aug 2026 15:25:00 +0000</pubDate>
+      <dc:creator>Wakefield Hare</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/the-lord-of-the-sabbath/</guid>
+      <description><![CDATA[Mark 2:23-3:6. Jesus, the Lord of the Sabbath, reveals rest as God's gracious gift, rooted in His finished work and fulfilled in Christ's finished work of redemption.]]></description>
+      <itunes:subtitle><![CDATA[Mark 2:23-3:6. Jesus, the Lord of the Sabbath, reveals rest as God's gracious gift, rooted in His finished work and fulfilled in Christ's finished work of redemption.]]></itunes:subtitle>
+      <content:encoded><![CDATA[Mark 2:23-3:6. Jesus, the Lord of the Sabbath, reveals rest as God's gracious gift, rooted in His finished work and fulfilled in Christ's finished work of redemption.]]></content:encoded>
+      <itunes:summary><![CDATA[Mark 2:23-3:6. Jesus, the Lord of the Sabbath, reveals rest as God's gracious gift, rooted in His finished work and fulfilled in Christ's finished work of redemption.]]></itunes:summary>
+      <googleplay:description><![CDATA[Mark 2:23-3:6. Jesus, the Lord of the Sabbath, reveals rest as God's gracious gift, rooted in His finished work and fulfilled in Christ's finished work of redemption.]]></googleplay:description>
+      <enclosure url="https://www.fillmorechristian.org/media/2026-08-16-the-lord-of-the-sabbath.mp3" length="30091880" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:author>Wakefield Hare</itunes:author>
+      <itunes:duration>00:41:47</itunes:duration>
+    </item>
     <item>
       <title>Do You Realize What This Means?</title>
       <link>https://www.fillmorechristian.org/episode/do-you-realize-what-this-means/</link>
