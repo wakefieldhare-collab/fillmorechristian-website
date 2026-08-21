@@ -1,14 +1,8 @@
 {
   "schema_version": 1,
-  "service_date": "2026-08-16",
-  "updated_at": "2026-08-15",
+  "service_date": "2026-08-23",
+  "updated_at": "2026-08-21",
   "announcements": [
-    {
-      "title": "Momentum Back-to-School Hangout",
-      "when": "Wednesday, August 19; time to be announced",
-      "details": "High school and middle school students are invited to kick off the new Momentum season.",
-      "location": "Rosendale Christian Church"
-    },
     {
       "title": "Family Sunday",
       "when": "Sunday, August 30",
