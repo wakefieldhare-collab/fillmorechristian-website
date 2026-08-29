@@ -1,13 +1,8 @@
 {
   "schema_version": 1,
-  "service_date": "2026-08-23",
-  "updated_at": "2026-08-21",
+  "service_date": "2026-08-30",
+  "updated_at": "2026-08-29",
   "announcements": [
-    {
-      "title": "Family Sunday",
-      "when": "Sunday, August 30",
-      "details": "Join us for a special all-ages worship service built for the whole church family."
-    },
     {
       "title": "Leadership Team Meeting",
       "when": "Wednesday, September 2, at 6:30 p.m.",
