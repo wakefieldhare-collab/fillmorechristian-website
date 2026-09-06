@@ -5,7 +5,7 @@
     <atom:link href="https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast" rel="self" type="application/rss+xml" />
     <link>https://www.fillmorechristian.org</link>
     <description>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</description>
-    <lastBuildDate>Sun, 16 Aug 2026 15:25:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 06 Sep 2026 16:20:00 +0000</lastBuildDate>
     <language>en-US</language>
     <copyright>2026</copyright>
     <itunes:subtitle>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</itunes:subtitle>
@@ -31,6 +31,25 @@
       <itunes:category text="Christianity" />
     </itunes:category>
     <generator>Fillmore Christian Church static podcast feed</generator>
+    <item>
+      <title>When the Prison Door Stays Closed</title>
+      <link>https://www.fillmorechristian.org/episode/when-the-prison-door-stays-closed/</link>
+      <pubDate>Sun, 06 Sep 2026 16:20:00 +0000</pubDate>
+      <dc:creator>Wakefield Hare</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/when-the-prison-door-stays-closed/</guid>
+      <description><![CDATA[Matthew 11:2-19. John the Baptist brings his question to Jesus from prison. Wakefield Hare teaches on bringing our doubts to Christ, trusting His salvation through suffering, and responding to His invitation in faith.]]></description>
+      <itunes:subtitle><![CDATA[Matthew 11:2-19. John the Baptist brings his question to Jesus from prison. Wakefield Hare teaches on bringing our doubts to Christ, trusting His salvation through suffering, and responding to His invitation in faith.]]></itunes:subtitle>
+      <content:encoded><![CDATA[Matthew 11:2-19. John the Baptist brings his question to Jesus from prison. Wakefield Hare teaches on bringing our doubts to Christ, trusting His salvation through suffering, and responding to His invitation in faith.]]></content:encoded>
+      <itunes:summary><![CDATA[Matthew 11:2-19. John the Baptist brings his question to Jesus from prison. Wakefield Hare teaches on bringing our doubts to Christ, trusting His salvation through suffering, and responding to His invitation in faith.]]></itunes:summary>
+      <googleplay:description><![CDATA[Matthew 11:2-19. John the Baptist brings his question to Jesus from prison. Wakefield Hare teaches on bringing our doubts to Christ, trusting His salvation through suffering, and responding to His invitation in faith.]]></googleplay:description>
+      <enclosure url="https://www.fillmorechristian.org/media/2026-09-06-when-the-prison-door-stays-closed.mp3" length="25536846" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:author>Wakefield Hare</itunes:author>
+      <itunes:duration>00:35:28</itunes:duration>
+    </item>
     <item>
       <title>The Lord of the Sabbath</title>
       <link>https://www.fillmorechristian.org/episode/the-lord-of-the-sabbath/</link>
