@@ -1,19 +1,24 @@
 {
   "schema_version": 1,
-  "service_date": "2026-08-30",
-  "updated_at": "2026-08-29",
+  "service_date": "2026-09-20",
+  "updated_at": "2026-09-18",
   "announcements": [
     {
-      "title": "Leadership Team Meeting",
-      "when": "Wednesday, September 2, at 6:30 p.m.",
-      "details": "Leadership Team members will meet to pray, plan, and serve.",
-      "location": "Fillmore Christian Church"
+      "title": "2026 Fillmore Fall Festival",
+      "when": "Saturday, October 3, 10:00 a.m. to 10:00 p.m.; Sunday, October 4, worship at 10:00 a.m.",
+      "details": "FCC volunteers are needed for setup on Friday, October 2, and cleanup after church on Sunday, October 4.",
+      "location": "Fillmore Ballpark"
     },
     {
-      "title": "2026 Fillmore Fall Festival",
-      "when": "Saturday, October 3, 10:00 a.m. to 10:00 p.m.; Sunday, October 4, 10:00 a.m. church service",
-      "details": "Join the Fillmore Fall Festival at Fillmore Ballpark. FCC volunteers are needed for setup on Friday, October 2, and cleanup after church on Sunday, October 4.",
-      "location": "Fillmore Ballpark"
+      "title": "Andrew County Food Pantry",
+      "when": "September 2026",
+      "details": "September collection: pancake mix and syrup."
+    },
+    {
+      "title": "October Fellowship Breakfast",
+      "when": "Sunday, October 11, 9:45 a.m. to 10:10 a.m.",
+      "details": "October fellowship breakfast moves to October 11 because of the October 4 Community Fall Fest service. Join us before worship.",
+      "location": "Fillmore Christian Church"
     }
   ]
 }
