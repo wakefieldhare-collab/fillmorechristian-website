@@ -5,7 +5,7 @@
     <atom:link href="https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast" rel="self" type="application/rss+xml" />
     <link>https://www.fillmorechristian.org</link>
     <description>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</description>
-    <lastBuildDate>Sun, 06 Sep 2026 16:20:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 27 Sep 2026 16:20:00 +0000</lastBuildDate>
     <language>en-US</language>
     <copyright>2026</copyright>
     <itunes:subtitle>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</itunes:subtitle>
@@ -31,6 +31,25 @@
       <itunes:category text="Christianity" />
     </itunes:category>
     <generator>Fillmore Christian Church static podcast feed</generator>
+    <item>
+      <title>How Dare You Ask</title>
+      <link>https://www.fillmorechristian.org/episode/how-dare-you-ask/</link>
+      <pubDate>Sun, 27 Sep 2026 16:20:00 +0000</pubDate>
+      <dc:creator>Wakefield Hare</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/how-dare-you-ask/</guid>
+      <description><![CDATA[Luke 11:1-13. Jesus teaches His disciples to pray. Wakefield Hare teaches on asking for what the Father wants, coming boldly because Christ bore our shame, and receiving the Father's best gift, the Holy Spirit.]]></description>
+      <itunes:subtitle><![CDATA[Luke 11:1-13. Jesus teaches His disciples to pray. Wakefield Hare teaches on asking for what the Father wants, coming boldly because Christ bore our shame, and receiving the Father's best gift, the Holy Spirit.]]></itunes:subtitle>
+      <content:encoded><![CDATA[Luke 11:1-13. Jesus teaches His disciples to pray. Wakefield Hare teaches on asking for what the Father wants, coming boldly because Christ bore our shame, and receiving the Father's best gift, the Holy Spirit.]]></content:encoded>
+      <itunes:summary><![CDATA[Luke 11:1-13. Jesus teaches His disciples to pray. Wakefield Hare teaches on asking for what the Father wants, coming boldly because Christ bore our shame, and receiving the Father's best gift, the Holy Spirit.]]></itunes:summary>
+      <googleplay:description><![CDATA[Luke 11:1-13. Jesus teaches His disciples to pray. Wakefield Hare teaches on asking for what the Father wants, coming boldly because Christ bore our shame, and receiving the Father's best gift, the Holy Spirit.]]></googleplay:description>
+      <enclosure url="https://www.fillmorechristian.org/media/2026-09-27-how-dare-you-ask.mp3" length="30378216" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:author>Wakefield Hare</itunes:author>
+      <itunes:duration>00:42:11</itunes:duration>
+    </item>
     <item>
       <title>When the Prison Door Stays Closed</title>
       <link>https://www.fillmorechristian.org/episode/when-the-prison-door-stays-closed/</link>
