@@ -137,7 +137,7 @@ function Get-ElementTextByLocalName {
     return ""
 }
 
-[xml]$feed = Get-Content -Raw -LiteralPath $feedFile
+[xml]$feed = Get-Content -Raw -Encoding UTF8 -LiteralPath $feedFile
 $latestItems = @($feed.rss.channel.item | Where-Object { $_.enclosure -and $_.enclosure.url } | Select-Object -First 1)
 if ($latestItems.Count -eq 0) {
     throw "Podcast feed has no audio items: $feedFile"
@@ -195,7 +195,7 @@ $replacementLines += @(
     "          <!-- LATEST_SERMON_END -->"
 )
 
-$page = Get-Content -Raw -LiteralPath $homeFile
+$page = Get-Content -Raw -Encoding UTF8 -LiteralPath $homeFile
 $startMarker = "          <!-- LATEST_SERMON_START -->"
 $endMarker = "          <!-- LATEST_SERMON_END -->"
 $start = $page.IndexOf($startMarker)
