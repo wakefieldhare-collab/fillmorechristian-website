@@ -1,23 +1,29 @@
 {
   "schema_version": 1,
-  "service_date": "2026-09-27",
-  "updated_at": "2026-09-26",
+  "service_date": "2026-10-11",
+  "updated_at": "2026-10-10",
   "announcements": [
     {
-      "title": "2026 Fillmore Fall Festival",
-      "when": "Saturday, October 3, 10:00 a.m. to 10:00 p.m.; Sunday, October 4, worship at 10:00 a.m. with Rosendale Christian Church",
-      "details": "FCC volunteers are needed for setup on Friday, October 2, and cleanup after church on Sunday, October 4.",
+      "title": "Food Pantry",
+      "when": "October 2026",
+      "details": "The Andrew County Food Pantry October collection is canned pumpkin. Bring a can or two any Sunday."
+    },
+    {
+      "title": "Fall Fest Thanks",
+      "when": "Sunday, October 4",
+      "details": "Thank you to everyone who served at the Fall Festival and at our ballpark worship with Rosendale Christian Church.",
       "location": "Fillmore Ballpark"
     },
     {
-      "title": "Andrew County Food Pantry",
-      "when": "September 2026",
-      "details": "September collection: pancake mix and syrup."
+      "title": "Next Sunday",
+      "when": "Sunday, October 18, 10:00 a.m.",
+      "details": "Power of the Kingdom: we continue in Mark 4 with Jesus' parables about the kingdom of God.",
+      "location": "Fillmore Christian Church"
     },
     {
-      "title": "October Fellowship Breakfast",
-      "when": "Sunday, October 11, 9:45 a.m. to 10:10 a.m.",
-      "details": "October fellowship breakfast moves to October 11 because of the October 4 Community Fall Fest service. Join us before worship.",
+      "title": "November Breakfast",
+      "when": "Sunday, November 1, 9:45 a.m.",
+      "details": "Our first Sunday fellowship breakfast runs from 9:45 to 10:10 a.m. before worship.",
       "location": "Fillmore Christian Church"
     }
   ]
