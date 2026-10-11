@@ -1,0 +1,124 @@
+{
+  "_note": "Read by render-static-sermons.ps1. passages maps a podcast episode slug to its passage; list only passages confirmed from the episode title, description or service records. videoSermons lists Sundays when FCC played a video sermon from another teacher; each links to the publisher's page.",
+  "passages": {
+    "how-dare-you-ask": "Luke 11:1-13",
+    "when-the-prison-door-stays-closed": "Matthew 11:2-19",
+    "the-lord-of-the-sabbath": "Mark 2:23-3:6",
+    "do-you-realize-what-this-means": "Mark 1:21-45",
+    "water-to-living-water": "John 4:1-42",
+    "the-fathers-offensive-grace": "Luke 15:1-2, 11-32",
+    "zeal-for-the-true-temple": "John 2:13-22",
+    "the-reading-of-the-law-nehemiah-8": "Nehemiah 8",
+    "the-weight-of-unresolved-guilt-ezra-6": "Ezra 6",
+    "breathe-of-life-to-dry-bones": "Ezekiel 37",
+    "micah-4-6-the-hope-in-the-minor-prophets": "Micah 4-6",
+    "hosea": "Hosea",
+    "judges-summary-2": "Judges",
+    "joshua-25-charles-spurgeon-sermon": "Joshua",
+    "exodus-17-dehydrated": "Exodus 17",
+    "crossing-the-red-sea": "Exodus 14",
+    "exodus-4-6-charles-spurgeon-sermon": "Exodus 4-6",
+    "the-book-of-job-2": "Job",
+    "genesis-24-the-masters-servant": "Genesis 24",
+    "genesis-22-1-19-alistair-begg-sermon-read-by-wake": "Genesis 22:1-19",
+    "justified-by-faith-genesis-17": "Genesis 17",
+    "the-calling-genesis-12-1-9-charles-spurgeon": "Genesis 12:1-9",
+    "the-flood-grace-in-the-midst-of-evil-2": "Genesis 6-9",
+    "creation-gosple-project-week-one": "Genesis 1-2",
+    "hebrew-511-63": "Hebrews 5:11-6:3",
+    "living-your-life-for-eternity-luke-19-11-27": "Luke 19:11-27",
+    "living-life-for-eternity-luke-19-11-27": "Luke 19:11-27",
+    "let-god-use-your-constraints-luke-19-1-10": "Luke 19:1-10",
+    "relying-on-the-word-of-god-1-thessalonians-2-13-16": "1 Thessalonians 2:13-16",
+    "the-danger-of-being-the-older-brother": "Luke 15",
+    "luke-14-16b-35-following-christ-whatever-the-cost": "Luke 14:16b-35",
+    "luke-13-31-35-gods-desire-and-mission-for-you": "Luke 13:31-35",
+    "be-ready-luke-12": "Luke 12:35-48",
+    "from-disciple-to-apostles-luke-91-10": "Luke 9:1-10",
+    "the-words-of-eternal-life": "Luke 8",
+    "put-on-the-lord-jesus-christ": "Romans 13",
+    "romans-13-1-7": "Romans 13:1-7"
+  },
+  "videoSermons": [
+    {
+      "date": "2026-10-11",
+      "title": "The Parable of the Sower",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 8:4-15",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/the-parable-of-the-sower/"
+    },
+    {
+      "date": "2026-09-20",
+      "title": "A Meal to Remember",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 7:36-50",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/meal-remember/"
+    },
+    {
+      "date": "2026-09-13",
+      "title": "One Mother's Day",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 7:11-17",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/one-mothers-day/"
+    },
+    {
+      "date": "2026-08-23",
+      "title": "Jesus Picks His Team",
+      "teacher": "Alistair Begg",
+      "passage": "Mark 3:7-19",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/jesus-picks-his-team/"
+    },
+    {
+      "date": "2026-08-09",
+      "title": "Jesus Heals the Paralytic",
+      "teacher": "Alistair Begg",
+      "passage": "Mark 2:1-12",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/jesus-heals-paralytic/"
+    },
+    {
+      "date": "2026-08-02",
+      "title": "Orlando Listener Event",
+      "teacher": "Alistair Begg",
+      "passage": "Mark 1:35-45",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/orlando-listener-event/"
+    },
+    {
+      "date": "2026-07-19",
+      "title": "Why Did Jesus Come?",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 4:14-30",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/why-did-jesus-come/"
+    },
+    {
+      "date": "2026-07-12",
+      "title": "Is Seeing Believing?",
+      "teacher": "Kevin DeYoung",
+      "passage": "John 4:43-54",
+      "source": "Christ Covenant Church",
+      "url": "https://christcovenant.org/sermons/is-seeing-believing/"
+    },
+    {
+      "date": "2026-06-28",
+      "title": "He Must Increase",
+      "teacher": "Chad Van Dixhoorn",
+      "passage": "John 3:22-36",
+      "source": "Parkside Church",
+      "url": "https://www.parksidechurch.com/learn/resources/media-center/sermon/he-must-increase/"
+    },
+    {
+      "date": "2026-06-14",
+      "title": "Born Again",
+      "teacher": "Alistair Begg",
+      "passage": "John 3:1-15",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/born-again/"
+    }
+  ]
+}

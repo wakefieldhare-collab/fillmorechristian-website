@@ -163,10 +163,133 @@ function Get-ElementTextByLocalName {
     return ""
 }
 
-function Build-ArchiveSummaryHtml {
-    param($Items)
+function Join-LastWords {
+    param([string]$Text)
+    # Keep the last three words together so a title never wraps to a short final line.
+    # Tokens without letters or digits (such as "-") do not count as words. A nowrap span is used
+    # rather than &nbsp; because browsers still break after hyphens.
+    $words = @($Text -split " " | Where-Object { $_ })
+    $wordPositions = @(for ($i = 0; $i -lt $words.Count; $i++) { if ($words[$i] -match "[A-Za-z0-9]") { $i } })
+    if ($wordPositions.Count -le 3) { return "<span class=`"nowrap`">$(HtmlEncode $Text)</span>" }
+    $split = $wordPositions[$wordPositions.Count - 3]
+    $head = ($words[0..($split - 1)] | ForEach-Object { HtmlEncode $_ }) -join " "
+    $tail = ($words[$split..($words.Count - 1)] | ForEach-Object { HtmlEncode $_ }) -join " "
+    return "$head <span class=`"nowrap`">$tail</span>"
+}
 
-    $totalCount = @($Items).Count
+function Build-MetaHtml {
+    param([object[]]$Parts)
+    # Each part stays on one line (CSS nowrap). A short final part is held to the part before it.
+    $spans = @(foreach ($part in $Parts) {
+        $classAttr = if ($part.Class) { " class=`"$($part.Class)`"" } else { "" }
+        "<span$classAttr>$(HtmlEncode $part.Text)</span>"
+    })
+    $last = $Parts[$Parts.Count - 1]
+    if ($spans.Count -ge 2 -and @($last.Text -split " ").Count -le 2) {
+        $held = "<span class=`"nowrap`">$($spans[$spans.Count - 2]) &middot; $($spans[$spans.Count - 1])</span>"
+        $spans = if ($spans.Count -eq 2) { @($held) } else { @($spans[0..($spans.Count - 3)]) + $held }
+    }
+    return $spans -join " &middot; "
+}
+
+$bibleBooks = @(
+    "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
+    "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles", "Ezra", "Nehemiah", "Esther", "Job", "Psalms", "Proverbs",
+    "Ecclesiastes", "Song of Solomon", "Isaiah", "Jeremiah", "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos",
+    "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi",
+    "Matthew", "Mark", "Luke", "John", "Acts", "Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians",
+    "Philippians", "Colossians", "1 Thessalonians", "2 Thessalonians", "1 Timothy", "2 Timothy", "Titus", "Philemon",
+    "Hebrews", "James", "1 Peter", "2 Peter", "1 John", "2 John", "3 John", "Jude", "Revelation"
+)
+$firstNewTestamentBook = [Array]::IndexOf($bibleBooks, "Matthew")
+
+function Get-PassageBook {
+    param([string]$Passage)
+    if (-not $Passage) { return "" }
+    $match = $bibleBooks | Where-Object { $Passage -eq $_ -or $Passage.StartsWith("$_ ") } | Sort-Object Length -Descending | Select-Object -First 1
+    if ($match) { return $match }
+    return ""
+}
+
+function Get-PassageSortKey {
+    param([string]$Passage, [string]$Book)
+    $rest = $Passage.Substring($Book.Length).Trim()
+    $chapter = 0
+    $verse = 0
+    if ($rest -match "^(\d+)(?::(\d+))?") {
+        $chapter = [int]$Matches[1]
+        if ($Matches[2]) { $verse = [int]$Matches[2] }
+    }
+    return ($chapter * 1000) + $verse
+}
+
+function Get-BookAnchor {
+    param([string]$Book)
+    return "book-" + (($Book.ToLowerInvariant() -replace "[^a-z0-9]+", "-").Trim("-"))
+}
+
+function Build-PassageViewHtml {
+    param($Entries)
+
+    $withBook = @($Entries | Where-Object { $_.Book })
+    $books = @($withBook | ForEach-Object { $_.Book } | Sort-Object -Unique { [Array]::IndexOf($bibleBooks, $_) })
+    $lines = New-Object System.Collections.Generic.List[string]
+
+    $lines.Add('          <nav class="passage-book-nav" aria-label="Jump to a book of the Bible">')
+    foreach ($book in $books) {
+        $count = @($withBook | Where-Object { $_.Book -eq $book }).Count
+        $lines.Add("            <a href=`"#$(Get-BookAnchor $book)`">$(HtmlEncode $book) <span class=`"passage-book-count`">$count</span></a>")
+    }
+    $lines.Add('          </nav>')
+
+    $currentTestament = ""
+    foreach ($book in $books) {
+        $testament = if ([Array]::IndexOf($bibleBooks, $book) -ge $firstNewTestamentBook) { "New Testament" } else { "Old Testament" }
+        if ($testament -ne $currentTestament) {
+            $lines.Add("          <h2 class=`"passage-testament`">$testament</h2>")
+            $currentTestament = $testament
+        }
+        $bookEntries = @($withBook | Where-Object { $_.Book -eq $book } | Sort-Object @{ Expression = { $_.PassageSortKey } }, @{ Expression = { $_.SortTimestamp } })
+        $lines.Add("          <div class=`"passage-book`" id=`"$(Get-BookAnchor $book)`">")
+        $lines.Add("            <h3>$(HtmlEncode $book)</h3>")
+        $lines.Add('            <ul class="passage-list">')
+        foreach ($entry in $bookEntries) {
+            $linkAttrs = if ($entry.IsExternal) { " target=`"_blank`" rel=`"noopener`"" } else { "" }
+            $kind = if ($entry.IsExternal) { " <span class=`"passage-kind`">Video</span>" } else { "" }
+            $lines.Add("              <li>")
+            $lines.Add("                <span class=`"passage-ref`">$((HtmlEncode $entry.Passage) -replace ' ', '&nbsp;')$kind</span>")
+            if ($entry.Href) {
+                $lines.Add("                <a href=`"$(HtmlEncode $entry.Href)`"$linkAttrs>$(Join-LastWords $entry.Title)</a>")
+            } else {
+                $lines.Add("                <span class=`"passage-title`">$(Join-LastWords $entry.Title)</span>")
+            }
+            $lines.Add("                <span class=`"passage-meta`"><span>$((HtmlEncode $entry.Speaker) -replace ' ', '&nbsp;')</span>, <span>$((HtmlEncode $entry.Date) -replace ' ', '&nbsp;')</span></span>")
+            $lines.Add("              </li>")
+        }
+        $lines.Add('            </ul>')
+        $lines.Add('          </div>')
+    }
+
+    return $lines -join "`r`n"
+}
+
+function Replace-BetweenMarkers {
+    param([string]$Page, [string]$Name, [string]$Content)
+    $startMarker = "        <!-- $($Name)_START -->"
+    $endMarker = "        <!-- $($Name)_END -->"
+    $start = $Page.IndexOf($startMarker)
+    $end = $Page.IndexOf($endMarker)
+    if ($start -lt 0 -or $end -lt 0 -or $end -lt $start) {
+        throw "Could not find $Name markers in $pageFile"
+    }
+    $replacement = $startMarker + "`r`n" + $Content + "`r`n" + "        " + $endMarker.Trim()
+    return $Page.Substring(0, $start) + $replacement + $Page.Substring($end + $endMarker.Length)
+}
+
+function Build-ArchiveSummaryHtml {
+    param($Items, [int]$VideoCount)
+
+    $totalCount = @($Items).Count + $VideoCount
     $audioCount = @($Items | Where-Object { $_.enclosure -and [string]$_.enclosure.url }).Count
     $years = @(
         $Items |
@@ -200,7 +323,9 @@ function Build-ArchiveSummaryHtml {
 
 [xml]$feed = Get-Content -Raw -LiteralPath $feedFile
 $items = @($feed.rss.channel.item)
-$cards = New-Object System.Collections.Generic.List[string]
+$index = Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot "sermon-index.json") | ConvertFrom-Json
+$entries = New-Object System.Collections.Generic.List[object]
+$central = [System.TimeZoneInfo]::FindSystemTimeZoneById("Central Standard Time")
 
 foreach ($item in $items) {
     $title = [string]$item.title
@@ -220,25 +345,33 @@ foreach ($item in $items) {
     $durationLabel = Format-DurationLabel (Get-ElementTextByLocalName $item "duration")
     $episodePath = Get-RelativeEpisodePath ([string]$item.link)
     $episodeCanonicalUrl = Get-CanonicalEpisodeUrl $episodePath
-    $search = "$title $date $speaker $description $audioSizeLabel $durationLabel"
+    $slug = if ($episodePath) { ($episodePath -replace "^episode/", "").Trim("/") } else { "" }
+    $passageProperty = if ($slug) { $index.passages.PSObject.Properties[$slug] } else { $null }
+    $passage = if ($passageProperty) { [string]$passageProperty.Value } else { "" }
+    $book = Get-PassageBook $passage
+    if ($passage -and -not $book) { throw "Unrecognized book in passage '$passage' for $slug" }
+    $search = "$title $date $speaker $passage $description $audioSizeLabel $durationLabel"
 
     $cardClass = if ($audioUrl) { "sermon-item" } else { "sermon-item no-audio" }
     $hasAudio = if ($audioUrl) { "true" } else { "false" }
     $html = @()
     $html += "        <article class=`"$cardClass`" data-year=`"$(HtmlEncode $year)`" data-has-audio=`"$hasAudio`" data-sort-date=`"$(HtmlEncode $sortTimestamp)`" data-title=`"$(HtmlEncode $title.ToLowerInvariant())`" data-search=`"$(HtmlEncode $search.ToLowerInvariant())`">"
     if ($episodePath) {
-        $html += "          <h3><a href=`"$(HtmlEncode $episodePath)`">$(HtmlEncode $title)</a></h3>"
+        $html += "          <h3><a href=`"$(HtmlEncode $episodePath)`">$(Join-LastWords $title)</a></h3>"
     } else {
-        $html += "          <h3>$(HtmlEncode $title)</h3>"
+        $html += "          <h3>$(Join-LastWords $title)</h3>"
     }
-    $metaParts = @("<span>$(HtmlEncode $date)</span>", "<span>$(HtmlEncode $speaker)</span>")
+    $metaParts = @(@{ Text = $date }, @{ Text = $speaker })
+    if ($passage) {
+        $metaParts += @{ Text = $passage; Class = "sermon-passage" }
+    }
     if ($audioSizeLabel) {
-        $metaParts += "<span class=`"sermon-audio-size`">Audio $(HtmlEncode $audioSizeLabel)</span>"
+        $metaParts += @{ Text = "Audio $audioSizeLabel"; Class = "sermon-audio-size" }
     }
     if ($durationLabel) {
-        $metaParts += "<span class=`"sermon-duration`">Duration $(HtmlEncode $durationLabel)</span>"
+        $metaParts += @{ Text = "Duration $durationLabel"; Class = "sermon-duration" }
     }
-    $html += "          <div class=`"sermon-meta`">$($metaParts -join ' &middot; ')</div>"
+    $html += "          <div class=`"sermon-meta`">$(Build-MetaHtml $metaParts)</div>"
     if ($description) {
         $html += "          <p class=`"sermon-description`">$(HtmlEncode $description)</p>"
     }
@@ -250,41 +383,75 @@ foreach ($item in $items) {
         }
         $html += "          <div class=`"sermon-actions`">$($actionLinks -join '')</div>"
     } else {
-        $html += "          <p class=`"sermon-audio-missing`">Audio is not attached to this archived feed item yet.</p>"
+        $html += "          <p class=`"sermon-audio-missing`">Audio is not attached to this archived <span class=`"nowrap`">feed item yet.</span></p>"
         if ($episodeCanonicalUrl) {
             $html += "          <div class=`"sermon-actions`"><button class=`"copy-button sermon-copy-link`" type=`"button`" data-copy-value=`"$(HtmlEncode $episodeCanonicalUrl)`" data-copy-label=`"Copy Link`" data-copy-label-success=`"Copied`" data-copy-success=`"Sermon link copied.`" data-copy-fallback=`"Sermon link selected. Press Ctrl+C to copy it.`" data-copy-fail=`"Copy failed. Open the sermon and copy the page address.`">Copy Link</button></div>"
         }
     }
     $html += "        </article>"
-    $cards.Add(($html -join "`r`n"))
+    $entries.Add([pscustomobject]@{
+        SortTimestamp = [long]$sortTimestamp
+        Html = ($html -join "`r`n")
+        Title = $title
+        Date = $date
+        Speaker = $speaker
+        Passage = $passage
+        Book = $book
+        PassageSortKey = if ($book) { Get-PassageSortKey $passage $book } else { 0 }
+        Href = $episodePath
+        IsExternal = $false
+    })
 }
+
+foreach ($video in @($index.videoSermons)) {
+    $sunday = [datetime]::ParseExact([string]$video.date, "yyyy-MM-dd", [System.Globalization.CultureInfo]::InvariantCulture).AddHours(10.5)
+    $offset = $central.GetUtcOffset($sunday)
+    $when = [datetimeoffset]::new($sunday, $offset)
+    $title = [string]$video.title
+    $date = $when.ToString("MMMM d, yyyy", [System.Globalization.CultureInfo]::GetCultureInfo("en-US"))
+    $year = $when.ToString("yyyy")
+    $sortTimestamp = $when.ToUnixTimeSeconds()
+    $teacher = [string]$video.teacher
+    $passage = [string]$video.passage
+    $book = Get-PassageBook $passage
+    if (-not $book) { throw "Unrecognized book in video sermon passage '$passage'" }
+    $url = [string]$video.url
+    if (-not $url.StartsWith("https://")) { throw "Video sermon link must use HTTPS: $url" }
+    $source = [string]$video.source
+    $search = "$title $date $teacher $passage video sermon $source"
+
+    $html = @()
+    $html += "        <article class=`"sermon-item sermon-video`" data-year=`"$year`" data-has-audio=`"false`" data-sort-date=`"$sortTimestamp`" data-title=`"$(HtmlEncode $title.ToLowerInvariant())`" data-search=`"$(HtmlEncode $search.ToLowerInvariant())`">"
+    $html += "          <h3><a href=`"$(HtmlEncode $url)`" target=`"_blank`" rel=`"noopener`">$(Join-LastWords $title)</a></h3>"
+    $metaHtml = Build-MetaHtml @(@{ Text = $date }, @{ Text = $teacher }, @{ Text = $passage; Class = "sermon-passage" }, @{ Text = "Video sermon"; Class = "sermon-video-label" })
+    $html += "          <div class=`"sermon-meta`">$metaHtml</div>"
+    $html += "          <p class=`"sermon-description`">Shown during our Sunday&nbsp;worship&nbsp;service.</p>"
+    $html += "          <div class=`"sermon-actions`"><a href=`"$(HtmlEncode $url)`" class=`"sermon-watch`" target=`"_blank`" rel=`"noopener`">Watch at $(HtmlEncode $source)</a></div>"
+    $html += "        </article>"
+    $entries.Add([pscustomobject]@{
+        SortTimestamp = [long]$sortTimestamp
+        Html = ($html -join "`r`n")
+        Title = $title
+        Date = $date
+        Speaker = $teacher
+        Passage = $passage
+        Book = $book
+        PassageSortKey = Get-PassageSortKey $passage $book
+        Href = $url
+        IsExternal = $true
+    })
+}
+
+$sortedEntries = @($entries | Sort-Object SortTimestamp -Descending)
+$videoCount = @($index.videoSermons).Count
 
 $page = Get-Content -Raw -LiteralPath $pageFile
-$startMarker = "        <!-- STATIC_SERMONS_START -->"
-$endMarker = "        <!-- STATIC_SERMONS_END -->"
-$start = $page.IndexOf($startMarker)
-$end = $page.IndexOf($endMarker)
-
-if ($start -lt 0 -or $end -lt 0 -or $end -lt $start) {
-    throw "Could not find static sermon markers in $pageFile"
-}
-
-$replacement = $startMarker + "`r`n" + ($cards -join "`r`n") + "`r`n" + "        " + $endMarker.Trim()
-$updated = $page.Substring(0, $start) + $replacement + $page.Substring($end + $endMarker.Length)
-
-$summaryStartMarker = "        <!-- SERMON_ARCHIVE_SUMMARY_START -->"
-$summaryEndMarker = "        <!-- SERMON_ARCHIVE_SUMMARY_END -->"
-$summaryStart = $updated.IndexOf($summaryStartMarker)
-$summaryEnd = $updated.IndexOf($summaryEndMarker)
-
-if ($summaryStart -lt 0 -or $summaryEnd -lt 0 -or $summaryEnd -lt $summaryStart) {
-    throw "Could not find sermon archive summary markers in $pageFile"
-}
-
-$summaryReplacement = $summaryStartMarker + "`r`n" + (Build-ArchiveSummaryHtml $items) + "`r`n" + "        " + $summaryEndMarker.Trim()
-$updated = $updated.Substring(0, $summaryStart) + $summaryReplacement + $updated.Substring($summaryEnd + $summaryEndMarker.Length)
+$updated = Replace-BetweenMarkers $page "STATIC_SERMONS" (($sortedEntries | ForEach-Object { $_.Html }) -join "`r`n")
+$updated = Replace-BetweenMarkers $updated "SERMON_ARCHIVE_SUMMARY" (Build-ArchiveSummaryHtml $items $videoCount)
+$updated = Replace-BetweenMarkers $updated "SERMON_PASSAGES" (Build-PassageViewHtml $sortedEntries)
 
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 [System.IO.File]::WriteAllText($pageFile, $updated.TrimEnd() + "`r`n", $utf8NoBom)
 
-Write-Host "Rendered $($cards.Count) static sermon cards and archive summary into $SermonsPage"
+$mappedCount = @($sortedEntries | Where-Object { $_.Book }).Count
+Write-Host "Rendered $($sortedEntries.Count) sermon cards ($videoCount video), $mappedCount grouped by passage, into $SermonsPage"

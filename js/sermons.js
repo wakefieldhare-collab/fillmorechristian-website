@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const shareButton = document.getElementById('sermon-share-link');
   const staticCards = Array.from(container.querySelectorAll('.sermon-item'));
 
+  initializeArchiveViews(container, shareButton);
+
   if (staticCards.length > 0) {
     initializeStaticArchive(container, staticCards, search, yearFilter, sortControl, audioOnly, clearButton, shareButton);
     return;
@@ -141,6 +143,46 @@ function initializeStaticArchive(container, cards, search, yearFilter, sortContr
   }
 
   applyFilter({ updateUrl: false });
+}
+
+function initializeArchiveViews(container, shareButton) {
+  const passageView = document.getElementById('sermon-passage-view');
+  const dateControls = document.getElementById('sermon-date-controls');
+  const buttons = Array.from(document.querySelectorAll('[data-archive-view]'));
+  if (!passageView || buttons.length === 0) return;
+
+  function showView(view, updateUrl) {
+    const showPassages = view === 'passage';
+    passageView.hidden = !showPassages;
+    container.hidden = showPassages;
+    if (dateControls) dateControls.hidden = showPassages;
+    buttons.forEach(function(button) {
+      button.setAttribute('aria-pressed', button.getAttribute('data-archive-view') === view ? 'true' : 'false');
+    });
+
+    if (updateUrl && typeof URLSearchParams !== 'undefined' && window.history && typeof window.history.replaceState === 'function') {
+      const params = new URLSearchParams(window.location.search || '');
+      setArchiveParam(params, 'view', showPassages ? 'passage' : '');
+      const nextQuery = params.toString();
+      window.history.replaceState({}, '', window.location.pathname + (nextQuery ? '?' + nextQuery : '') + window.location.hash);
+      updateArchiveShareLink(shareButton);
+    }
+  }
+
+  buttons.forEach(function(button) {
+    button.addEventListener('click', function() {
+      showView(button.getAttribute('data-archive-view'), true);
+    });
+  });
+
+  let initialView = 'date';
+  if (typeof URLSearchParams !== 'undefined') {
+    initialView = new URLSearchParams(window.location.search || '').get('view') === 'passage' ? 'passage' : 'date';
+  }
+  if (window.location.hash && window.location.hash.indexOf('#book-') === 0) {
+    initialView = 'passage';
+  }
+  showView(initialView, false);
 }
 
 function applyArchiveStateFromUrl(search, yearFilter, sortControl, audioOnly) {

@@ -1200,13 +1200,17 @@ if ($podcastOwnershipIssues.Count -eq 0) {
     Add-Check "Podcast ownership metadata" "FAIL" ($podcastOwnershipIssues -join "; ")
 }
 
+# Video-Sunday entries (scripts/sermon-index.json) add cards beyond the podcast feed; they never carry audio.
+$sermonIndexPath = Join-Path $root "scripts\sermon-index.json"
+$videoSermonCount = if (Test-Path -LiteralPath $sermonIndexPath) { @((Get-Content -Raw -LiteralPath $sermonIndexPath | ConvertFrom-Json).videoSermons).Count } else { 0 }
+
 $sermonsPath = Join-Path $root "sermons.html"
 if (Test-Path -LiteralPath $sermonsPath) {
     $sermonsHtml = Get-Content -Raw -LiteralPath $sermonsPath
     $staticCards = ([regex]::Matches($sermonsHtml, 'class="sermon-item')).Count
-    $expectedCards = if ($feedItemCounts.ContainsKey($feedPaths[0])) { $feedItemCounts[$feedPaths[0]] } else { 0 }
+    $expectedCards = if ($feedItemCounts.ContainsKey($feedPaths[0])) { $feedItemCounts[$feedPaths[0]] + $videoSermonCount } else { 0 }
     if ($expectedCards -gt 0 -and $staticCards -eq $expectedCards) {
-        Add-Check "Static sermon archive" "OK" "$staticCards static cards match the podcast feed"
+        Add-Check "Static sermon archive" "OK" "$staticCards static cards match the podcast feed plus $videoSermonCount video sermon(s)"
     } else {
         Add-Check "Static sermon archive" "FAIL" "$staticCards static cards, expected $expectedCards from the podcast feed"
     }
@@ -2122,8 +2126,9 @@ if (-not $SkipRemote) {
 
             if ($path -eq "sermons.html") {
                 $remoteCards = ([regex]::Matches($response.Content, 'class="sermon-item')).Count
-                if ($feedItemCounts.ContainsKey($feedPaths[0]) -and $remoteCards -ne $feedItemCounts[$feedPaths[0]]) {
-                    Add-Check "Staging sermon card count" "FAIL" "$remoteCards remote cards, expected $($feedItemCounts[$feedPaths[0]])"
+                $expectedRemoteCards = if ($feedItemCounts.ContainsKey($feedPaths[0])) { $feedItemCounts[$feedPaths[0]] + $videoSermonCount } else { 0 }
+                if ($feedItemCounts.ContainsKey($feedPaths[0]) -and $remoteCards -ne $expectedRemoteCards) {
+                    Add-Check "Staging sermon card count" "FAIL" "$remoteCards remote cards, expected $expectedRemoteCards"
                 } else {
                     Add-Check "Staging sermon card count" "OK" "$remoteCards sermon cards"
                 }
@@ -2141,7 +2146,7 @@ if (-not $SkipRemote) {
                 }
                 if ($feedItemCounts.ContainsKey($feedPaths[0]) -and
                     $response.Content -match 'id="sermon-archive-summary"' -and
-                    $response.Content -match "<span class=`"archive-summary-value`">$($feedItemCounts[$feedPaths[0]])</span>\s*<span class=`"archive-summary-label`">messages archived</span>" -and
+                    $response.Content -match "<span class=`"archive-summary-value`">$expectedRemoteCards</span>\s*<span class=`"archive-summary-label`">messages archived</span>" -and
                     $response.Content -match "<span class=`"archive-summary-value`">$expectedRemoteAudioCards</span>\s*<span class=`"archive-summary-label`">with audio</span>" -and
                     $expectedRemoteYearRange -and
                     $response.Content -match "<span class=`"archive-summary-value`">$([regex]::Escape($expectedRemoteYearRange))</span>\s*<span class=`"archive-summary-label`">teaching years</span>") {
@@ -2151,14 +2156,14 @@ if (-not $SkipRemote) {
                 }
 
                 $remoteCardsWithYear = ([regex]::Matches($response.Content, 'class="sermon-item[^"]*"\s+data-year="\d{4}"')).Count
-                if ($feedItemCounts.ContainsKey($feedPaths[0]) -and $remoteCardsWithYear -eq $feedItemCounts[$feedPaths[0]] -and $response.Content -match 'id="sermon-year"') {
+                if ($feedItemCounts.ContainsKey($feedPaths[0]) -and $remoteCardsWithYear -eq $expectedRemoteCards -and $response.Content -match 'id="sermon-year"') {
                     Add-Check "Staging sermon year filter" "OK" "$remoteCardsWithYear sermon cards include years and filter control is present"
                 } else {
                     Add-Check "Staging sermon year filter" "FAIL" "$remoteCardsWithYear sermon card year value(s); filter control present: $($response.Content -match 'id=`"sermon-year`"')"
                 }
 
                 $remoteCardsWithSortData = ([regex]::Matches($response.Content, 'class="sermon-item[^"]*"\s+data-year="\d{4}"\s+data-has-audio="(?:true|false)"\s+data-sort-date="\d+"\s+data-title="[^"]+"')).Count
-                if ($feedItemCounts.ContainsKey($feedPaths[0]) -and $remoteCardsWithSortData -eq $feedItemCounts[$feedPaths[0]] -and $response.Content -match 'id="sermon-sort"') {
+                if ($feedItemCounts.ContainsKey($feedPaths[0]) -and $remoteCardsWithSortData -eq $expectedRemoteCards -and $response.Content -match 'id="sermon-sort"') {
                     Add-Check "Staging sermon sort control" "OK" "$remoteCardsWithSortData sermon cards include sort metadata and sort control is present"
                 } else {
                     Add-Check "Staging sermon sort control" "FAIL" "$remoteCardsWithSortData sermon card sort value(s); sort control present: $($response.Content -match 'id=`"sermon-sort`"')"
@@ -2166,7 +2171,7 @@ if (-not $SkipRemote) {
 
                 $remoteCardsWithAudioFlag = ([regex]::Matches($response.Content, 'class="sermon-item[^"]*"\s+data-year="\d{4}"\s+data-has-audio="(?:true|false)"')).Count
                 $remoteAudioCards = ([regex]::Matches($response.Content, 'data-has-audio="true"')).Count
-                if ($feedItemCounts.ContainsKey($feedPaths[0]) -and $feedEnclosureCounts.ContainsKey($feedPaths[0]) -and $remoteCardsWithAudioFlag -eq $feedItemCounts[$feedPaths[0]] -and $remoteAudioCards -eq $expectedRemoteAudioCards -and $response.Content -match 'id="sermon-audio-only"') {
+                if ($feedItemCounts.ContainsKey($feedPaths[0]) -and $feedEnclosureCounts.ContainsKey($feedPaths[0]) -and $remoteCardsWithAudioFlag -eq $expectedRemoteCards -and $remoteAudioCards -eq $expectedRemoteAudioCards -and $response.Content -match 'id="sermon-audio-only"') {
                     Add-Check "Staging sermon audio filter" "OK" "$remoteAudioCards cards have audio and audio-only control is present"
                 } else {
                     Add-Check "Staging sermon audio filter" "FAIL" "$remoteCardsWithAudioFlag audio flag(s), $remoteAudioCards audio card(s), audio control present: $($response.Content -match 'id=`"sermon-audio-only`"')"
