@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "service_date": "2026-10-11",
-  "updated_at": "2026-10-10",
+  "service_date": "2026-10-18",
+  "updated_at": "2026-10-11",
   "announcements": [
     {
       "title": "Food Pantry",
@@ -9,15 +9,9 @@
       "details": "The Andrew County Food Pantry October collection is canned pumpkin. Bring a can or two any Sunday."
     },
     {
-      "title": "Fall Fest Thanks",
-      "when": "Sunday, October 4",
-      "details": "Thank you to everyone who served at the Fall Festival and at our ballpark worship with Rosendale Christian Church.",
-      "location": "Fillmore Ballpark"
-    },
-    {
       "title": "Next Sunday",
-      "when": "Sunday, October 18, 10:00 a.m.",
-      "details": "Power of the Kingdom: we continue in Mark 4 with Jesus' parables about the kingdom of God.",
+      "when": "Sunday, October 25, 10:00 a.m.",
+      "details": "Power over Nature: we finish Mark 4 as Jesus calms the storm.",
       "location": "Fillmore Christian Church"
     },
     {
