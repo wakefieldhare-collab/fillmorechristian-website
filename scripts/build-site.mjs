@@ -23,6 +23,7 @@ const publishPaths = [
   "index.html",
   "podcast.html",
   "podcast.xml",
+  "privacy.html",
   "robots.txt",
   "sermons.html",
   "site.webmanifest",
