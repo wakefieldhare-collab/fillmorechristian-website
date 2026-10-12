@@ -1,5 +1,5 @@
 {
-  "_note": "Read by render-static-sermons.ps1. passages maps a podcast episode slug to its passage; list only passages confirmed from the episode title, description or service records. videoSermons lists Sundays when FCC played a video sermon from another teacher; each links to the publisher's page.",
+  "_note": "Read by render-static-sermons.ps1. passages maps a podcast episode slug to its passage; list only passages confirmed from the episode title, description or service records. videoSermons lists Sundays when FCC played a video sermon from another teacher; each links to the publisher's page. Earlier entries were identified from the video file names kept in WorshipTools Presenter and confirmed against each publisher's page; only confirmed matches are listed.",
   "passages": {
     "how-dare-you-ask": "Luke 11:1-13",
     "when-the-prison-door-stays-closed": "Matthew 11:2-19",
@@ -119,6 +119,390 @@
       "passage": "John 3:1-15",
       "source": "Truth For Life",
       "url": "https://www.truthforlife.org/resources/sermon/born-again/"
+    },
+    {
+      "date": "2026-04-19",
+      "title": "A Journey to Jesus",
+      "teacher": "Alistair Begg",
+      "passage": "Matthew 2:1-12",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/journey-jesus/"
+    },
+    {
+      "date": "2026-03-22",
+      "title": "The Prophesied Kingdom, Part Two",
+      "teacher": "Alistair Begg",
+      "passage": "Ezra 1:1-Malachi 4:6",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/prophesied-kingdom-pt-2/"
+    },
+    {
+      "date": "2026-03-15",
+      "title": "The Great Confession",
+      "teacher": "Alistair Begg",
+      "passage": "Nehemiah 9:1-5",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/the-great-confession/"
+    },
+    {
+      "date": "2026-01-18",
+      "title": "Getting the Picture",
+      "teacher": "Alistair Begg",
+      "passage": "Daniel 7:1-28",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/getting-picture/"
+    },
+    {
+      "date": "2026-01-04",
+      "title": "No God Like Yahweh",
+      "teacher": "Alistair Begg",
+      "passage": "Daniel 3:1-30",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/no-god-yahweh/"
+    },
+    {
+      "date": "2025-12-28",
+      "title": "God of the Exiles",
+      "teacher": "Alistair Begg",
+      "passage": "Daniel 1:1-21",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/god-exiles/"
+    },
+    {
+      "date": "2025-12-07",
+      "title": "Suffering in the Believer's Life",
+      "teacher": "Alistair Begg",
+      "passage": "Lamentations 1:12",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/suffering-in-the-believers-life/"
+    },
+    {
+      "date": "2025-11-09",
+      "title": "Sin",
+      "teacher": "Colin Smith",
+      "passage": "2 Kings 17",
+      "source": "Open the Bible",
+      "url": "https://www.youtube.com/watch?v=O9SrbxqQC9k"
+    },
+    {
+      "date": "2025-10-26",
+      "title": "The Sulking Servant",
+      "teacher": "Alistair Begg",
+      "passage": "Jonah 4:1-4",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/the-sulking-servant/"
+    },
+    {
+      "date": "2025-07-20",
+      "title": "The One Between",
+      "teacher": "Alistair Begg",
+      "passage": "1 Samuel 17:1-11",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/one-between/"
+    },
+    {
+      "date": "2025-06-22",
+      "title": "Saul's Folly",
+      "teacher": "Alistair Begg",
+      "passage": "1 Samuel 13:1-23",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/sauls-folly/"
+    },
+    {
+      "date": "2025-06-15",
+      "title": "Give Us a King",
+      "teacher": "Alistair Begg",
+      "passage": "1 Samuel 8:1-22",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/give-us-king/"
+    },
+    {
+      "date": "2025-06-01",
+      "title": "Misplaced Faith",
+      "teacher": "Alistair Begg",
+      "passage": "1 Samuel 4:1-11",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/misplaced-faith/"
+    },
+    {
+      "date": "2025-04-06",
+      "title": "All Israel Will Be Saved",
+      "teacher": "John Piper",
+      "passage": "Romans 11:22-29",
+      "source": "Desiring God",
+      "url": "https://www.desiringgod.org/messages/all-israel-will-be-saved"
+    },
+    {
+      "date": "2025-03-09",
+      "title": "Life and Prosperity, Death and Destruction",
+      "teacher": "Tim Keller",
+      "passage": "Deuteronomy 30",
+      "source": "The Gospel Coalition",
+      "url": "https://www.youtube.com/watch?v=oZm5JSAHu5U"
+    },
+    {
+      "date": "2025-03-02",
+      "title": "The Son of Man Must Be Lifted Up Like the Serpent",
+      "teacher": "John Piper",
+      "passage": "John 3:1-15",
+      "source": "Desiring God",
+      "url": "https://www.desiringgod.org/messages/the-son-of-man-must-be-lifted-up-like-the-serpent"
+    },
+    {
+      "date": "2025-01-26",
+      "title": "The Law and the Gospel",
+      "teacher": "John MacArthur",
+      "passage": "Selected Scriptures",
+      "source": "Grace to You",
+      "url": "https://www.gty.org/library/sermons-library/80-335"
+    },
+    {
+      "date": "2025-01-19",
+      "title": "On the Mountain: The Terrifying and Beckoning God",
+      "teacher": "Tim Keller",
+      "passage": "Exodus 19",
+      "source": "The Gospel Coalition",
+      "url": "https://www.youtube.com/watch?v=rACtcpKA2vk"
+    },
+    {
+      "date": "2024-11-17",
+      "title": "All Things for Good: In the Family of Joseph",
+      "teacher": "Alistair Begg",
+      "passage": "Genesis 50:20",
+      "source": "Banner of Truth",
+      "url": "https://www.youtube.com/watch?v=BF5V5ngiUNE"
+    },
+    {
+      "date": "2024-11-10",
+      "title": "Jacob's Ladder",
+      "teacher": "R.C. Sproul",
+      "passage": "Genesis 28",
+      "source": "Ligonier Ministries",
+      "url": "https://learn.ligonier.org/series/themes-from-genesis/jacobs-ladder"
+    },
+    {
+      "date": "2024-09-01",
+      "title": "The Fall of Satan and the Victory of Christ",
+      "teacher": "John Piper",
+      "passage": "Genesis 3:1-15",
+      "source": "Desiring God",
+      "url": "https://www.desiringgod.org/messages/the-fall-of-satan-and-the-victory-of-christ"
+    },
+    {
+      "date": "2024-08-18",
+      "title": "Turn Your Eyes upon Jesus",
+      "teacher": "Alistair Begg",
+      "passage": "Hebrews 13:18-25",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/turn-your-eyes-upon-jesus/"
+    },
+    {
+      "date": "2024-08-11",
+      "title": "A Christian Lifestyle",
+      "teacher": "Alistair Begg",
+      "passage": "Hebrews 13:1-8",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/a-christian-lifestyle/"
+    },
+    {
+      "date": "2024-07-28",
+      "title": "The Discipline of the Father",
+      "teacher": "Alistair Begg",
+      "passage": "Hebrews 12:5-11",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/discipline-father/"
+    },
+    {
+      "date": "2024-07-21",
+      "title": "Through Many Dangers",
+      "teacher": "Alistair Begg",
+      "passage": "Hebrews 11:29-40",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/through-many-dangers/"
+    },
+    {
+      "date": "2024-06-30",
+      "title": "What Is Faith?",
+      "teacher": "Alistair Begg",
+      "passage": "Hebrews 11:1",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/what-is-faith/"
+    },
+    {
+      "date": "2024-06-16",
+      "title": "Faith, Hope, and Love",
+      "teacher": "Alistair Begg",
+      "passage": "Hebrews 10:19-25",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/faith-hope-and-love/"
+    },
+    {
+      "date": "2024-06-09",
+      "title": "It Is Finished!",
+      "teacher": "Alistair Begg",
+      "passage": "Hebrews 10:1-18",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/it-finished/"
+    },
+    {
+      "date": "2024-05-19",
+      "title": "A Superior Covenant",
+      "teacher": "Alistair Begg",
+      "passage": "Hebrews 8:1-13",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/a-superior-covenant/"
+    },
+    {
+      "date": "2024-05-05",
+      "title": "Confident of Better Things",
+      "teacher": "Alistair Begg",
+      "passage": "Hebrews 6:9-20",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/confident-of-better-things/"
+    },
+    {
+      "date": "2024-04-14",
+      "title": "Jesus, the Great High Priest",
+      "teacher": "Alistair Begg",
+      "passage": "Hebrews 4:14-5:10",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/jesus-the-great-high-priest/"
+    },
+    {
+      "date": "2024-04-07",
+      "title": "Rest for Your Souls",
+      "teacher": "Alistair Begg",
+      "passage": "Hebrews 4:1-13",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/rest-for-your-soul/"
+    },
+    {
+      "date": "2024-03-24",
+      "title": "Holding Firmly to the End, Part Two",
+      "teacher": "Alistair Begg",
+      "passage": "Hebrews 3:1-19",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/holding-firmly-to-the-end-pt-2/"
+    },
+    {
+      "date": "2024-03-17",
+      "title": "Holding Firmly to the End, Part One",
+      "teacher": "Alistair Begg",
+      "passage": "Hebrews 3:1-19",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/holding-firmly-to-the-end-pt-1/"
+    },
+    {
+      "date": "2024-03-10",
+      "title": "The Danger of Drifting",
+      "teacher": "Alistair Begg",
+      "passage": "Hebrews 2:1-18",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/the-danger-of-drifting/"
+    },
+    {
+      "date": "2024-02-25",
+      "title": "Why You Should Join the Church",
+      "teacher": "John MacArthur",
+      "passage": "Selected Scriptures",
+      "source": "Grace to You",
+      "url": "https://www.gty.org/sermons/80-330/why-you-should-join-the-church"
+    },
+    {
+      "date": "2024-02-18",
+      "title": "Membership Matters",
+      "teacher": "Alistair Begg",
+      "passage": "Romans 12:4-5",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/membership-matters/"
+    },
+    {
+      "date": "2024-01-28",
+      "title": "The Baptism Debate",
+      "teacher": "Alistair Begg",
+      "passage": "Acts 16:11-15",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/the-baptism-debate/"
+    },
+    {
+      "date": "2023-12-31",
+      "title": "The Plan and Purpose of God",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 24:44-49",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/the-plan-and-purpose-of-god/"
+    },
+    {
+      "date": "2023-12-17",
+      "title": "The Resurrection, Part One",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 24:1-53",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/the-resurrection-an-intro/"
+    },
+    {
+      "date": "2023-12-10",
+      "title": "The Crucifixion",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 23:32-43",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/crucifixion-cd/"
+    },
+    {
+      "date": "2023-11-26",
+      "title": "Jesus: Despised and Rejected",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 22:63-23:7",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/jesus-despised-rejected/"
+    },
+    {
+      "date": "2023-11-19",
+      "title": "Jesus, Our Substitute",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 22:39-46",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/jesus-our-substitute/"
+    },
+    {
+      "date": "2023-11-05",
+      "title": "Dispute and Denial",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 22:21-38",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/dispute-and-denial/"
+    },
+    {
+      "date": "2023-10-29",
+      "title": "The Extent of His Love",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 22:7-20",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/the-extent-of-his-love/"
+    },
+    {
+      "date": "2023-09-24",
+      "title": "Watch and Pray",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 21:34-38",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/watch-and-pray/"
+    },
+    {
+      "date": "2023-06-18",
+      "title": "Persistent Prayer for the Lord's Return",
+      "teacher": "John MacArthur",
+      "passage": "Luke 18:1-8",
+      "source": "Grace to You",
+      "url": "https://www.gty.org/sermons/42-227/persistent-prayer-for-the-lords-return"
+    },
+    {
+      "date": "2023-06-11",
+      "title": "A Coming of the Kingdom",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 17:20-37",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/a-coming-of-the-kingdom/"
     }
   ]
 }

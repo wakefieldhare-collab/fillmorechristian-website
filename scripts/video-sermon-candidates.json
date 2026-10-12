@@ -1,0 +1,207 @@
+{
+  "_note": "Video Sundays found in WorshipTools Presenter whose sermon is not yet confirmed. Not shown on the website. Confirm with Wake, then move an entry into sermon-index.json videoSermons.",
+  "candidates": [
+    {
+      "date": "2023-07-02",
+      "status": "unknown",
+      "title": null,
+      "teacher": "Alistair Begg",
+      "passage": "Luke 18",
+      "source": "Truth For Life",
+      "url": null,
+      "note": "Pharisee and the Tax Collector (18:9-14) or How to Enter the Kingdom (18:15-30)"
+    },
+    {
+      "date": "2023-07-09",
+      "status": "unknown",
+      "title": null,
+      "teacher": "Alistair Begg",
+      "passage": "Luke 18",
+      "source": "Truth For Life",
+      "url": null,
+      "note": "How to Enter the Kingdom (18:15-30) or Believing Is Seeing (18:31-43)"
+    },
+    {
+      "date": "2023-07-30",
+      "status": "probable",
+      "title": "Jesus: King, Prophet, Priest",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 19:28-48",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/jesus-king-prophet-priest/"
+    },
+    {
+      "date": "2023-08-06",
+      "status": "probable",
+      "title": "The Authority of Jesus",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 20:1-8",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/the-authority-of-jesus/"
+    },
+    {
+      "date": "2023-08-27",
+      "status": "probable",
+      "title": "The Tenants Parable",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 20:9-19",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/the-tenants-parable/"
+    },
+    {
+      "date": "2023-09-03",
+      "status": "probable",
+      "title": "Render to Caesar",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 20:20-26",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/render-to-caesar/"
+    },
+    {
+      "date": "2023-09-17",
+      "status": "unknown",
+      "title": null,
+      "teacher": "Alistair Begg",
+      "passage": "Luke 20 or 21",
+      "source": "Truth For Life",
+      "url": null,
+      "note": "likely The Hope of the Resurrection (20:27-40)"
+    },
+    {
+      "date": "2024-02-04",
+      "status": "probable",
+      "title": "You Must Be Born Again",
+      "teacher": "Tim Keller",
+      "passage": "John 3:1-21",
+      "source": "The Gospel Coalition",
+      "url": "https://www.thegospelcoalition.org/conference_media/you-must-be-born-again/"
+    },
+    {
+      "date": "2024-05-26",
+      "status": "probable",
+      "title": "The Cleansing of Conscience",
+      "teacher": "Alistair Begg",
+      "passage": "Hebrews 9:1-14",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/the-cleansing-of-conscience/"
+    },
+    {
+      "date": "2024-09-08",
+      "status": "unknown",
+      "title": null,
+      "teacher": null,
+      "passage": "Genesis 4",
+      "source": null,
+      "url": null
+    },
+    {
+      "date": "2025-02-16",
+      "status": "unknown",
+      "title": null,
+      "teacher": "Alistair Begg",
+      "passage": "Numbers",
+      "source": "Truth For Life",
+      "url": null
+    },
+    {
+      "date": "2025-03-16",
+      "status": "unknown",
+      "title": null,
+      "teacher": null,
+      "passage": "Joshua 3-4",
+      "source": null,
+      "url": null
+    },
+    {
+      "date": "2025-05-11",
+      "status": "unknown",
+      "title": null,
+      "teacher": null,
+      "passage": "Judges 16",
+      "source": null,
+      "url": null
+    },
+    {
+      "date": "2025-05-25",
+      "status": "probable",
+      "title": "The Word of the Lord",
+      "teacher": "Alistair Begg",
+      "passage": "1 Samuel 3:1-14",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/word-lord/"
+    },
+    {
+      "date": "2025-06-08",
+      "status": "probable",
+      "title": "Samuel's Solid Leadership",
+      "teacher": "Alistair Begg",
+      "passage": "1 Samuel 7:1-11",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/samuels-solid-leadership/"
+    },
+    {
+      "date": "2025-07-13",
+      "status": "probable",
+      "title": "The Spirit, Descending and Departing",
+      "teacher": "Alistair Begg",
+      "passage": "1 Samuel 16:13-23",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/spirit-descending-and-departing/"
+    },
+    {
+      "date": "2025-08-10",
+      "status": "unknown",
+      "title": null,
+      "teacher": "R.C. Sproul",
+      "passage": "2 Samuel 11-12",
+      "source": "Ligonier Ministries",
+      "url": null,
+      "note": "two ~23 min lectures; Life of David #13-14 or Psalm 51 lectures"
+    },
+    {
+      "date": "2026-02-01",
+      "status": "probable",
+      "title": "Ezra and Nehemiah",
+      "teacher": "R.C. Sproul",
+      "passage": "Ezra",
+      "source": "Ligonier Ministries",
+      "url": "https://learn.ligonier.org/series/dust-glory-old-testament/ezra-and-nehemiah-ot"
+    },
+    {
+      "date": "2026-03-01",
+      "status": "probable",
+      "title": "Laboring for a God Who Fights for Us",
+      "teacher": "Tim Keller",
+      "passage": "Nehemiah 3-4",
+      "source": "The Gospel Coalition",
+      "url": "https://www.thegospelcoalition.org/conference_media/laboring-god-fights-us/"
+    },
+    {
+      "date": "2026-04-12",
+      "status": "probable",
+      "title": "This Thing That Has Happened, Part Two",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 2:22-38",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/thing-has-happened-part-two/"
+    },
+    {
+      "date": "2026-05-03",
+      "status": "probable",
+      "title": "Repentance, Part Two",
+      "teacher": "Alistair Begg",
+      "passage": "Luke 3:7-14",
+      "source": "Truth For Life",
+      "url": "https://www.truthforlife.org/resources/sermon/repentance-pt-2/"
+    },
+    {
+      "date": "2026-05-10",
+      "status": "probable",
+      "title": "The Lamb",
+      "teacher": "Tim Keller",
+      "passage": "John 1:19-34",
+      "source": "Gospel in Life",
+      "url": "https://gospelinlife.com/sermon/the-lamb/"
+    }
+  ]
+}

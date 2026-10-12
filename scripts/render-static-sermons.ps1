@@ -414,10 +414,12 @@ foreach ($video in @($index.videoSermons)) {
     $teacher = [string]$video.teacher
     $passage = [string]$video.passage
     $book = Get-PassageBook $passage
-    if (-not $book) { throw "Unrecognized book in video sermon passage '$passage'" }
+    # A passage such as "Selected Scriptures" names no single book; it stays out of the By passage view.
+    if (-not $book -and $passage -match "^\d?\s?[A-Z][a-z]+ \d") { throw "Unrecognized book in video sermon passage '$passage'" }
     $url = [string]$video.url
     if (-not $url.StartsWith("https://")) { throw "Video sermon link must use HTTPS: $url" }
     $source = [string]$video.source
+    $watchLabel = if (([Uri]$url).Host -match "(^|\.)youtube\.com$|^youtu\.be$") { "Watch on YouTube" } else { "Watch at $source" }
     $search = "$title $date $teacher $passage video sermon $source"
 
     $html = @()
@@ -426,7 +428,7 @@ foreach ($video in @($index.videoSermons)) {
     $metaHtml = Build-MetaHtml @(@{ Text = $date }, @{ Text = $teacher }, @{ Text = $passage; Class = "sermon-passage" }, @{ Text = "Video sermon"; Class = "sermon-video-label" })
     $html += "          <div class=`"sermon-meta`">$metaHtml</div>"
     $html += "          <p class=`"sermon-description`">Shown during our Sunday&nbsp;worship&nbsp;service.</p>"
-    $html += "          <div class=`"sermon-actions`"><a href=`"$(HtmlEncode $url)`" class=`"sermon-watch`" target=`"_blank`" rel=`"noopener`">Watch at $(HtmlEncode $source)</a></div>"
+    $html += "          <div class=`"sermon-actions`"><a href=`"$(HtmlEncode $url)`" class=`"sermon-watch`" target=`"_blank`" rel=`"noopener`">$(HtmlEncode $watchLabel)</a></div>"
     $html += "        </article>"
     $entries.Add([pscustomobject]@{
         SortTimestamp = [long]$sortTimestamp
@@ -436,7 +438,7 @@ foreach ($video in @($index.videoSermons)) {
         Speaker = $teacher
         Passage = $passage
         Book = $book
-        PassageSortKey = Get-PassageSortKey $passage $book
+        PassageSortKey = if ($book) { Get-PassageSortKey $passage $book } else { 0 }
         Href = $url
         IsExternal = $true
     })
