@@ -1,5 +1,5 @@
 {
-  "_note": "Read by render-static-sermons.ps1. passages maps a podcast episode slug to its passage; list only passages confirmed from the episode title, description or service records. videoSermons lists Sundays when FCC played a video sermon from another teacher; each links to the publisher's page. Earlier entries were identified from the video file names kept in WorshipTools Presenter and confirmed against each publisher's page; only confirmed matches are listed.",
+  "_note": "Read by render-static-sermons.ps1. passages maps a podcast episode slug to its passage; list only passages confirmed from the episode title, description or service records. videoSermons lists Sundays when FCC played a video sermon from another teacher; each links to the publisher's page. Earlier entries were identified from the video file names kept in WorshipTools Presenter and confirmed against each publisher's page; only confirmed matches are listed. Passages and speakers for 2021-2022 episodes come from the church's sermon transcripts (Sermon Audio/Transcriptions); where the transcript only implies the text, just the chapter is listed.",
   "passages": {
     "how-dare-you-ask": "Luke 11:1-13",
     "when-the-prison-door-stays-closed": "Matthew 11:2-19",
@@ -35,9 +35,25 @@
     "luke-13-31-35-gods-desire-and-mission-for-you": "Luke 13:31-35",
     "be-ready-luke-12": "Luke 12:35-48",
     "from-disciple-to-apostles-luke-91-10": "Luke 9:1-10",
-    "the-words-of-eternal-life": "Luke 8",
-    "put-on-the-lord-jesus-christ": "Romans 13",
-    "romans-13-1-7": "Romans 13:1-7"
+    "the-words-of-eternal-life": "Luke 8:22-56",
+    "put-on-the-lord-jesus-christ": "Romans 13:8-14",
+    "romans-13-1-7": "Romans 13:1-7",
+    "the-cost-of-pride": "Luke 9:46-48",
+    "killing-the-lion": "Luke 9:10-17",
+    "the-parable-of-the-soils": "Luke 8",
+    "reed-shaken-by-the-wind": "Luke 7:24-35",
+    "house-on-the-rock": "Luke 6:43-49",
+    "the-annoying-speck-in-your-eye": "Luke 6:37-42",
+    "the-path-to-joy": "Luke 6",
+    "are-you-poor": "Luke 6:17-26",
+    "we-must-proclaim-gods-attributes": "Jonah 3:3-10",
+    "gods-heart": "Luke 5-6",
+    "of-hard-hearts-and-family": "Luke 5",
+    "lord-if-you-will": "Luke 5:12-16",
+    "jesus-s-clam-to-be-the-messiah": "Luke 4",
+    "jesus-the-god-man": "Luke 3",
+    "the-visitors-and-the-no-shows": "Matthew 13",
+    "joseph-and-mary": "Luke 1:45-56"
   },
   "videoSermons": [
     {
@@ -504,5 +520,12 @@
       "source": "Truth For Life",
       "url": "https://www.truthforlife.org/resources/sermon/a-coming-of-the-kingdom/"
     }
-  ]
+  ],
+  "speakers": {
+    "reed-shaken-by-the-wind": "Wakefield Hare",
+    "the-annoying-speck-in-your-eye": "Wakefield Hare",
+    "are-you-poor": "Wakefield Hare",
+    "of-hard-hearts-and-family": "Wakefield Hare",
+    "joseph-and-mary": "Wakefield Hare"
+  }
 }

@@ -348,6 +348,8 @@ foreach ($item in $items) {
     $slug = if ($episodePath) { ($episodePath -replace "^episode/", "").Trim("/") } else { "" }
     $passageProperty = if ($slug) { $index.passages.PSObject.Properties[$slug] } else { $null }
     $passage = if ($passageProperty) { [string]$passageProperty.Value } else { "" }
+    $speakerProperty = if ($slug -and $index.speakers) { $index.speakers.PSObject.Properties[$slug] } else { $null }
+    if ($speakerProperty) { $speaker = [string]$speakerProperty.Value }
     $book = Get-PassageBook $passage
     if ($passage -and -not $book) { throw "Unrecognized book in passage '$passage' for $slug" }
     $search = "$title $date $speaker $passage $description $audioSizeLabel $durationLabel"
