@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "service_date": "2026-10-18",
-  "updated_at": "2026-10-11",
+  "updated_at": "2026-10-12",
   "announcements": [
     {
       "title": "Food Pantry",
@@ -25,6 +25,12 @@
       "when": "Sunday, November 8",
       "details": "Our annual FCC business meeting follows the worship service. Please stay for a potluck lunch after the meeting.",
       "location": "Fillmore Christian Church"
+    },
+    {
+      "title": "Nursing Home Worship",
+      "when": "Sunday, November 8, 2:00 and 3:00 p.m.",
+      "details": "Join us to sing hymns, read Scripture and visit with residents at LaVerna at 2:00 p.m. and Abundant Acres at 3:00 p.m. All ages are welcome. Ask Brenda Barnes if you would like to help or ride along.",
+      "location": "LaVerna and Abundant Acres"
     }
   ]
 }
