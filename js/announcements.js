@@ -6,7 +6,7 @@
     return;
   }
 
-  function formatServiceDate(value) {
+  function formatServiceDate(value, weekday = true) {
     const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || "");
     if (!match) {
       return "this Sunday";
@@ -14,7 +14,7 @@
 
     const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12));
     return new Intl.DateTimeFormat("en-US", {
-      weekday: "long",
+      ...(weekday ? { weekday: "long" } : {}),
       month: "long",
       day: "numeric",
       year: "numeric",
@@ -64,7 +64,15 @@
   }
 
   function render(data) {
-    const announcements = Array.isArray(data.announcements) ? data.announcements : [];
+    if (!data || data.schema_version !== 1 || !Array.isArray(data.announcements) ||
+        !data.announcements.every(function (item) {
+          return item && ["title", "when", "details"].every(function (key) {
+            return typeof item[key] === "string" && item[key].trim();
+          }) && (!item.url || new URL(item.url).protocol === "https:");
+        })) {
+      throw new Error("Announcement data is invalid.");
+    }
+    const announcements = data.announcements;
     const serviceDate = formatServiceDate(data.service_date);
 
     document.querySelectorAll("[data-announcements-service-date]").forEach(function (element) {
@@ -72,7 +80,7 @@
     });
 
     document.querySelectorAll("[data-announcements-updated]").forEach(function (element) {
-      element.textContent = data.updated_at ? "Updated " + data.updated_at : "Updated weekly";
+      element.textContent = data.updated_at ? "Updated " + formatServiceDate(data.updated_at, false) : "Updated weekly";
     });
 
     lists.forEach(function (list) {
@@ -96,6 +104,8 @@
 
   function showError() {
     lists.forEach(function (list) {
+      // Keep the published copy available if the refresh cannot be loaded.
+      if (list.querySelector(".announcement-card") || list.querySelector(".announcements-empty:not([data-announcements-fallback])")) return;
       const loading = list.querySelector(".announcements-loading");
       if (loading) {
         loading.remove();

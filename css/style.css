@@ -2313,3 +2313,30 @@ h4 { font-size: 1.25rem; }
 .time-item .sunday-school-range { font-size: 1.5rem; white-space: nowrap; }
 .sunday-school-note { display: block; font-size: 0.95rem; text-wrap: balance; }
 .time-item:has(.sunday-school-range) { max-width: 24rem; }
+
+.announcement-card :is(h3, p) { text-wrap: balance; }
+
+/* Aerial parking guide for first-time visitors. */
+.visitor-parking-guide {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(18rem, 0.8fr);
+  gap: 2rem;
+  align-items: start;
+  margin-top: 2.5rem;
+}
+.visitor-parking-figure { margin: 0; }
+.visitor-parking-figure img { display: block; width: 100%; height: auto; border-radius: 0.6rem; }
+.visitor-parking-figure figcaption { margin-top: 0.6rem; color: var(--color-text-light); font-size: 0.85rem; text-wrap: balance; }
+.visitor-parking-copy h3 { font-size: 1.6rem; line-height: 1.3; margin-bottom: 1rem; text-wrap: balance; }
+.visitor-parking-copy p, .visitor-parking-legend li > span:last-child { text-wrap: balance; }
+.visitor-parking-copy p { margin-bottom: 1.2rem; }
+.visitor-parking-legend { list-style: none; padding: 0; margin: 1.3rem 0; }
+.visitor-parking-legend li { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 0.85rem; }
+.parking-key { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; flex: 0 0 2rem; font-weight: 700; border-radius: 0.3rem; }
+.parking-key-yes { background: #ffe726; color: #172331; border: 2px solid #172331; }
+.parking-key-no { background: #fff; color: #cf1717; border: 2px solid #cf1717; }
+@media (max-width: 768px) { .visitor-parking-guide { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; } }
+
+.visit-checklist h2, .visit-page-grid h3, .location-details h3 { text-wrap: balance; }
+
+.visit-checklist-list li { text-wrap: balance; }

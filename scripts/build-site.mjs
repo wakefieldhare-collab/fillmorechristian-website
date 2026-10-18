@@ -1,7 +1,9 @@
-import { cp, mkdir, rm } from "node:fs/promises";
+import { cp, mkdir, rm, readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+
+import { renderAnnouncementsPage } from "./lib/announcements.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const outDir = path.join(root, "dist");
@@ -40,6 +42,7 @@ const publishPaths = [
 
 const publishImagePaths = [
   "andy-barnes.jpg",
+  "fcc-visitor-parking-guide.png",
   "church-exterior-1200.jpg",
   "church-exterior-1200.webp",
   "fcc-logo.png",
@@ -73,6 +76,13 @@ for (const imagePath of publishImagePaths) {
   }
 
   await cp(source, path.join(outDir, "images", imagePath), { force: true });
+}
+
+const announcementData = JSON.parse(await readFile(path.join(root, "announcements.json"), "utf8"));
+for (const page of ["index.html", "announcements.html"]) {
+  const target = path.join(outDir, page);
+  const html = await readFile(target, "utf8");
+  await writeFile(target, renderAnnouncementsPage(html, announcementData), "utf8");
 }
 
 console.log(`Built ${publishPaths.length + publishImagePaths.length} publish paths into ${path.relative(root, outDir)}`);

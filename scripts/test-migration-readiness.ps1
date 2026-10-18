@@ -451,6 +451,13 @@ if ((Test-Path -LiteralPath $announcementsPath) -and
     Add-Check "Weekly announcements" "FAIL" "announcement page, data, or client script is missing"
 }
 
+$announcementChecks = & node --test (Join-Path $root "scripts/test-announcements.mjs") 2>&1
+if ($LASTEXITCODE -ne 0) {
+    Add-Check "Announcement availability" "FAIL" "$announcementChecks"
+} else {
+    Add-Check "Announcement availability" "OK" "Published HTML includes current announcements; preview, dates, escaped text and safe links pass"
+}
+
 $publicCopyIssues = New-Object System.Collections.Generic.List[string]
 foreach ($relativePath in @("index.html", "sermons.html", "podcast.html", "404.html")) {
     $htmlPath = Join-Path $root $relativePath
