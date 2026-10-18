@@ -2308,3 +2308,8 @@ h4 { font-size: 1.25rem; }
     padding: 2.5em 0;
   }
 }
+
+/* Sunday School schedule and first-Sunday breakfast exception. */
+.time-item .sunday-school-range { font-size: 1.5rem; white-space: nowrap; }
+.sunday-school-note { display: block; font-size: 0.95rem; text-wrap: balance; }
+.time-item:has(.sunday-school-range) { max-width: 24rem; }

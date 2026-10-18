@@ -3,7 +3,7 @@
    ============================================ */
 
 const CHURCH_CALENDAR_URL = 'events.ics';
-const CHURCH_CALENDAR_VERSION = '20260801-01';
+const CHURCH_CALENDAR_VERSION = '20261018-01';
 
 document.addEventListener('DOMContentLoaded', function() {
   const upcomingContainer = document.getElementById('upcoming-events');
@@ -161,63 +161,44 @@ function generateUpcomingOccurrences(event, now, limit) {
 }
 
 function generateMonthlyOccurrences(event, firstStart, duration, now, limit) {
-  const monthlyRule = parseMonthlyByDayRule(event.rrule);
-  if (!monthlyRule) {
-    return [];
-  }
+  const monthlyRules = parseMonthlyByDayRules(event.rrule);
+  if (!monthlyRules.length) return [];
 
   const occurrences = [];
   let cursor = new Date(firstStart.getFullYear(), firstStart.getMonth(), 1);
   let attempts = 0;
 
   while (occurrences.length < limit && attempts < limit + 36) {
-    const candidate = getNthWeekdayOfMonth(
-      cursor.getFullYear(),
-      cursor.getMonth(),
-      monthlyRule.weekday,
-      monthlyRule.ordinal,
-      firstStart.getHours(),
-      firstStart.getMinutes(),
-      firstStart.getSeconds()
-    );
+    const candidates = monthlyRules.map(function(rule) {
+      return getNthWeekdayOfMonth(
+        cursor.getFullYear(), cursor.getMonth(), rule.weekday, rule.ordinal,
+        firstStart.getHours(), firstStart.getMinutes(), firstStart.getSeconds()
+      );
+    }).filter(Boolean).sort(function(a, b) { return a.getTime() - b.getTime(); });
 
-    if (candidate && candidate.getTime() >= firstStart.getTime()) {
+    candidates.forEach(function(candidate) {
       const candidateEnd = new Date(candidate.getTime() + duration);
-      if (candidateEnd.getTime() > now.getTime() && !isExcludedOccurrence(event, candidate)) {
-        occurrences.push({
-          start: candidate,
-          end: candidateEnd
-        });
+      if (candidate.getTime() >= firstStart.getTime() &&
+          candidateEnd.getTime() > now.getTime() && !isExcludedOccurrence(event, candidate)) {
+        occurrences.push({ start: candidate, end: candidateEnd });
       }
-    }
-
+    });
     cursor.setMonth(cursor.getMonth() + 1);
     attempts += 1;
   }
-
-  return occurrences;
+  return occurrences.slice(0, limit);
 }
 
-function parseMonthlyByDayRule(rrule) {
-  const match = String(rrule || '').match(/BYDAY=([1-5])([A-Z]{2})/);
-  if (!match) return null;
-
-  const weekdays = {
-    SU: 0,
-    MO: 1,
-    TU: 2,
-    WE: 3,
-    TH: 4,
-    FR: 5,
-    SA: 6
-  };
-
-  if (typeof weekdays[match[2]] !== 'number') return null;
-
-  return {
-    ordinal: Number(match[1]),
-    weekday: weekdays[match[2]]
-  };
+function parseMonthlyByDayRules(rrule) {
+  const match = String(rrule || '').match(/(?:^|;)BYDAY=([^;]+)/);
+  if (!match) return [];
+  const weekdays = { SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6 };
+  const rules = match[1].split(',').map(function(token) {
+    const day = token.match(/^([1-5])([A-Z]{2})$/);
+    if (!day || typeof weekdays[day[2]] !== 'number') return null;
+    return { ordinal: Number(day[1]), weekday: weekdays[day[2]] };
+  });
+  return rules.every(Boolean) ? rules : [];
 }
 
 function getNthWeekdayOfMonth(year, month, weekday, ordinal, hours, minutes, seconds) {
@@ -258,7 +239,8 @@ function getStaticEventsHtml() {
       '<div class="event-date-box event-date-box-recurring"><span class="month">Every</span><span class="day">Sun</span></div>' +
       '<div class="event-details">' +
         '<h4>Sunday School</h4>' +
-        '<span class="event-time">Every Sunday at 9:00 AM</span>' +
+        '<span class="event-time">Every Sunday, 9:00 to 9:50 AM</span>' +
+        '<p class="sunday-school-note">Ends at 9:45 AM on first Sundays for Fellowship Breakfast.</p>' +
         '<p>Classes for preschool and elementary children, middle and high school students, and adults.</p>' +
       '</div>' +
     '</div>' +

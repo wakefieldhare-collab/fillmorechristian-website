@@ -8,14 +8,26 @@ X-WR-CALDESC:Recurring Sunday School and worship schedule for Fillmore Christian
 X-WR-TIMEZONE:America/Chicago
 BEGIN:VEVENT
 UID:sunday-school@fillmorechristian.org
-DTSTAMP:20260601T000000Z
-DTSTART;TZID=America/Chicago:20260607T090000
-DTEND;TZID=America/Chicago:20260607T100000
-RRULE:FREQ=WEEKLY;BYDAY=SU
-EXDATE;TZID=America/Chicago:20260621T090000,20260802T090000,20261004T090000
+DTSTAMP:20261018T120000Z
+DTSTART;TZID=America/Chicago:20260614T090000
+DTEND;TZID=America/Chicago:20260614T095000
+RRULE:FREQ=MONTHLY;BYDAY=2SU,3SU,4SU,5SU
+EXDATE;TZID=America/Chicago:20260621T090000
 SUMMARY:Sunday School
 LOCATION:Fillmore Christian Church\, 310 N. Florence Street\, Fillmore\, MO 64449
 DESCRIPTION:Classes for preschool and elementary children, middle and high school students, and adults.
+URL:https://www.fillmorechristian.org/events.html
+END:VEVENT
+BEGIN:VEVENT
+UID:sunday-school-first-sunday@fillmorechristian.org
+DTSTAMP:20261018T120000Z
+DTSTART;TZID=America/Chicago:20260607T090000
+DTEND;TZID=America/Chicago:20260607T094500
+RRULE:FREQ=MONTHLY;BYDAY=1SU
+EXDATE;TZID=America/Chicago:20260802T090000,20261004T090000
+SUMMARY:Sunday School
+LOCATION:Fillmore Christian Church\, 310 N. Florence Street\, Fillmore\, MO 64449
+DESCRIPTION:Ends at 9:45 AM for Fellowship Breakfast. Classes for preschool and elementary children, middle and high school students, and adults.
 URL:https://www.fillmorechristian.org/events.html
 END:VEVENT
 BEGIN:VEVENT

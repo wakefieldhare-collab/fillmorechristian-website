@@ -472,7 +472,7 @@ if (Test-Path -LiteralPath $homeHtmlPath) {
     $homeHtml = Get-Content -Raw -LiteralPath $homeHtmlPath
     if ($homeHtml -match 'id="first-visit-guide"' -and
         $homeHtml -match "First time at Fillmore\?" -and
-        $homeHtml -match "Sunday School starts at 9:00 AM" -and
+        $homeHtml -match "Sunday School meets from 9:00 to 9:50 AM" -and
         $homeHtml -match "preschool and elementary children, middle and high school students, and adults" -and
         $homeHtml -match "Children are welcome in worship" -and
         $homeHtml -match "Get Directions" -and
@@ -489,7 +489,7 @@ $visitHtmlPath = Join-Path $root "visit.html"
 if (Test-Path -LiteralPath $visitHtmlPath) {
     $visitHtml = Get-Content -Raw -LiteralPath $visitHtmlPath
     if ($visitHtml -match 'id="visit-service-times"' -and
-        $visitHtml -match "Sunday School starts at 9:00 AM" -and
+        $visitHtml -match "Sunday School meets from 9:00 to 9:50 AM" -and
         $visitHtml -match "preschool and elementary children, middle and high school students, or adults" -and
         $visitHtml -match "Worship begins at 10:00 AM" -and
         $visitHtml -match "Children are welcome in worship" -and
@@ -776,6 +776,10 @@ if (Test-Path -LiteralPath $calendarPath) {
         $calendarIssues.Add("js/events.js is missing")
     }
 
+    $scheduleTest = & node (Join-Path $root "scripts/test-events.mjs") 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        $calendarIssues.Add("Sunday School schedule behavior checks failed: $scheduleTest")
+    }
     if ($calendarIssues.Count -eq 0) {
         Add-Check "Self-hosted event calendar" "OK" "events.ics publishes recurring Sunday School and worship schedule, and the events UI loads and exposes a copyable feed locally"
     } else {

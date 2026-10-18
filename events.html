@@ -12,15 +12,15 @@
   <link rel="alternate" type="text/calendar" title="Fillmore Christian Sunday Schedule" href="https://www.fillmorechristian.org/events.ics">
   <meta name="theme-color" content="#173247">
   <meta property="og:title" content="Events | Fillmore Christian Church">
-  <meta property="og:description" content="Join Fillmore Christian Church for Sunday School at 9 AM, fellowship breakfast on first Sundays, and worship at 10 AM.">
+  <meta property="og:description" content="Join Fillmore Christian Church for Sunday School from 9 to 9:50 AM (9:45 AM on first Sundays), fellowship breakfast on first Sundays, and worship at 10 AM.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.fillmorechristian.org/events.html">
   <meta property="og:image" content="https://www.fillmorechristian.org/images/sanctuary-service-1200.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Events | Fillmore Christian Church">
-  <meta name="twitter:description" content="Sunday School at 9 AM and Sunday worship at 10 AM in Fillmore, Missouri.">
+  <meta name="twitter:description" content="Sunday School from 9 to 9:50 AM (9:45 AM on first Sundays) and Sunday worship at 10 AM in Fillmore, Missouri.">
   <meta name="twitter:image" content="https://www.fillmorechristian.org/images/sanctuary-service-1200.jpg">
-  <link rel="stylesheet" href="css/style.css?v=20260602-02">
+  <link rel="stylesheet" href="css/style.css?v=20261018-01">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -38,15 +38,38 @@
           "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
           "eventStatus": "https://schema.org/EventScheduled",
           "isAccessibleForFree": true,
-          "eventSchedule": {
-            "@type": "Schedule",
-            "repeatFrequency": "P1W",
-            "byDay": "https://schema.org/Sunday",
-            "startTime": "09:00",
-            "endTime": "10:00",
-            "exceptDate": ["2026-08-02", "2026-10-04"],
-            "scheduleTimezone": "America/Chicago"
-          },
+          "eventSchedule": [
+            {
+              "@type": "Schedule",
+              "repeatFrequency": "P1M",
+              "byDay": "https://schema.org/Sunday",
+              "startTime": "09:00",
+              "scheduleTimezone": "America/Chicago",
+              "byMonthWeek": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "endTime": "09:50",
+              "exceptDate": [
+                "2026-06-21"
+              ]
+            },
+            {
+              "@type": "Schedule",
+              "repeatFrequency": "P1M",
+              "byDay": "https://schema.org/Sunday",
+              "startTime": "09:00",
+              "scheduleTimezone": "America/Chicago",
+              "byMonthWeek": 1,
+              "endTime": "09:45",
+              "exceptDate": [
+                "2026-08-02",
+                "2026-10-04"
+              ]
+            }
+          ],
           "location": {
             "@type": "Place",
             "name": "Fillmore Christian Church",
@@ -119,7 +142,10 @@
             "byDay": "https://schema.org/Sunday",
             "startTime": "10:00",
             "endTime": "11:15",
-            "exceptDate": ["2026-08-30", "2026-10-04"],
+            "exceptDate": [
+              "2026-08-30",
+              "2026-10-04"
+            ],
             "scheduleTimezone": "America/Chicago"
           },
           "location": {
@@ -256,7 +282,8 @@
           </div>
           <div class="event-details">
             <h4>Sunday School</h4>
-            <span class="event-time">Every Sunday at 9:00 AM</span>
+            <span class="event-time">Every Sunday, 9:00 to 9:50 AM</span>
+            <p class="sunday-school-note">Ends at 9:45 AM on first Sundays for Fellowship Breakfast.</p>
             <p>Classes for preschool and elementary children, middle and high school students, and adults.</p>
           </div>
         </div>
@@ -347,6 +374,6 @@
   </footer>
 
   <script src="js/main.js?v=20260602-03"></script>
-  <script src="js/events.js?v=20260604-03"></script>
+  <script src="js/events.js?v=20261018-01"></script>
 </body>
 </html>
