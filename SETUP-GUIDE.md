@@ -1,5 +1,9 @@
 # Fillmore Christian Church Website - Setup Guide
 
+## Current Sunday School schedule
+
+Sunday School meets from 9:00 to 9:50 AM. On first Sundays, it ends at 9:45 AM for Fellowship Breakfast. The public pages, calendar subscription and contact card match this schedule. [October 18 review and release record](docs/2026-10-18-sunday-school-times.md).
+
 ## Overview
 
 Static website for Fillmore Christian Church, replacing ChurchCo ($50/mo). Built with plain HTML, CSS, and JavaScript. Host on Cloudflare Pages so the domain, DNS, and static site can live together at Cloudflare.
