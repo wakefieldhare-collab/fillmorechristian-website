@@ -706,11 +706,10 @@ if (Test-Path -LiteralPath $calendarPath) {
         $eventsHtml -notmatch 'event-date-box-recurring') {
         $calendarIssues.Add("home or events page is missing the clear recurring Sunday fallback schedule")
     }
-    if ($indexHtml -notmatch 'data-schedule-exception="2026-10-04"' -or
-        $eventsHtml -notmatch 'data-schedule-exception="2026-10-04"' -or
-        $indexHtml -notmatch 'Community Church Service at Fillmore Ballpark' -or
-        $eventsHtml -notmatch 'Community Church Service at Fillmore Ballpark') {
-        $calendarIssues.Add("home or events page is missing the October 4 community service notice")
+    if ($indexHtml -match 'data-schedule-exception="2026-10-04"' -or
+        $eventsHtml -match 'data-schedule-exception="2026-10-04"' -or
+        (Get-Content -Raw -LiteralPath (Join-Path $root "js/events.js")) -match 'data-schedule-exception="2026-10-04"') {
+        $calendarIssues.Add("home, events page or JavaScript fallback still shows the expired October 4 community service notice")
     }
     if ($eventsHtml -notmatch '<link\s+rel="alternate"\s+type="text/calendar"') {
         $calendarIssues.Add("events page missing calendar autodiscovery")

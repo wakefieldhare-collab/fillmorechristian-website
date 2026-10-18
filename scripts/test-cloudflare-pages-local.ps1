@@ -395,12 +395,12 @@ try {
         $eventsPageContent -notmatch 'data-recurring-event="first-sunday-fellowship-breakfast"' -or
         $eventsPageContent -notmatch 'data-recurring-event="sunday-worship"' -or
         $eventsPageContent -notmatch 'event-date-box-recurring' -or
-        $eventsPageContent -notmatch 'data-schedule-exception="2026-10-04"' -or
+        $eventsPageContent -match 'data-schedule-exception="2026-10-04"' -or
         $eventsPageContent -notmatch '"name": "Family Sunday"' -or
         $eventsPageContent -notmatch '"2026-08-30"' -or
         $eventsPageContent -notmatch 'Community Church Service at Fillmore Ballpark' -or
         $eventsPageContent -notmatch '"2026-10-04"') {
-        throw "Events page is missing the recurring Sunday schedule or a dated exception notice"
+        throw "Events page is missing the recurring Sunday schedule or still shows the expired October 4 notice"
     }
     $checks.Add([pscustomobject]@{ Check = "Calendar subscribe controls"; Status = "OK"; Details = "Published output includes copyable canonical iCal feed URL" })
 
@@ -430,10 +430,10 @@ try {
         $homePageContent -notmatch 'data-recurring-event="first-sunday-fellowship-breakfast"' -or
         $homePageContent -notmatch 'data-recurring-event="sunday-worship"' -or
         $homePageContent -notmatch 'event-date-box-recurring' -or
-        $homePageContent -notmatch 'data-schedule-exception="2026-10-04"' -or
+        $homePageContent -match 'data-schedule-exception="2026-10-04"' -or
         $homePageContent -notmatch 'Community Church Service at Fillmore Ballpark' -or
         $homePageContent -notmatch '"2026-10-04"') {
-        throw "Home page is missing the recurring Sunday schedule or a dated exception notice"
+        throw "Home page is missing the recurring Sunday schedule or still shows the expired October 4 notice"
     }
     if ($homePageContent -notmatch '<img\s+src="images/fcc-logo-mark\.png"\s+alt=""\s+class="nav-brand-logo"\s+aria-hidden="true">' -or
         $homePageContent -notmatch '<img\s+src="images/fcc-logo\.png"\s+alt="Fillmore Christian Church"\s+class="hero-logo"\s+width="2048"\s+height="2048"\s+decoding="async">' -or

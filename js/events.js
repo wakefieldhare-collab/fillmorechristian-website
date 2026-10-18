@@ -254,10 +254,6 @@ function renderEvents(container, events) {
 
 function getStaticEventsHtml() {
   return '' +
-    '<div class="event-notice" data-schedule-exception="2026-10-04">' +
-      '<h3>October 4 Community Church Service</h3>' +
-      '<p>There will be no regular Sunday School or worship at Fillmore Christian Church on October 4. Join the 10:00 AM Community Church Service at Fillmore Ballpark.</p>' +
-    '</div>' +
     '<div class="event-item" data-static-event="true" data-recurring-event="sunday-school">' +
       '<div class="event-date-box event-date-box-recurring"><span class="month">Every</span><span class="day">Sun</span></div>' +
       '<div class="event-details">' +
