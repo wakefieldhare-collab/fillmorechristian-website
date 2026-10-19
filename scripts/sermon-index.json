@@ -1,6 +1,7 @@
 {
   "_note": "Read by render-static-sermons.ps1. passages maps a podcast episode slug to its passage; list only passages confirmed from the episode title, description or service records. videoSermons lists Sundays when FCC played a video sermon from another teacher; each links to the publisher's page. Earlier entries were identified from the video file names kept in WorshipTools Presenter and confirmed against each publisher's page; only confirmed matches are listed. Passages and speakers for 2021-2022 episodes come from the church's sermon transcripts (Sermon Audio/Transcriptions); where the transcript only implies the text, just the chapter is listed.",
   "passages": {
+    "power-of-the-kingdom": "Mark 4:21-34",
     "how-dare-you-ask": "Luke 11:1-13",
     "when-the-prison-door-stays-closed": "Matthew 11:2-19",
     "the-lord-of-the-sabbath": "Mark 2:23-3:6",
