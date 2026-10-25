@@ -1,35 +1,35 @@
 {
   "schema_version": 1,
-  "service_date": "2026-10-18",
-  "updated_at": "2026-10-12",
+  "service_date": "2026-10-25",
+  "updated_at": "2026-10-25",
   "announcements": [
     {
       "title": "Food Pantry",
       "when": "October 2026",
-      "details": "The Andrew County Food Pantry October collection is canned pumpkin. Bring a can or two any Sunday."
-    },
-    {
-      "title": "Next Sunday",
-      "when": "Sunday, October 25, 10:00 a.m.",
-      "details": "Power over Nature: we finish Mark 4 as Jesus calms the storm.",
-      "location": "Fillmore Christian Church"
+      "details": "The Andrew County Food Pantry October collection is canned pumpkin. Today is the last Sunday to bring it."
     },
     {
       "title": "November Breakfast",
-      "when": "Sunday, November 1, 9:45 a.m.",
-      "details": "Our first Sunday fellowship breakfast runs from 9:45 to 10:10 a.m. before worship.",
+      "when": "Sunday, November 1, 9:45 a.m.",
+      "details": "Our first Sunday fellowship breakfast runs from 9:45 to 10:10 a.m. before worship.",
+      "location": "Fillmore Christian Church"
+    },
+    {
+      "title": "Next Sunday",
+      "when": "Sunday, November 1, 10:00 a.m.",
+      "details": "Power of Healing: in Luke 8 Jesus heals and gives life.",
       "location": "Fillmore Christian Church"
     },
     {
       "title": "Annual Meeting",
       "when": "Sunday, November 8",
-      "details": "Our annual FCC business meeting follows the worship service. Please stay for a potluck lunch after the meeting.",
+      "details": "Our annual FCC business meeting follows the worship service. Please stay for a potluck lunch after the meeting.",
       "location": "Fillmore Christian Church"
     },
     {
       "title": "Nursing Home Worship",
-      "when": "Sunday, November 8, 2:00 and 3:00 p.m.",
-      "details": "Join us to sing hymns, read Scripture and visit with residents at LaVerna at 2:00 p.m. and Abundant Acres at 3:00 p.m. All ages are welcome. Ask Brenda Barnes if you would like to help or ride along.",
+      "when": "Sunday, November 8, 2:00 and 3:00 p.m.",
+      "details": "Join us to sing hymns, read Scripture and visit with residents at LaVerna at 2:00 p.m. and Abundant Acres at 3:00 p.m. All ages are welcome. Ask Brenda Barnes if you would like to help or ride along.",
       "location": "LaVerna and Abundant Acres"
     }
   ]
