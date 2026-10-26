@@ -1,13 +1,8 @@
 {
   "schema_version": 1,
-  "service_date": "2026-10-25",
-  "updated_at": "2026-10-25",
+  "service_date": "2026-11-01",
+  "updated_at": "2026-10-26",
   "announcements": [
-    {
-      "title": "Food Pantry",
-      "when": "October 2026",
-      "details": "The Andrew County Food Pantry October collection is canned pumpkin. Today is the last Sunday to bring it."
-    },
     {
       "title": "Church Workday",
       "when": "Saturday, October 31, 8:00 a.m.",
@@ -15,16 +10,15 @@
       "location": "Fillmore Christian Church"
     },
     {
-      "title": "November Breakfast",
+      "title": "Fellowship Breakfast",
       "when": "Sunday, November 1, 9:45 a.m.",
-      "details": "Our first Sunday fellowship breakfast runs from 9:45 to 10:10 a.m. before worship.",
+      "details": "Our first Sunday fellowship breakfast runs from 9:45 to 10:10 a.m. before worship. Everyone is welcome.",
       "location": "Fillmore Christian Church"
     },
     {
-      "title": "Next Sunday",
-      "when": "Sunday, November 1, 10:00 a.m.",
-      "details": "Power of Healing: in Luke 8 Jesus heals and gives life.",
-      "location": "Fillmore Christian Church"
+      "title": "Food Pantry",
+      "when": "November 2026",
+      "details": "The Andrew County Food Pantry November collection is baking supplies: vanilla, baking powder, baking soda, chocolate chips and the like. Bring one or two any Sunday this month."
     },
     {
       "title": "Annual Meeting",
@@ -37,6 +31,12 @@
       "when": "Sunday, November 8, 2:00 and 3:00 p.m.",
       "details": "Join us to sing hymns, read Scripture and visit with residents at LaVerna at 2:00 p.m. and Abundant Acres at 3:00 p.m. All ages are welcome. Ask Brenda Barnes if you would like to help or ride along.",
       "location": "LaVerna and Abundant Acres"
+    },
+    {
+      "title": "Next Sunday",
+      "when": "Sunday, November 8, 10:00 a.m.",
+      "details": "Jesus Provides: in Matthew 14 Jesus feeds the crowd.",
+      "location": "Fillmore Christian Church"
     }
   ]
 }
