@@ -1,14 +1,8 @@
 {
   "schema_version": 1,
   "service_date": "2026-11-01",
-  "updated_at": "2026-10-26",
+  "updated_at": "2026-11-01",
   "announcements": [
-    {
-      "title": "Church Workday",
-      "when": "Saturday, October 31, 8:00 a.m.",
-      "details": "Join us for grounds cleanup and building maintenance. Questions? Ask Andy Barnes or Caleb Mohn.",
-      "location": "Fillmore Christian Church"
-    },
     {
       "title": "Fellowship Breakfast",
       "when": "Sunday, November 1, 9:45 a.m.",
