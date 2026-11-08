@@ -1,13 +1,12 @@
 {
   "schema_version": 1,
-  "service_date": "2026-11-01",
-  "updated_at": "2026-11-01",
+  "service_date": "2026-11-15",
+  "updated_at": "2026-11-08",
   "announcements": [
     {
-      "title": "Fellowship Breakfast",
-      "when": "Sunday, November 1, 9:45 a.m.",
-      "details": "Our first Sunday fellowship breakfast runs from 9:45 to 10:10 a.m. before worship. Everyone is welcome.",
-      "location": "Fillmore Christian Church"
+      "title": "Ice Skating Party",
+      "when": "Sunday, February 28, 2027, 1:00 to 3:00 p.m.",
+      "details": "Mark your calendar for our annual church ice skating party. All ages are welcome, and pizza is provided. More details will come this winter."
     },
     {
       "title": "Food Pantry",
@@ -15,21 +14,9 @@
       "details": "The Andrew County Food Pantry November collection is baking supplies: vanilla, baking powder, baking soda, chocolate chips and the like. Bring one or two any Sunday this month."
     },
     {
-      "title": "Annual Meeting",
-      "when": "Sunday, November 8",
-      "details": "Our annual FCC business meeting follows the worship service. Please stay for a potluck lunch after the meeting.",
-      "location": "Fillmore Christian Church"
-    },
-    {
-      "title": "Nursing Home Worship",
-      "when": "Sunday, November 8, 2:00 and 3:00 p.m.",
-      "details": "Join us to sing hymns, read Scripture and visit with residents at LaVerna at 2:00 p.m. and Abundant Acres at 3:00 p.m. All ages are welcome. Ask Brenda Barnes if you would like to help or ride along.",
-      "location": "LaVerna and Abundant Acres"
-    },
-    {
       "title": "Next Sunday",
-      "when": "Sunday, November 8, 10:00 a.m.",
-      "details": "Jesus Provides: in Matthew 14 Jesus feeds the crowd.",
+      "when": "Sunday, November 15, 10:00 a.m.",
+      "details": "Jesus over Creation: in Matthew 14 Jesus walks on the water.",
       "location": "Fillmore Christian Church"
     }
   ]
