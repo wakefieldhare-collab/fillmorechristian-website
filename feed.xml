@@ -5,7 +5,7 @@
     <atom:link href="https://www.fillmorechristian.org/podcast-category/fillmore-christian/feed/podcast" rel="self" type="application/rss+xml" />
     <link>https://www.fillmorechristian.org</link>
     <description>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</description>
-    <lastBuildDate>Sun, 18 Oct 2026 15:28:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 08 Nov 2026 16:28:00 +0000</lastBuildDate>
     <language>en-US</language>
     <copyright>2026</copyright>
     <itunes:subtitle>The Bible teaching archives of Fillmore Christian Church in Fillmore, Missouri.</itunes:subtitle>
@@ -31,6 +31,25 @@
       <itunes:category text="Christianity" />
     </itunes:category>
     <generator>Fillmore Christian Church static podcast feed</generator>
+    <item>
+      <title>Jesus Provides</title>
+      <link>https://www.fillmorechristian.org/episode/jesus-provides/</link>
+      <pubDate>Sun, 08 Nov 2026 16:28:00 +0000</pubDate>
+      <dc:creator>Wakefield Hare</dc:creator>
+      <guid isPermaLink="false">https://www.fillmorechristian.org/episode/jesus-provides/</guid>
+      <description><![CDATA[Jesus feeds five thousand men from five loaves and two fish. In Matthew 14:13-21 and John 6, Wakefield Hare considers why prices and provision grip us so tightly and why Jesus told His disciples, "You give them something to eat." The command shows how powerless we are to save ourselves. Jesus is the bread of life who conquers sin and death, and we can bring every need to Him and trust Him to provide.]]></description>
+      <itunes:subtitle><![CDATA[Jesus feeds five thousand men from five loaves and two fish. In Matthew 14:13-21 and John 6, Wakefield Hare considers why prices and provision grip us so tightly and why Jesus told His disciples, "You give them something to eat." The command shows how powerless we are to save ourselves. Jesus is the bread of life who conquers sin and death, and we can bring every need to Him and trust Him to provide.]]></itunes:subtitle>
+      <content:encoded><![CDATA[Jesus feeds five thousand men from five loaves and two fish. In Matthew 14:13-21 and John 6, Wakefield Hare considers why prices and provision grip us so tightly and why Jesus told His disciples, "You give them something to eat." The command shows how powerless we are to save ourselves. Jesus is the bread of life who conquers sin and death, and we can bring every need to Him and trust Him to provide.]]></content:encoded>
+      <itunes:summary><![CDATA[Jesus feeds five thousand men from five loaves and two fish. In Matthew 14:13-21 and John 6, Wakefield Hare considers why prices and provision grip us so tightly and why Jesus told His disciples, "You give them something to eat." The command shows how powerless we are to save ourselves. Jesus is the bread of life who conquers sin and death, and we can bring every need to Him and trust Him to provide.]]></itunes:summary>
+      <googleplay:description><![CDATA[Jesus feeds five thousand men from five loaves and two fish. In Matthew 14:13-21 and John 6, Wakefield Hare considers why prices and provision grip us so tightly and why Jesus told His disciples, "You give them something to eat." The command shows how powerless we are to save ourselves. Jesus is the bread of life who conquers sin and death, and we can bring every need to Him and trust Him to provide.]]></googleplay:description>
+      <enclosure url="https://www.fillmorechristian.org/media/2026-11-08-jesus-provides.mp3" length="26995436" type="audio/mpeg" />
+      <itunes:explicit>no</itunes:explicit>
+      <googleplay:explicit>no</googleplay:explicit>
+      <itunes:block>no</itunes:block>
+      <googleplay:block>no</googleplay:block>
+      <itunes:author>Wakefield Hare</itunes:author>
+      <itunes:duration>00:37:29</itunes:duration>
+    </item>
     <item>
       <title>Power of the Kingdom</title>
       <link>https://www.fillmorechristian.org/episode/power-of-the-kingdom/</link>
