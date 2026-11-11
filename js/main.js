@@ -246,8 +246,10 @@ function enhanceAudioPlayers(scope) {
       });
     });
 
+    // The select lives inside its label so the pair wraps as one unit on
+    // narrow screens instead of leaving "Speed" stranded on the row above.
+    label.appendChild(select);
     controls.appendChild(label);
-    controls.appendChild(select);
     player.insertAdjacentElement('afterend', controls);
   });
 }
