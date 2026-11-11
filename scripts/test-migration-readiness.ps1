@@ -843,7 +843,7 @@ if ((Test-Path -LiteralPath $deployScriptPath) -and (Test-Path -LiteralPath $pag
         $deployScriptText -match "pages[\s`"']*,[\s`"']*deploy" -and
         $pagesAuthScriptText -match "user/tokens/verify" -and
         $pagesAuthScriptText -match "pages/projects" -and
-        $pagesAuthScriptText -match "pages project list" -and
+        $pagesAuthScriptText -match "pages[\s`"',]*project[\s`"',]*list" -and
         $pagesAuthScriptText -match "AuthMode:\s+WranglerOAuth" -and
         $pagesAuthScriptText -match "Cloudflare Pages Edit" -and
         $packageJsonText -match '"verify:cloudflare-pages-auth"') {

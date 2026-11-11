@@ -36,6 +36,31 @@ function Get-WranglerInvocation {
     throw "wrangler is not installed or available through npx."
 }
 
+# Windows PowerShell turns native stderr into terminating errors under
+# ErrorActionPreference Stop when output is captured with 2>&1. npx and
+# wrangler write ordinary warnings to stderr (for example the first-run
+# "will be installed" notice), so judge native commands by exit code only.
+function Invoke-NativeCapture {
+    param(
+        [string]$Command,
+        [string[]]$Arguments
+    )
+
+    $savedPreference = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        $output = @(& $Command @Arguments 2>&1 | ForEach-Object { "$_" })
+        $exitCode = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $savedPreference
+    }
+
+    return [pscustomobject]@{
+        Output = $output
+        ExitCode = $exitCode
+    }
+}
+
 function Invoke-Wrangler {
     param(
         [object]$Wrangler,
@@ -96,7 +121,30 @@ if (-not $SkipPreflight) {
             throw "npm run build failed."
         }
 
-        & (Join-Path $PSScriptRoot "test-migration-readiness.ps1") -SkipRemote
+        # The readiness owner guard requires the active gh account to be
+        # wakefieldhare-collab. The machine's global gh account may be a
+        # different profile that must not be switched, so supply the church
+        # account's token to this check only and clear it afterward.
+        $setChurchGitHubToken = $false
+        if (-not $env:GH_TOKEN) {
+            $tokenResult = Invoke-NativeCapture -Command "gh" -Arguments @("auth", "token", "--hostname", "github.com", "--user", "wakefieldhare-collab")
+            $churchToken = ($tokenResult.Output -join "").Trim()
+            if ($tokenResult.ExitCode -eq 0 -and $churchToken) {
+                $env:GH_TOKEN = $churchToken
+                $setChurchGitHubToken = $true
+            } else {
+                Write-Warning "The wakefieldhare-collab GitHub account is not signed in to gh; the owner guard will check the global gh account instead."
+            }
+            Remove-Variable tokenResult, churchToken -ErrorAction SilentlyContinue
+        }
+        try {
+            & (Join-Path $PSScriptRoot "test-migration-readiness.ps1") -SkipRemote
+        } finally {
+            if ($setChurchGitHubToken) {
+                Remove-Item Env:\GH_TOKEN -ErrorAction SilentlyContinue
+            }
+        }
+
         & (Join-Path $PSScriptRoot "test-cloudflare-pages-local.ps1") -BuildOutputDir $BuildOutputDir
     } finally {
         Pop-Location
@@ -131,8 +179,8 @@ if ($DryRun) {
     return
 }
 
-$whoamiOutput = & $wrangler.Command @($wrangler.PrefixArgs) whoami 2>&1
-if ($LASTEXITCODE -ne 0 -or ($whoamiOutput -join "`n") -match "not authenticated") {
+$whoami = Invoke-NativeCapture -Command $wrangler.Command -Arguments (@($wrangler.PrefixArgs) + @("whoami"))
+if ($whoami.ExitCode -ne 0 -or ($whoami.Output -join "`n") -match "not authenticated") {
     throw "Cloudflare is not authenticated. Set CLOUDFLARE_API_TOKEN/CF_API_TOKEN with Account:Cloudflare Pages Edit access, or run `npx wrangler login`."
 }
 

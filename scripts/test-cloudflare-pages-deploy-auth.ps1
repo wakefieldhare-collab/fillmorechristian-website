@@ -27,6 +27,31 @@ function Get-WranglerInvocation {
     throw "wrangler is not installed or available through npx."
 }
 
+# Windows PowerShell turns native stderr into terminating errors under
+# ErrorActionPreference Stop when output is captured with 2>&1. npx and
+# wrangler write ordinary warnings to stderr (for example the first-run
+# "will be installed" notice), so judge native commands by exit code only.
+function Invoke-NativeCapture {
+    param(
+        [string]$Command,
+        [string[]]$Arguments
+    )
+
+    $savedPreference = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        $output = @(& $Command @Arguments 2>&1 | ForEach-Object { "$_" })
+        $exitCode = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $savedPreference
+    }
+
+    return [pscustomobject]@{
+        Output = $output
+        ExitCode = $exitCode
+    }
+}
+
 function Get-CloudflareToken {
     foreach ($name in @("CLOUDFLARE_API_TOKEN", "CF_API_TOKEN")) {
         $value = [Environment]::GetEnvironmentVariable($name)
@@ -99,17 +124,17 @@ function Test-WranglerOAuthPagesAccess {
         [Environment]::SetEnvironmentVariable("CLOUDFLARE_API_TOKEN", $null, "Process")
         [Environment]::SetEnvironmentVariable("CF_API_TOKEN", $null, "Process")
 
-        $whoamiOutput = & $wrangler.Command @($wrangler.PrefixArgs) whoami 2>&1
-        if ($LASTEXITCODE -ne 0 -or ($whoamiOutput -join "`n") -match "not authenticated") {
+        $whoami = Invoke-NativeCapture -Command $wrangler.Command -Arguments (@($wrangler.PrefixArgs) + @("whoami"))
+        if ($whoami.ExitCode -ne 0 -or ($whoami.Output -join "`n") -match "not authenticated") {
             throw "$($wrangler.Label) is not authenticated with a Wrangler OAuth session."
         }
 
-        $projectListOutput = & $wrangler.Command @($wrangler.PrefixArgs) pages project list 2>&1
-        if ($LASTEXITCODE -ne 0) {
+        $projectList = Invoke-NativeCapture -Command $wrangler.Command -Arguments (@($wrangler.PrefixArgs) + @("pages", "project", "list"))
+        if ($projectList.ExitCode -ne 0) {
             throw "$($wrangler.Label) could not list Cloudflare Pages projects."
         }
 
-        if (($projectListOutput -join "`n") -notmatch [regex]::Escape($ProjectName)) {
+        if (($projectList.Output -join "`n") -notmatch [regex]::Escape($ProjectName)) {
             throw "$($wrangler.Label) is authenticated, but project $ProjectName was not found in account $AccountId."
         }
 
