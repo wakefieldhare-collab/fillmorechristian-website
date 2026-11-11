@@ -609,7 +609,7 @@ $olderNavMarkup
   <meta name="twitter:description" content="$(HtmlEncode $summary)">
   <meta name="twitter:image" content="https://www.fillmorechristian.org/images/podcast-cover.jpg">
   <script type="application/ld+json">$jsonLdMarkup</script>
-  <link rel="stylesheet" href="../../css/style.css?v=20260906-01">
+  <link rel="stylesheet" href="../../css/style.css?v=20261111-01">
 </head>
 <body>
   <nav class="navbar">

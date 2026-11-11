@@ -1869,6 +1869,7 @@ h4 { font-size: 1.25rem; }
 .episode-header h1 {
   text-wrap: balance;
   max-width: 880px;
+  margin-inline: auto;
 }
 
 .episode-layout {
@@ -1894,6 +1895,7 @@ h4 { font-size: 1.25rem; }
 }
 
 .episode-content h2 {
+  text-align: left;
   text-wrap: balance;
   margin-bottom: 0.35rem;
 }
