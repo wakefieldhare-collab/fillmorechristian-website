@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "service_date": "2026-11-15",
-  "updated_at": "2026-11-08",
+  "updated_at": "2026-11-15",
   "announcements": [
     {
       "title": "Ice Skating Party",
@@ -15,8 +15,8 @@
     },
     {
       "title": "Next Sunday",
-      "when": "Sunday, November 15, 10:00 a.m.",
-      "details": "Jesus over Creation: in Matthew 14 Jesus walks on the water.",
+      "when": "Sunday, November 22, 10:00 a.m.",
+      "details": "Jesus Heals: in Mark 7 Jesus heals a Gentile mother's daughter and opens the ears of a deaf man.",
       "location": "Fillmore Christian Church"
     }
   ]
