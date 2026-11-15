@@ -58,6 +58,8 @@ Export status on 2026-06-01:
 
 Update, November 15, 2026: the local backup folder was found empty (last changed November 12, cause unknown), which blocked deploys. Since TheChurchCo was already canceled, the audio storage model changed. Cloudflare R2 is now the official copy. The church Google Drive folder `Sermon Audio\Website Audio Archive` is the second copy: all 79 inventory files were restored there from R2 and hash-verified. `audio-inventory.csv` is the index. `exports/thechurchco-podcast/audio/` is now only a working folder and may be empty. The scripts and readiness checks no longer need it. Check both copies with `npm run verify:audio-archive`. See SERMON-UPLOAD-GUIDE.md, "Where The Audio Lives."
 
+Readiness checks after this change: `scripts/test-migration-readiness.ps1` checks that `audio-inventory.csv` covers every feed enclosure and that every inventory row is complete, then sends a HEAD request for each inventory file to `https://www.fillmorechristian.org/media/` and fails if any file is missing or served at a different size ("R2 audio inventory sizes"). Nothing is downloaded. This check runs in every mode, including `-SkipRemote`, so the deploy preflight and CI both confirm R2. Use `-SkipR2AudioCheck` only when R2 is unreachable on purpose, and `-MediaBaseUrl` to point the check at another host. The retired local-file checks are kept behind `-CheckLocalAudioCopy`, which fails unless `exports/thechurchco-podcast/audio/` holds every file.
+
 ## Podcast Independence Plan
 
 Current state is safe for production traffic and cancellation-ready for TheChurchCo website/podcast hosting:
@@ -202,7 +204,7 @@ GitHub Pages staging is enabled from `main`:
 - URL: `https://wakefieldhare-collab.github.io/fillmorechristian-website/`
 - Purpose: public preview and QA before Cloudflare DNS cutover.
 - Deployment: `.github/workflows/pages.yml` builds with `npm run build` and publishes `dist`, matching the Cloudflare Pages output directory.
-- Safety gate: deploy waits for a Windows readiness job that runs `npm run build` and `scripts/test-migration-readiness.ps1 -SkipRemote -SkipLocalAudioBackup`. The skip applies only to the large local audio backup folder that is intentionally not checked into GitHub; local cancellation checks still run without that skip.
+- Safety gate: deploy waits for a Windows readiness job that runs `npm run build` and `scripts/test-migration-readiness.ps1 -SkipRemote -SkipLocalAudioBackup`. Since November 15, 2026 `-SkipLocalAudioBackup` changes nothing (local audio is no longer checked by default), and the R2 size check still runs in CI.
 - Limitation: Cloudflare `_redirects`, `_headers`, `_routes.json`, and Pages Functions are not honored by GitHub Pages. Treat this as staging only, not final production.
 
 ## Preflight Checks
@@ -235,11 +237,13 @@ npm run build
 .\scripts\test-cloudflare-pages-local.ps1
 ```
 
-To verify the 2.16 GB local audio backup hashes before cancellation:
+To hash-check the sermon audio archive on the church Drive against the inventory (replaces the retired local backup hash check; reads about 2.6 GB):
 
 ```powershell
-.\scripts\test-migration-readiness.ps1 -VerifyAudioHashes
+.\scripts\verify-audio-archive.ps1 -VerifyHashes -VerifyR2
 ```
+
+`-VerifyAudioHashes` on the readiness script now hashes only files that happen to be in the local working folder.
 
 To verify that podcast enclosure URLs are reachable and serving audio metadata:
 

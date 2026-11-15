@@ -7,6 +7,12 @@ param(
     [switch]$SkipRemote,
     [switch]$VerifyAudioHashes,
     [switch]$SkipLocalAudioBackup,
+    # Retired local-file audio checks (full copy in exports\thechurchco-podcast\audio).
+    # Off by default since R2 became the official copy on 2026-11-15.
+    [switch]$CheckLocalAudioCopy,
+    # Skip the R2 size check (HEAD requests for every audio-inventory.csv file).
+    [switch]$SkipR2AudioCheck,
+    [string]$MediaBaseUrl = "https://www.fillmorechristian.org/media",
     [switch]$RequireIndependentAudio,
     [switch]$VerifyPodcastMedia,
     [switch]$VerifyAllPodcastMedia,
@@ -1762,6 +1768,14 @@ if (Test-Path -LiteralPath $manifestPath) {
     # working folder, so coverage is checked against the inventory.
     # -SkipLocalAudioBackup is kept for CI compatibility and no longer changes this check.
     $expectedAudioFiles = @($rowsWithAudio | ForEach-Object { ConvertTo-LocalAudioFileName $_.EnclosureUrl } | Where-Object { $_ } | Select-Object -Unique)
+    if ($CheckLocalAudioCopy) {
+        $missingLocal = @($expectedAudioFiles | Where-Object { -not (Test-Path -LiteralPath (Join-Path $audioDir $_)) })
+        if ($missingLocal.Count -eq 0) {
+            Add-Check "Podcast audio local copy (retired)" "OK" "Local folder covers $($expectedAudioFiles.Count) unique enclosure filenames"
+        } else {
+            Add-Check "Podcast audio local copy (retired)" "FAIL" ("Missing local audio: " + ($missingLocal -join ", "))
+        }
+    }
     $inventoryNames = if (Test-Path -LiteralPath $inventoryPath) { @(Import-Csv -LiteralPath $inventoryPath | ForEach-Object { $_.FileName }) } else { @() }
     $missingInventory = @($expectedAudioFiles | Where-Object { $_ -notin $inventoryNames })
     if ($missingInventory.Count -eq 0) {
@@ -1786,6 +1800,7 @@ if (Test-Path -LiteralPath $inventoryPath) {
         $filePath = Join-Path $audioDir $row.FileName
         if (-not (Test-Path -LiteralPath $filePath)) {
             # No local working copy; R2 and the Drive archive hold this file.
+            if ($CheckLocalAudioCopy) { $badInventory.Add("$($row.FileName): missing locally") }
             continue
         }
         $localChecked++
@@ -1877,6 +1892,7 @@ if (Test-Path -LiteralPath $r2ManifestPath) {
             $filePath = Join-Path $audioDir $row.FileName
             if (-not (Test-Path -LiteralPath $filePath)) {
                 # Local working copy is optional; R2 is the official copy.
+                if ($CheckLocalAudioCopy) { $r2Issues.Add("$($row.FileName): local audio file missing") }
                 continue
             }
 
@@ -1911,6 +1927,48 @@ if (Test-Path -LiteralPath $r2ManifestPath) {
     }
 } else {
     Add-Check "R2 audio manifest" "WARN" "R2 manifest not found; run scripts\build-r2-audio-manifest.ps1 before uploading audio"
+}
+
+# R2 is the official copy of the sermon audio. Confirm every audio-inventory.csv
+# file is served at its recorded size. HEAD requests only; nothing is downloaded.
+if ($SkipR2AudioCheck) {
+    Add-Check "R2 audio inventory sizes" "WARN" "Skipped by -SkipR2AudioCheck"
+} elseif (Test-Path -LiteralPath $inventoryPath) {
+    $r2SizeIssues = New-Object System.Collections.Generic.List[string]
+    $r2SizeRows = @(Import-Csv -LiteralPath $inventoryPath | Where-Object { $_.FileName })
+    $mediaBase = $MediaBaseUrl.TrimEnd("/")
+    foreach ($row in $r2SizeRows) {
+        $url = "$mediaBase/$([System.Uri]::EscapeDataString($row.FileName))"
+        $servedLength = $null
+        $lastError = ""
+        for ($attempt = 1; $attempt -le 3 -and $null -eq $servedLength; $attempt++) {
+            try {
+                $head = Invoke-WebRequest -UseBasicParsing -Uri $url -Method Head -MaximumRedirection 5 -TimeoutSec 30
+                if ($head.StatusCode -eq 200) {
+                    $servedLength = [int64]([string]$head.Headers["Content-Length"])
+                } else {
+                    $lastError = "HTTP $($head.StatusCode)"
+                }
+            } catch {
+                $lastError = $_.Exception.Message
+            }
+            if ($null -eq $servedLength -and $attempt -lt 3) { Start-Sleep -Seconds 2 }
+        }
+        if ($null -eq $servedLength) {
+            $r2SizeIssues.Add("$($row.FileName): $lastError")
+        } elseif ($servedLength -ne [int64]$row.SizeBytes) {
+            $r2SizeIssues.Add("$($row.FileName): served $servedLength bytes, inventory has $($row.SizeBytes)")
+        }
+    }
+    if ($r2SizeRows.Count -eq 0) {
+        Add-Check "R2 audio inventory sizes" "FAIL" "audio-inventory.csv has no rows"
+    } elseif ($r2SizeIssues.Count -eq 0) {
+        Add-Check "R2 audio inventory sizes" "OK" "$($r2SizeRows.Count) inventory files served from $mediaBase at recorded sizes"
+    } else {
+        Add-Check "R2 audio inventory sizes" "FAIL" ($r2SizeIssues -join "; ")
+    }
+} else {
+    Add-Check "R2 audio inventory sizes" "FAIL" "Audio inventory not found: $inventoryPath"
 }
 
 $dnsPreservePath = Join-Path $root "exports\dns\fillmorechristian.org-cloudflare-preserve-records.csv"

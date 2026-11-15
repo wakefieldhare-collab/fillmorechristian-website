@@ -22,7 +22,7 @@ Static website for Fillmore Christian Church, replacing ChurchCo ($50/mo). Built
 - [x] Cloudflare build output prepared with `npm run build` -> `dist`
 - [x] Migration preflight script added at `scripts/test-migration-readiness.ps1`
 - [x] Podcast RSS feed exported and normalized into the static site
-- [x] 70 unique sermon audio files backed up locally with SHA-256 inventory
+- [x] 70 unique sermon audio files backed up locally with SHA-256 inventory (superseded November 15, 2026: R2 is the official copy and the church Drive holds the archive; see Step 1)
 - [x] R2 audio manifest prepared for `https://www.fillmorechristian.org/media`
 - [x] R2 enabled, bucket `fillmore-christian-sermons` created, and all 70 audio objects uploaded and SHA-256 verified
 - [x] GitHub Pages staging deployment enabled from the personal repo
@@ -41,24 +41,31 @@ npm run status:migration
 
 ## What's Left
 
-### Step 1: Keep The Sermon Audio Backup Safe
+### Step 1: Keep The Sermon Audio Safe
 
-This was the first critical task because it becomes impossible once ChurchCo access is canceled. It is already done as of June 1, 2026, and the same 70 files have been uploaded to Cloudflare R2 and hash-verified. Keep the local backup until the public R2 hostname and production feed have both been verified.
+Done. The original ChurchCo download (June 1, 2026) was uploaded to Cloudflare R2 and hash-verified, and TheChurchCo was canceled June 2, 2026. Since November 15, 2026 the audio is kept this way, with no full local copy:
 
-Current local backup status:
+- Official copy: Cloudflare R2 bucket `fillmore-christian-sermons`, served at `https://www.fillmorechristian.org/media/<file name>`.
+- Archive copy: church Google Drive folder `J:\My Drive\Sermon Audio\Website Audio Archive`.
+- Index: `exports/thechurchco-podcast/audio-inventory.csv` (FileName, SizeBytes, SHA256), kept in Git. On November 15, 2026 it held 79 files, 2,583,609,567 bytes.
+- R2 manifest: `exports/thechurchco-podcast/r2-audio-manifest.csv`, built from the inventory.
+- Working folder: `exports/thechurchco-podcast/audio/` holds only a sermon being added and may be empty.
 
-- Feed items exported: 73
-- Items with audio enclosures: 71
-- Unique downloaded audio files: 70
-- Local backup folder: `exports/thechurchco-podcast/audio/`
-- Inventory file: `exports/thechurchco-podcast/audio-inventory.csv`
-- R2 upload manifest: `exports/thechurchco-podcast/r2-audio-manifest.csv`
+`scripts\add-podcast-episode.ps1 -UploadR2` hashes the new file, adds its inventory row, uploads it to R2, copies it to the Drive archive, confirms R2 serves it at the recorded size, and then removes the working copy.
 
-Before canceling TheChurchCo, verify the backup again:
+The readiness check confirms every inventory file is served from R2 at its recorded size (HEAD requests only, nothing is downloaded):
 
 ```powershell
-.\scripts\test-migration-readiness.ps1 -VerifyAudioHashes
+.\scripts\test-migration-readiness.ps1
 ```
+
+Once a month, compare the Drive archive and R2 with the inventory:
+
+```powershell
+npm run verify:audio-archive
+```
+
+Add `-VerifyHashes` when running `scripts\verify-audio-archive.ps1` directly to hash every archive file (reads about 2.6 GB through Drive for desktop).
 
 ### Step 2: Set Up Podcast Hosting
 
