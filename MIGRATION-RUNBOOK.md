@@ -56,6 +56,8 @@ Export status on 2026-06-01:
 - Backup folder: `exports/thechurchco-podcast/audio/`
 - Download verification inventory: `exports/thechurchco-podcast/audio-inventory.csv` with SHA-256 hashes for the 70 local audio files.
 
+Update, November 15, 2026: the local backup folder was found empty (last changed November 12, cause unknown), which blocked deploys. Since TheChurchCo was already canceled, the audio storage model changed. Cloudflare R2 is now the official copy. The church Google Drive folder `Sermon Audio\Website Audio Archive` is the second copy: all 79 inventory files were restored there from R2 and hash-verified. `audio-inventory.csv` is the index. `exports/thechurchco-podcast/audio/` is now only a working folder and may be empty. The scripts and readiness checks no longer need it. Check both copies with `npm run verify:audio-archive`. See SERMON-UPLOAD-GUIDE.md, "Where The Audio Lives."
+
 ## Podcast Independence Plan
 
 Current state is safe for production traffic and cancellation-ready for TheChurchCo website/podcast hosting:

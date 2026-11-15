@@ -68,8 +68,9 @@ The guided uploader will ask Caleb to:
 Then it will:
 
 - Pull the latest website source.
-- Copy the audio into the local podcast audio archive.
-- Upload the audio to Cloudflare R2.
+- Record the audio's size and SHA-256 in `audio-inventory.csv`.
+- Upload the audio to Cloudflare R2 and confirm the public URL serves it.
+- Copy the audio to the church Drive archive.
 - Update every podcast feed.
 - Update the sermon archive, podcast page, homepage, sitemap, and episode pages.
 - Run the local readiness check.
@@ -107,7 +108,7 @@ Run the add command:
 
 The script will:
 
-- Copy the audio into the local podcast audio archive.
+- Copy the audio into the local working folder and record it in `audio-inventory.csv`.
 - Update all podcast feed files:
   - `podcast-category/fillmore-christian/feed/podcast`
   - `podcast.xml`
@@ -116,8 +117,28 @@ The script will:
 - Create the episode page.
 - Update the homepage and podcast page latest-message cards.
 - Update the R2 audio manifest.
-- Upload the new audio file to Cloudflare R2 when `-UploadR2` is included.
+- Upload the new audio file to Cloudflare R2 when `-UploadR2` is included, then confirm the public URL serves the same number of bytes.
+- Copy the audio to the church Drive archive (`-ArchiveDir`, default `J:\My Drive\Sermon Audio\Website Audio Archive`). If that folder is not reachable, it warns and keeps going; copy the file there by hand afterward.
+- Remove the local working copy after a verified R2 upload and archive copy (`-KeepLocalCopy` keeps it).
 - Build the `dist` folder for deployment.
+
+## Where The Audio Lives
+
+Since TheChurchCo was canceled (June 2, 2026), the website sermon audio has two copies and no full local copy:
+
+- Cloudflare R2 (bucket `fillmore-christian-sermons`, served at `https://www.fillmorechristian.org/media/`) is the official copy.
+- The church Google Drive folder `Sermon Audio\Website Audio Archive` is the second copy.
+- `exports/thechurchco-podcast/audio-inventory.csv` (in Git) is the index: every file's name, size and SHA-256. `audio-duration-inventory.csv` keeps each file's duration.
+
+`exports/thechurchco-podcast/audio/` is only a working folder for a sermon being added. It may be empty. The scripts and readiness checks no longer need earlier files there.
+
+Check both copies against the inventory (about monthly, and after any scare):
+
+```powershell
+npm run verify:audio-archive
+```
+
+Add `-VerifyHashes` when running `scripts\verify-audio-archive.ps1` directly to hash every archive file (reads about 2.6 GB from Drive).
 
 ## Verify Locally
 

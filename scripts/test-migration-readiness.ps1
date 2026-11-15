@@ -1756,33 +1756,39 @@ if (Test-Path -LiteralPath $manifestPath) {
     $rowsWithAudio = @($manifestRows | Where-Object { $_.EnclosureUrl })
     Add-Check "Podcast manifest" "OK" "$($manifestRows.Count) rows, $($rowsWithAudio.Count) rows with audio enclosures"
 
-    if ($SkipLocalAudioBackup) {
-        Add-Check "Podcast audio backup coverage" "WARN" "Local audio backup file check skipped for CI; run without -SkipLocalAudioBackup before canceling TheChurchCo"
-    } elseif (Test-Path -LiteralPath $audioDir) {
-        $audioFiles = @(Get-ChildItem -LiteralPath $audioDir -File)
-        $expectedAudioFiles = @($rowsWithAudio | ForEach-Object { ConvertTo-LocalAudioFileName $_.EnclosureUrl } | Where-Object { $_ } | Select-Object -Unique)
-        $missingAudio = @($expectedAudioFiles | Where-Object { -not (Test-Path -LiteralPath (Join-Path $audioDir $_)) })
-        if ($missingAudio.Count -eq 0) {
-            Add-Check "Podcast audio backup coverage" "OK" "$($audioFiles.Count) local files cover $($expectedAudioFiles.Count) unique enclosure filenames"
-        } else {
-            Add-Check "Podcast audio backup coverage" "FAIL" ("Missing audio backups: " + ($missingAudio -join ", "))
-        }
+    # TheChurchCo was canceled 2026-06-02. R2 is the official audio copy and
+    # audio-inventory.csv is its index; the Drive archive is the second copy
+    # (scripts\verify-audio-archive.ps1). The local audio folder is only a
+    # working folder, so coverage is checked against the inventory.
+    # -SkipLocalAudioBackup is kept for CI compatibility and no longer changes this check.
+    $expectedAudioFiles = @($rowsWithAudio | ForEach-Object { ConvertTo-LocalAudioFileName $_.EnclosureUrl } | Where-Object { $_ } | Select-Object -Unique)
+    $inventoryNames = if (Test-Path -LiteralPath $inventoryPath) { @(Import-Csv -LiteralPath $inventoryPath | ForEach-Object { $_.FileName }) } else { @() }
+    $missingInventory = @($expectedAudioFiles | Where-Object { $_ -notin $inventoryNames })
+    if ($missingInventory.Count -eq 0) {
+        Add-Check "Podcast audio backup coverage" "OK" "audio-inventory.csv covers $($expectedAudioFiles.Count) unique enclosure filenames (R2 is the official copy; verify the Drive archive with scripts\verify-audio-archive.ps1)"
     } else {
-        Add-Check "Podcast audio backup coverage" "FAIL" "Audio backup directory not found: $audioDir"
+        Add-Check "Podcast audio backup coverage" "FAIL" ("Enclosures missing from audio-inventory.csv: " + ($missingInventory -join ", "))
     }
 } else {
     Add-Check "Podcast manifest" "FAIL" "Manifest not found: $manifestPath"
 }
 
-if ((Test-Path -LiteralPath $inventoryPath) -and (Test-Path -LiteralPath $audioDir)) {
+if (Test-Path -LiteralPath $inventoryPath) {
     $inventoryRows = @(Import-Csv -LiteralPath $inventoryPath)
     $badInventory = New-Object System.Collections.Generic.List[string]
+    $localChecked = 0
     foreach ($row in $inventoryRows) {
-        $filePath = Join-Path $audioDir $row.FileName
-        if (-not (Test-Path -LiteralPath $filePath)) {
-            $badInventory.Add("$($row.FileName): missing")
+        if (-not $row.FileName -or -not $row.SizeBytes -or [int64]$row.SizeBytes -le 0 -or $row.SHA256 -notmatch '^[0-9A-Fa-f]{64}$') {
+            $badInventory.Add("$($row.FileName): incomplete inventory row")
             continue
         }
+
+        $filePath = Join-Path $audioDir $row.FileName
+        if (-not (Test-Path -LiteralPath $filePath)) {
+            # No local working copy; R2 and the Drive archive hold this file.
+            continue
+        }
+        $localChecked++
 
         $file = Get-Item -LiteralPath $filePath
         if ([int64]$row.SizeBytes -ne $file.Length) {
@@ -1800,12 +1806,12 @@ if ((Test-Path -LiteralPath $inventoryPath) -and (Test-Path -LiteralPath $audioD
 
     if ($badInventory.Count -eq 0) {
         $hashNote = if ($VerifyAudioHashes) { " with SHA-256 verification" } else { "" }
-        Add-Check "Podcast audio inventory" "OK" "$($inventoryRows.Count) inventory rows match local files$hashNote"
+        Add-Check "Podcast audio inventory" "OK" "$($inventoryRows.Count) complete inventory rows; $localChecked local working file(s) match$hashNote"
     } else {
         Add-Check "Podcast audio inventory" "FAIL" ($badInventory -join "; ")
     }
 } else {
-    Add-Check "Podcast audio inventory" "WARN" "Inventory or audio directory not present"
+    Add-Check "Podcast audio inventory" "FAIL" "Audio inventory not found: $inventoryPath"
 }
 
 if (Test-Path -LiteralPath $durationInventoryPath) {
@@ -1870,7 +1876,7 @@ if (Test-Path -LiteralPath $r2ManifestPath) {
         if (Test-Path -LiteralPath $audioDir) {
             $filePath = Join-Path $audioDir $row.FileName
             if (-not (Test-Path -LiteralPath $filePath)) {
-                $r2Issues.Add("$($row.FileName): local audio file missing")
+                # Local working copy is optional; R2 is the official copy.
                 continue
             }
 

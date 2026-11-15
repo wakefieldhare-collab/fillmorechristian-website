@@ -14,9 +14,10 @@ $root = Resolve-Path (Join-Path $PSScriptRoot "..")
 $audioPath = if ([System.IO.Path]::IsPathRooted($AudioDir)) { $AudioDir } else { Join-Path $root $AudioDir }
 $outputFile = if ([System.IO.Path]::IsPathRooted($OutputPath)) { $OutputPath } else { Join-Path $root $OutputPath }
 
-if (-not (Test-Path -LiteralPath $audioPath)) {
-    throw "Audio directory not found: $audioPath"
-}
+# The duration inventory is the durable record. The local audio folder is only a
+# working folder for newly added sermons, so it may be missing or partial; files
+# present there add or refresh rows, and every other row is kept as recorded.
+$hasAudioDir = Test-Path -LiteralPath $audioPath
 
 function ConvertTo-LocalAudioFileName {
     param([string]$Url)
@@ -99,16 +100,31 @@ function Set-ItunesDuration {
     return 0
 }
 
-$shell = New-Object -ComObject Shell.Application
-$namespace = $shell.Namespace($audioPath)
-if (-not $namespace) {
-    throw "Could not read audio metadata directory: $audioPath"
+$durationByFileName = @{}
+if (Test-Path -LiteralPath $outputFile) {
+    foreach ($row in @(Import-Csv -LiteralPath $outputFile)) {
+        if ($row.FileName -and [int]$row.DurationSeconds -gt 0) {
+            $durationByFileName[$row.FileName] = [pscustomobject]@{
+                FileName = $row.FileName
+                Duration = $row.Duration
+                DurationSeconds = [int]$row.DurationSeconds
+                SizeBytes = [int64]$row.SizeBytes
+            }
+        }
+    }
 }
 
-$durationRows = New-Object System.Collections.Generic.List[object]
-$durationByFileName = @{}
+$localFiles = if ($hasAudioDir) { @(Get-ChildItem -LiteralPath $audioPath -File | Sort-Object Name) } else { @() }
+$namespace = $null
+if ($localFiles.Count -gt 0) {
+    $shell = New-Object -ComObject Shell.Application
+    $namespace = $shell.Namespace([string]$audioPath)
+    if (-not $namespace) {
+        throw "Could not read audio metadata directory: $audioPath"
+    }
+}
 
-foreach ($file in @(Get-ChildItem -LiteralPath $audioPath -File | Sort-Object Name)) {
+foreach ($file in $localFiles) {
     $item = $namespace.ParseName($file.Name)
     if (-not $item) {
         continue
@@ -127,11 +143,11 @@ foreach ($file in @(Get-ChildItem -LiteralPath $audioPath -File | Sort-Object Na
         DurationSeconds = $durationSeconds
         SizeBytes = $file.Length
     }
-    $durationRows.Add($durationByFileName[$file.Name])
 }
 
+$durationRows = @($durationByFileName.Values | Sort-Object FileName)
 if ($durationRows.Count -eq 0) {
-    throw "No audio durations could be read from $audioPath"
+    throw "No audio durations are recorded in $OutputPath or readable from $audioPath"
 }
 
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $outputFile) | Out-Null

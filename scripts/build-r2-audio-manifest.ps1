@@ -49,9 +49,10 @@ if (-not (Test-Path -LiteralPath $manifestPath)) {
 if (-not (Test-Path -LiteralPath $inventoryPath)) {
     throw "Audio inventory not found: $inventoryPath"
 }
-if (-not (Test-Path -LiteralPath $audioPath)) {
-    throw "Audio directory not found: $audioPath"
-}
+# Since TheChurchCo was canceled (2026-06-02), R2 holds the official audio and
+# audio-inventory.csv is the index. The local audio folder is only a working
+# folder for newly added sermons, so it may be missing or hold just a few files.
+$hasAudioDir = Test-Path -LiteralPath $audioPath
 
 $podcastRows = @(Import-Csv -LiteralPath $manifestPath)
 $inventoryRows = @(Import-Csv -LiteralPath $inventoryPath)
@@ -103,19 +104,22 @@ $base = $BaseAudioUrl.TrimEnd("/")
 $rows = @(
     foreach ($group in ($references | Group-Object FileName | Sort-Object Name)) {
         $fileName = $group.Name
-        $filePath = Join-Path $audioPath $fileName
-        if (-not (Test-Path -LiteralPath $filePath)) {
-            throw "Audio file missing for manifest entry: $filePath"
-        }
-
-        $file = Get-Item -LiteralPath $filePath
         if (-not $inventoryByName.ContainsKey($fileName)) {
             throw "Audio inventory is missing an entry for $fileName"
         }
 
         $inventory = $inventoryByName[$fileName]
-        if ([int64]$inventory.SizeBytes -ne $file.Length) {
-            throw "Audio size mismatch for $fileName`: inventory has $($inventory.SizeBytes), local file has $($file.Length)"
+        if (-not $inventory.SizeBytes -or [int64]$inventory.SizeBytes -le 0 -or -not $inventory.SHA256) {
+            throw "Audio inventory entry for $fileName is missing SizeBytes or SHA256"
+        }
+
+        # A local working copy is optional; when one exists it must match the inventory.
+        $filePath = if ($hasAudioDir) { Join-Path $audioPath $fileName } else { "" }
+        if ($filePath -and (Test-Path -LiteralPath $filePath)) {
+            $file = Get-Item -LiteralPath $filePath
+            if ([int64]$inventory.SizeBytes -ne $file.Length) {
+                throw "Audio size mismatch for $fileName`: inventory has $($inventory.SizeBytes), local file has $($file.Length)"
+            }
         }
 
         $objectKey = if ($normalizedPrefix) { "$normalizedPrefix/$fileName" } else { $fileName }
@@ -126,7 +130,7 @@ $rows = @(
             ObjectKey = $objectKey
             FileName = $fileName
             ContentType = Get-ContentType $fileName
-            SizeBytes = $file.Length
+            SizeBytes = [int64]$inventory.SizeBytes
             SHA256 = $inventory.SHA256
             FeedReferenceCount = $group.Count
             SourceUrlCount = $sourceUrls.Count

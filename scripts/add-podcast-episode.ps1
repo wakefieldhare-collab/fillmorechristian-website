@@ -17,7 +17,11 @@ param(
     [string]$BaseAudioUrl = "https://www.fillmorechristian.org/media",
     [string]$Bucket = "",
     [switch]$UploadR2,
-    [switch]$SkipBuild
+    [switch]$SkipBuild,
+    # Second copy of every website sermon file, on the church Google Drive.
+    [string]$ArchiveDir = "J:\My Drive\Sermon Audio\Website Audio Archive",
+    # Keep the working copy in exports\thechurchco-podcast\audio after a verified R2 upload.
+    [switch]$KeepLocalCopy
 )
 
 $ErrorActionPreference = "Stop"
@@ -409,10 +413,53 @@ if ($UploadR2) {
     }
 }
 
+# Archive copy on the church Google Drive. Missing Drive is a loud warning, not a
+# failure, so the upload still works on a computer without the church Drive.
+$archiveStatus = "not copied"
+if ($ArchiveDir -and (Test-Path -LiteralPath (Split-Path -Parent $ArchiveDir))) {
+    New-Item -ItemType Directory -Force -Path $ArchiveDir | Out-Null
+    $archivePath = Join-Path $ArchiveDir $targetFileName
+    Copy-Item -LiteralPath $targetPath -Destination $archivePath -Force
+    if ((Get-Item -LiteralPath $archivePath).Length -ne $targetAudio.Length) {
+        throw "Archive copy size mismatch: $archivePath"
+    }
+    $archiveStatus = $archivePath
+} else {
+    Write-Warning "Archive folder is not reachable ($ArchiveDir). Copy $targetFileName there by hand so the second copy stays complete."
+}
+
+# Confirm the public R2 URL serves the new file at the inventory size before
+# removing the working copy. R2 plus the Drive archive are the durable copies.
+$localStatus = $targetPath
+if ($UploadR2) {
+    $served = $false
+    for ($attempt = 1; $attempt -le 6 -and -not $served; $attempt++) {
+        try {
+            $head = Invoke-WebRequest -Uri $audioUrl -Method Head -UseBasicParsing
+            $servedLength = [int64]([string]$head.Headers["Content-Length"])
+            if ($head.StatusCode -eq 200 -and $servedLength -eq $targetAudio.Length) {
+                $served = $true
+            }
+        } catch {
+            # The object may still be propagating.
+        }
+        if (-not $served) { Start-Sleep -Seconds 5 }
+    }
+    if (-not $served) {
+        throw "R2 upload finished, but $audioUrl did not serve $($targetAudio.Length) bytes. The working copy was kept at $targetPath."
+    }
+
+    if (-not $KeepLocalCopy -and $archiveStatus -ne "not copied") {
+        Remove-Item -LiteralPath $targetPath -Force
+        $localStatus = "removed after verified R2 upload and archive copy"
+    }
+}
+
 Write-Host ""
 Write-Host "Added podcast episode:"
 Write-Host "  Title: $Title"
 Write-Host "  Episode: $episodeUrl"
 Write-Host "  Audio: $audioUrl"
-Write-Host "  File: $targetPath"
+Write-Host "  Working copy: $localStatus"
+Write-Host "  Archive: $archiveStatus"
 Write-Host "  R2 manifest: $r2ManifestPath"
