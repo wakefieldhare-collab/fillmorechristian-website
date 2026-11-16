@@ -27,14 +27,54 @@ $hadWorkspaceWrangler = Test-Path -LiteralPath $workspaceWranglerPath
 function Stop-ProcessTree {
     param([int]$ProcessId)
 
-    $children = @(Get-CimInstance Win32_Process -Filter "ParentProcessId = $ProcessId" -ErrorAction SilentlyContinue)
-    foreach ($child in $children) {
-        Stop-ProcessTree -ProcessId $child.ProcessId
+    # Windows keeps a ParentProcessId after the parent exits, and process IDs
+    # are reused, so a recursive walk can loop (PID 0 even lists itself as its
+    # own parent). Walk one snapshot iteratively, visit each PID once, never
+    # touch system PIDs, and follow a child only if it started after its parent.
+    if ($ProcessId -le 4) {
+        return
     }
 
-    $process = Get-Process -Id $ProcessId -ErrorAction SilentlyContinue
-    if ($process) {
-        Stop-Process -Id $ProcessId -Force -ErrorAction SilentlyContinue
+    $all = @(Get-CimInstance Win32_Process -ErrorAction SilentlyContinue)
+    $byId = @{}
+    $childrenByParent = @{}
+    foreach ($entry in $all) {
+        $byId[[int]$entry.ProcessId] = $entry
+        $parentId = [int]$entry.ParentProcessId
+        if (-not $childrenByParent.ContainsKey($parentId)) {
+            $childrenByParent[$parentId] = New-Object System.Collections.Generic.List[object]
+        }
+        $childrenByParent[$parentId].Add($entry)
+    }
+
+    $visited = New-Object System.Collections.Generic.HashSet[int]
+    $order = New-Object System.Collections.Generic.List[int]
+    $queue = New-Object System.Collections.Generic.Queue[int]
+    [void]$visited.Add($ProcessId)
+    $queue.Enqueue($ProcessId)
+    while ($queue.Count -gt 0) {
+        $currentId = $queue.Dequeue()
+        $order.Add($currentId)
+        $current = $byId[$currentId]
+        if (-not $childrenByParent.ContainsKey($currentId)) {
+            continue
+        }
+        foreach ($child in $childrenByParent[$currentId]) {
+            $childId = [int]$child.ProcessId
+            if ($childId -le 4 -or $visited.Contains($childId)) {
+                continue
+            }
+            if ($current -and $current.CreationDate -and $child.CreationDate -and $child.CreationDate -lt $current.CreationDate) {
+                continue
+            }
+            [void]$visited.Add($childId)
+            $queue.Enqueue($childId)
+        }
+    }
+
+    # Stop the deepest processes first, then the root.
+    for ($index = $order.Count - 1; $index -ge 0; $index--) {
+        Stop-Process -Id $order[$index] -Force -ErrorAction SilentlyContinue
     }
 }
 
