@@ -1,23 +1,29 @@
 {
   "schema_version": 1,
-  "service_date": "2026-11-15",
-  "updated_at": "2026-11-15",
+  "service_date": "2026-11-22",
+  "updated_at": "2026-11-16",
   "announcements": [
     {
-      "title": "Ice Skating Party",
-      "when": "Sunday, February 28, 2027, 1:00 to 3:00 p.m.",
-      "details": "Mark your calendar for our annual church ice skating party. All ages are welcome, and pizza is provided. More details will come this winter."
+      "title": "Family Sunday",
+      "when": "Sunday, November 29, 10:00 a.m.",
+      "details": "The first Sunday of Advent. Our students lead worship, and all ages stay together for the whole service. We read John 11, where Jesus raises Lazarus.",
+      "location": "Fillmore Christian Church"
+    },
+    {
+      "title": "Deck the Halls",
+      "when": "Sunday, November 29, after worship",
+      "details": "Stay after the service and help us decorate the church for Christmas. All ages are welcome.",
+      "location": "Fillmore Christian Church"
     },
     {
       "title": "Food Pantry",
       "when": "November 2026",
-      "details": "The Andrew County Food Pantry November collection is baking supplies: vanilla, baking powder, baking soda, chocolate chips and the like. Bring one or two any Sunday this month."
+      "details": "The Andrew County Food Pantry November collection is baking supplies: vanilla, baking powder, baking soda, chocolate chips and the like. Next Sunday is the last Sunday to bring them."
     },
     {
-      "title": "Next Sunday",
-      "when": "Sunday, November 22, 10:00 a.m.",
-      "details": "Jesus Heals: in Mark 7 Jesus heals a Gentile mother's daughter and opens the ears of a deaf man.",
-      "location": "Fillmore Christian Church"
+      "title": "Ice Skating Party",
+      "when": "Sunday, February 28, 2027, 1:00 to 3:00 p.m.",
+      "details": "Mark your calendar for our annual church ice skating party. All ages are welcome, and pizza is provided. More details will come this winter."
     }
   ]
 }
